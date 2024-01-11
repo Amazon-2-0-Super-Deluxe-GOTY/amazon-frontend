@@ -16,7 +16,7 @@
   }
 }
 
-body {
+body:not(.sb-show-main) {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
