@@ -16,7 +16,7 @@
   }
 }
 
-body:not(.sb-show-main) {
+.next-basic-page {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
