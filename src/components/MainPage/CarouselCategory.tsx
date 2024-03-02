@@ -1,13 +1,13 @@
-import * as React from "react"
+import * as React from "react";
 
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
+} from "@/components/ui/carousel";
 
 export function CarouselCategory() {
   return (
@@ -16,7 +16,7 @@ export function CarouselCategory() {
         {Array.from({ length: 10 }).map((_, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4">
             <div>
-              <Card style={{height:'264px'}}>
+              <Card style={{ height: "264px" }}>
                 <CardContent className="flex items-center justify-center p-6">
                   <span className="text-2xl font-semibold">{index + 1}</span>
                 </CardContent>
@@ -28,7 +28,5 @@ export function CarouselCategory() {
       <CarouselPrevious />
       <CarouselNext />
     </Carousel>
-  )
+  );
 }
-
-

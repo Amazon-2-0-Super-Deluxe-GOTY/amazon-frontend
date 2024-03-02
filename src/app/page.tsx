@@ -18,12 +18,12 @@ import Image from "next/image";
 import placeholderImage from "../../public/placeholder.svg";
 
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-  } from "@/components/ui/carousel"
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpCard } from "@/components/MainPage/SingInUpCard";
@@ -34,7 +34,6 @@ import { Sale } from "@/components/MainPage/Sale";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center">
-      
       <header className="flex justify-center items-center px-2 py-4 border-b w-full">
         <div className="max-w-screen-xl flex items-center justify-between w-full">
           <div className="flex items-center space-x-4">
@@ -52,63 +51,41 @@ export default function Home() {
           </div>
         </div>
       </header>
-      
-      <main className="block items-center justify-center p-0 m-0">
-      <section className="flex flex-col items-center w-full">
-        <div style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'312px', marginTop:'40px'}}>
+
+      <main className="block items-center justify-center p-0 m-0"></main>
+
+      <main className="max-w-screen-xl w-full grow px-2 pt-4">
+        <div
+          style={{
+            maxWidth: "1600px",
+            width: "100%",
+          }}
+        >
           <Banner />
         </div>
-        <div className="flex justify-center" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'312px', marginTop:'80px'}}>
-          <div className="bg-gray-200 rounded-lg h-full p-6" style={{maxWidth:'1194px', minWidth:'937px', width:'100%', marginRight:'24px'}}>
-            <CarouselCategory />
-          </div>
-          <div style={{maxWidth:'382px', minWidth:'300px', width:'100%'}}>
-            <SingInUpCard />
-          </div>
-        </div>
-      </section>
-      <section className="flex flex-col items-center w-full" style={{marginTop:'10px'}}>
-        <div className="block bg-gray-200 rounded-lg w-full h-full" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'500px', marginTop:'40px'}}>
-          <div className="flex justify-between">
-            <div className="" style={{marginTop:'24px', marginLeft:'24px', fontSize:'28px'}}>
-              <span>Trending deals</span>
+        <section className="flex flex-col items-center w-full my-8">
+          <div
+            className="flex justify-center flex-wrap"
+            style={{
+              width: "100%",
+            }}
+          >
+            <div
+              className="bg-gray-200 rounded-lg h-full p-6"
+              style={{
+                marginRight: "24px",
+              }}
+            >
+              <CarouselCategory />
             </div>
-            <div className="flex" style={{marginTop:'32.5px', marginRight:'24px', fontSize:'16px'}}>
-              <span>see more</span>
-              <span>{'>'}</span>
-            </div>
-          </div>
-          <div className="pl-6 pr-6 pt-4">
-            <TrendingDeals />
-          </div>
-        </div>
-      </section>
-      <section className="flex flex-col items-center w-full" style={{marginTop:'40px'}}>
-        <div className="block bg-gray-200 rounded-lg p-6" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'312px'}}>
-          <CarouselCategory />
-        </div>
-      </section>
-      <section className="flex flex-col items-center w-full" style={{marginTop:'40px'}}>
-        <div className="block bg-gray-200 rounded-lg w-full h-full" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'500px'}}>
-          <div className="flex justify-between">
-            <div className="" style={{marginTop:'24px', marginLeft:'24px', fontSize:'28px'}}>
-              <span>Sale</span>
-            </div>
-            <div className="flex" style={{marginTop:'32.5px', marginRight:'24px', fontSize:'16px'}}>
-              <span>see more</span>
-              <span>{'>'}</span>
+            <div
+              style={{ maxWidth: "382px", minWidth: "300px", width: "100%" }}
+            >
+              <SingInUpCard />
             </div>
           </div>
-          <div className="pl-6 pr-6 pt-4">
-            <Sale />
-          </div>
-        </div>
-      </section>
-    </main>
-      
-      
-      <main className="max-w-screen-xl w-full grow px-2 pt-4">
-        <section className="my-8">
+        </section>
+        <section className="my-8 bg-gray-200 p-4 rounded-md">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Trending deals</h2>
             <Button variant="ghost">
@@ -128,9 +105,42 @@ export default function Home() {
             <CarouselNext className="right-0" />
           </Carousel>
         </section>
+        <section
+          className="flex flex-col items-center w-full"
+          style={{ marginTop: "40px" }}
+        >
+          <div
+            className="block bg-gray-200 rounded-lg p-6"
+            style={{
+              maxWidth: "1600px",
+              width: "100%",
+            }}
+          >
+            <CarouselCategory />
+          </div>
+        </section>
+        <section className="my-8 bg-gray-200 p-4 rounded-md">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">Sale</h2>
+            <Button variant="ghost">
+              See more <ChevronRight size={16} className="ml-2" />
+            </Button>
+          </div>
+
+          <Carousel className="w-full">
+            <CarouselContent className="mx-auto">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <CarouselItem className="md:basis-1/3 lg:basis-1/5" key={index}>
+                  <ProductCard title={`Test ${index + 1}`} price={35.99} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
+          </Carousel>
+        </section>
       </main>
-      
-      
+
       <footer className="py-8 border-t w-full">
         <div className="flex flex-wrap justify-between items-start gap-8 max-w-3xl mx-auto px-2">
           <div>
