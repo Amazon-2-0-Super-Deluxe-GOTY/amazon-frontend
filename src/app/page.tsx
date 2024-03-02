@@ -16,17 +16,25 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import placeholderImage from "../../public/placeholder.svg";
+
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+  } from "@/components/ui/carousel"
+
+import { Banner } from "@/components/MainPage/Banner";
+import { SingInUpCard } from "@/components/MainPage/SingInUpCard";
+import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
+import { TrendingDeals } from "@/components/MainPage/TrendingDeals";
+import { Sale } from "@/components/MainPage/Sale";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center">
+      
       <header className="flex justify-center items-center px-2 py-4 border-b w-full">
         <div className="max-w-screen-xl flex items-center justify-between w-full">
           <div className="flex items-center space-x-4">
@@ -44,6 +52,61 @@ export default function Home() {
           </div>
         </div>
       </header>
+      
+      <main className="block items-center justify-center p-0 m-0">
+      <section className="flex flex-col items-center w-full">
+        <div style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'312px', marginTop:'40px'}}>
+          <Banner />
+        </div>
+        <div className="flex justify-center" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'312px', marginTop:'80px'}}>
+          <div className="bg-gray-200 rounded-lg h-full p-6" style={{maxWidth:'1194px', minWidth:'937px', width:'100%', marginRight:'24px'}}>
+            <CarouselCategory />
+          </div>
+          <div style={{maxWidth:'382px', minWidth:'300px', width:'100%'}}>
+            <SingInUpCard />
+          </div>
+        </div>
+      </section>
+      <section className="flex flex-col items-center w-full" style={{marginTop:'10px'}}>
+        <div className="block bg-gray-200 rounded-lg w-full h-full" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'500px', marginTop:'40px'}}>
+          <div className="flex justify-between">
+            <div className="" style={{marginTop:'24px', marginLeft:'24px', fontSize:'28px'}}>
+              <span>Trending deals</span>
+            </div>
+            <div className="flex" style={{marginTop:'32.5px', marginRight:'24px', fontSize:'16px'}}>
+              <span>see more</span>
+              <span>{'>'}</span>
+            </div>
+          </div>
+          <div className="pl-6 pr-6 pt-4">
+            <TrendingDeals />
+          </div>
+        </div>
+      </section>
+      <section className="flex flex-col items-center w-full" style={{marginTop:'40px'}}>
+        <div className="block bg-gray-200 rounded-lg p-6" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'312px'}}>
+          <CarouselCategory />
+        </div>
+      </section>
+      <section className="flex flex-col items-center w-full" style={{marginTop:'40px'}}>
+        <div className="block bg-gray-200 rounded-lg w-full h-full" style={{maxWidth:'1600px', minWidth:'938px', width:'100%', height:'500px'}}>
+          <div className="flex justify-between">
+            <div className="" style={{marginTop:'24px', marginLeft:'24px', fontSize:'28px'}}>
+              <span>Sale</span>
+            </div>
+            <div className="flex" style={{marginTop:'32.5px', marginRight:'24px', fontSize:'16px'}}>
+              <span>see more</span>
+              <span>{'>'}</span>
+            </div>
+          </div>
+          <div className="pl-6 pr-6 pt-4">
+            <Sale />
+          </div>
+        </div>
+      </section>
+    </main>
+      
+      
       <main className="max-w-screen-xl w-full grow px-2 pt-4">
         <section className="my-8">
           <div className="flex justify-between items-center mb-4">
@@ -65,12 +128,9 @@ export default function Home() {
             <CarouselNext className="right-0" />
           </Carousel>
         </section>
-        {/* <div className="absolute bottom-4 -right-12">
-          <Button className="sticky bottom-0" variant="ghost">
-            <ArrowUpIcon className="text-gray-700" />
-          </Button>
-        </div> */}
       </main>
+      
+      
       <footer className="py-8 border-t w-full">
         <div className="flex flex-wrap justify-between items-start gap-8 max-w-3xl mx-auto px-2">
           <div>
