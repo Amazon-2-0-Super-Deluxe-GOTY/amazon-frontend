@@ -28,8 +28,6 @@ import {
 import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpCard } from "@/components/MainPage/SingInUpCard";
 import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
-import { TrendingDeals } from "@/components/MainPage/TrendingDeals";
-import { Sale } from "@/components/MainPage/Sale";
 
 export default function Home() {
   return (
@@ -55,35 +53,12 @@ export default function Home() {
       <main className="block items-center justify-center p-0 m-0"></main>
 
       <main className="max-w-screen-xl w-full grow px-2 pt-4">
-        <div
-          style={{
-            maxWidth: "1600px",
-            width: "100%",
-          }}
-        >
-          <Banner />
-        </div>
-        <section className="flex flex-col items-center w-full my-8">
-          <div
-            className="flex justify-center flex-wrap"
-            style={{
-              width: "100%",
-            }}
-          >
-            <div
-              className="bg-gray-200 rounded-lg h-full p-6"
-              style={{
-                marginRight: "24px",
-              }}
-            >
-              <CarouselCategory />
-            </div>
-            <div
-              style={{ maxWidth: "382px", minWidth: "300px", width: "100%" }}
-            >
-              <SingInUpCard />
-            </div>
+        <Banner />
+        <section className="flex flex-col justify-center lg:flex-row gap-6 my-8">
+          <div className="bg-gray-200 rounded-lg h-full p-6 grow min-w-0">
+            <CarouselCategory />
           </div>
+          <SingInUpCard />
         </section>
         <section className="my-8 bg-gray-200 p-4 rounded-md">
           <div className="flex justify-between items-center mb-4">
@@ -101,21 +76,15 @@ export default function Home() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-0" />
-            <CarouselNext className="right-0" />
+            <CarouselPrevious />
+            <CarouselNext />
           </Carousel>
         </section>
         <section
           className="flex flex-col items-center w-full"
           style={{ marginTop: "40px" }}
         >
-          <div
-            className="block bg-gray-200 rounded-lg p-6"
-            style={{
-              maxWidth: "1600px",
-              width: "100%",
-            }}
-          >
+          <div className="block bg-gray-200 rounded-lg p-6 w-full">
             <CarouselCategory />
           </div>
         </section>
@@ -135,8 +104,8 @@ export default function Home() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-0" />
-            <CarouselNext className="right-0" />
+            <CarouselPrevious />
+            <CarouselNext />
           </Carousel>
         </section>
       </main>
