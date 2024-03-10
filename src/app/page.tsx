@@ -14,16 +14,6 @@ import {
   UserIcon,
   YoutubeIcon,
 } from "lucide-react";
-import Image from "next/image";
-import placeholderImage from "../../public/placeholder.svg";
-
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpCard } from "@/components/MainPage/SingInUpCard";
@@ -68,14 +58,9 @@ export default function Home() {
           </div>
           <CarouselProduct />
         </section>
-        <section
-          className="flex flex-col items-center w-full"
-          style={{ marginTop: "40px" }}
-        >
-          <div className="block bg-gray-200 rounded-lg p-6 w-full">
-            <CarouselCategory />
-          </div>
-        </section>
+        <div className="bg-gray-200 rounded-lg p-6">
+          <CarouselCategory />
+        </div>
         <section className="my-8 bg-gray-200 p-4 rounded-md">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Sale</h2>

@@ -17,15 +17,18 @@ function getRandomInt(min: number, max: number) {
 
 export function CarouselCategory() {
   return (
-    <Carousel className="h-full w-full">
-      <CarouselContent className="md:basis-1/3 lg:basis-1/5">
+    <Carousel className="h-full w-full @container">
+      <CarouselContent className="mx-auto">
         {Array.from({ length: 10 }).map((_, index) => (
-          <CardContent key={index}>
+          <CarouselItem
+            key={index}
+            className="@3xl:basis-1/3 @6xl:basis-1/5 flex justify-center pl-0"
+          >
             <ImageCard
               title={`Test ${index + 1}`}
               variant={getRandomInt(1, 3) as any}
             />
-          </CardContent>
+          </CarouselItem>
         ))}
       </CarouselContent>
       <CarouselPrevious />
