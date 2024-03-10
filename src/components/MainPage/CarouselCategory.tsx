@@ -76,26 +76,26 @@ const ImageCard = ({
             />
           </div>
         ) : (
-          <div className="grid grid-cols-3 grid-rows-2 items-end gap-1 h-40 w-full relative">
+          <div className="grid grid-cols-3 grid-rows-3 items-end gap-1 h-40 w-full relative">
             <Image
               src={placeholderImage}
               alt="placeholder"
-              className="h-full max-w-full max-h-full col-span-3 object-cover"
+              className="max-w-full max-h-full h-full row-span-2 col-span-3 object-cover"
             />
             <Image
               src={placeholderImage}
               alt="placeholder"
-              className="max-w-full max-h-full object-cover"
+              className="max-w-full max-h-full h-full row-2 object-cover"
             />
             <Image
               src={placeholderImage}
               alt="placeholder"
-              className="max-w-full max-h-full object-cover"
+              className="max-w-full max-h-full h-full row-2 col-1 object-cover"
             />
             <Image
               src={placeholderImage}
               alt="placeholder"
-              className="max-w-full max-h-full object-cover"
+              className="max-w-full max-h-full h-full row-2 col-2 object-cover"
             />
           </div>
         )}

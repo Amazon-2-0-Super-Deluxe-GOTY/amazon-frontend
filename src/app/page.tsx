@@ -28,6 +28,7 @@ import {
 import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpCard } from "@/components/MainPage/SingInUpCard";
 import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
+import { CarouselProduct } from "@/components/MainPage/CarouselProduct";
 
 export default function Home() {
   return (
@@ -50,8 +51,6 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="block items-center justify-center p-0 m-0"></main>
-
       <main className="max-w-screen-xl w-full grow px-2 pt-4">
         <Banner />
         <section className="flex flex-col justify-center lg:flex-row gap-6 my-8">
@@ -67,18 +66,7 @@ export default function Home() {
               See more <ChevronRight size={16} className="ml-2" />
             </Button>
           </div>
-
-          <Carousel className="w-full">
-            <CarouselContent className="mx-auto">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <CarouselItem className="md:basis-1/3 lg:basis-1/5" key={index}>
-                  <ProductCard title={`Test ${index + 1}`} price={35.99} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+          <CarouselProduct />
         </section>
         <section
           className="flex flex-col items-center w-full"
@@ -95,18 +83,7 @@ export default function Home() {
               See more <ChevronRight size={16} className="ml-2" />
             </Button>
           </div>
-
-          <Carousel className="w-full">
-            <CarouselContent className="mx-auto">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <CarouselItem className="md:basis-1/3 lg:basis-1/5" key={index}>
-                  <ProductCard title={`Test ${index + 1}`} price={35.99} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+          <CarouselProduct />
         </section>
       </main>
 
@@ -148,24 +125,3 @@ export default function Home() {
     </div>
   );
 }
-
-const ProductCard = ({ title, price }: { title: string; price: number }) => {
-  const priceParts = price.toFixed(2).split(".");
-  const whole = priceParts[0];
-  const fraction = priceParts[1];
-
-  return (
-    <Card className="w-[220px]">
-      <div className="p-2">
-        <Image src={placeholderImage} alt="placeholder" className="w-full" />
-        <div className="mt-3 flex flex-col">
-          <span className="text-lg">{title}</span>
-          <div>
-            <span className="text-xl">${whole}</span>
-            <sup>{fraction}</sup>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-};
