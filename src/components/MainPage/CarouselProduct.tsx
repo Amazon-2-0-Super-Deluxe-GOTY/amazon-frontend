@@ -7,7 +7,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import placeholderImage from "../../../public/placeholder.svg";
+import placeholderImage from "../../../public/Icons/placeholder.svg";
 import { MessageCircle, StarIcon } from "lucide-react";
 
 export function CarouselProduct() {

@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import placeholderImage from "../../../public/placeholder.svg";
+import placeholderImage from "../../../public/Icons/placeholder.svg";
 
 export function Banner() {
   return (
@@ -20,7 +20,7 @@ export function Banner() {
             <div className="w-full h-80">
               <Card className="w-full h-full">
                 <CardContent className="flex items-center justify-center">
-                  <Image
+                <Image
                     src={placeholderImage}
                     alt="placeholder"
                     fill={true}
