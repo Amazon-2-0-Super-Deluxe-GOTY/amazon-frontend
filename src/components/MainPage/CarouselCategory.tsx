@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 import {
   Carousel,
   CarouselContent,
@@ -24,10 +25,12 @@ export function CarouselCategory() {
             key={index}
             className="@3xl:basis-1/3 @6xl:basis-1/5 flex justify-center pl-0"
           >
+            <Link href={`/category/${index + 1}`}>
             <ImageCard
               title={`Test ${index + 1}`}
               variant={getRandomInt(1, 3) as any}
             />
+            </Link>
           </CarouselItem>
         ))}
       </CarouselContent>

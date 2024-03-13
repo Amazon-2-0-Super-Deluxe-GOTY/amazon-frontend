@@ -1,4 +1,5 @@
 import * as React from "react";
+import Link from "next/link";
 import {
     BellIcon,
     HeartIcon,
@@ -14,7 +15,9 @@ export function Header() {
         <div className="max-w-screen-xl flex items-center justify-between w-full">
         <div className="flex items-center space-x-4">
             <MenuIcon className="text-gray-700" />
-            <span className="font-bold text-xl">Logo</span>
+            <Link href={"/"}>
+              <span className="font-bold text-xl">Logo</span>
+            </Link>
         </div>
         <div className="flex-1 mx-4">
             <Input placeholder="Search..." />

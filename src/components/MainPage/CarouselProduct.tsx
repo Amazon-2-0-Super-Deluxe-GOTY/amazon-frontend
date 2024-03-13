@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 import {
   Carousel,
   CarouselContent,
@@ -19,7 +20,9 @@ export function CarouselProduct() {
             className="md:basis-1/3 lg:basis-1/5 flex justify-center pl-0"
             key={index}
           >
-            <ProductCard title={`Test ${index + 1}`} price={35.99} />
+            <Link href={`/product/${index + 1}`}>
+              <ProductCard title={`Test ${index + 1}`} price={35.99} />
+            </Link>
           </CarouselItem>
         ))}
       </CarouselContent>

@@ -8,15 +8,11 @@ import { SingInUpCard } from "@/components/MainPage/SingInUpCard";
 import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
 import { CarouselProduct } from "@/components/MainPage/CarouselProduct";
 
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center">
-      <Header />
-
       <main className="max-w-screen-xl w-full grow px-2 pt-4">
         <Banner />
         <section className="flex flex-col justify-center lg:flex-row gap-6 my-8">
@@ -47,8 +43,6 @@ export default function Home() {
           <CarouselProduct />
         </section>
       </main>
-
-      <Footer />
 
       <div className="absolute">
         <ScrollToTopButton />
