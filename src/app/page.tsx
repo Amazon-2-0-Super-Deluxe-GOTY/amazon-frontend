@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpCard } from "@/components/MainPage/SingInUpCard";
@@ -12,8 +10,8 @@ import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col items-center">
-      <main className="max-w-screen-xl w-full grow px-2 pt-4">
+    <>
+      <main className="max-w-screen-xl w-full grow px-2 pt-4 mx-auto">
         <Banner />
         <section className="flex flex-col justify-center lg:flex-row gap-6 my-8">
           <div className="bg-gray-200 rounded-lg h-full p-6 grow min-w-0">
@@ -44,9 +42,7 @@ export default function Home() {
         </section>
       </main>
 
-      <div className="absolute">
-        <ScrollToTopButton />
-      </div>
-    </div>
+      <ScrollToTopButton />
+    </>
   );
 }

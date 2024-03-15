@@ -20,7 +20,7 @@ export function Banner() {
             <div className="w-full h-80">
               <Card className="w-full h-full">
                 <CardContent className="flex items-center justify-center">
-                <Image
+                  <Image
                     src={placeholderImage}
                     alt="placeholder"
                     fill={true}
