@@ -85,7 +85,12 @@ export default function CategoryPage({
           {/* Filters here */}
           <div className="grid grid-cols-1 lg:grid-cols-3 auto-rows-max gap-6">
             {Array.from({ length: 10 }).map((_, index) => (
-              <ProductCard price={29} title={"Product " + index} key={index} />
+              <ProductCard
+                price={29}
+                title={"Product " + index}
+                quantity={index}
+                key={index}
+              />
             ))}
           </div>
           {/* Pagination here */}
@@ -123,13 +128,22 @@ const FiltersCard = () => {
   );
 };
 
-const ProductCard = ({ title, price }: { title: string; price: number }) => {
+const ProductCard = ({
+  title,
+  price,
+  quantity,
+}: {
+  title: string;
+  price: number;
+  quantity: number;
+}) => {
   const priceParts = price.toFixed(2).split(".");
   const whole = priceParts[0];
   const fraction = priceParts[1];
+  const isOutOfStock = quantity === 0;
 
   return (
-    <Card className="max-w-sm w-full border-0 hover:ring-1 ring-gray-300 shadow-none transition-shadow duration-300">
+    <Card className="max-w-sm w-full border-0 hover:ring-1 ring-gray-300 shadow-none transition-shadow duration-300 relative">
       <CardHeader className="pb-0">
         <div className="relative aspect-square">
           <Image src={placeholder} fill={true} alt="Placeholder" />
@@ -158,6 +172,14 @@ const ProductCard = ({ title, price }: { title: string; price: number }) => {
           </div>
         </div>
       </CardContent>
+      {isOutOfStock && (
+        <div className="absolute inset-0 bg-gray-200/50">
+          <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-center max-w-[230px] w-full">
+            <span className="text-2xl">Out of Stock</span>
+            <Button className="mt-4">Notify when available</Button>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
