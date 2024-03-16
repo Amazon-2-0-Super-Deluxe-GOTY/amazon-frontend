@@ -33,8 +33,8 @@ const ScrollToTopButton = () => {
       <Button
         variant="ghost"
         className={clsx(
-          "bg-gray-200 text-black flex justify-center items-center fixed right-4 bottom-4 lg:right-10 lg:bottom-10 w-12 h-12 rounded-lg transition-all opacity-0",
-          isVisible && "visible opacity-100"
+          "fixed flex justify-center items-center bg-gray-200 text-black right-4 bottom-4 lg:right-10 lg:bottom-10 w-12 h-12 rounded-lg transition-all duration-200 ease-in-out opacity-0 pointer-events-none",
+          isVisible && "opacity-1 pointer-events-auto"
         )}
         onClick={scrollToTop}
       >
