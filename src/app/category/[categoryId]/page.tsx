@@ -2,13 +2,23 @@
 import { useEffect } from "react";
 import Image from "next/image";
 
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Checkbox from "@/components/ui/checkbox"
-import ScrollArea from "@/components/ui/scrollarea"
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-import HouseLine from "../../../../public/Icons/HouseLine.svg";
-import FiltersCategoryArrow from "../../../../public/Icons/FiltersCategoryArrow.svg";
+import HouseLine from "@/../public/Icons/HouseLine.svg";
+import FiltersCategoryArrow from "@/../public/Icons/FiltersCategoryArrow.svg";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Slash } from "lucide-react";
+import Link from "next/link";
 
 export default function CategoryPage({
   params,
@@ -22,32 +32,62 @@ export default function CategoryPage({
   }, [params.categoryId]);
 
   return (
-    <main className="flex flex-col items-center pl-[160px] pr-[160px] pt-10 pb-10 grow w-full h-full">
+    <main className="flex flex-col items-center max-w-screen-xl py-10 grow w-full mx-auto">
       <section className="w-full flex items-left gap-1">
-        <Image src={HouseLine} alt="Home" />
-        <span>/ Category{params.categoryId} / Subcategory / ProductsType </span>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/">
+                  <Image src={HouseLine} width={24} height={24} alt="Home" />
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <Slash />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/clothes">Clothes</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <Slash />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/clothes/women">Women</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <Slash />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbPage>Tops, Tees & Blouses</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        {/* <Image src={HouseLine} alt="Home" />
+        <span>/ Category{params.categoryId} / Subcategory / ProductsType </span> */}
       </section>
       <section className="w-full flex items-left pt-4">
         <span className="text-[36px] font-semibold">Title</span>
       </section>
-      <section className="flex w-full h-full pt-8">
-        <div className="gap-3">
+      <section className="flex w-full pt-8">
+        <div className="flex flex-col gap-3 w-full gap-4">
           {Array.from({ length: 5 }).map((_, index) => (
             <FiltersCard key={index} />
           ))}
         </div>
-        <div className="">
-
-        </div>
+        <div className=""></div>
       </section>
-
     </main>
   );
 }
 
 const FiltersCard = () => {
   return (
-    <div className="max-w-sm p-4 bg-gray-200 rounded-lg shadow mb-4">
+    <div className="max-w-xs w-full p-4 bg-gray-200 rounded-lg shadow max-h-[414px]">
       <div className="flex items-center justify-between border-b">
         <h2 className="text-lg font-semibold">Brand</h2>
         <Button variant="ghost">
@@ -55,14 +95,16 @@ const FiltersCard = () => {
         </Button>
       </div>
       <div className="pt-3 w-full">
-        <Input placeholder="Search..." />
-        <ScrollArea className="max-h-[414px] w-full pt-3">
+        <Input placeholder="Search..." className="mb-3" />
+        <ScrollArea>
           <ul className="list-none p-0 m-0">
             {Array.from({ length: 10 }).map((_, index) => (
-              <div key={index} className="flex items-center space-x-2">
+              <li key={index} className="flex items-center space-x-2">
                 <Checkbox id={"brand" + index} />
-                <label className="text-sm" htmlFor={"brand" + index}>PUMIEY</label>
-              </div>
+                <label className="text-base" htmlFor={"brand" + index}>
+                  PUMIEY
+                </label>
+              </li>
             ))}
           </ul>
         </ScrollArea>
