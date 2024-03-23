@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle, Slash, StarIcon } from "lucide-react";
@@ -7,12 +7,14 @@ import { MessageCircle, Slash, StarIcon } from "lucide-react";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import RatingFillStar from "@/../public/Icons/RatingFillStar.svg";
 import RatingLineStar from "@/../public/Icons/RatingLineStar.svg";
+import SwitchCard33 from "@/../public/Icons/SwitchCard33.svg";
+import SwitchCard44 from "@/../public/Icons/SwitchCard44.svg";
 import placeholder from "@/../public/Icons/placeholder.svg";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,7 +41,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ComboboxFilters } from "@/components/ui/combobox";
 import {
   Select,
   SelectContent,
@@ -50,6 +51,7 @@ import {
 
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { cn } from "@/lib/utils";
 
 type FiltersDataItem = {
   title: string;
@@ -96,26 +98,19 @@ const FiltersData: FiltersDataItem[] = [
   },
 ];
 
-type FiltersComboboxDataItem = {
-  value: string;
-  label: string;
-};
-const FiltersComboboxData: FiltersComboboxDataItem[] = [
-  {
-    value: "aswd",
-    label: "Aswd",
-  },
-  {
-    value: "qwerty",
-    label: "Qwerty",
-  }
-];
-
 export default function CategoryPage({
   params,
 }: {
   params: { categoryId: string };
 }) {
+  const [isDisplay33, setIsDisplay33] = useState(false);
+  const SwitchDisplayCardsTo33 = () => {
+    setIsDisplay33(true);
+  };
+  const SwitchDisplayCardsTo44 = () => {
+    setIsDisplay33(false);
+  };
+
   useEffect(() => {
     if (params.categoryId) {
       console.log(`Loading page for category ${params.categoryId}`);
@@ -170,14 +165,25 @@ export default function CategoryPage({
         </div>
         <div className="grow">
           {/* Filters here */}
-          <div className="w-full flex justify-between items-center">
-            <div>
-              <ComboboxFilters data={FiltersComboboxData} />
+          <div className="w-full flex justify-between items-center gap-2 ">
+            <div className="max-w-[200px] w-full">
+              <Select>
+                <SelectTrigger className="bg-gray-200">
+                  <SelectValue placeholder="Selected filters" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-200">
+                  <SelectItem value="filtername-filtervalue1">Filter 1</SelectItem>
+                  <SelectItem value="filtername-filtervalue2">Filter 2</SelectItem>
+                  <SelectItem value="filtername-filtervalue3">Filter 3</SelectItem>
+                  <hr className="my-4 border-gray-300"></hr>
+                  <Button variant={"ghost"}>Clear all</Button>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="flex gap-2">
-              <div>
+            <div className="flex gap-2 items-center w-full justify-end">
+              <div className="max-w-[260px] w-full">
                 <Select>
-                  <SelectTrigger className="max-w-[283px] w-full">
+                  <SelectTrigger>
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -187,15 +193,32 @@ export default function CategoryPage({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex">
-                {/* Switch card template here*/}
+              <div className="flex max-md:hidden">
+                <Button 
+                  variant={"ghost"} 
+                  className={cn("rounded-r-none min-w-[40px] px-4 max-lg:px-2", isDisplay33 ? "bg-gray-300" : "bg-gray-200" )}
+                  onClick={SwitchDisplayCardsTo33}>
+                  <Image
+                    src={SwitchCard33}
+                    alt="switchcards33"
+                  />
+                </Button>
+                <Button 
+                  variant={"ghost"} 
+                  className={cn("rounded-l-none min-w-[40px] px-4 max-lg:px-2", !isDisplay33 ? "bg-gray-300" : "bg-gray-200" )}
+                  onClick={SwitchDisplayCardsTo44}>
+                  <Image
+                    src={SwitchCard44}
+                    alt="switchcards44"
+                  />
+                </Button>
               </div>
             </div>
           </div>
           <br/>
           <hr></hr>
           <br/>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6 items-center justify-center">
+          <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6", !isDisplay33 && "md:grid-cols-3 lg:grid-cols-4")}>
             {Array.from({ length: 10 }).map((_, index) => (
               <ProductCard
                 price={29}
@@ -232,9 +255,9 @@ export default function CategoryPage({
 const FiltersCard = ({ item }: { item: FiltersDataItem }) => {
   return (
     <div className="max-h-[414px] p-6 pt-3 bg-gray-200 rounded-lg shadow">
-      <Accordion type="single" collapsible>
+      <Accordion type="single" defaultValue="item-1" collapsible>
         <AccordionItem value="item-1">
-          <AccordionTrigger>{item["title"]}</AccordionTrigger>
+          <AccordionTrigger className="font-semibold">{item["title"]}</AccordionTrigger>
           <AccordionContent>
               { item["isSearch"] ? <Input placeholder="Search..." className="mb-3" /> : <></>}
               <ScrollArea>
@@ -357,7 +380,7 @@ const ProductCard = ({
   const isOutOfStock = quantity === 0;
 
   return (
-    <Card className="max-w-sm w-full border-0 hover:ring-1 ring-gray-300 shadow-none transition-shadow duration-300 relative">
+    <Card className="m-auto max-w-sm w-full border-0 hover:ring-1 ring-gray-300 shadow-none transition-shadow duration-300 relative">
       <CardHeader className="pb-0">
         <div className="relative aspect-square">
           <Image src={placeholder} fill={true} alt="Placeholder" />
