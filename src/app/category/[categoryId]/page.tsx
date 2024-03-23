@@ -165,18 +165,29 @@ export default function CategoryPage({
         </div>
         <div className="grow">
           {/* Filters here */}
-          <div className="w-full flex justify-between items-center gap-2 ">
+          <div className="w-full flex justify-between items-center gap-2">
             <div className="max-w-[200px] w-full">
               <Select>
                 <SelectTrigger className="bg-gray-200">
                   <SelectValue placeholder="Selected filters" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-200">
-                  <SelectItem value="filtername-filtervalue1">Filter 1</SelectItem>
-                  <SelectItem value="filtername-filtervalue2">Filter 2</SelectItem>
-                  <SelectItem value="filtername-filtervalue3">Filter 3</SelectItem>
-                  <hr className="my-4 border-gray-300"></hr>
-                  <Button variant={"ghost"}>Clear all</Button>
+                  <div className=" p-3">
+                    <ScrollArea>
+                      <ul className="list-none p-0 m-0 max-h-[230px]">
+                        {Array.from({ length: 15 }).map((_, index) => (
+                          <li key={index} className="flex items-center space-x-2 pb-1">
+                            <Button variant={"ghost"} className="flex gap-2 bg-gray-300">
+                              <span>Filter {index}</span>
+                              <Button variant={"ghost"} className="px-1">X</Button>
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>  
+                    </ScrollArea>
+                    <hr className="my-4 border-gray-400 border-y"></hr>
+                    <Button variant={"ghost"}>Clear all</Button>
+                  </div>
                 </SelectContent>
               </Select>
             </div>
