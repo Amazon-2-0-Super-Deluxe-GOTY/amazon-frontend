@@ -103,12 +103,12 @@ export default function CategoryPage({
 }: {
   params: { categoryId: string };
 }) {
-  const [isDisplay33, setIsDisplay33] = useState(false);
-  const SwitchDisplayCardsTo33 = () => {
-    setIsDisplay33(true);
+  const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] = useState(true);
+  const ButtonDefaultCardTemplateClick = () => {
+    setIsDefaultTemplateDisplayCardOn(true);
   };
-  const SwitchDisplayCardsTo44 = () => {
-    setIsDisplay33(false);
+  const ButtonSecondaryCardTemplateClick = () => {
+    setIsDefaultTemplateDisplayCardOn(false);
   };
 
   useEffect(() => {
@@ -179,7 +179,7 @@ export default function CategoryPage({
                           <li key={index} className="flex items-center space-x-2 pb-1">
                             <Button variant={"ghost"} className="flex gap-2 bg-gray-300">
                               <span>Filter {index}</span>
-                              <Button variant={"ghost"} className="px-1">X</Button>
+                              <span className="px-1">X</span>
                             </Button>
                           </li>
                         ))}
@@ -207,8 +207,8 @@ export default function CategoryPage({
               <div className="flex max-md:hidden">
                 <Button 
                   variant={"ghost"} 
-                  className={cn("rounded-r-none min-w-[40px] px-4 max-lg:px-2", isDisplay33 ? "bg-gray-300" : "bg-gray-200" )}
-                  onClick={SwitchDisplayCardsTo33}>
+                  className={cn("rounded-r-none min-w-[40px] px-4 max-lg:px-2", isDefaultTemplateDisplayCardOn ? "bg-gray-300" : "bg-gray-200" )}
+                  onClick={ButtonDefaultCardTemplateClick}>
                   <Image
                     src={SwitchCard33}
                     alt="switchcards33"
@@ -216,8 +216,8 @@ export default function CategoryPage({
                 </Button>
                 <Button 
                   variant={"ghost"} 
-                  className={cn("rounded-l-none min-w-[40px] px-4 max-lg:px-2", !isDisplay33 ? "bg-gray-300" : "bg-gray-200" )}
-                  onClick={SwitchDisplayCardsTo44}>
+                  className={cn("rounded-l-none min-w-[40px] px-4 max-lg:px-2", !isDefaultTemplateDisplayCardOn ? "bg-gray-300" : "bg-gray-200" )}
+                  onClick={ButtonSecondaryCardTemplateClick}>
                   <Image
                     src={SwitchCard44}
                     alt="switchcards44"
@@ -226,12 +226,10 @@ export default function CategoryPage({
               </div>
             </div>
           </div>
-          <br/>
-          <hr></hr>
-          <br/>
-          <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6", !isDisplay33 && "md:grid-cols-3 lg:grid-cols-4")}>
+          <hr className="mt-6 mb-10 border-gray-300"></hr>
+          <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6", !isDefaultTemplateDisplayCardOn && "md:grid-cols-3 lg:grid-cols-4")}>
             {Array.from({ length: 10 }).map((_, index) => (
-              <ProductCard
+              <ProductCard 
                 price={29}
                 title={"Product " + index}
                 quantity={index}
@@ -270,7 +268,7 @@ const FiltersCard = ({ item }: { item: FiltersDataItem }) => {
         <AccordionItem value="item-1">
           <AccordionTrigger className="font-semibold">{item["title"]}</AccordionTrigger>
           <AccordionContent>
-              { item["isSearch"] ? <Input placeholder="Search..." className="mb-3" /> : <></>}
+              { item["isSearch"] ? <Input placeholder="Search..." className="my-3" /> : <></>}
               <ScrollArea>
                 <ul className="list-none p-0 m-0 max-h-[272px] ">
                   <FilterCardVariation title={item["title"]} type={item["type"]} values={item["values"]}/>
@@ -311,9 +309,18 @@ const FilterCardVariation = ({
       {
         return(
           <>
-            <ToggleGroup variant="outline" type="multiple" className={`grid grid-cols-5 max-[340px]:grid-cols-4 max-[250px]:grid-cols-3 max-[180px]:grid-cols-2`}> 
+            <ToggleGroup 
+              variant="outline" 
+              type="multiple" 
+              className={`grid grid-cols-5 max-[340px]:grid-cols-4 max-[250px]:grid-cols-3 max-[180px]:grid-cols-2 `}
+              > 
               {Array.from({ length: values.length }).map((_, index) => (
-                <ToggleGroupItem key={title + index} value={values[index]} aria-label={"Toggle" + values[index]}>
+                <ToggleGroupItem 
+                  key={title + index} 
+                  value={values[index]} 
+                  aria-label={"Toggle" + values[index]}
+                  className="border-black border-[1.5px]"
+                  >
                   {values[index]}
                 </ToggleGroupItem>
               ))}
@@ -325,12 +332,12 @@ const FilterCardVariation = ({
       {
         return(
           <>
-            <div className="h-full overflow-hidden">
+            <div className="h-full overflow-hidden mt-3">
               <div className="flex justify-between w-full pb-3">
                 <div className="flex justify-center items-center gap-2">
-                  <Input className="max-w-[64px]" value={"0"}></Input>
+                  <Input className="max-w-[64px]" defaultValue={"0"}></Input>
                   <span className="font-bold">—</span>
-                  <Input className="max-w-[64px]" value={"100"}></Input>
+                  <Input className="max-w-[64px]" defaultValue={"100"}></Input>
                 </div>
                 <div>
                   <Button variant={"ghost"} className="bg-gray-300">Save</Button>
@@ -346,7 +353,7 @@ const FilterCardVariation = ({
     case "Rating":
       {
         return(
-          <>
+          <div className="mt-3">
             {Array.from({ length: values.length }).map((_, index) => (
               <li key={index} className="flex items-center space-x-2 pb-2">
                 <Checkbox id={title + index} />
@@ -369,7 +376,7 @@ const FilterCardVariation = ({
                 </label>
               </li>
             ))}
-          </>
+          </div>
         );
       }
   }
