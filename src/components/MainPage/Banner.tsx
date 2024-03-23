@@ -1,4 +1,6 @@
+"use client";
 import * as React from "react";
+import Autoplay from "embla-carousel-autoplay";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -13,7 +15,18 @@ import placeholderImage from "../../../public/Icons/placeholder.svg";
 
 export function Banner() {
   return (
-    <Carousel className="w-full rounded-lg overflow-hidden">
+    <Carousel
+      className="w-full rounded-lg overflow-hidden"
+      plugins={[
+        Autoplay({
+          delay: 1000,
+          stopOnMouseEnter: true,
+        }),
+      ]}
+      opts={{
+        loop: true,
+      }}
+    >
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index}>
