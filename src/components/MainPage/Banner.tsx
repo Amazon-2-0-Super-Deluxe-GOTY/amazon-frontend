@@ -19,7 +19,8 @@ export function Banner() {
       className="w-full rounded-lg overflow-hidden"
       plugins={[
         Autoplay({
-          delay: 4000,
+          delay: 1000,
+          stopOnMouseEnter: true,
         }),
       ]}
       opts={{

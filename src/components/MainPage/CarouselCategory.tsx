@@ -26,10 +26,10 @@ export function CarouselCategory() {
         breakpoints: {
           "(max-width: 640px)": {
             align: "center",
+            loop: true,
           },
         },
         align: "end",
-        loop: true,
       }}
     >
       <CarouselContent>
@@ -41,7 +41,7 @@ export function CarouselCategory() {
                 "basis-[unset] md:basis-1/3 lg:basis-1/6 flex justify-center pl-4 lg:pl-6"
               }
             >
-              <Link href={`/category/${index + 1}`}>
+              <Link href={`/category/${index + 1}`} className="h-full">
                 <ImageCard
                   title={`Test category card title ${index + 1}`}
                   variant={getRandomInt(1, 3) as any}
@@ -65,8 +65,8 @@ const ImageCard = ({
   variant: 1 | 2 | 3;
 }) => {
   return (
-    <Card className="min-w-44 max-w-44 lg:max-w-xs w-full flex flex-col">
-      <div className="p-2">
+    <Card className="min-w-44 max-w-44 lg:max-w-xs w-full h-full">
+      <div className="p-2 h-full flex flex-col">
         {variant === 1 ? (
           <div className="h-32">
             <Image
@@ -122,9 +122,9 @@ const ImageCard = ({
             />
           </div>
         )}
-        <div className="mt-2">
+        <div className="mt-2 grow flex flex-col justify-between gap-6">
           <p className="text-lg line-clamp-2">{title}</p>
-          <div className="mt-6 flex justify-end">
+          <div className="text-end">
             <Button variant="ghost">
               See all <ChevronRight size={16} className="ml-2" />
             </Button>

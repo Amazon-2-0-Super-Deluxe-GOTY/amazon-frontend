@@ -12,11 +12,11 @@ export function SingInUpBanner() {
         <Image
           src={placeholder}
           alt="Placeholder"
-          className="w-full max-w-md object-cover aspect-video"
+          className="w-full max-w-md object-cover max-h-[260px]"
         />
         <div>
           <div className="mb-6 text-center">
-            <h2 className="text-2xl lg:text-4xl font-semibold mb-3">
+            <h2 className="text-2xl lg:text-4xl whitespace-nowrap font-semibold mb-3">
               Be aware of the variety
             </h2>
             <p className="text-lg lg:text-3xl">
@@ -39,7 +39,7 @@ export function SingInUpBanner() {
         <Image
           src={placeholder}
           alt="Placeholder"
-          className="w-full max-w-md object-cover aspect-video"
+          className="w-full max-w-md object-cover max-h-[260px]"
         />
       </CardContent>
     </Card>
