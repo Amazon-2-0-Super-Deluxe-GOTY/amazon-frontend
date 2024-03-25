@@ -1,6 +1,5 @@
 import { ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
-import { MediaQuery } from "../MediaQuery";
 import { CarouselProduct } from "./CarouselProduct";
 import { ProductsListMobile } from "./ProductsListMobile";
 
@@ -18,12 +17,13 @@ export const ProductsBlock = ({ title }: { title: string }) => {
           See all <ChevronRight size={16} className="ml-2" />
         </Button>
       </div>
-      <MediaQuery
-        minSize="lg"
-        fallback={<ProductsListMobile products={products} />}
-      >
+      {/* TODO: find better solution */}
+      <div className="block lg:hidden">
+        <ProductsListMobile products={products} />
+      </div>
+      <div className="hidden lg:block">
         <CarouselProduct products={products} />
-      </MediaQuery>
+      </div>
     </div>
   );
 };
