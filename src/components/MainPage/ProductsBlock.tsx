@@ -17,7 +17,6 @@ export const ProductsBlock = ({ title }: { title: string }) => {
           See all <ChevronRight size={16} className="ml-2" />
         </Button>
       </div>
-      {/* TODO: find better solution */}
       <div className="block lg:hidden">
         <ProductsListMobile products={products} />
       </div>
