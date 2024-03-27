@@ -232,7 +232,7 @@ export default function CategoryPage({
         </Breadcrumb>
       </section>
       <section className="w-full flex items-left pt-4">
-        <span className="text-[36px] font-semibold">Title</span>
+        <span className="text-4xl font-semibold">Title</span>
       </section>
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <div className="flex flex-col gap-2 basis-[385px] max-md:w-full">
