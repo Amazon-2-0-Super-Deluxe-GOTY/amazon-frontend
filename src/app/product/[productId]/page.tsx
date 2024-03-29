@@ -20,6 +20,112 @@ import {
 } from "@/components/ui/carousel";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import placeholder from "@/../public/Icons/placeholder.svg";
+import { OptionsComponent } from "@/components/Product/Options/types";
+import { ProductOptionsMapper } from "@/components/Product/Options/ProductOptionsMapper";
+import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
+
+const productOptions: OptionsComponent[] = [
+  {
+    type: "sizes",
+    data: [
+      {
+        title: "Extra Small",
+        short: "XS",
+        isAvailable: true,
+      },
+      {
+        title: "Small",
+        short: "S",
+        isAvailable: true,
+      },
+      {
+        title: "Medium",
+        short: "M",
+        isAvailable: true,
+      },
+      {
+        title: "Large",
+        short: "L",
+        isAvailable: true,
+      },
+      {
+        title: "Extra Large",
+        short: "XL",
+        isAvailable: true,
+      },
+      {
+        title: "2X Large",
+        short: "2XL",
+        isAvailable: true,
+      },
+      {
+        title: "3X Large",
+        short: "3XL",
+        isAvailable: false,
+      },
+    ],
+  },
+  {
+    type: "colors",
+    data: [
+      {
+        title: "Red",
+        hex: "#FF0000",
+        isAvailable: true,
+      },
+      {
+        title: "Orange",
+        hex: "#FF8A00",
+        isAvailable: true,
+      },
+      {
+        title: "Yellow",
+        hex: "#FFE500",
+        isAvailable: true,
+      },
+      {
+        title: "Chartreuse",
+        hex: "#80FF00",
+        isAvailable: true,
+      },
+      {
+        title: "Green",
+        hex: "#00FF47",
+        isAvailable: true,
+      },
+      {
+        title: "Aqua",
+        hex: "#00FFD1",
+        isAvailable: false,
+      },
+      {
+        title: "Light Blue",
+        hex: "#00D1FF",
+        isAvailable: true,
+      },
+      {
+        title: "Azure",
+        hex: "#0094FF",
+        isAvailable: true,
+      },
+      {
+        title: "Blue",
+        hex: "#0047FF",
+        isAvailable: true,
+      },
+      {
+        title: "Purple",
+        hex: "#8000FF",
+        isAvailable: true,
+      },
+      {
+        title: "Magenta",
+        hex: "#FA00FF",
+        isAvailable: true,
+      },
+    ],
+  },
+];
 
 export default function ProductPage({
   params,
@@ -76,7 +182,7 @@ export default function ProductPage({
               PUMIEY Women&apos;s Long Sleeve T-Shirts Crew Neck Slim Fit Tops
               Sexy Basic Tee Smoke Cloud Pro Collection
             </h1>
-            <span className="text-sm text-gray-400">Code: b0chfkt63b</span>
+            <span className="text-sm text-gray-400">Code: B0CHFLT63B</span>
             <div className="my-3 flex items-center">
               <div className="flex items-center gap-1 h-4">
                 <Star fill="#000" className="w-4 h-4" />
@@ -110,6 +216,9 @@ export default function ProductPage({
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
+            <span className="w-1/5 absolute top-[4%] lg:top-8 left-0 pl-[3%] py-2 bg-gray-50 rounded-e-full text-base lg:text-2xl">
+              -24%
+            </span>
           </Carousel>
           <div className="mt-4 lg:mt-8">
             <Carousel
@@ -155,11 +264,16 @@ export default function ProductPage({
               </div>
               <span className="text-xl font-bold ml-2">4.3</span>
               <span className="text-xl ml-4">228 reviews</span>
-              <span className="text-xl ml-auto">Code: b0chfkt63b</span>
+              <span className="text-xl ml-auto">Code: B0CHFLT63B</span>
             </div>
           </div>
+          <div className="mt-3 mb-6 lg:mt-8 lg:mb-0 flex flex-col gap-3 lg:gap-8">
+            <ProductOptionsMapper options={productOptions} />
+          </div>
         </div>
-        <div className="max-w-72 w-full"></div>
+        <div className="max-w-72 w-full">
+          <ProductOrderCard />
+        </div>
       </section>
     </main>
   );
