@@ -8,33 +8,33 @@ import { cn } from "@/lib/utils";
 const type: AdditionalProductDataTypes = "colors";
 
 export const OptionColors = ({ data }: { data: ColorsData }) => {
-  const [index, setIndex] = useState<number>();
   const searchParams = useSearhParamsTools();
-
-  const onSelect = (i: number) => () => {
-    setIndex(i);
-    searchParams.set(type, data[i].title);
-  };
-
-  useEffect(() => {
+  // const [index, setIndex] = useState<number>();
+  const [index, setIndex] = useState<number | undefined>(() => {
     const defaultValue = searchParams.get(type);
 
     if (defaultValue) {
       const index = data.findIndex((s) => s.title === defaultValue);
 
       if (index !== -1 && data[index].isAvailable) {
-        setIndex(index);
+        return index;
       } else {
         // remove invalid parameter
         searchParams.set(type, undefined);
       }
     }
-  }, []);
+    return undefined;
+  });
+
+  const onSelect = (i: number) => () => {
+    setIndex(i);
+    searchParams.set(type, data[i].title);
+  };
 
   return (
     <div className="w-full">
       <p className="text-base lg:text-2xl">
-        <span>Size</span>
+        <span>Color</span>
         <span className="font-semibold ml-4">
           {index !== undefined ? data[index].title : "None"}
         </span>
@@ -50,7 +50,7 @@ export const OptionColors = ({ data }: { data: ColorsData }) => {
           return (
             <div
               className={cn(
-                "min-w-11 max-w-14 w-full aspect-square flex justify-center items-center rounded-md border-2 cursor-pointer p-3",
+                "min-w-11 max-w-14 w-full aspect-square flex justify-center items-center rounded-md border-2 cursor-pointer p-2.5",
                 {
                   "border-gray-300": !isSelected,
                   "border-black": isSelected,

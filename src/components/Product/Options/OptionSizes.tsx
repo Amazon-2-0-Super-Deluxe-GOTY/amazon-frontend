@@ -9,28 +9,30 @@ import { PencilRulerIcon, ShirtIcon } from "lucide-react";
 const type: AdditionalProductDataTypes = "sizes";
 
 export const OptionSizes = ({ data }: { data: SizesData }) => {
-  const [index, setIndex] = useState<number>();
   const searchParams = useSearhParamsTools();
-
-  const onSelect = (i: number) => () => {
-    setIndex(i);
-    searchParams.set(type, data[i].short);
-  };
-
-  useEffect(() => {
+  const [index, setIndex] = useState<number | undefined>(() => {
     const defaultValue = searchParams.get(type);
 
     if (defaultValue) {
       const index = data.findIndex((s) => s.short === defaultValue);
 
       if (index !== -1 && data[index].isAvailable) {
-        setIndex(index);
+        return index;
       } else {
         // remove invalid parameter
         searchParams.set(type, undefined);
       }
     }
-  }, []);
+
+    return undefined;
+  });
+
+  const onSelect = (i: number) => () => {
+    setIndex(i);
+    searchParams.set(type, data[i].short);
+  };
+
+  useEffect(() => {}, []);
 
   return (
     <div className="w-full">
