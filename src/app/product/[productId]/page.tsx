@@ -26,7 +26,7 @@ import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
 
 const productOptions: OptionsComponent[] = [
   {
-    type: "sizes",
+    type: "size",
     data: [
       {
         title: "Extra Small",
@@ -66,7 +66,7 @@ const productOptions: OptionsComponent[] = [
     ],
   },
   {
-    type: "colors",
+    type: "color",
     data: [
       {
         title: "Red",
@@ -195,57 +195,8 @@ export default function ProductPage({
               <span className="text-base ml-2">228 reviews</span>
             </div>
           </div>
-          <Carousel
-            className="w-full"
-            opts={{
-              align: "center",
-            }}
-          >
-            <CarouselContent>
-              {Array.from({ length: 10 }).map((_, index) => {
-                return (
-                  <CarouselItem key={index}>
-                    <Image
-                      src={placeholder}
-                      alt="Placeholder"
-                      className="object-cover"
-                    />
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-            <span className="w-1/5 absolute top-[4%] lg:top-8 left-0 pl-[3%] py-2 bg-gray-50 rounded-e-full text-base lg:text-2xl">
-              -24%
-            </span>
-          </Carousel>
-          <div className="mt-4 lg:mt-8">
-            <Carousel
-              className="w-full"
-              opts={{
-                align: "center",
-              }}
-            >
-              <CarouselContent>
-                {Array.from({ length: 10 }).map((_, index) => {
-                  return (
-                    <CarouselItem
-                      key={index}
-                      className={
-                        "basis-[unset] pl-2 first:pl-4 lg:pl-6 md:pl-4 lg:first:pl-4"
-                      }
-                    >
-                      <Image
-                        src={placeholder}
-                        alt="Placeholder"
-                        className="w-14 h-14 lg:w-20 lg:h-20 object-cover"
-                      />
-                    </CarouselItem>
-                  );
-                })}
-              </CarouselContent>
-            </Carousel>
+          <div className="sticky top-4">
+            <ImagesBlock />
           </div>
         </div>
         <div className="max-w-xl w-full">
@@ -271,10 +222,71 @@ export default function ProductPage({
             <ProductOptionsMapper options={productOptions} />
           </div>
         </div>
-        <div className="max-w-72 w-full">
-          <ProductOrderCard />
+        <div className="lg:max-w-72 w-full">
+          <div className="sticky top-4">
+            <ProductOrderCard />
+          </div>
         </div>
       </section>
     </main>
   );
 }
+
+const ImagesBlock = () => {
+  return (
+    <>
+      <Carousel
+        className="w-full"
+        opts={{
+          align: "center",
+        }}
+      >
+        <CarouselContent>
+          {Array.from({ length: 10 }).map((_, index) => {
+            return (
+              <CarouselItem key={index}>
+                <Image
+                  src={placeholder}
+                  alt="Placeholder"
+                  className="object-cover"
+                />
+              </CarouselItem>
+            );
+          })}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+        <span className="w-1/5 absolute top-[4%] lg:top-8 left-0 pl-[3%] py-2 bg-gray-50 rounded-e-full text-base lg:text-2xl">
+          -24%
+        </span>
+      </Carousel>
+      <div className="mt-2 lg:mt-8">
+        <Carousel
+          className="w-full"
+          opts={{
+            align: "center",
+          }}
+        >
+          <CarouselContent>
+            {Array.from({ length: 10 }).map((_, index) => {
+              return (
+                <CarouselItem
+                  key={index}
+                  className={
+                    "basis-[unset] pl-2 first:pl-4 lg:pl-6 md:pl-4 lg:first:pl-4"
+                  }
+                >
+                  <Image
+                    src={placeholder}
+                    alt="Placeholder"
+                    className="w-14 h-14 lg:w-20 lg:h-20 object-cover"
+                  />
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+        </Carousel>
+      </div>
+    </>
+  );
+};

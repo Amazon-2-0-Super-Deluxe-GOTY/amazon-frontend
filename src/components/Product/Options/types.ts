@@ -1,4 +1,4 @@
-export type AdditionalProductDataTypes = "sizes" | "colors";
+export type AdditionalProductDataTypes = "size" | "color";
 export type SizesData = {
   title: string;
   short: string;

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PencilRulerIcon, ShirtIcon } from "lucide-react";
 
-const type: AdditionalProductDataTypes = "sizes";
+const type: AdditionalProductDataTypes = "size";
 
 export const OptionSizes = ({ data }: { data: SizesData }) => {
   const searchParams = useSearhParamsTools();
@@ -57,8 +57,6 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
                 {
                   "border-gray-300": !isSelected,
                   "border-black": isSelected,
-                  // "text-gray-300 bg-gray-100 cursor-not-allowed overflow-hidden relative before:absolute before:-top-4 before:-bottom-4 before:rotate-45 before:bg-gray-300 before:w-[2px] z-10":
-                  //   !item.isAvailable,
                   "cursor-not-allowed relative before:absolute before:inset-0 before:bg-gray-100/80":
                     !item.isAvailable,
                 }
@@ -66,6 +64,7 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
               key={item.short}
               title={item.title}
               onClick={item.isAvailable ? onSelect(i) : undefined}
+              aria-disabled={item.isAvailable}
             >
               {item.short}
               {!item.isAvailable && (

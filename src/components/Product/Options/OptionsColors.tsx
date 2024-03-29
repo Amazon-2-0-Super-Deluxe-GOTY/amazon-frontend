@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useSearhParamsTools } from "@/lib/router";
 import { cn } from "@/lib/utils";
 
-const type: AdditionalProductDataTypes = "colors";
+const type: AdditionalProductDataTypes = "color";
 
 export const OptionColors = ({ data }: { data: ColorsData }) => {
   const searchParams = useSearhParamsTools();
@@ -54,8 +54,6 @@ export const OptionColors = ({ data }: { data: ColorsData }) => {
                 {
                   "border-gray-300": !isSelected,
                   "border-black": isSelected,
-                  //   "text-gray-300 bg-gray-100 cursor-not-allowed overflow-hidden relative before:absolute before:-top-4 before:-bottom-4 before:rotate-45 before:bg-gray-300 before:w-[2px]":
-                  //     !item.isAvailable,
                   "cursor-not-allowed relative before:absolute before:inset-0 before:bg-gray-100/80":
                     !item.isAvailable,
                 }
@@ -63,6 +61,7 @@ export const OptionColors = ({ data }: { data: ColorsData }) => {
               key={item.hex}
               title={item.title}
               onClick={item.isAvailable ? onSelect(i) : undefined}
+              aria-disabled={item.isAvailable}
             >
               <div
                 className="aspect-square w-full min-w-4 rounded-sm"
