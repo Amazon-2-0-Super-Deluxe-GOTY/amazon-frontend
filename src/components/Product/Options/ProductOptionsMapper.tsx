@@ -10,10 +10,10 @@ export const ProductOptionsMapper = ({
   return options.map((opt) => {
     switch (opt.type) {
       case "size":
-        return <OptionSizes data={opt.data as SizesData} />;
+        return <OptionSizes data={opt.data as SizesData} key={opt.type} />;
 
       case "color":
-        return <OptionColors data={opt.data as ColorsData} />;
+        return <OptionColors data={opt.data as ColorsData} key={opt.type} />;
 
       default:
         return null;

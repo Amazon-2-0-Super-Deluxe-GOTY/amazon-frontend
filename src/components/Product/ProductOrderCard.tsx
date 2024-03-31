@@ -2,6 +2,7 @@ import { ChevronRightIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { MediaQueryCSS } from "../MediaQuery";
 
 export const ProductOrderCard = () => {
   const [count, setCount] = useState(1);
@@ -18,17 +19,19 @@ export const ProductOrderCard = () => {
           </span>
           <sub className="ml-2 line-through text-gray-400 text-lg">$39.99</sub>
         </div>
-        <hr className="border-black" />
-        <ul className="space-y-1">
-          <li className="flex justify-between text-base">
-            <span>Status</span>
-            <span>In stock</span>
-          </li>
-          <InfoLabel title="Delivery" />
-          <InfoLabel title="Payment methods" />
-          <InfoLabel title="Guarantee" />
-          <InfoLabel title="Returns" />
-        </ul>
+        <MediaQueryCSS minSize="lg">
+          <hr className="border-black mb-3" />
+          <ul className="space-y-1">
+            <li className="flex justify-between text-base">
+              <span>Status</span>
+              <span>In stock</span>
+            </li>
+            <InfoLabel title="Delivery" />
+            <InfoLabel title="Payment methods" />
+            <InfoLabel title="Guarantee" />
+            <InfoLabel title="Returns" />
+          </ul>
+        </MediaQueryCSS>
         <hr className="border-black" />
         <div className="flex justify-between items-center py-1">
           <span className="text-base">Quantity</span>
@@ -39,10 +42,12 @@ export const ProductOrderCard = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2">
         <Button>Add to cart</Button>
         <Button>Buy now</Button>
-        <Button variant={"outline"}>Add to wish list</Button>
+        <Button variant={"outline"} className="col-span-2 lg:col-span-1">
+          Add to wish list
+        </Button>
       </CardContent>
     </Card>
   );

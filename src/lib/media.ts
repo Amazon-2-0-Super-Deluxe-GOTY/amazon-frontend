@@ -51,3 +51,24 @@ export const useScreenSize = (params: Params) => {
       : screenSizesMax[params.maxSize];
   return useMediaQuery(query);
 };
+
+const screenSizesMinClass = {
+  sm: "hidden sm:block",
+  md: "hidden md:block",
+  lg: "hidden lg:block",
+  xl: "hidden xl:block",
+  "2xl": "hidden 2xl:block",
+};
+const screenSizesMaxClass = {
+  sm: "sm:hidden",
+  md: "md:hidden",
+  lg: "lg:hidden",
+  xl: "xl:hidden",
+  "2xl": "2xl:hidden",
+};
+
+export const getScreeSizeClass = (params: Params) => {
+  return "minSize" in params
+    ? screenSizesMinClass[params.minSize]
+    : screenSizesMaxClass[params.maxSize];
+};

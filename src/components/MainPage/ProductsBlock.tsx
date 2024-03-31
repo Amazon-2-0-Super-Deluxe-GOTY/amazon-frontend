@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { CarouselProduct } from "./CarouselProduct";
 import { ProductsListMobile } from "./ProductsListMobile";
+import { MediaQueryCSS } from "../MediaQuery";
 
 export const ProductsBlock = ({ title }: { title: string }) => {
   const products = Array.from({ length: 10 }).map((_, index) => ({
@@ -17,12 +18,12 @@ export const ProductsBlock = ({ title }: { title: string }) => {
           See all <ChevronRight size={16} className="ml-2" />
         </Button>
       </div>
-      <div className="block lg:hidden">
+      <MediaQueryCSS maxSize="lg">
         <ProductsListMobile products={products} />
-      </div>
-      <div className="hidden lg:block">
+      </MediaQueryCSS>
+      <MediaQueryCSS minSize="lg">
         <CarouselProduct products={products} />
-      </div>
+      </MediaQueryCSS>
     </div>
   );
 };

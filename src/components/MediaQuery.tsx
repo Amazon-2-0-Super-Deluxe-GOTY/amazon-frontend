@@ -1,5 +1,5 @@
 "use client";
-import { type ScreenSize, useScreenSize } from "@/lib/media";
+import { type ScreenSize, useScreenSize, getScreeSizeClass } from "@/lib/media";
 import React from "react";
 
 interface Props {
@@ -23,4 +23,10 @@ export const MediaQuery = (props: PropsMin | PropsMax) => {
   }
 
   return props.fallback ? props.fallback : null;
+};
+
+export const MediaQueryCSS = (props: PropsMin | PropsMax) => {
+  const className = getScreeSizeClass(props);
+
+  return <div className={className}>{props.children}</div>;
 };

@@ -23,6 +23,9 @@ import placeholder from "@/../public/Icons/placeholder.svg";
 import { OptionsComponent } from "@/components/Product/Options/types";
 import { ProductOptionsMapper } from "@/components/Product/Options/ProductOptionsMapper";
 import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
+import { MediaQueryCSS } from "@/components/MediaQuery";
+import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
+import { ProductDetails } from "@/components/Product/ProductDetails";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -127,6 +130,33 @@ const productOptions: OptionsComponent[] = [
   },
 ];
 
+const productDetails = [
+  {
+    title: "Brand",
+    text: "PUMIEY",
+  },
+  {
+    title: "Sleeve type",
+    text: "Long sleeve",
+  },
+  {
+    title: "Fabric type",
+    text: "75% Polyamide, 25% Elastane",
+  },
+  {
+    title: "Care instructions",
+    text: "Machine Wash",
+  },
+  {
+    title: "Origin",
+    text: "Imported",
+  },
+  {
+    title: "Closure type",
+    text: "Pull On",
+  },
+];
+
 export default function ProductPage({
   params,
 }: {
@@ -139,7 +169,7 @@ export default function ProductPage({
   }, [params.productId]);
 
   return (
-    <main className="flex flex-col items-center grow w-full max-w-[1600px] px-4 py-5 lg:py-10 lg:px-2 mx-auto">
+    <main className="grow w-full max-w-[1600px] px-4 py-5 lg:py-10 lg:px-2 mx-auto space-y-6">
       <div className="w-full flex items-left gap-1 mb-3 lg:mb-10">
         <Breadcrumb className="text-sm lg:text-base">
           <BreadcrumbList>
@@ -177,7 +207,7 @@ export default function ProductPage({
       </div>
       <section className="flex flex-col lg:flex-row gap-3 lg:gap-6 justify-between w-full">
         <div className="max-w-2xl w-full">
-          <div className="lg:hidden">
+          <MediaQueryCSS maxSize="lg">
             <h1 className="text-2xl">
               PUMIEY Women&apos;s Long Sleeve T-Shirts Crew Neck Slim Fit Tops
               Sexy Basic Tee Smoke Cloud Pro Collection
@@ -194,7 +224,7 @@ export default function ProductPage({
               <span className="text-base font-bold ml-2">4.3</span>
               <span className="text-base ml-2">228 reviews</span>
             </div>
-          </div>
+          </MediaQueryCSS>
           <div className="sticky top-4">
             <ImagesBlock />
           </div>
@@ -223,10 +253,15 @@ export default function ProductPage({
           </div>
         </div>
         <div className="lg:max-w-72 w-full">
-          <div className="sticky top-4">
+          <div className="sticky top-4 space-y-2 lg:space-y-4">
             <ProductOrderCard />
+            <SellerInfoCard />
           </div>
         </div>
+      </section>
+      <section className="py-6 border-t-2 pt-4 space-y-6">
+        <h2 className="text-3xl font-semibold">Product details</h2>
+        <ProductDetails details={productDetails} />
       </section>
     </main>
   );
