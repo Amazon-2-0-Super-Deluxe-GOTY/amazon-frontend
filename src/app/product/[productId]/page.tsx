@@ -26,6 +26,7 @@ import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
 import { MediaQueryCSS } from "@/components/MediaQuery";
 import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
 import { ProductDetails } from "@/components/Product/ProductDetails";
+import { AboutProduct } from "@/components/Product/AboutProduct";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -157,6 +158,29 @@ const productDetails = [
   },
 ];
 
+const aboutProductData = [
+  {
+    title: "Classic design",
+    text: "This long sleeve tops features a round neck design and a standard T-shirt length. Its adaptability shines as it effortlessly transitions from a tucked-in inner layer to a stylish crop top when stacked at the waist, making it a must-have piece for those seeking to channel the fall fashion trend.",
+  },
+  {
+    title: "Smoke cloud pro collection",
+    text: "New colors, new design, new fabric! Hero smoke cloud pro is coming! Different from the usual Smoke Cloud collection products made with C110TM fabric, the new drop's fabric is more smooth, and creamy. With some special tech, even the light colors won't be sheer.",
+  },
+  {
+    title: "Wardrobe essential",
+    text: "Are you still struggling to find the perfect fall fashion staple? Look no further! Our Long sleeve shirt is your ultimate choice. This monochromatic approach makes it an ideal choice for versatile pairings, effortlessly complementing various bottoms such as cargo pants, jeans, and more.",
+  },
+  {
+    title: "Occasion",
+    text: "Whether you're dressing for a casual outing or a formal event, this basic tee showcases its versatility, allowing you to confidently express your fashion sense in any setting, such as work, a party, a club, travel.",
+  },
+  {
+    title: "Occasion",
+    text: "Whether you're dressing for a casual outing or a formal event, this basic tee showcases its versatility, allowing you to confidently express your fashion sense in any setting, such as work, a party, a club, travel.",
+  },
+];
+
 export default function ProductPage({
   params,
 }: {
@@ -260,8 +284,16 @@ export default function ProductPage({
         </div>
       </section>
       <section className="py-6 border-t-2 pt-4 space-y-6">
-        <h2 className="text-3xl font-semibold">Product details</h2>
-        <ProductDetails details={productDetails} />
+        <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
+          Product details
+        </h2>
+        <ProductDetails items={productDetails} />
+      </section>
+      <section className="py-6 border-t-2 pt-4 space-y-6">
+        <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
+          About product
+        </h2>
+        <AboutProduct items={aboutProductData} />
       </section>
     </main>
   );
