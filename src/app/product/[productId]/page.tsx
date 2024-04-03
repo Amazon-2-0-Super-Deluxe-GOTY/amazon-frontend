@@ -221,11 +221,6 @@ const productDescriptionBlocks: DescriptionBlock[] = [
       direction: "rtl",
     },
   },
-  {
-    id: "5",
-    type: "hr",
-    data: {},
-  },
 ];
 
 export default function ProductPage({
@@ -240,7 +235,7 @@ export default function ProductPage({
   }, [params.productId]);
 
   return (
-    <main className="grow w-full max-w-[1600px] px-4 py-5 lg:py-10 lg:px-2 mx-auto space-y-6">
+    <main className="grow w-full max-w-[1600px] py-5 lg:py-10 mx-auto space-y-6">
       <div className="w-full flex items-left gap-1 mb-3 lg:mb-10">
         <Breadcrumb className="text-sm lg:text-base">
           <BreadcrumbList>
