@@ -1,20 +1,26 @@
 import React from "react";
 import { Button } from "../ui/button";
+import { useScreenSize } from "@/lib/media";
 
 interface Item {
   title: string;
   text: string;
 }
 
-const defaultItemsLimit = 4;
+const mobileItemsLimit = 2;
+const desktopItemsLimit = 4;
 
 export const AboutProduct = (props: { items: Item[] }) => {
-  const isExpandable = props.items.length > defaultItemsLimit;
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const isMobile = useScreenSize({ maxSize: "sm" });
+
+  const defaultItemsLimit = isMobile ? mobileItemsLimit : desktopItemsLimit;
+  const isExpandable = props.items.length > defaultItemsLimit;
+
   const items = React.useMemo(() => {
     if (!isExpandable || isExpanded) return props.items;
     return props.items.slice(0, defaultItemsLimit);
-  }, [isExpandable, isExpanded]);
+  }, [isExpandable, isExpanded, defaultItemsLimit]);
 
   const onExpand = () => setIsExpanded(true);
   const onHide = () => setIsExpanded(false);

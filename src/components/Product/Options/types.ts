@@ -1,4 +1,4 @@
-export type AdditionalProductDataTypes = "size" | "color";
+export type ProductOptionsTypes = "size" | "color";
 export type SizesData = {
   title: string;
   short: string;
@@ -7,6 +7,6 @@ export type SizesData = {
 export type ColorsData = { title: string; hex: string; isAvailable: boolean }[];
 
 export type OptionsComponent = {
-  type: AdditionalProductDataTypes;
+  type: ProductOptionsTypes;
   data: SizesData | ColorsData;
 };

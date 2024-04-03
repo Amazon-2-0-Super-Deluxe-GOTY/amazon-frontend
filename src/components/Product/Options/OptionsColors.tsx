@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { AdditionalProductDataTypes, ColorsData } from "./types";
+import { ProductOptionsTypes, ColorsData } from "./types";
 import clsx from "clsx";
 import { useSearhParamsTools } from "@/lib/router";
 import { cn } from "@/lib/utils";
 
-const type: AdditionalProductDataTypes = "color";
+const type: ProductOptionsTypes = "color";
 
 export const OptionColors = ({ data }: { data: ColorsData }) => {
   const searchParams = useSearhParamsTools();
@@ -39,10 +39,7 @@ export const OptionColors = ({ data }: { data: ColorsData }) => {
           {index !== undefined ? data[index].title : "None"}
         </span>
       </p>
-      <div
-        role="input"
-        className="flex lg:flex-wrap gap-1 lg:gap-3 mt-2 lg:mt-4 overflow-y-auto pb-1 lg:pb-0"
-      >
+      <div className="flex lg:flex-wrap gap-1 lg:gap-3 mt-2 lg:mt-4 overflow-y-auto pb-1 lg:pb-0">
         {data.map((s, i) => {
           const item = data[i];
           const isSelected = index === i;

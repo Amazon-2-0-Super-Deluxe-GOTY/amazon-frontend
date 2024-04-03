@@ -27,6 +27,8 @@ import { MediaQueryCSS } from "@/components/MediaQuery";
 import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
 import { ProductDetails } from "@/components/Product/ProductDetails";
 import { AboutProduct } from "@/components/Product/AboutProduct";
+import { ProductDescriptionMapper } from "@/components/Product/Description/ProductDescriptionMapper";
+import type { DescriptionBlock } from "@/components/Product/Description/types";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -181,6 +183,51 @@ const aboutProductData = [
   },
 ];
 
+const productDescriptionBlocks: DescriptionBlock[] = [
+  {
+    id: "1",
+    type: "header",
+    data: {
+      text: "Lorem ipsum dolor sit amet",
+      level: 1,
+      align: "center",
+    },
+  },
+  {
+    id: "2",
+    type: "paragraph",
+    data: {
+      text: "Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue.",
+      align: "center",
+    },
+  },
+  {
+    id: "3",
+    type: "horizontalCard",
+    data: {
+      title: "Cum sociis natoque penatibus",
+      text: "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.",
+      image: placeholder,
+      direction: "ltr",
+    },
+  },
+  {
+    id: "4",
+    type: "horizontalCard",
+    data: {
+      title: "Nullam dictum felis eu pede",
+      text: "Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet.",
+      image: placeholder,
+      direction: "rtl",
+    },
+  },
+  {
+    id: "5",
+    type: "hr",
+    data: {},
+  },
+];
+
 export default function ProductPage({
   params,
 }: {
@@ -294,6 +341,12 @@ export default function ProductPage({
           About product
         </h2>
         <AboutProduct items={aboutProductData} />
+      </section>
+      <section className="py-6 border-t-2 pt-4 space-y-6">
+        <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
+          Product Description
+        </h2>
+        <ProductDescriptionMapper blocks={productDescriptionBlocks} />
       </section>
     </main>
   );

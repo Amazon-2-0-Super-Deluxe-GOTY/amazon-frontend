@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { AdditionalProductDataTypes, SizesData } from "./types";
+import { ProductOptionsTypes, SizesData } from "./types";
 import { useSearhParamsTools } from "@/lib/router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PencilRulerIcon, ShirtIcon } from "lucide-react";
 
-const type: AdditionalProductDataTypes = "size";
+const type: ProductOptionsTypes = "size";
 
 export const OptionSizes = ({ data }: { data: SizesData }) => {
   const searchParams = useSearhParamsTools();
@@ -42,10 +42,7 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
           {index !== undefined ? data[index].title : "None"}
         </span>
       </p>
-      <div
-        role="input"
-        className="flex lg:flex-wrap gap-1 lg:gap-3 my-2 lg:my-4 overflow-y-auto pb-1 lg:pb-0"
-      >
+      <div className="flex lg:flex-wrap gap-1 lg:gap-3 my-2 lg:my-4 overflow-y-auto pb-1 lg:pb-0">
         {data.map((s, i) => {
           const item = data[i];
           const isSelected = index === i;
