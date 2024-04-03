@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 import Image from "next/image";
 import { SearchIcon, XIcon } from "lucide-react";
 
@@ -6,7 +7,8 @@ import FilterIcon from "@/../public/Icons/FilterIcon.svg";
 import RatingFillStar from "@/../public/Icons/RatingFillStar.svg";
 import RatingLineStar from "@/../public/Icons/RatingLineStar.svg";
 
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -32,15 +34,18 @@ import {
 import { cn } from "@/lib/utils";
   
 
+type FiltersDataItemValue = {
+  name: string;
+  isChecked: boolean;
+};
 type FiltersDataItem = {
-    title: string;
-    type: string;
-    isSearch: boolean;
-    values: string[];
+  title: string;
+  type: string;
+  values: FiltersDataItemValue[];
+  isSearch: boolean;
 };
 
-const FiltersCard = ({ item, isOpen, isMobile }: { item: FiltersDataItem, isOpen: boolean , isMobile: boolean }) => {
-
+const FiltersCard = ({ categoryId, item, isOpen, isMobile }: { categoryId: string, item: FiltersDataItem, isOpen: boolean , isMobile: boolean }) => {
     const [searchText, setSearchText] = useState<string>('');
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchText(e.target.value);
@@ -63,10 +68,11 @@ const FiltersCard = ({ item, isOpen, isMobile }: { item: FiltersDataItem, isOpen
                 <ul className="list-none p-0 m-0 max-h-[272px] w-full">
                   <FilterCardVariation
                     key={item.title}
+                    categoryId={categoryId}
                     title={item.title}
                     type={item.type}
                     values={item.values
-                      .filter(value => value.toLowerCase().includes(searchText.toLowerCase()))}
+                      .filter(value => value.name.toLowerCase().includes(searchText.toLowerCase()))}
                   />
                 </ul>
               </ScrollArea>
@@ -77,22 +83,66 @@ const FiltersCard = ({ item, isOpen, isMobile }: { item: FiltersDataItem, isOpen
     );
 };
 
-const FiltersCardMobile = ({ items }: { items: FiltersDataItem[] }) => {
+const FiltersCardMobile = ({ categoryId, items }: { categoryId: string, items: FiltersDataItem[] }) => {
+  
+
+  //#region indicatorCheckedFilterCount
+  const [indicatorCount, setIndicatorCount] = useState(0);
+  useEffect(() => {
+    const updateIndicatorCount = () => {
+      const keys = Object.keys(localStorage).filter(key => key.includes("FilterCheckedArray")).filter(key => key.includes(categoryId));
+      console.log(keys);
+      const count = keys.reduce((acc, key) => {
+        const values = localStorage.getItem(key);
+        console.log(values);
+
+        if (values) {
+          let isCheckedArray = values.split(/[\[\],]/).filter(value => value.trim() !== '');
+          console.log(isCheckedArray);
+          isCheckedArray.map((item, index) => {
+            if (item == "true") {
+              acc++;
+            }
+          })
+        }
+
+        return acc;
+      }, 0);
+
+      setIndicatorCount(count);
+    };
+
+    updateIndicatorCount();
+
+    window.addEventListener('storage', updateIndicatorCount);
+
+    return () => window.removeEventListener('storage', updateIndicatorCount);
+  }, []);
+  //#endregion
+
+  const handleClearAllFilters = () => {
+    items.map((item, index) => {
+      localStorage.removeItem("FilterCheckedArray_" + item.title + "_" + categoryId);
+    });
+    
+  };
+
   return (
     <>
       <Drawer>
-        <DrawerTrigger>
-          <Image src={FilterIcon} alt="filters" />
+        <DrawerTrigger className="h-8 w-8 relative">
+            <div className="absolute flex h-5 w-5 bg-gray-300 rounded-full top-[-5px] right-[-5px] justify-center items-center">
+              <span className="text-[10px]">{indicatorCount}</span>
+            </div>
+            <Image src={FilterIcon} alt="filters" />
         </DrawerTrigger>
         <DrawerContent className="bg-gray-200 max-h-[700px]">
           <DrawerHeader className="pb-0">
             <div className="flex w-full justify-between items-center mb-2">
               <DrawerTitle className="font-bold">Filters</DrawerTitle>
               
-              <DrawerClose>
-                <Button variant="ghost" className="font-bold">
-                  <XIcon />
-                </Button>
+              <DrawerClose className={buttonVariants({ variant: "ghost" })}>
+                  <XIcon className="font-bold" />
               </DrawerClose>
             </div>
             <div className="flex justify-between items-center gap-2 max-h-8 h-full">
@@ -106,7 +156,13 @@ const FiltersCardMobile = ({ items }: { items: FiltersDataItem[] }) => {
                 </Button>
               </div>
               <div>
-                <Button variant={"ghost"} className="border-2 border-gray-400">Reset all</Button>
+                <Button variant={"ghost"} className="border-2 border-gray-400"
+                  onClick={() => {
+                      handleClearAllFilters()
+                    }}
+                    asChild>
+                  <Link href={`/category/${categoryId}`} >Reset all</Link>
+                </Button>
               </div>
             </div>
             <div className="flex max-h-[100px] mt-2 gap-1">
@@ -122,14 +178,16 @@ const FiltersCardMobile = ({ items }: { items: FiltersDataItem[] }) => {
             <hr className="mt-1 border-gray-400 border-y"></hr>
           </DrawerHeader>
           <DrawerHeader>
-            <div className="max-h-[400px] overflow-y-scroll">
+            <ScrollArea>
+            <div className="max-h-[400px]">
               {items.map((item, index) => (
                 <div key={index} className="my-2">
-                  <FiltersCard item={item} isOpen={false} isMobile={true} />
+                  <FiltersCard categoryId={categoryId} item={item} isOpen={false} isMobile={true} />
                   <hr className="mt-2 border-gray-300 border-y"></hr>
                 </div>
               ))}
             </div>
+            </ScrollArea>
           </DrawerHeader>
         </DrawerContent>
       </Drawer>
@@ -138,23 +196,47 @@ const FiltersCardMobile = ({ items }: { items: FiltersDataItem[] }) => {
 }
   
 const FilterCardVariation = ({
+    categoryId,
     title,
     type,
     values,
 }: {
+    categoryId: string;
     title: string;
     type: string;
-    values: string[];
+    values: FiltersDataItemValue[];
 }) => {
+  const initialItems = values.map(element => element.isChecked);
+
+  const [items, setItems] = useState<boolean[]>(initialItems);
+
+  const handleCheckedChange = (index: number) => {
+    const updatedItems = [...items];
+    updatedItems[index] = !updatedItems[index];
+    setItems(updatedItems);
+
+    localStorage.setItem("FilterCheckedArray_" + title + "_" + categoryId, JSON.stringify(updatedItems));
+  };
+  
+  useEffect(() => {
+    const storedItems = localStorage.getItem("FilterCheckedArray_" + title + "_" + categoryId);
+    if (storedItems) {
+      setItems(JSON.parse(storedItems));
+    }
+  }, []);
+
+
     switch (type) {
       case "Checkbox": {
         return (
           <>
-            {Array.from({ length: values.length }).map((_, index) => (
+            {values.map((item, index) => (
               <li key={index} className="flex items-center space-x-2 pb-1">
-                <Checkbox id={title + index} />
+                <Checkbox id={title + index} checked={items[index]} onCheckedChange={ 
+                  () => { handleCheckedChange(index) }
+                 }/>
                 <label className="text-base" htmlFor={title + index}>
-                  {values[index]}
+                  {item.name}
                 </label>
               </li>
             ))}
@@ -169,14 +251,17 @@ const FilterCardVariation = ({
               type="multiple"
               className={`grid grid-cols-5 max-[340px]:grid-cols-4 max-[250px]:grid-cols-3 max-[180px]:grid-cols-2 `}
             >
-              {Array.from({ length: values.length }).map((_, index) => (
+              {values.map((item, index) => (
                 <ToggleGroupItem
                   key={title + index}
-                  value={values[index]}
-                  aria-label={"Toggle" + values[index]}
+                  value={item.name}
+                  aria-label={"Toggle" + item.name}
                   className="border-black border-[1.5px]"
+                  data-state={items[index] ? "on" : "off"} onClick={ 
+                    () => { handleCheckedChange(index) }
+                   }
                 >
-                  {values[index]}
+                  {item.name}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
@@ -200,7 +285,7 @@ const FilterCardVariation = ({
                 </div>
               </div>
               <div className="h-[20px]">
-                <Slider defaultValue={[15, 90]} max={100} step={1} />
+                <Slider defaultValue={[0, 100]} max={100} min={0} step={1} />
               </div>
             </div>
           </>
@@ -209,9 +294,11 @@ const FilterCardVariation = ({
       case "Rating": {
         return (
           <div className="mt-3">
-            {Array.from({ length: values.length }).map((_, index) => (
+            {values.map((_, index) => (
               <li key={index} className="flex items-center space-x-2 pb-2">
-                <Checkbox id={title + index} />
+                <Checkbox id={title + index} checked={items[index]} onCheckedChange={ 
+                  () => { handleCheckedChange(index) }
+                 }/>
                 <label
                   className="text-base flex gap-[3.44px]"
                   htmlFor={title + index}

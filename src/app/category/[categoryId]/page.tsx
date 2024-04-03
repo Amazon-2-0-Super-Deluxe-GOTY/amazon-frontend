@@ -46,129 +46,139 @@ import { ProductCard } from "@/components/Product/ProductCard";
 import { FiltersCard, FiltersCardMobile } from "@/components/ProductByCategoryPage/FiltersCard";
 import { useScreenSize } from '@/lib/media';
 
+type FiltersDataItemValue = {
+  name: string;
+  isChecked: boolean;
+};
 type FiltersDataItem = {
   title: string;
   type: string;
+  values: FiltersDataItemValue[];
   isSearch: boolean;
-  values: string[];
 };
 const FiltersData: FiltersDataItem[] = [
   {
     title: "Brand",
     type: "Checkbox",
-    isSearch: true,
     values: [
-      "Brand 1",
-      "Brand 2",
-      "Brand 3",
-      "Brand 4",
-      "Brand 5",
-      "Brand 6",
-      "Brand 7",
-      "Brand 8",
-      "Brand 9",
-      "Brand 10",
-      "Brand 11",
-      "Brand 12",
-      "Brand 13",
-      "Brand 14",
-      "Brand 15",
+      { name: "Brand 1", isChecked: false },
+      { name: "Brand 2", isChecked: false },
+      { name: "Brand 3", isChecked: false },
+      { name: "Brand 4", isChecked: false },
+      { name: "Brand 5", isChecked: false },
+      { name: "Brand 6", isChecked: false },
+      { name: "Brand 7", isChecked: false },
+      { name: "Brand 8", isChecked: false },
+      { name: "Brand 9", isChecked: false },
+      { name: "Brand 10", isChecked: false },
+      { name: "Brand 11", isChecked: false },
+      { name: "Brand 12", isChecked: false },
+      { name: "Brand 13", isChecked: false },
+      { name: "Brand 14", isChecked: false },
+      { name: "Brand 15", isChecked: false },
     ],
+    isSearch: true,
   },
   {
     title: "Fabric type",
     type: "Checkbox",
-    isSearch: true,
     values: [
-      "Fabric type 1",
-      "Fabric type 2",
-      "Fabric type 3",
-      "Fabric type 4",
-      "Fabric type 5",
-      "Fabric type 6",
-      "Fabric type 7",
-      "Fabric type 8",
-      "Fabric type 9",
-      "Fabric type 10",
-      "Fabric type 11",
-      "Fabric type 12",
-      "Fabric type 13",
-      "Fabric type 14",
-      "Fabric type 15",
+      { name: "Brand 1", isChecked: false },
+      { name: "Brand 2", isChecked: false },
+      { name: "Brand 3", isChecked: false },
+      { name: "Brand 4", isChecked: false },
+      { name: "Brand 5", isChecked: false },
+      { name: "Brand 6", isChecked: false },
+      { name: "Brand 7", isChecked: false },
+      { name: "Brand 8", isChecked: false },
+      { name: "Brand 9", isChecked: false },
+      { name: "Brand 10", isChecked: false },
+      { name: "Brand 11", isChecked: false },
+      { name: "Brand 12", isChecked: false },
+      { name: "Brand 13", isChecked: false },
+      { name: "Brand 14", isChecked: false },
+      { name: "Brand 15", isChecked: false },
     ],
+    isSearch: true,
   },
   {
     title: "Size",
     type: "Tiles",
-    isSearch: true,
     values: [
-      "2XS",
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "2XL",
-      "3XL",
-      "4XL",
-      "5XL",
-      "32",
-      "34",
-      "36",
-      "38",
-      "40",
-      "42",
-      "44",
-      "46",
-      "48",
-      "50",
-      "52",
-      "54",
-      "56",
-      "58",
-      "60",
+      { name: "2XS", isChecked: false },
+      { name: "XS", isChecked: false },
+      { name: "S", isChecked: false },
+      { name: "M", isChecked: false },
+      { name: "L", isChecked: false },
+      { name: "XL", isChecked: false },
+      { name: "2XL", isChecked: false },
+      { name: "3XL", isChecked: false },
+      { name: "4XL", isChecked: false },
+      { name: "5XL", isChecked: false },
+      { name: "32", isChecked: false },
+      { name: "34", isChecked: false },
+      { name: "36", isChecked: false },
+      { name: "38", isChecked: false },
+      { name: "40", isChecked: false },
+      { name: "42", isChecked: false },
+      { name: "44", isChecked: false },
+      { name: "46", isChecked: false },
+      { name: "48", isChecked: false },
+      { name: "50", isChecked: false },
+      { name: "52", isChecked: false },
+      { name: "54", isChecked: false },
+      { name: "56", isChecked: false },
+      { name: "58", isChecked: false },
+      { name: "60", isChecked: false },
     ],
+    isSearch: true,
   },
   {
     title: "Color",
     type: "Checkbox",
-    isSearch: true,
     values: [
-      "Color 1",
-      "Color 2",
-      "Color 3",
-      "Color 4",
-      "Color 5",
-      "Color 6",
-      "Color 7",
-      "Color 8",
-      "Color 9",
-      "Color 10",
-      "Color 11",
-      "Color 12",
-      "Color 13",
-      "Color 14",
-      "Color 15",
+      { name: "Color 1", isChecked: false },
+      { name: "Color 2", isChecked: false },
+      { name: "Color 3", isChecked: false },
+      { name: "Color 4", isChecked: false },
+      { name: "Color 5", isChecked: false },
+      { name: "Color 6", isChecked: false },
+      { name: "Color 7", isChecked: false },
+      { name: "Color 8", isChecked: false },
+      { name: "Color 9", isChecked: false },
+      { name: "Color 10", isChecked: false },
+      { name: "Color 11", isChecked: false },
+      { name: "Color 12", isChecked: false },
+      { name: "Color 13", isChecked: false },
+      { name: "Color 14", isChecked: false },
+      { name: "Color 15", isChecked: false },
     ],
+    isSearch: true,
   },
   {
     title: "Price",
     type: "Price",
+    values: [{ name: "0", isChecked: false }],
     isSearch: false,
-    values: ["0"],
   },
   {
     title: "Customer reviews",
     type: "Rating",
+    values: [
+      { name: "5", isChecked: false }, 
+      { name: "4", isChecked: false }, 
+      { name: "3", isChecked: false }, 
+      { name: "2", isChecked: false }, 
+      { name: "1", isChecked: false }, 
+    ],
     isSearch: false,
-    values: ["5", "4", "3", "2", "1"],
   },
 ];
 
 export default function CategoryPage ({
   params,
 }: {
-  params: { categoryId: string };
+  params: { categoryId: string, filter: string };
 }) {
   //#region isMobile
   const isMobile = useScreenSize({ maxSize: "sm" });
@@ -184,6 +194,13 @@ export default function CategoryPage ({
     setIsDefaultTemplateDisplayCardOn(false);
   };
   //#endregion
+  
+  const handleClearAllFilters = () => {
+    FiltersData.map((item, index) => {
+      localStorage.removeItem("FilterCheckedArray_" + item.title + "_" + params.categoryId);
+    });
+    
+  };
 
   useEffect(() => {
     if (params.categoryId) {
@@ -237,13 +254,13 @@ export default function CategoryPage ({
         { !isMobile && 
           <div className="flex flex-col gap-2 basis-[385px] max-md:w-full">
             {FiltersData.map((item, index) => (
-              <FiltersCard key={index} item={item} isOpen={true} isMobile={false} />
+              <FiltersCard key={index} categoryId={params.categoryId} item={item} isOpen={true} isMobile={false} />
             ))}
           </div> }
         <div className="grow">
           {/* Filters here */}
           <div className="w-full flex justify-between items-center gap-2">
-          {isMobile ? (<FiltersCardMobile items={FiltersData} />) : (
+          {isMobile ? (<FiltersCardMobile categoryId={params.categoryId} items={FiltersData} />) : (
             <div className="max-w-[200px] w-full">
               <Select>
                 <SelectTrigger className="bg-gray-200">
@@ -270,7 +287,14 @@ export default function CategoryPage ({
                       </ul>
                     </ScrollArea>
                     <hr className="my-4 border-gray-400 border-y"></hr>
-                    <Button variant={"ghost"}>Clear all</Button>
+                    <Button variant={"ghost"} onClick={() => {
+                      handleClearAllFilters()
+                    }}
+                    asChild>
+                      <Link href={`/category/${params.categoryId}`} >
+                        Clear all
+                      </Link>
+                    </Button>
                   </div>
                 </SelectContent>
               </Select>
