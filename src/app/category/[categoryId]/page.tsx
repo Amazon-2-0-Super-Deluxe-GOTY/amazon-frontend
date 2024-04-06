@@ -8,12 +8,11 @@ import { useSearchParamsTools } from "@/lib/router";
 
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Slash, StarIcon, XIcon } from "lucide-react";
+import { Slash, XIcon } from "lucide-react";
 
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import SwitchCard33 from "@/../public/Icons/SwitchCard33.svg";
 import SwitchCard44 from "@/../public/Icons/SwitchCard44.svg";
-import placeholder from "@/../public/Icons/placeholder.svg";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -41,7 +40,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { ProductCard } from "@/components/Product/ProductCard";
