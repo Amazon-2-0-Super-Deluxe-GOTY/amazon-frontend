@@ -9,28 +9,22 @@ export const ProductDescriptionMapper = ({
 }: {
   blocks: DescriptionBlock[];
 }) => {
-  return (
-    <article className="flex flex-col gap-4">
-      {blocks.map((block) => {
-        switch (block.type) {
-          case "header":
-            return <DescriptionHeader data={block.data} key={block.id} />;
+  return blocks.map((block) => {
+    switch (block.type) {
+      case "header":
+        return <DescriptionHeader data={block.data} key={block.id} />;
 
-          case "paragraph":
-            return <DescriptionParagraph data={block.data} key={block.id} />;
+      case "paragraph":
+        return <DescriptionParagraph data={block.data} key={block.id} />;
 
-          case "horizontalCard":
-            return (
-              <DescriptionHorizontalCard data={block.data} key={block.id} />
-            );
+      case "horizontalCard":
+        return <DescriptionHorizontalCard data={block.data} key={block.id} />;
 
-          case "hr":
-            return <DescriptionHR data={block.data} key={block.id} />;
+      case "hr":
+        return <DescriptionHR data={block.data} key={block.id} />;
 
-          default:
-            return null;
-        }
-      })}
-    </article>
-  );
+      default:
+        return null;
+    }
+  });
 };

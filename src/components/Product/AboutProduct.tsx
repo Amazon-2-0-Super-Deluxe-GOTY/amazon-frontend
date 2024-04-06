@@ -1,6 +1,13 @@
 import React from "react";
 import { Button } from "../ui/button";
 import { useScreenSize } from "@/lib/media";
+import { useExpandableList } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 
 interface Item {
   title: string;
@@ -10,20 +17,38 @@ interface Item {
 const mobileItemsLimit = 2;
 const desktopItemsLimit = 4;
 
-export const AboutProduct = (props: { items: Item[] }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+export const AboutProduct = ({
+  items: initialItems,
+  variant = "grid",
+}: {
+  items: Item[];
+  variant?: "grid" | "list";
+}) => {
   const isMobile = useScreenSize({ maxSize: "sm" });
-
   const defaultItemsLimit = isMobile ? mobileItemsLimit : desktopItemsLimit;
-  const isExpandable = props.items.length > defaultItemsLimit;
+  const { items, isExpandable, isExpanded, onExpand, onHide } =
+    useExpandableList({ maxItems: defaultItemsLimit, items: initialItems });
 
-  const items = React.useMemo(() => {
-    if (!isExpandable || isExpanded) return props.items;
-    return props.items.slice(0, defaultItemsLimit);
-  }, [isExpandable, isExpanded, defaultItemsLimit]);
-
-  const onExpand = () => setIsExpanded(true);
-  const onHide = () => setIsExpanded(false);
+  if (variant === "list") {
+    return (
+      <div className="flex flex-col gap-3">
+        {initialItems.map((item, i) => (
+          <Accordion type="single" collapsible key={i}>
+            {/* All items within an accordion should use a unique value. */}
+            <AccordionItem
+              className="p-3 pt-0 lg:p-6 lg:pt-3 border rounded-sm"
+              value={i.toString()}
+            >
+              <AccordionTrigger className="font-semibold">
+                {item.title}
+              </AccordionTrigger>
+              <AccordionContent className="mt-2">{item.text}</AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div>

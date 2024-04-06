@@ -27,8 +27,9 @@ import { MediaQueryCSS } from "@/components/MediaQuery";
 import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
 import { ProductDetails } from "@/components/Product/ProductDetails";
 import { AboutProduct } from "@/components/Product/AboutProduct";
-import { ProductDescriptionMapper } from "@/components/Product/Description/ProductDescriptionMapper";
 import type { DescriptionBlock } from "@/components/Product/Description/types";
+import { ProductsBlock } from "@/components/MainPage/ProductsBlock";
+import { ProductDescription } from "@/components/Product/ProductDescription";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -228,6 +229,8 @@ export default function ProductPage({
 }: {
   params: { productId: string };
 }) {
+  const hasOptions = productOptions.length > 0;
+
   useEffect(() => {
     if (params.productId) {
       console.log(`Loading page for product ${params.productId}`);
@@ -314,8 +317,19 @@ export default function ProductPage({
               <span className="text-xl ml-auto">Code: B0CHFLT63B</span>
             </div>
           </div>
-          <div className="mt-3 mb-6 lg:mt-8 lg:mb-0 flex flex-col gap-3 lg:gap-8">
-            <ProductOptionsMapper options={productOptions} />
+          <div className="mt-3 mb-6 lg:mt-8 lg:mb-0">
+            {hasOptions ? (
+              <div className="flex flex-col gap-3 lg:gap-8">
+                <ProductOptionsMapper options={productOptions} />
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-xl lg:text-xl font-semibold text-center lg:text-start mb-4">
+                  About product
+                </h2>
+                <AboutProduct items={aboutProductData} variant="list" />
+              </div>
+            )}
           </div>
         </div>
         <div className="lg:max-w-72 w-full">
@@ -331,18 +345,26 @@ export default function ProductPage({
         </h2>
         <ProductDetails items={productDetails} />
       </section>
-      <section className="py-6 border-t-2 pt-4 space-y-6">
-        <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
-          About product
-        </h2>
-        <AboutProduct items={aboutProductData} />
-      </section>
+      {hasOptions && (
+        <section className="py-6 border-t-2 pt-4 space-y-6">
+          <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
+            About product
+          </h2>
+          <AboutProduct items={aboutProductData} />
+        </section>
+      )}
       <section className="py-6 border-t-2 pt-4 space-y-6">
         <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
           Product Description
         </h2>
-        <ProductDescriptionMapper blocks={productDescriptionBlocks} />
+        <ProductDescription blocks={productDescriptionBlocks} />
       </section>
+      <div className="py-6 border-t-2">
+        <ProductsBlock title="You may also like" />
+      </div>
+      <div className="py-6 border-t-2">
+        <ProductsBlock title="Best sellers in women's fashion" />
+      </div>
     </main>
   );
 }
