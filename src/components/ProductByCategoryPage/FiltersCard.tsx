@@ -1,131 +1,139 @@
 import { useState, useEffect } from "react";
 
+import { cn } from "@/lib/utils";
+import { useSearchParamsTools } from "@/lib/router";
+
+import Link from "next/link";
 import Image from "next/image";
 import { SearchIcon, XIcon } from "lucide-react";
 
 import FilterIcon from "@/../public/Icons/FilterIcon.svg";
-import RatingFillStar from "@/../public/Icons/RatingFillStar.svg";
-import RatingLineStar from "@/../public/Icons/RatingLineStar.svg";
 
-import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Slider } from "@/components/ui/slider";
-
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-  } from "@/components/ui/drawer";
-import { cn } from "@/lib/utils";
-  
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { FilterCardVariation } from "./FilterCardVariation";
+import { FiltersDataItem } from "./FiltersDataTypes";
 
-type FiltersDataItemValue = {
-  name: string;
-  isChecked: boolean;
-};
-type FiltersDataItem = {
-  title: string;
-  type: string;
-  values: FiltersDataItemValue[];
-  isSearch: boolean;
-};
 
-const FiltersCard = ({ categoryId, item, isOpen, isMobile }: { categoryId: string, item: FiltersDataItem, isOpen: boolean , isMobile: boolean }) => {
-    const [searchText, setSearchText] = useState<string>('');
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchText(e.target.value);
-    };
-  
-    return (
-      <div className={cn("max-h-[414px] p-6 pt-3 bg-gray-200 rounded-lg", isMobile ? "" : "shadow")}>
-        <Accordion type="single" defaultValue={isOpen ? "item-1" : ""} collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger className="font-semibold">
-              {item.title}
-            </AccordionTrigger>
-            <AccordionContent>
-              {item.isSearch ? (
-                <Input placeholder="Search..." className="my-3" value={searchText} onChange={handleSearchChange} />
-              ) : (
-                <></>
-              )}
-              <ScrollArea>
-                <ul className="list-none p-0 m-0 max-h-[272px] w-full">
-                  <FilterCardVariation
-                    key={item.title}
-                    categoryId={categoryId}
-                    title={item.title}
-                    type={item.type}
-                    values={item.values
-                      .filter(value => value.name.toLowerCase().includes(searchText.toLowerCase()))}
-                  />
-                </ul>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div>
-    );
+const FiltersCard = ({ item, isOpen, isMobile }: { item: FiltersDataItem, isOpen: boolean, isMobile: boolean }) => {
+  //#region Search
+  const [searchText, setSearchText] = useState<string>('');
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+  //#endregion
+
+  return (
+    <div className={cn("max-h-[414px] p-6 pt-3 bg-gray-200 rounded-lg", isMobile ? "" : "shadow")}>
+      <Accordion type="single" defaultValue={isOpen ? "item-1" : ""} collapsible>
+        <AccordionItem value="item-1">
+          <AccordionTrigger className="font-semibold">
+            {item.title}
+          </AccordionTrigger>
+          <AccordionContent>
+            {item.isSearch ? (
+              <Input placeholder="Search..." className="my-3" value={searchText} onChange={handleSearchChange} />
+            ) : (
+              <></>
+            )}
+            <ScrollArea>
+              <ul className="list-none p-0 m-0 max-h-[272px] w-full">
+                <FilterCardVariation
+                  key={item.title}
+                  title={item.title}
+                  type={item.type}
+                  values={item.values
+                    .filter(value => value.toLowerCase().includes(searchText.toLowerCase()))}
+                />
+              </ul>
+            </ScrollArea>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
 };
 
 const FiltersCardMobile = ({ categoryId, items }: { categoryId: string, items: FiltersDataItem[] }) => {
-  
+  const searchParams = useSearchParamsTools();
 
-  //#region indicatorCheckedFilterCount
-  const [indicatorCount, setIndicatorCount] = useState(0);
-  useEffect(() => {
-    const updateIndicatorCount = () => {
-      const keys = Object.keys(localStorage).filter(key => key.includes("FilterCheckedArray")).filter(key => key.includes(categoryId));
-      console.log(keys);
-      const count = keys.reduce((acc, key) => {
-        const values = localStorage.getItem(key);
-        console.log(values);
-
-        if (values) {
-          let isCheckedArray = values.split(/[\[\],]/).filter(value => value.trim() !== '');
-          console.log(isCheckedArray);
-          isCheckedArray.map((item, index) => {
-            if (item == "true") {
-              acc++;
-            }
-          })
+  //#region CheckedParams
+  const [data, setData] = useState<string[] | undefined>(() => {
+    const result = items.map((item, index) => {
+      const params = searchParams.get(item.title);
+      if (params)
+      {
+        const checkedValues = params.split(',');
+        const itemNamesArray = checkedValues.map((element, i) => {
+          if(item.values.find((s) => s === element))
+          {
+            return element;
+          }
+        });
+          
+        if(itemNamesArray)
+        {
+          return itemNamesArray;
         }
+        else
+        {
+          searchParams.set(item.title, undefined);
+        }
+      }
+    })
+    return result;
+  });
 
-        return acc;
-      }, 0);
-
-      setIndicatorCount(count);
-    };
-
-    updateIndicatorCount();
-
-    window.addEventListener('storage', updateIndicatorCount);
-
-    return () => window.removeEventListener('storage', updateIndicatorCount);
-  }, []);
+  //   if(data)
+  //   {
+  //     let newData;
+  //     if(data.find((s) => s === name))
+  //     {
+  //       newData = data.filter((s) => s != name);
+  //     }
+  //     else
+  //     {
+  //       newData = data;
+  //       newData.push(name);
+  //     }
+  //     setData(newData);
+  //     searchParams.set(title, newData.join(','));
+  //   }
+  //   else
+  //   {
+  //     setData([name]);
+  //     searchParams.set(title, name);
+  //   }
+  // };
   //#endregion
 
-  const handleClearAllFilters = () => {
-    items.map((item, index) => {
-      localStorage.removeItem("FilterCheckedArray_" + item.title + "_" + categoryId);
-    });
-    
-  };
+  //#region indicatorCheckedFilterCount
+  const [indicatorCount, setIndicatorCount] = useState<number | undefined>(() => {
+    let result = 0;
+    if(data)
+    {
+      data.forEach((s) => s ? result += s.length : false);
+    }
+    return result;
+  });
+  //#endregion
 
   return (
     <>
@@ -156,24 +164,26 @@ const FiltersCardMobile = ({ categoryId, items }: { categoryId: string, items: F
                 </Button>
               </div>
               <div>
-                <Button variant={"ghost"} className="border-2 border-gray-400"
-                  onClick={() => {
-                      handleClearAllFilters()
-                    }}
-                    asChild>
-                  <Link href={`/category/${categoryId}`} >Reset all</Link>
+                <Button variant={"ghost"} className="border-2 border-gray-400">
+                  <Link href={`/category/${categoryId}`}>Reset all</Link>
                 </Button>
               </div>
             </div>
             <div className="flex max-h-[100px] mt-2 gap-1">
-              <Button variant={"ghost"} className="bg-gray-300 justify-between">
-                <span>Brand 1</span>
-                <XIcon />
-              </Button>
-              <Button variant={"ghost"} className="bg-gray-300 justify-between">
-                <span>Brand 2</span>
-                <XIcon />
-              </Button>
+              <ScrollArea className="flex h-full gap-2 items-start justify-normal">
+                {data && data
+                .filter((element) => element)
+                .reduce((acc, element) => {
+                  const _items = (element).toString().split(',');
+                  return acc.concat(_items);
+                }, [])
+                .map((item, index) => (
+                  <Button key={index} variant="ghost" className="bg-gray-300 justify-between m-[2px]">
+                    <span>{item}</span>
+                    <XIcon />
+                  </Button>
+                ))}
+              </ScrollArea>
             </div>
             <hr className="mt-1 border-gray-400 border-y"></hr>
           </DrawerHeader>
@@ -182,7 +192,10 @@ const FiltersCardMobile = ({ categoryId, items }: { categoryId: string, items: F
             <div className="max-h-[400px]">
               {items.map((item, index) => (
                 <div key={index} className="my-2">
-                  <FiltersCard categoryId={categoryId} item={item} isOpen={false} isMobile={true} />
+                  <FiltersCard 
+                    item={item}
+                    isOpen={false}
+                    isMobile={true} />
                   <hr className="mt-2 border-gray-300 border-y"></hr>
                 </div>
               ))}
@@ -194,133 +207,5 @@ const FiltersCardMobile = ({ categoryId, items }: { categoryId: string, items: F
     </>
   );
 }
-  
-const FilterCardVariation = ({
-    categoryId,
-    title,
-    type,
-    values,
-}: {
-    categoryId: string;
-    title: string;
-    type: string;
-    values: FiltersDataItemValue[];
-}) => {
-  const initialItems = values.map(element => element.isChecked);
-
-  const [items, setItems] = useState<boolean[]>(initialItems);
-
-  const handleCheckedChange = (index: number) => {
-    const updatedItems = [...items];
-    updatedItems[index] = !updatedItems[index];
-    setItems(updatedItems);
-
-    localStorage.setItem("FilterCheckedArray_" + title + "_" + categoryId, JSON.stringify(updatedItems));
-  };
-  
-  useEffect(() => {
-    const storedItems = localStorage.getItem("FilterCheckedArray_" + title + "_" + categoryId);
-    if (storedItems) {
-      setItems(JSON.parse(storedItems));
-    }
-  }, []);
-
-
-    switch (type) {
-      case "Checkbox": {
-        return (
-          <>
-            {values.map((item, index) => (
-              <li key={index} className="flex items-center space-x-2 pb-1">
-                <Checkbox id={title + index} checked={items[index]} onCheckedChange={ 
-                  () => { handleCheckedChange(index) }
-                 }/>
-                <label className="text-base" htmlFor={title + index}>
-                  {item.name}
-                </label>
-              </li>
-            ))}
-          </>
-        );
-      }
-      case "Tiles": {
-        return (
-          <>
-            <ToggleGroup
-              variant="outline"
-              type="multiple"
-              className={`grid grid-cols-5 max-[340px]:grid-cols-4 max-[250px]:grid-cols-3 max-[180px]:grid-cols-2 `}
-            >
-              {values.map((item, index) => (
-                <ToggleGroupItem
-                  key={title + index}
-                  value={item.name}
-                  aria-label={"Toggle" + item.name}
-                  className="border-black border-[1.5px]"
-                  data-state={items[index] ? "on" : "off"} onClick={ 
-                    () => { handleCheckedChange(index) }
-                   }
-                >
-                  {item.name}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </>
-        );
-      }
-      case "Price": {
-        return (
-          <>
-            <div className="h-full overflow-hidden mt-3">
-              <div className="flex justify-between w-full pb-3">
-                <div className="flex justify-center items-center gap-2">
-                  <Input className="max-w-[64px]" defaultValue={"0"}></Input>
-                  <span className="font-bold">—</span>
-                  <Input className="max-w-[64px]" defaultValue={"100"}></Input>
-                </div>
-                <div>
-                  <Button variant={"ghost"} className="bg-gray-300">
-                    Save
-                  </Button>
-                </div>
-              </div>
-              <div className="h-[20px]">
-                <Slider defaultValue={[0, 100]} max={100} min={0} step={1} />
-              </div>
-            </div>
-          </>
-        );
-      }
-      case "Rating": {
-        return (
-          <div className="mt-3">
-            {values.map((_, index) => (
-              <li key={index} className="flex items-center space-x-2 pb-2">
-                <Checkbox id={title + index} checked={items[index]} onCheckedChange={ 
-                  () => { handleCheckedChange(index) }
-                 }/>
-                <label
-                  className="text-base flex gap-[3.44px]"
-                  htmlFor={title + index}
-                >
-                  {Array.from({ length: 5 - index }).map((_, _index) => (
-                    <Image key={_index} src={RatingFillStar} alt="placeholder" />
-                  ))}
-                  {Array.from({ length: index }).map((_, _index) => (
-                    <Image
-                      key={_index}
-                      src={RatingLineStar}
-                      alt="placeholder"
-                      fill={false}
-                    />
-                  ))}
-                </label>
-              </li>
-            ))}
-          </div>
-        );
-      }
-    }
-};
 
 export { FiltersCard, FiltersCardMobile };

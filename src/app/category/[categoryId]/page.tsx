@@ -2,9 +2,13 @@
 import React from 'react';
 import { useState, useEffect } from "react";
 
+import { cn } from "@/lib/utils";
+import { useScreenSize } from '@/lib/media';
+import { useSearchParamsTools } from "@/lib/router";
+
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Slash, StarIcon } from "lucide-react";
+import { MessageCircle, Slash, StarIcon, XIcon } from "lucide-react";
 
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import SwitchCard33 from "@/../public/Icons/SwitchCard33.svg";
@@ -21,7 +25,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
 import {
   Pagination,
   PaginationContent,
@@ -41,144 +44,127 @@ import {
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/Product/ProductCard";
 import { FiltersCard, FiltersCardMobile } from "@/components/ProductByCategoryPage/FiltersCard";
-import { useScreenSize } from '@/lib/media';
+import { FiltersDataItem } from '@/components/ProductByCategoryPage/FiltersDataTypes';
 
-type FiltersDataItemValue = {
-  name: string;
-  isChecked: boolean;
-};
-type FiltersDataItem = {
-  title: string;
-  type: string;
-  values: FiltersDataItemValue[];
-  isSearch: boolean;
-};
 const FiltersData: FiltersDataItem[] = [
   {
     title: "Brand",
     type: "Checkbox",
-    values: [
-      { name: "Brand 1", isChecked: false },
-      { name: "Brand 2", isChecked: false },
-      { name: "Brand 3", isChecked: false },
-      { name: "Brand 4", isChecked: false },
-      { name: "Brand 5", isChecked: false },
-      { name: "Brand 6", isChecked: false },
-      { name: "Brand 7", isChecked: false },
-      { name: "Brand 8", isChecked: false },
-      { name: "Brand 9", isChecked: false },
-      { name: "Brand 10", isChecked: false },
-      { name: "Brand 11", isChecked: false },
-      { name: "Brand 12", isChecked: false },
-      { name: "Brand 13", isChecked: false },
-      { name: "Brand 14", isChecked: false },
-      { name: "Brand 15", isChecked: false },
-    ],
     isSearch: true,
+    values: [
+      "Brand 1",
+      "Brand 2",
+      "Brand 3",
+      "Brand 4",
+      "Brand 5",
+      "Brand 6",
+      "Brand 7",
+      "Brand 8",
+      "Brand 9",
+      "Brand 10",
+      "Brand 11",
+      "Brand 12",
+      "Brand 13",
+      "Brand 14",
+      "Brand 15",
+    ],
   },
   {
     title: "Fabric type",
     type: "Checkbox",
-    values: [
-      { name: "Brand 1", isChecked: false },
-      { name: "Brand 2", isChecked: false },
-      { name: "Brand 3", isChecked: false },
-      { name: "Brand 4", isChecked: false },
-      { name: "Brand 5", isChecked: false },
-      { name: "Brand 6", isChecked: false },
-      { name: "Brand 7", isChecked: false },
-      { name: "Brand 8", isChecked: false },
-      { name: "Brand 9", isChecked: false },
-      { name: "Brand 10", isChecked: false },
-      { name: "Brand 11", isChecked: false },
-      { name: "Brand 12", isChecked: false },
-      { name: "Brand 13", isChecked: false },
-      { name: "Brand 14", isChecked: false },
-      { name: "Brand 15", isChecked: false },
-    ],
     isSearch: true,
+    values: [
+      "Fabric type 1",
+      "Fabric type 2",
+      "Fabric type 3",
+      "Fabric type 4",
+      "Fabric type 5",
+      "Fabric type 6",
+      "Fabric type 7",
+      "Fabric type 8",
+      "Fabric type 9",
+      "Fabric type 10",
+      "Fabric type 11",
+      "Fabric type 12",
+      "Fabric type 13",
+      "Fabric type 14",
+      "Fabric type 15",
+    ],
   },
   {
     title: "Size",
     type: "Tiles",
-    values: [
-      { name: "2XS", isChecked: false },
-      { name: "XS", isChecked: false },
-      { name: "S", isChecked: false },
-      { name: "M", isChecked: false },
-      { name: "L", isChecked: false },
-      { name: "XL", isChecked: false },
-      { name: "2XL", isChecked: false },
-      { name: "3XL", isChecked: false },
-      { name: "4XL", isChecked: false },
-      { name: "5XL", isChecked: false },
-      { name: "32", isChecked: false },
-      { name: "34", isChecked: false },
-      { name: "36", isChecked: false },
-      { name: "38", isChecked: false },
-      { name: "40", isChecked: false },
-      { name: "42", isChecked: false },
-      { name: "44", isChecked: false },
-      { name: "46", isChecked: false },
-      { name: "48", isChecked: false },
-      { name: "50", isChecked: false },
-      { name: "52", isChecked: false },
-      { name: "54", isChecked: false },
-      { name: "56", isChecked: false },
-      { name: "58", isChecked: false },
-      { name: "60", isChecked: false },
-    ],
     isSearch: true,
+    values: [
+      "2XS",
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "4XL",
+      "5XL",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+      "44",
+      "46",
+      "48",
+      "50",
+      "52",
+      "54",
+      "56",
+      "58",
+      "60",
+    ],
   },
   {
     title: "Color",
     type: "Checkbox",
-    values: [
-      { name: "Color 1", isChecked: false },
-      { name: "Color 2", isChecked: false },
-      { name: "Color 3", isChecked: false },
-      { name: "Color 4", isChecked: false },
-      { name: "Color 5", isChecked: false },
-      { name: "Color 6", isChecked: false },
-      { name: "Color 7", isChecked: false },
-      { name: "Color 8", isChecked: false },
-      { name: "Color 9", isChecked: false },
-      { name: "Color 10", isChecked: false },
-      { name: "Color 11", isChecked: false },
-      { name: "Color 12", isChecked: false },
-      { name: "Color 13", isChecked: false },
-      { name: "Color 14", isChecked: false },
-      { name: "Color 15", isChecked: false },
-    ],
     isSearch: true,
+    values: [
+      "Color 1",
+      "Color 2",
+      "Color 3",
+      "Color 4",
+      "Color 5",
+      "Color 6",
+      "Color 7",
+      "Color 8",
+      "Color 9",
+      "Color 10",
+      "Color 11",
+      "Color 12",
+      "Color 13",
+      "Color 14",
+      "Color 15",
+    ],
   },
   {
     title: "Price",
     type: "Price",
-    values: [{ name: "0", isChecked: false }],
     isSearch: false,
+    values: ["0"],
   },
   {
     title: "Customer reviews",
     type: "Rating",
-    values: [
-      { name: "5", isChecked: false }, 
-      { name: "4", isChecked: false }, 
-      { name: "3", isChecked: false }, 
-      { name: "2", isChecked: false }, 
-      { name: "1", isChecked: false }, 
-    ],
     isSearch: false,
+    values: ["5", "4", "3", "2", "1"],
   },
 ];
 
 export default function CategoryPage ({
   params,
 }: {
-  params: { categoryId: string, filter: string };
+  params: { categoryId: string };
 }) {
   //#region isMobile
   const isMobile = useScreenSize({ maxSize: "sm" });
@@ -194,13 +180,51 @@ export default function CategoryPage ({
     setIsDefaultTemplateDisplayCardOn(false);
   };
   //#endregion
-  
-  const handleClearAllFilters = () => {
-    FiltersData.map((item, index) => {
-      localStorage.removeItem("FilterCheckedArray_" + item.title + "_" + params.categoryId);
-    });
+
+  const onClearFilters = () => {
     
   };
+
+  //#region CheckedParams
+  const searchParams = useSearchParamsTools();
+  const [data, setData] = useState<string[] | undefined>(() => {
+    const result = FiltersData.map((item, index) => {
+      const params = searchParams.get(item.title);
+      if (params)
+      {
+        const checkedValues = params.split(',');
+        const itemNamesArray = checkedValues.map((element, i) => {
+          if(item.values.find((s) => s === element))
+          {
+            return element;
+          }
+        });
+          
+        if(itemNamesArray)
+        {
+          return itemNamesArray;
+        }
+        else
+        {
+          searchParams.set(item.title, undefined);
+        }
+      }
+    })
+    return result;
+  });
+
+  //#endregion
+  
+  //#region indicatorCheckedFilterCount
+  const [indicatorCount, setIndicatorCount] = useState<number | undefined>(() => {
+    let result = 0;
+    if(data)
+    {
+      data.forEach((s) => s ? result += s.length : false);
+    }
+    return result;
+  });
+  //#endregion
 
   useEffect(() => {
     if (params.categoryId) {
@@ -254,7 +278,7 @@ export default function CategoryPage ({
         { !isMobile && 
           <div className="flex flex-col gap-2 basis-[385px] max-md:w-full">
             {FiltersData.map((item, index) => (
-              <FiltersCard key={index} categoryId={params.categoryId} item={item} isOpen={true} isMobile={false} />
+              <FiltersCard key={index} item={item} isOpen={true} isMobile={false} />
             ))}
           </div> }
         <div className="grow">
@@ -264,32 +288,31 @@ export default function CategoryPage ({
             <div className="max-w-[200px] w-full">
               <Select>
                 <SelectTrigger className="bg-gray-200">
-                  <SelectValue placeholder="Selected filters" />
+                  <SelectValue placeholder={indicatorCount + (indicatorCount == 1 ? " filter applied" : " filters applied")} />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-200">
-                  <div className=" p-3">
+                  <div className="p-3">
                     <ScrollArea>
                       <ul className="list-none p-0 m-0 max-h-[230px]">
-                        {Array.from({ length: 15 }).map((_, index) => (
-                          <li
-                            key={index}
-                            className="flex items-center space-x-2 pb-1"
-                          >
-                            <Button
-                              variant={"ghost"}
-                              className="flex gap-2 bg-gray-300"
-                            >
-                              <span>Filter {index}</span>
-                              <span className="px-1">X</span>
-                            </Button>
-                          </li>
-                        ))}
+                        {data && data
+                          .filter((element) => element)
+                          .reduce((acc, element) => {
+                            const _items = (element).toString().split(',');
+                            return acc.concat(_items);
+                          }, [])
+                          .map((item, index) => (
+                            <li key={index} className="flex items-center space-x-2 pb-1">
+                              <Button key={index} variant="ghost" className="bg-gray-300 justify-between flex gap-2">
+                                <span>{item}</span>
+                                <XIcon />
+                              </Button>
+                            </li>
+                          ))}
                       </ul>
                     </ScrollArea>
                     <hr className="my-4 border-gray-400 border-y"></hr>
-                    <Button variant={"ghost"} onClick={() => {
-                      handleClearAllFilters()
-                    }}
+                    <Button variant={"ghost"}
+                    onClick={() => {onClearFilters()}}
                     asChild>
                       <Link href={`/category/${params.categoryId}`} >
                         Clear all
@@ -307,13 +330,10 @@ export default function CategoryPage ({
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mostpopular">Most popular</SelectItem>
-                    <SelectItem value="tocheap">
-                      From expensive to cheap
-                    </SelectItem>
-                    <SelectItem value="toexpensive">
-                      From cheap to expensive
-                    </SelectItem>
+                    <SelectItem value="byrating">By rating</SelectItem>
+                    <SelectItem value="novelty">Novelty</SelectItem>
+                    <SelectItem value="toexpensive">From cheap to expensive</SelectItem>
+                    <SelectItem value="tocheap">From expensive to cheap</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
