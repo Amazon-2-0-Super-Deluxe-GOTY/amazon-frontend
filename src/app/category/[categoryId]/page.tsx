@@ -1,9 +1,9 @@
 "use client";
-import React from 'react';
+import React from "react";
 import { useState, useEffect } from "react";
 
 import { cn } from "@/lib/utils";
-import { useScreenSize } from '@/lib/media';
+import { useScreenSize } from "@/lib/media";
 import { useSearchParamsTools } from "@/lib/router";
 
 import Image from "next/image";
@@ -43,13 +43,15 @@ import {
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { ProductCard } from "@/components/Product/ProductCard";
-import { FiltersCard, FiltersCardMobile } from "@/components/ProductByCategoryPage/FiltersCard";
-import { FiltersDataItem } from '@/components/ProductByCategoryPage/FiltersDataTypes';
+import { FiltersCardMobile } from "@/components/ProductByCategoryPage/FiltersCard";
+import { FilterItem } from "@/components/ProductByCategoryPage/filtersDataTypes";
+import { MediaQueryCSS } from "@/components/MediaQuery";
+import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
 
-const FiltersData: FiltersDataItem[] = [
+const FiltersData: FilterItem[] = [
   {
     title: "Brand",
-    type: "Checkbox",
+    type: "checkbox",
     isSearch: true,
     values: [
       "Brand 1",
@@ -71,7 +73,7 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Fabric type",
-    type: "Checkbox",
+    type: "checkbox",
     isSearch: true,
     values: [
       "Fabric type 1",
@@ -93,7 +95,7 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Size",
-    type: "Tiles",
+    type: "tiles",
     isSearch: true,
     values: [
       "2XS",
@@ -125,7 +127,7 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Color",
-    type: "Checkbox",
+    type: "checkbox",
     isSearch: true,
     values: [
       "Color 1",
@@ -147,19 +149,19 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Price",
-    type: "Price",
+    type: "price",
     isSearch: false,
-    values: ["0"],
+    values: { min: 0, max: 1000 },
   },
   {
     title: "Customer reviews",
-    type: "Rating",
+    type: "rating",
     isSearch: false,
-    values: ["5", "4", "3", "2", "1"],
+    values: [5, 4, 3, 2, 1],
   },
 ];
 
-export default function CategoryPage ({
+export default function CategoryPage({
   params,
 }: {
   params: { categoryId: string };
@@ -179,49 +181,43 @@ export default function CategoryPage ({
   };
   //#endregion
 
-  const onClearFilters = () => {
-    
-  };
+  const onClearFilters = () => {};
 
   //#region CheckedParams
   const searchParams = useSearchParamsTools();
   const [data, setData] = useState<string[] | undefined>(() => {
     const result = FiltersData.map((item, index) => {
       const params = searchParams.get(item.title);
-      if (params)
-      {
-        const checkedValues = params.split(',');
+      if (params) {
+        const checkedValues = params.split(",");
         const itemNamesArray = checkedValues.map((element, i) => {
-          if(item.values.find((s) => s === element))
-          {
+          if (item.values.find((s) => s === element)) {
             return element;
           }
         });
-          
-        if(itemNamesArray)
-        {
+
+        if (itemNamesArray) {
           return itemNamesArray;
-        }
-        else
-        {
+        } else {
           searchParams.set(item.title, undefined);
         }
       }
-    })
+    });
     return result;
   });
 
   //#endregion
-  
+
   //#region indicatorCheckedFilterCount
-  const [indicatorCount, setIndicatorCount] = useState<number | undefined>(() => {
-    let result = 0;
-    if(data)
-    {
-      data.forEach((s) => s ? result += s.length : false);
+  const [indicatorCount, setIndicatorCount] = useState<number | undefined>(
+    () => {
+      let result = 0;
+      if (data) {
+        data.forEach((s) => (s ? (result += s.length) : false));
+      }
+      return result;
     }
-    return result;
-  });
+  );
   //#endregion
 
   useEffect(() => {
@@ -273,54 +269,79 @@ export default function CategoryPage ({
         <span className="text-[36px] font-semibold">Title</span>
       </section>
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
-        { !isMobile && 
+        <MediaQueryCSS minSize="lg">
           <div className="flex flex-col gap-2 basis-[385px] max-md:w-full">
-            {FiltersData.map((item, index) => (
-              <FiltersCard key={index} item={item} isOpen={true} isMobile={false} />
-            ))}
-          </div> }
+            <FilterCardVariation filters={FiltersData} />
+          </div>
+        </MediaQueryCSS>
+
         <div className="grow">
           {/* Filters here */}
           <div className="w-full flex justify-between items-center gap-2">
-          {isMobile ? (<FiltersCardMobile categoryId={params.categoryId} items={FiltersData} />) : (
-            <div className="max-w-[200px] w-full">
-              <Select>
-                <SelectTrigger className="bg-gray-200">
-                  <SelectValue placeholder={indicatorCount + (indicatorCount == 1 ? " filter applied" : " filters applied")} />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-200">
-                  <div className="p-3">
-                    <ScrollArea>
-                      <ul className="list-none p-0 m-0 max-h-[230px]">
-                        {data && data
-                          .filter((element) => element)
-                          .reduce((acc, element) => {
-                            const _items = (element).toString().split(',');
-                            return acc.concat(_items);
-                          }, [])
-                          .map((item, index) => (
-                            <li key={index} className="flex items-center space-x-2 pb-1">
-                              <Button key={index} variant="ghost" className="bg-gray-300 justify-between flex gap-2">
-                                <span>{item}</span>
-                                <XIcon />
-                              </Button>
-                            </li>
-                          ))}
-                      </ul>
-                    </ScrollArea>
-                    <hr className="my-4 border-gray-400 border-y"></hr>
-                    <Button variant={"ghost"}
-                    onClick={() => {onClearFilters()}}
-                    asChild>
-                      <Link href={`/category/${params.categoryId}`} >
-                        Clear all
-                      </Link>
-                    </Button>
-                  </div>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+            <MediaQueryCSS maxSize="lg">
+              <FiltersCardMobile
+                categoryId={params.categoryId}
+                items={FiltersData}
+              />
+            </MediaQueryCSS>
+            <MediaQueryCSS minSize="lg">
+              <div className="max-w-[200px] w-full">
+                <Select>
+                  <SelectTrigger className="bg-gray-200">
+                    <SelectValue
+                      placeholder={
+                        indicatorCount +
+                        (indicatorCount == 1
+                          ? " filter applied"
+                          : " filters applied")
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-200">
+                    <div className="p-3">
+                      <ScrollArea>
+                        <ul className="list-none p-0 m-0 max-h-[230px]">
+                          {data &&
+                            data
+                              .filter((element) => element)
+                              .reduce((acc, element) => {
+                                const _items = element.toString().split(",");
+                                return acc.concat(_items);
+                              }, [])
+                              .map((item, index) => (
+                                <li
+                                  key={index}
+                                  className="flex items-center space-x-2 pb-1"
+                                >
+                                  <Button
+                                    key={index}
+                                    variant="ghost"
+                                    className="bg-gray-300 justify-between flex gap-2"
+                                  >
+                                    <span>{item}</span>
+                                    <XIcon />
+                                  </Button>
+                                </li>
+                              ))}
+                        </ul>
+                      </ScrollArea>
+                      <hr className="my-4 border-gray-400 border-y"></hr>
+                      <Button
+                        variant={"ghost"}
+                        onClick={() => {
+                          onClearFilters();
+                        }}
+                        asChild
+                      >
+                        <Link href={`/category/${params.categoryId}`}>
+                          Clear all
+                        </Link>
+                      </Button>
+                    </div>
+                  </SelectContent>
+                </Select>
+              </div>
+            </MediaQueryCSS>
             <div className="flex gap-2 items-center w-full justify-end">
               <div className="max-w-[260px] w-full">
                 <Select>
@@ -330,8 +351,12 @@ export default function CategoryPage ({
                   <SelectContent>
                     <SelectItem value="byrating">By rating</SelectItem>
                     <SelectItem value="novelty">Novelty</SelectItem>
-                    <SelectItem value="toexpensive">From cheap to expensive</SelectItem>
-                    <SelectItem value="tocheap">From expensive to cheap</SelectItem>
+                    <SelectItem value="toexpensive">
+                      From cheap to expensive
+                    </SelectItem>
+                    <SelectItem value="tocheap">
+                      From expensive to cheap
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
