@@ -9,7 +9,7 @@ import {
 export function Footer() {
   return (
     <footer className="pt-8 border-t w-full bg-gray-100">
-      <div className="flex flex-wrap justify-between items-start gap-8 max-w-3xl mx-auto px-2">
+      <div className="flex flex-wrap justify-between items-start gap-8 max-w-3xl mx-auto px-4">
         <div>
           <h3 className="font-bold mb-2">Support</h3>
           <ul>
