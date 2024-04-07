@@ -1,5 +1,15 @@
-import { ChevronRightIcon, MinusIcon, PlusIcon } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  MinusIcon,
+  PlusIcon,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MediaQueryCSS } from "../MediaQuery";
@@ -13,11 +23,18 @@ export const ProductOrderCard = () => {
   return (
     <Card className="bg-gray-200">
       <CardHeader className="space-y-3">
-        <div>
-          <span className="text-3xl font-bold">
-            $24<sup>99</sup>
-          </span>
-          <sub className="ml-2 line-through text-gray-400 text-lg">$39.99</sub>
+        <div className="flex justify-between items-center">
+          <div>
+            <span className="text-3xl font-bold">
+              $24<sup>99</sup>
+            </span>
+            <sub className="ml-2 line-through text-gray-400 text-lg">
+              $39.99
+            </sub>
+          </div>
+          <MediaQueryCSS maxSize="lg">
+            <span>In stock</span>
+          </MediaQueryCSS>
         </div>
         <MediaQueryCSS minSize="lg">
           <hr className="border-black mb-3" />
@@ -42,13 +59,19 @@ export const ProductOrderCard = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2">
+      <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
         <Button>Add to cart</Button>
         <Button>Buy now</Button>
         <Button variant={"outline"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
       </CardContent>
+      <MediaQueryCSS maxSize="lg">
+        <CardFooter className="justify-center gap-1">
+          Details
+          <ChevronDownIcon />
+        </CardFooter>
+      </MediaQueryCSS>
     </Card>
   );
 };
