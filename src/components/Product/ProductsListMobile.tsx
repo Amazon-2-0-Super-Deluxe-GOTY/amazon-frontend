@@ -1,4 +1,4 @@
-import { ProductCard } from "../Product/ProductCard";
+import { ProductCard } from "./ProductCard";
 
 export const ProductsListMobile = ({
   products,
@@ -6,7 +6,7 @@ export const ProductsListMobile = ({
   products: { title: string; price: number }[];
 }) => {
   return (
-    <div className="grid grid-cols-2 auto-rows-max gap-4">
+    <div className="grid grid-cols-2 auto-rows-max gap-4 place-items-center">
       {products.map((product, index) => (
         <ProductCard key={index} title={product.title} price={product.price} />
       ))}

@@ -91,24 +91,6 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
           <span className="text-sm lg:text-lg">Unsure of size?</span>
         </Button>
       </div>
-      {/* <div className="flex gap-4">
-        <Button
-          size={"lg"}
-          variant={"outline"}
-          className="w-max h-max justify-start gap-2 lg:gap-4 p-2 lg:p-4 lg:max-w-xs lg:w-full"
-        >
-          <ShirtIcon className="w-4 lg:w-10" />
-          <span className="text-sm lg:text-2xl">Size chart</span>
-        </Button>
-        <Button
-          size={"lg"}
-          variant={"outline"}
-          className="w-max h-max justify-start gap-2 lg:gap-4 p-2 lg:p-4 lg:max-w-xs lg:w-full"
-        >
-          <PencilRulerIcon className="w-4 lg:w-10" />
-          <span className="text-sm lg:text-2xl">Unsure of size?</span>
-        </Button>
-      </div> */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
-import { CarouselProduct } from "./CarouselProduct";
+import { CarouselProduct } from "../MainPage/CarouselProduct";
 import { ProductsListMobile } from "./ProductsListMobile";
 import { MediaQueryCSS } from "../MediaQuery";
 

@@ -28,7 +28,7 @@ import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
 import { ProductDetails } from "@/components/Product/ProductDetails";
 import { AboutProduct } from "@/components/Product/AboutProduct";
 import type { DescriptionBlock } from "@/components/Product/Description/types";
-import { ProductsBlock } from "@/components/MainPage/ProductsBlock";
+import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import { ProductDescription } from "@/components/Product/ProductDescription";
 
 const productOptions: OptionsComponent[] = [
@@ -275,7 +275,7 @@ export default function ProductPage({
         </Breadcrumb>
       </div>
       <section className="flex flex-col lg:flex-row gap-3 lg:gap-6 justify-between w-full">
-        <div className="max-w-2xl w-full">
+        <div className="lg:max-w-2xl w-full">
           <MediaQueryCSS maxSize="lg">
             <h1 className="text-2xl">
               PUMIEY Women&apos;s Long Sleeve T-Shirts Crew Neck Slim Fit Tops
