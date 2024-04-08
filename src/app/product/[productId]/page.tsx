@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/carousel";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import placeholder from "@/../public/Icons/placeholder.svg";
-import { OptionsComponent } from "@/components/Product/Options/types";
+import type { OptionsComponent } from "@/components/Product/Options/types";
 import { ProductOptionsMapper } from "@/components/Product/Options/ProductOptionsMapper";
 import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
 import { MediaQueryCSS } from "@/components/MediaQuery";
@@ -30,6 +30,8 @@ import { AboutProduct } from "@/components/Product/AboutProduct";
 import type { DescriptionBlock } from "@/components/Product/Description/types";
 import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import { ProductDescription } from "@/components/Product/ProductDescription";
+import { ReviewsStatisticCard } from "@/components/Review/ReviewsStatisticCard";
+import type { ReviewsStatistic } from "@/components/Review/types";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -224,6 +226,25 @@ const productDescriptionBlocks: DescriptionBlock[] = [
   },
 ];
 
+const reviewsStatistic: ReviewsStatistic = {
+  score: 4.3,
+  reviewsCount: 228,
+  starsStatistic: [
+    { stars: 1, percentage: 7 },
+    { stars: 2, percentage: 5 },
+    { stars: 3, percentage: 8 },
+    { stars: 4, percentage: 12 },
+    { stars: 5, percentage: 68 },
+  ],
+  tags: [
+    "Actual price",
+    "Price/quality",
+    "Polite seller",
+    "Good service",
+    "Fits the description",
+  ],
+};
+
 export default function ProductPage({
   params,
 }: {
@@ -358,6 +379,17 @@ export default function ProductPage({
           Product Description
         </h2>
         <ProductDescription blocks={productDescriptionBlocks} />
+      </section>
+      <section className="py-6 border-t-2 pt-4 space-y-6">
+        <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
+          Customer reviews
+        </h2>
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="lg:max-w-xl w-full">
+            <ReviewsStatisticCard data={reviewsStatistic} />
+          </div>
+          <div className="w-full"></div>
+        </div>
       </section>
       <div className="py-6 border-t-2">
         <ProductsBlock title="You may also like" />
