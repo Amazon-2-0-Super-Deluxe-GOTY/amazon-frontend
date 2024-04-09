@@ -31,7 +31,8 @@ import type { DescriptionBlock } from "@/components/Product/Description/types";
 import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import { ProductDescription } from "@/components/Product/ProductDescription";
 import { ReviewsStatisticCard } from "@/components/Review/ReviewsStatisticCard";
-import type { ReviewsStatistic } from "@/components/Review/types";
+import type { Review, ReviewsStatistic } from "@/components/Review/types";
+import { ReviewCard } from "@/components/Review/ReviewCard";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -245,6 +246,135 @@ const reviewsStatistic: ReviewsStatistic = {
   ],
 };
 
+const reviews: Review[] = [
+  {
+    user: {
+      avatar: placeholder,
+      fullName: "Jessica Jimenez",
+      location: "United States",
+    },
+    options: [
+      {
+        title: "Size",
+        value: "2X Large",
+      },
+      {
+        title: "Color",
+        value: "Black",
+      },
+    ],
+    title: "Pumiey long sleeve",
+    text: "Obsessed with these long sleeves! Definitely big girl friendly, holds everything in but still feels breathable. Very thick material, not see-through.",
+    rating: 5,
+    reviewRatesCount: 1,
+    isRatedByUser: true,
+    createdAt: new Date(),
+  },
+  {
+    user: {
+      avatar: placeholder,
+      fullName: "Adrienne O’Brien",
+      location: "United States",
+    },
+    options: [
+      {
+        title: "Size",
+        value: "Small",
+      },
+      {
+        title: "Color",
+        value: "Sage",
+      },
+    ],
+    // images: [placeholder, placeholder],
+    images: [
+      placeholder,
+      placeholder,
+      placeholder,
+      placeholder,
+      placeholder,
+      placeholder,
+      placeholder,
+    ],
+    title: "Girls, GET. THIS.",
+    text: "Ok, I got this in the color sage to try to recreate a Pinterest outfit I saw and omg it’s so good.\nThe fabric is soft and comfy while still being fitted + It’s double lined so you can go braless. The color is so pretty too, this with some low rise baggy jeans would be even cuter but I didn’t have any anyway get this you won’t regret it!!!! I’ll update after a few washes to see if it holds up.",
+    rating: 5,
+    reviewRatesCount: 25,
+    isRatedByUser: true,
+    createdAt: new Date(),
+  },
+  {
+    user: {
+      avatar: placeholder,
+      fullName: "Joe Gatto",
+      location: "Canada",
+    },
+    options: [
+      {
+        title: "Size",
+        value: "Large",
+      },
+      {
+        title: "Color",
+        value: "White",
+      },
+    ],
+    images: [placeholder],
+    title: "Great Shirt, unfortunately returned due to stains",
+    text: "Shirt feels amazing, super soft and stretchy. Would love to have kept it if it wasn’t stained.",
+    rating: 3,
+    reviewRatesCount: 1,
+    isRatedByUser: false,
+    createdAt: new Date(),
+  },
+  {
+    user: {
+      avatar: placeholder,
+      fullName: "Sylvio",
+      location: "United States",
+    },
+    options: [
+      {
+        title: "Size",
+        value: "Medium",
+      },
+      {
+        title: "Color",
+        value: "Black",
+      },
+    ],
+    title: "Love",
+    text: "I do love this top and I enjoy wearing it! Although I am going to say something negative about it on a personal level, something that I wasn't thinking about and as you can see it's got nothing to do with how I rated the product. On me the arms are a little tight, or perhaps I should say snug, and I seem to be pulling on the sleeves a lot. Although by doing that the material has a tendency to grab my hair on my arms and give it a discomfort feeling. It doesn't hurt and it does not pitch and I think it's just indicative to any kind of material that fits snug around the arms.\nMaybe I'm just being a big sissy, although I think I'm going to trim my hair on my arms just a little bit before I wear it the next time. Anyhow I had the same problem with a pair of underfarmer compression top that I had. Anyhow just something to think about, all in all I give it a thumbs up, the material is nice and soft and it has a four-way stretch.",
+    rating: 5,
+    reviewRatesCount: 0,
+    isRatedByUser: false,
+    createdAt: new Date(),
+  },
+  {
+    user: {
+      avatar: placeholder,
+      fullName: "Sylvio",
+      location: "Mexico",
+    },
+    options: [
+      {
+        title: "Size",
+        value: "Medium",
+      },
+      {
+        title: "Color",
+        value: "Marsala",
+      },
+    ],
+    title: "Me encantan",
+    text: "Me gusta mucho la calidad de esta marca para sus playeras. La talla es tal cual.",
+    rating: 5,
+    reviewRatesCount: 0,
+    isRatedByUser: false,
+    createdAt: new Date(),
+  },
+];
+
 export default function ProductPage({
   params,
 }: {
@@ -388,7 +518,13 @@ export default function ProductPage({
           <div className="lg:max-w-xl w-full">
             <ReviewsStatisticCard data={reviewsStatistic} />
           </div>
-          <div className="w-full"></div>
+          <div className="w-full">
+            <div className="space-y-3 lg:space-y-8">
+              {reviews.map((r, i) => (
+                <ReviewCard review={r} key={i} />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
       <div className="py-6 border-t-2">

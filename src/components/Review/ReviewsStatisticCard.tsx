@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import type { ReviewsStatistic } from "./types";
 import { CheckCircleIcon } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
 export const ReviewsStatisticCard = ({ data }: { data: ReviewsStatistic }) => {
   const starsDataReversed = useMemo(
@@ -11,8 +12,8 @@ export const ReviewsStatisticCard = ({ data }: { data: ReviewsStatistic }) => {
 
   return (
     <Card className="bg-gray-200 rounded-md">
-      <CardContent className="pt-6">
-        <div className="pb-6 border-b-2 border-black">
+      <CardContent className="pt-6 pb-3 lg:pb-6">
+        <div className="pb-3 lg:pb-6 border-b-2 border-black">
           <div className="flex justify-between gap-6">
             <div className="flex flex-col justify-center items-center">
               <p className="mb-2 font-semibold">
@@ -47,8 +48,8 @@ export const ReviewsStatisticCard = ({ data }: { data: ReviewsStatistic }) => {
               </tbody>
             </table>
           </div>
-          <div className="flex items-center gap-2 mt-3 text-sm lg:text-base">
-            <CheckCircleIcon className="w-5 h-5" />
+          <div className="flex items-center gap-2 mt-3 text-xs lg:text-base">
+            <CheckCircleIcon className="w-4 h-4 lg:w-5 lg:h-5" />
             <span>All opinions confirmed by purchase.</span>
             <span className="font-semibold">Learn more</span>
           </div>
@@ -56,7 +57,14 @@ export const ReviewsStatisticCard = ({ data }: { data: ReviewsStatistic }) => {
       </CardContent>
       <CardFooter className="flex-col items-start">
         <p className="lg:text-lg">Frequent tags</p>
-        <div className="mt-3 flex gap-2 w-full overflow-x-auto whitespace-nowrap">
+        <div className="mt-3 flex lg:flex-wrap gap-2 w-full overflow-x-auto whitespace-nowrap">
+          {/* <Carousel
+          className="mt-3 w-full"
+          opts={{
+            align: "center",
+          }}
+        >
+          <CarouselContent className="whitespace-nowrap"> */}
           {data.tags.map((tag, i) => (
             <div
               className="px-3 lg:px-4 py-1.5 lg:py-2 text-sm lg:text-base bg-gray-300 rounded-full"
@@ -65,6 +73,8 @@ export const ReviewsStatisticCard = ({ data }: { data: ReviewsStatistic }) => {
               {tag}
             </div>
           ))}
+          {/* </CarouselContent>
+        </Carousel> */}
         </div>
       </CardFooter>
     </Card>
