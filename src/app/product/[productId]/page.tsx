@@ -33,6 +33,7 @@ import { ProductDescription } from "@/components/Product/ProductDescription";
 import { ReviewsStatisticCard } from "@/components/Review/ReviewsStatisticCard";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
 import { ReviewCard } from "@/components/Review/ReviewCard";
+import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -514,18 +515,7 @@ export default function ProductPage({
         <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
           Customer reviews
         </h2>
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="lg:max-w-xl w-full">
-            <ReviewsStatisticCard data={reviewsStatistic} />
-          </div>
-          <div className="w-full">
-            <div className="space-y-3 lg:space-y-8">
-              {reviews.map((r, i) => (
-                <ReviewCard review={r} key={i} />
-              ))}
-            </div>
-          </div>
-        </div>
+        <ReviewsBlock reviews={reviews} reviewsStatistic={reviewsStatistic} />
       </section>
       <div className="py-6 border-t-2">
         <ProductsBlock title="You may also like" />

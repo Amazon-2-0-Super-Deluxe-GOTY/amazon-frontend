@@ -25,3 +25,8 @@ export interface Review {
   isRatedByUser: boolean;
   createdAt: Date;
 }
+
+export interface ReviewFilters {
+  stars?: 1 | 2 | 3 | 4 | 5;
+  filterBy: "recent";
+}
