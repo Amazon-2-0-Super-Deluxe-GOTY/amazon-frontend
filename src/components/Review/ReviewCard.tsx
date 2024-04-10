@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Review } from "./types";
 import { StarIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -8,9 +8,16 @@ import { Button } from "../ui/button";
 import clsx from "clsx";
 import { textAvatar } from "@/lib/utils";
 import Image from "next/image";
-import { MediaQueryCSS } from "../MediaQuery";
+import { ReviewTags } from "./ReviewTags";
+import { getRatesCountString } from "@/lib/review";
 
-export const ReviewCard = ({ review }: { review: Review }) => {
+export const ReviewCard = ({
+  review,
+  onClick,
+}: {
+  review: Review;
+  onClick?: () => void;
+}) => {
   const maxImages = 5;
   const starsElements = React.useMemo(() => {
     const maxRating = 5;
@@ -27,7 +34,7 @@ export const ReviewCard = ({ review }: { review: Review }) => {
   }, []);
 
   return (
-    <div className="pt-3 lg:pt-10 border-t-2">
+    <div className="pt-3 lg:pt-10 border-t-2 cursor-pointer" onClick={onClick}>
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center gap-2">
@@ -57,10 +64,15 @@ export const ReviewCard = ({ review }: { review: Review }) => {
           ))}
         </div>
       </div>
-      <div className="mb-6">
+      <div className="mb-4">
         <p className="font-semibold">{review.title}</p>
         <p className="whitespace-pre-line">{review.text}</p>
       </div>
+      {!!review.tags?.length && (
+        <div className="mb-6">
+          <ReviewTags tags={review.tags} />
+        </div>
+      )}
       {!!review.images?.length && (
         <ImagesList
           images={review.images.slice(0, maxImages)}
@@ -112,21 +124,5 @@ const ImagesList = ({
         </figure>
       ))}
     </div>
-  );
-};
-
-const getRatesCountString = (review: Review) => {
-  if (review.reviewRatesCount === 0) return "";
-
-  if (review.reviewRatesCount === 1) {
-    if (review.isRatedByUser) {
-      return "You found this helpful";
-    }
-    return "1 person found this helpful";
-  }
-
-  return (
-    (review.isRatedByUser ? "You and " : "") +
-    `${review.reviewRatesCount} people found this helpful`
   );
 };

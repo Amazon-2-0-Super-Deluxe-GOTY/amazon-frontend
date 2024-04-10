@@ -264,6 +264,13 @@ const reviews: Review[] = [
         value: "Black",
       },
     ],
+    tags: [
+      "Actual price",
+      "Price/quality",
+      "Polite seller",
+      "Good service",
+      "Fits the description",
+    ],
     title: "Pumiey long sleeve",
     text: "Obsessed with these long sleeves! Definitely big girl friendly, holds everything in but still feels breathable. Very thick material, not see-through.",
     rating: 5,

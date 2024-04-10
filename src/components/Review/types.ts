@@ -17,6 +17,7 @@ export interface Review {
     location: string;
   };
   options: { title: string; value: string }[];
+  tags?: string[];
   images?: string[];
   title: string;
   text: string;
