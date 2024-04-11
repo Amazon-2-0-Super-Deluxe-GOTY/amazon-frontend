@@ -11,16 +11,16 @@ import { Button } from "../ui/button";
 import { ReviewTags } from "./ReviewTags";
 import { getRatesCountString } from "@/lib/review";
 import { useScreenSize } from "@/lib/media";
+import { Drawer, DrawerClose, DrawerContent } from "../ui/drawer";
+import ClientOnlyPortal from "../ClientOnlyPortal";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "../ui/drawer";
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
+import Image from "next/image";
 
 interface ReviewCardProps {
   review?: Review;
@@ -74,21 +74,59 @@ export const ReviewCardFull = ({
   }
 
   return (
-    <Drawer open={isOpen} onOpenChange={onOpenChange}>
-      <DrawerContent className="h-[45%]">
-        <div className="px-4 py-3 h-full flex flex-col overflow-y-auto">
-          <ReviewHeaderMobile
-            review={review}
-            hasPrev={hasPrev}
-            hasNext={hasNext}
-            onPrev={onPrev}
-            onNext={onNext}
-          />
-          <ReviewBody review={review} />
-          <ReviewFooter review={review} />
-        </div>
-      </DrawerContent>
-    </Drawer>
+    <>
+      <Drawer open={isOpen} onOpenChange={onOpenChange}>
+        <DrawerContent className="h-[45vh]">
+          <div className="px-4 py-3 h-full flex flex-col gap-3 overflow-y-auto">
+            <ReviewHeaderMobile
+              review={review}
+              hasPrev={hasPrev}
+              hasNext={hasNext}
+              onPrev={onPrev}
+              onNext={onNext}
+            />
+            <ReviewBody review={review} />
+            <ReviewFooter review={review} />
+          </div>
+          {!!review.images?.length && (
+            <div className="fixed top-0 left-0 right-0 -translate-y-full overflow-hidden">
+              <Carousel
+                opts={{
+                  align: "center",
+                }}
+              >
+                <CarouselContent>
+                  {review.images.map((img, index) => {
+                    return (
+                      <CarouselItem
+                        className="max-h-[55vh] h-screen py-3"
+                        key={index}
+                      >
+                        <div className="h-full relative">
+                          <Image
+                            src={img}
+                            alt="Placeholder"
+                            fill={true}
+                            className="object-cover"
+                          />
+                        </div>
+                      </CarouselItem>
+                    );
+                  })}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          )}
+        </DrawerContent>
+      </Drawer>
+      {/* {isOpen && review.images?.length && (
+        <ClientOnlyPortal selector="body">
+          
+        </ClientOnlyPortal>
+      )} */}
+    </>
   );
 };
 
@@ -176,7 +214,7 @@ const ReviewHeaderMobile = ({
   onNext,
 }: ReviewHeaderProps) => {
   return (
-    <div className="flex flex-col items-center gap-3 mb-3">
+    <div className="flex flex-col items-center gap-3">
       <div className="w-full flex justify-between items-center">
         <HeaderControls
           hasPrev={hasPrev}
