@@ -5,12 +5,6 @@ type FilterTilesDataType = string[];
 type FilterPriceDataType = { min: number; max: number };
 type FilterRatingDataType = number[];
 
-// export type FiltersDataItem = {
-//   title: string;
-//   type: FilterTypes;
-//   values: FilterCheckboxDataType | FilterTilesDataType | FilterPriceDataType;
-//   isSearch: boolean;
-// };
 type FiltersDataItem<Type extends FilterTypes, Values> = {
   title: string;
   type: Type;

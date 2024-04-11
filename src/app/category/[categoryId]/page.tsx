@@ -3,7 +3,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 import { cn } from "@/lib/utils";
-import { useScreenSize } from "@/lib/media";
 import { useSearchParamsTools } from "@/lib/router";
 
 import Image from "next/image";
@@ -43,7 +42,7 @@ import {
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { ProductCard } from "@/components/Product/ProductCard";
-import { FiltersCardMobile } from "@/components/ProductByCategoryPage/FiltersCard";
+import { FilterCardVariationMobile } from "@/components/ProductByCategoryPage/FilterCardVariationMobile";
 import { FilterItem } from "@/components/ProductByCategoryPage/filtersDataTypes";
 import { MediaQueryCSS } from "@/components/MediaQuery";
 import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
@@ -166,10 +165,6 @@ export default function CategoryPage({
 }: {
   params: { categoryId: string };
 }) {
-  //#region isMobile
-  const isMobile = useScreenSize({ maxSize: "sm" });
-  //#endregion
-
   //#region ButtonDefaultCardTemplateClick
   const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] =
     useState(true);
@@ -181,43 +176,35 @@ export default function CategoryPage({
   };
   //#endregion
 
-  const onClearFilters = () => {};
-
   //#region CheckedParams
   const searchParams = useSearchParamsTools();
   const [data, setData] = useState<string[] | undefined>(() => {
-    const result = FiltersData.map((item, index) => {
-      const params = searchParams.get(item.title);
-      if (params) {
+    let result:string[] = [];
+    FiltersData.forEach((filter, index) => {
+      const params = searchParams.get(filter.title);
+      if (params)
+      {
         const checkedValues = params.split(",");
-        const itemNamesArray = checkedValues.map((element, i) => {
-          if (item.values.find((s) => s === element)) {
-            return element;
-          }
-        });
+        const itemNamesArray = checkedValues.filter((v) => filter.type !== "price" && ((filter.type === "rating" && !isNaN(parseInt(v)) && filter.values.includes(parseInt(v))) || (filter.type !== "rating" && filter.values.includes(v))))
 
-        if (itemNamesArray) {
-          return itemNamesArray;
+        if (itemNamesArray.length > 0) {
+          result = result.concat(itemNamesArray);
         } else {
-          searchParams.set(item.title, undefined);
+          searchParams.set(filter.title, undefined);
         }
       }
     });
     return result;
   });
-
   //#endregion
 
   //#region indicatorCheckedFilterCount
-  const [indicatorCount, setIndicatorCount] = useState<number | undefined>(
-    () => {
-      let result = 0;
-      if (data) {
-        data.forEach((s) => (s ? (result += s.length) : false));
-      }
-      return result;
+  const [indicatorCount, setIndicatorCount] = useState<number>(() => {
+    if (data) {
+      return data?.length;
     }
-  );
+    return 0;
+  });
   //#endregion
 
   useEffect(() => {
@@ -266,32 +253,30 @@ export default function CategoryPage({
         </Breadcrumb>
       </section>
       <section className="w-full flex items-left pt-4">
-        <span className="text-[36px] font-semibold">Title</span>
+        <span className="text-4xl font-semibold">Title</span>
       </section>
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <MediaQueryCSS minSize="lg">
-          <div className="flex flex-col gap-2 basis-[385px] max-md:w-full">
+          <div className="flex flex-col gap-2 w-80">
             <FilterCardVariation filters={FiltersData} />
           </div>
         </MediaQueryCSS>
-
         <div className="grow">
-          {/* Filters here */}
           <div className="w-full flex justify-between items-center gap-2">
             <MediaQueryCSS maxSize="lg">
-              <FiltersCardMobile
+              <FilterCardVariationMobile
                 categoryId={params.categoryId}
-                items={FiltersData}
+                filters={FiltersData}
               />
             </MediaQueryCSS>
             <MediaQueryCSS minSize="lg">
-              <div className="max-w-[200px] w-full">
+              <div className="max-w-52 w-full">
                 <Select>
                   <SelectTrigger className="bg-gray-200">
                     <SelectValue
                       placeholder={
                         indicatorCount +
-                        (indicatorCount == 1
+                        (indicatorCount === 1
                           ? " filter applied"
                           : " filters applied")
                       }
@@ -301,38 +286,24 @@ export default function CategoryPage({
                     <div className="p-3">
                       <ScrollArea>
                         <ul className="list-none p-0 m-0 max-h-[230px]">
-                          {data &&
-                            data
-                              .filter((element) => element)
-                              .reduce((acc, element) => {
-                                const _items = element.toString().split(",");
-                                return acc.concat(_items);
-                              }, [])
-                              .map((item, index) => (
-                                <li
+                          { data &&
+                            data.map((item, index) => (
+                              <li key={index} className="flex items-center space-x-2 pb-1" >
+                                <Button
                                   key={index}
-                                  className="flex items-center space-x-2 pb-1"
+                                  variant="ghost"
+                                  className="bg-gray-300 justify-between flex gap-2"
                                 >
-                                  <Button
-                                    key={index}
-                                    variant="ghost"
-                                    className="bg-gray-300 justify-between flex gap-2"
-                                  >
-                                    <span>{item}</span>
-                                    <XIcon />
-                                  </Button>
-                                </li>
-                              ))}
+                                  <span>{item}</span>
+                                  <XIcon />
+                                </Button>
+                              </li>
+                            ))
+                          }
                         </ul>
                       </ScrollArea>
                       <hr className="my-4 border-gray-400 border-y"></hr>
-                      <Button
-                        variant={"ghost"}
-                        onClick={() => {
-                          onClearFilters();
-                        }}
-                        asChild
-                      >
+                      <Button variant={"ghost"} asChild >
                         <Link href={`/category/${params.categoryId}`}>
                           Clear all
                         </Link>
@@ -351,12 +322,8 @@ export default function CategoryPage({
                   <SelectContent>
                     <SelectItem value="byrating">By rating</SelectItem>
                     <SelectItem value="novelty">Novelty</SelectItem>
-                    <SelectItem value="toexpensive">
-                      From cheap to expensive
-                    </SelectItem>
-                    <SelectItem value="tocheap">
-                      From expensive to cheap
-                    </SelectItem>
+                    <SelectItem value="toexpensive">From cheap to expensive</SelectItem>
+                    <SelectItem value="tocheap">From expensive to cheap</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
