@@ -60,7 +60,7 @@ export const ReviewCardFull = ({
         hideClose={true}
       >
         <div className="space-y-6 grow">
-          <div className="flex justify-between items-center gap-4">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Avatar>
                 <AvatarImage src={review.user.avatar} />
@@ -79,7 +79,7 @@ export const ReviewCardFull = ({
                 </MediaQueryCSS>
               </div>
             </div>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 ml-auto mr-[10%]">
               <button
                 className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
                 disabled={!hasPrev}
