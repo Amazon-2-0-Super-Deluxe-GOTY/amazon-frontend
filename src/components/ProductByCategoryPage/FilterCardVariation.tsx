@@ -20,7 +20,7 @@ import { Button } from "../ui/button";
 import { DoubleThumbSlider } from "../ui/slider";
 import { MediaQueryCSS } from "../MediaQuery";
 
-export const FilterCardVariation = ({ filters, isOpen = true }: { filters: FilterItem[], isOpen?: boolean }) => {
+export const FilterCardVariation = ({ filters, onFilterParamsChange, isOpen = true }: { filters: FilterItem[], onFilterParamsChange: (title: string, checkedItems: string[]) => void, isOpen?: boolean }) => {
   
   const [searchTextArray, setSearchTextArray] = useState<string[]>(filters.map(() => ''));
 
@@ -49,13 +49,13 @@ export const FilterCardVariation = ({ filters, isOpen = true }: { filters: Filte
                   {(() => {
                     switch (filter.type) {
                       case "checkbox":
-                        return <FilterCheckbox data={filter} searchText={searchTextArray[i]} />;
+                        return <FilterCheckbox data={filter} searchText={searchTextArray[i]} onFilterParamsChange={onFilterParamsChange} />;
                       case "tiles":
-                        return <FilterTiles data={filter} searchText={searchTextArray[i]} />;
+                        return <FilterTiles data={filter} searchText={searchTextArray[i]} onFilterParamsChange={onFilterParamsChange} />;
                       case "price":
                         return <FilterPrice data={filter} />;
                       case "rating":
-                        return <FilterRating data={filter} />;
+                        return <FilterRating data={filter} onFilterParamsChange={onFilterParamsChange} />;
 
                       default:
                         return null;
@@ -74,7 +74,7 @@ export const FilterCardVariation = ({ filters, isOpen = true }: { filters: Filte
   ));
 };
 
-const FilterCheckbox = ({ data, searchText }: { data: FilterCheckboxItem, searchText: string }) => {
+const FilterCheckbox = ({ data, onFilterParamsChange, searchText }: { data: FilterCheckboxItem, onFilterParamsChange: (title: string, checkedItems: string[]) => void, searchText: string }) => {
   const searchParams = useSearchParamsTools();
   const [checkedItems, setCheckedItems] = useState<string[]>(() => {
     const defaultValue = searchParams.get(data.title);
@@ -88,7 +88,6 @@ const FilterCheckbox = ({ data, searchText }: { data: FilterCheckboxItem, search
 
   const onToggle = (value: string) => () => {
     const isChecked = checkedItems.includes(value);
-
     if (isChecked) {
       setCheckedItems((items) => items.filter((v) => v !== value));
     } else {
@@ -97,28 +96,27 @@ const FilterCheckbox = ({ data, searchText }: { data: FilterCheckboxItem, search
   };
 
   useEffect(() => {
-    searchParams.set(data.title, checkedItems.join(","));
-  }, [checkedItems.length, checkedItems, data.title, searchParams]);
+    onFilterParamsChange(data.title, checkedItems);
+  }, [checkedItems]);
 
   return (
     <ul>
       {data.values.filter((v) => v.toLowerCase().includes(searchText)).map((item, index) => (
-        <li key={index} className="flex items-center space-x-2 pb-1">
-          <Checkbox
-            id={item + index}
-            checked={checkedItems.includes(item)}
-            onClick={onToggle(item)}
-          />
-          <label className="text-base" htmlFor={item + index}>
-            {item}
-          </label>
+        <li key={index} className="flex items-center space-x-2 pb-1" onClick={onToggle(item)}>
+            <Checkbox
+              id={item + index}
+              checked={checkedItems.includes(item)}
+            />
+            <label className="text-base" htmlFor={item + index}>
+              {item}
+            </label>
         </li>
       ))}
     </ul>
   );
 };
 
-const FilterTiles = ({ data, searchText }: { data: FilterTilesItem, searchText: string }) => {
+const FilterTiles = ({ data, onFilterParamsChange, searchText }: { data: FilterTilesItem, onFilterParamsChange: (title: string, checkedItems: string[]) => void, searchText: string }) => {
   const searchParams = useSearchParamsTools();
   const [checkedItems, setCheckedItems] = useState<string[]>(() => {
     const defaultValue = searchParams.get(data.title);
@@ -141,8 +139,8 @@ const FilterTiles = ({ data, searchText }: { data: FilterTilesItem, searchText: 
   };
 
   useEffect(() => {
-    searchParams.set(data.title, checkedItems.join(","));
-  }, [checkedItems.length, checkedItems, data.title, searchParams]);
+    onFilterParamsChange(data.title, checkedItems);
+  }, [checkedItems]);
 
   return (
     <>
@@ -202,6 +200,10 @@ const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
     searchParams.set(data.title, priceValue.min + "," + priceValue.max);
   }, [priceValue.min, priceValue.max, data.title, searchParams]);
 
+  const savePriceChange = () => {
+    // ...
+  };
+
   return (
     <div className="h-full overflow-hidden mt-3">
       <div className="flex justify-between w-full pb-3">
@@ -211,7 +213,10 @@ const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
           <Input className="max-w-[64px]" defaultValue={priceValue.max} onChange={onInputMaxValueChange}></Input>
         </div>
         <div>
-          <Button variant={"ghost"} className="bg-gray-300">
+          <Button 
+            variant={"ghost"} 
+            className="bg-gray-300"
+          >
             Save
           </Button>
         </div>
@@ -228,7 +233,7 @@ const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
   );
 };
 
-const FilterRating = ({ data }: { data: FilterRatingItem }) => {
+const FilterRating = ({ data, onFilterParamsChange }: { data: FilterRatingItem, onFilterParamsChange: (title: string, checkedItems: string[]) => void }) => {
   const searchParams = useSearchParamsTools();
   const [checkedItems, setCheckedItems] = useState<number[]>(() => {
     const defaultValue = searchParams.get(data.title);
@@ -250,17 +255,19 @@ const FilterRating = ({ data }: { data: FilterRatingItem }) => {
     }
   };
 
+  
   useEffect(() => {
-    searchParams.set(data.title, checkedItems.join(","));
-  }, [checkedItems.length, checkedItems, data.title, searchParams]);
+    const checkedItemsAsString = checkedItems.map((item) => item.toString());
+    onFilterParamsChange(data.title, checkedItemsAsString);
+  }, [checkedItems]);
+
 
   return (
     <div className="mt-3">
       {data.values.map((item, index) => (
-        <li key={index} className="flex items-center space-x-2 pb-2">
+        <li key={index} className="flex items-center space-x-2 pb-2" onClick={onToggle(item)}>
           <Checkbox id={data.title + item} 
             checked={checkedItems.includes(item)}
-            onClick={onToggle(item)}
           />
           <label
             className="text-base flex gap-[3.44px]"

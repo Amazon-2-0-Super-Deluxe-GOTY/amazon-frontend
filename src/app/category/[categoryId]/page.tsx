@@ -165,6 +165,9 @@ export default function CategoryPage({
 }: {
   params: { categoryId: string };
 }) {
+  const searchParams = useSearchParamsTools();
+  const [dataParamsChange, setDataParamsChange] = useState<{ title: string; values: string[] } | undefined>();
+
   //#region ButtonDefaultCardTemplateClick
   const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] =
     useState(true);
@@ -177,23 +180,29 @@ export default function CategoryPage({
   //#endregion
 
   //#region CheckedParams
-  const searchParams = useSearchParamsTools();
-  const [data, setData] = useState<string[] | undefined>(() => {
-    let result:string[] = [];
-    FiltersData.forEach((filter, index) => {
-      const params = searchParams.get(filter.title);
-      if (params)
-      {
-        const checkedValues = params.split(",");
-        const itemNamesArray = checkedValues.filter((v) => filter.type !== "price" && ((filter.type === "rating" && !isNaN(parseInt(v)) && filter.values.includes(parseInt(v))) || (filter.type !== "rating" && filter.values.includes(v))))
+  const [data, setData] = useState<{ title: string; values: string[] }[] | undefined>(() => {
+    let result: { title: string; values: string[] }[] = [{ title: "", values: [] }];
 
+    FiltersData.forEach((filter, index) => {
+      const defaultValue = searchParams.get(filter.title);
+      if (defaultValue) {
+        const itemNamesArray = defaultValue.split(",").filter(
+          (v) =>
+            filter.type !== "price" &&
+            ((filter.type === "rating" &&
+              !isNaN(parseInt(v)) &&
+              filter.values.includes(parseInt(v))) ||
+              (filter.type !== "rating" && filter.values.includes(v)))
+        );
+    
         if (itemNamesArray.length > 0) {
-          result = result.concat(itemNamesArray);
+          result.push({ title: filter.title, values: itemNamesArray });
         } else {
           searchParams.set(filter.title, undefined);
         }
       }
     });
+
     return result;
   });
   //#endregion
@@ -201,11 +210,64 @@ export default function CategoryPage({
   //#region indicatorCheckedFilterCount
   const [indicatorCount, setIndicatorCount] = useState<number>(() => {
     if (data) {
-      return data?.length;
+      return data?.reduce((total, item) => total + item.values.length, 0);
     }
     return 0;
   });
   //#endregion
+
+  const filterParamsChange = (titleItems: string, checkedItems: string[]) => {
+
+    setDataParamsChange({title: titleItems, values: checkedItems});
+
+    setData((prevData) => {
+      if (!prevData) {
+        return [{ title: titleItems, values: checkedItems }];
+      }
+
+      const index = prevData.findIndex((item) => item.title === titleItems);
+      if (index !== -1)
+      {
+        const updatedItem = {
+          ...prevData[index],
+          values: checkedItems,
+        };
+        return [...prevData.slice(0, index), updatedItem, ...prevData.slice(index + 1)];
+      }
+      else
+      {
+        const newItem = { title: titleItems, values: checkedItems };
+        return [...prevData, newItem];
+      }
+    });
+
+  };
+
+  useEffect(() => {
+
+    if(dataParamsChange)
+    {
+      const params = searchParams.get(dataParamsChange.title);
+      if(params)
+      {
+        if(dataParamsChange.values.length !== 0)
+          searchParams.set(dataParamsChange.title, dataParamsChange.values.join(","));
+        else
+          searchParams.set(dataParamsChange.title, undefined);
+      }
+      else
+      {
+        if(dataParamsChange.values.length !== 0)
+          searchParams.set(dataParamsChange.title, dataParamsChange.values.join(","));
+        else
+          setDataParamsChange(undefined);
+      }
+    }
+
+    const newCount = data?.reduce((total, item) => total + item.values.length, 0);
+    setIndicatorCount(newCount ? newCount : 0);
+
+  }, [filterParamsChange])
 
   useEffect(() => {
     if (params.categoryId) {
@@ -258,7 +320,7 @@ export default function CategoryPage({
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <MediaQueryCSS minSize="lg">
           <div className="flex flex-col gap-2 w-80">
-            <FilterCardVariation filters={FiltersData} />
+            <FilterCardVariation filters={FiltersData} onFilterParamsChange={filterParamsChange} />
           </div>
         </MediaQueryCSS>
         <div className="grow">
@@ -286,20 +348,23 @@ export default function CategoryPage({
                     <div className="p-3">
                       <ScrollArea>
                         <ul className="list-none p-0 m-0 max-h-[230px]">
-                          { data &&
-                            data.map((item, index) => (
-                              <li key={index} className="flex items-center space-x-2 pb-1" >
-                                <Button
-                                  key={index}
-                                  variant="ghost"
-                                  className="bg-gray-300 justify-between flex gap-2"
-                                >
-                                  <span>{item}</span>
-                                  <XIcon />
-                                </Button>
-                              </li>
-                            ))
-                          }
+                          {data &&
+                          data.map((item, index) => (
+                            <ul key={index}>
+                              {item.values.map((value, valueIndex) => (
+                                <li key={valueIndex} className="flex items-center space-x-2 pb-1">
+                                  <Button
+                                    key={valueIndex}
+                                    variant="ghost"
+                                    className="bg-gray-300 justify-between flex gap-2"
+                                  >
+                                    <span>{value}</span>
+                                    <XIcon />
+                                  </Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            ))}
                         </ul>
                       </ScrollArea>
                       <hr className="my-4 border-gray-400 border-y"></hr>

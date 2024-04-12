@@ -26,24 +26,32 @@ import { FilterItem } from "./filtersDataTypes";
 
 export const FilterCardVariationMobile = ({ categoryId, filters }: { categoryId: string, filters: FilterItem[] }) => {
   const searchParams = useSearchParamsTools();
+  const [dataParamsChange, setDataParamsChange] = useState<{ title: string; values: string[] } | undefined>();
 
   //#region CheckedParams
-  const [data, setData] = useState<string[] | undefined>(() => {
-    let result:string[] = [];
-    filters.forEach((filter, index) => {
-      const params = searchParams.get(filter.title);
-      if (params)
-      {
-        const checkedValues = params.split(",");
-        const itemNamesArray = checkedValues.filter((v) => filter.type !== "price" && ((filter.type === "rating" && !isNaN(parseInt(v)) && filter.values.includes(parseInt(v))) || (filter.type !== "rating" && filter.values.includes(v))))
+  const [data, setData] = useState<{ title: string; values: string[] }[] | undefined>(() => {
+    let result: { title: string; values: string[] }[] = [{ title: "", values: [] }];
 
+    filters.forEach((filter, index) => {
+      const defaultValue = searchParams.get(filter.title);
+      if (defaultValue) {
+        const itemNamesArray = defaultValue.split(",").filter(
+          (v) =>
+            filter.type !== "price" &&
+            ((filter.type === "rating" &&
+              !isNaN(parseInt(v)) &&
+              filter.values.includes(parseInt(v))) ||
+              (filter.type !== "rating" && filter.values.includes(v)))
+        );
+    
         if (itemNamesArray.length > 0) {
-          result = result.concat(itemNamesArray);
+          result.push({ title: filter.title, values: itemNamesArray });
         } else {
           searchParams.set(filter.title, undefined);
         }
       }
     });
+
     return result;
   });
   //#endregion
@@ -51,11 +59,64 @@ export const FilterCardVariationMobile = ({ categoryId, filters }: { categoryId:
   //#region indicatorCheckedFilterCount
   const [indicatorCount, setIndicatorCount] = useState<number>(() => {
     if (data) {
-      return data?.length;
+      return data?.reduce((total, item) => total + item.values.length, 0);
     }
     return 0;
   });
   //#endregion
+
+  const filterParamsChange = (titleItems: string, checkedItems: string[]) => {
+
+    setDataParamsChange({title: titleItems, values: checkedItems});
+
+    setData((prevData) => {
+      if (!prevData) {
+        return [{ title: titleItems, values: checkedItems }];
+      }
+
+      const index = prevData.findIndex((item) => item.title === titleItems);
+      if (index !== -1)
+      {
+        const updatedItem = {
+          ...prevData[index],
+          values: checkedItems,
+        };
+        return [...prevData.slice(0, index), updatedItem, ...prevData.slice(index + 1)];
+      }
+      else
+      {
+        const newItem = { title: titleItems, values: checkedItems };
+        return [...prevData, newItem];
+      }
+    });
+
+  };
+
+  useEffect(() => {
+
+    if(dataParamsChange)
+    {
+      const params = searchParams.get(dataParamsChange.title);
+      if(params)
+      {
+        if(dataParamsChange.values.length !== 0)
+          searchParams.set(dataParamsChange.title, dataParamsChange.values.join(","));
+        else
+          searchParams.set(dataParamsChange.title, undefined);
+      }
+      else
+      {
+        if(dataParamsChange.values.length !== 0)
+          searchParams.set(dataParamsChange.title, dataParamsChange.values.join(","));
+        else
+          setDataParamsChange(undefined);
+      }
+    }
+
+    const newCount = data?.reduce((total, item) => total + item.values.length, 0);
+    setIndicatorCount(newCount ? newCount : 0);
+
+  }, [filterParamsChange])
 
   return (
     <>
@@ -92,15 +153,15 @@ export const FilterCardVariationMobile = ({ categoryId, filters }: { categoryId:
               </div>
             </div>
             <div className="flex max-h-[100px] mt-2 gap-1">
-              <ScrollArea className="flex h-full gap-2 items-start">
-                { data &&
-                  data.map((item, index) => (
-                    <Button key={index} variant="ghost" className="bg-gray-300 justify-between m-[2px]">
-                      <span>{item}</span>
+              <ScrollArea className="flex w-full h-full gap-2 items-start">
+                {data && data.map((item, index) =>
+                  item.values.map((value, valueIndex) => (
+                    <Button key={index + "_" + valueIndex} variant="ghost" className="bg-gray-300 justify-between m-[2px]">
+                      <span>{value}</span>
                       <XIcon />
                     </Button>
                   ))
-                }
+                )}
               </ScrollArea>
             </div>
             <hr className="mt-1 border-gray-400 border-y"></hr>
@@ -108,7 +169,7 @@ export const FilterCardVariationMobile = ({ categoryId, filters }: { categoryId:
           <DrawerHeader>
             <ScrollArea>
               <div className="max-h-[400px]">
-                <FilterCardVariation filters={filters} isOpen={false} />
+                <FilterCardVariation filters={filters} isOpen={false} onFilterParamsChange={filterParamsChange}/>
               </div>
             </ScrollArea>
           </DrawerHeader>
