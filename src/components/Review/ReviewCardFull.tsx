@@ -12,7 +12,6 @@ import { ReviewTags } from "./ReviewTags";
 import { getRatesCountString } from "@/lib/review";
 import { useScreenSize } from "@/lib/media";
 import { Drawer, DrawerClose, DrawerContent } from "../ui/drawer";
-import ClientOnlyPortal from "../ClientOnlyPortal";
 import {
   Carousel,
   CarouselContent,
@@ -53,7 +52,7 @@ export const ReviewCardFull = ({
     return (
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent
-          className="sm:max-w-2xl w-full flex flex-col"
+          className="sm:max-w-full w-[40vw] flex flex-col"
           hideClose={true}
         >
           <div className="flex flex-col gap-6 grow">
@@ -68,6 +67,9 @@ export const ReviewCardFull = ({
             <ReviewBody review={review} />
             <ReviewFooter review={review} />
           </div>
+          {!!review.images?.length && (
+            <ReviewImageCarouselDesktop images={review.images} />
+          )}
         </SheetContent>
       </Sheet>
     );
@@ -89,43 +91,10 @@ export const ReviewCardFull = ({
             <ReviewFooter review={review} />
           </div>
           {!!review.images?.length && (
-            <div className="fixed top-0 left-0 right-0 -translate-y-full overflow-hidden">
-              <Carousel
-                opts={{
-                  align: "center",
-                }}
-              >
-                <CarouselContent>
-                  {review.images.map((img, index) => {
-                    return (
-                      <CarouselItem
-                        className="max-h-[55vh] h-screen py-3"
-                        key={index}
-                      >
-                        <div className="h-full relative">
-                          <Image
-                            src={img}
-                            alt="Placeholder"
-                            fill={true}
-                            className="object-cover"
-                          />
-                        </div>
-                      </CarouselItem>
-                    );
-                  })}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            </div>
+            <ReviewImageCarouselMobile images={review.images} />
           )}
         </DrawerContent>
       </Drawer>
-      {/* {isOpen && review.images?.length && (
-        <ClientOnlyPortal selector="body">
-          
-        </ClientOnlyPortal>
-      )} */}
     </>
   );
 };
@@ -139,6 +108,10 @@ interface HeaderControlsProps {
   hasNext: boolean;
   onPrev: () => void;
   onNext: () => void;
+}
+
+interface ReviewImageCarouselProps {
+  images: string[];
 }
 
 interface ReviewHeaderProps extends BasePartProps, HeaderControlsProps {}
@@ -169,6 +142,69 @@ const HeaderControls = ({
   );
 };
 
+const ReviewImageCarouselDesktop = ({ images }: ReviewImageCarouselProps) => {
+  return (
+    // width + parent padding
+    <div className="fixed top-0 bottom-0 -translate-x-[calc(60vw+1.5rem)] w-[60vw] px-6">
+      <Carousel
+        opts={{
+          align: "center",
+        }}
+      >
+        <CarouselContent>
+          {images.map((img, index) => {
+            return (
+              <CarouselItem className="h-screen py-[15%] w-full" key={index}>
+                <div className="h-full w-full mx-auto relative">
+                  <Image
+                    src={img}
+                    alt="Placeholder"
+                    fill={true}
+                    className="object-cover"
+                  />
+                </div>
+              </CarouselItem>
+            );
+          })}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
+  );
+};
+
+const ReviewImageCarouselMobile = ({ images }: ReviewImageCarouselProps) => {
+  return (
+    <div className="fixed top-0 left-0 right-0 -translate-y-full">
+      <Carousel
+        opts={{
+          align: "center",
+        }}
+      >
+        <CarouselContent>
+          {images.map((img, index) => {
+            return (
+              <CarouselItem className="max-h-[55vh] h-screen py-3" key={index}>
+                <div className="h-full relative">
+                  <Image
+                    src={img}
+                    alt="Placeholder"
+                    fill={true}
+                    className="object-cover"
+                  />
+                </div>
+              </CarouselItem>
+            );
+          })}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
+  );
+};
+
 const ReviewHeaderDesktop = ({
   review,
   hasPrev,
@@ -183,9 +219,9 @@ const ReviewHeaderDesktop = ({
           <AvatarImage src={review.user.avatar} />
           <AvatarFallback>{textAvatar(review.user.fullName)}</AvatarFallback>
         </Avatar>
-        <div>
+        <div className="text-sm xl:text-base">
           <span>{review.user.fullName}</span>
-          <div className="flex items-center gap-2 h-5 text-base">
+          <div className="flex items-center gap-2 h-5">
             <span>{review.user.location}</span>
             <Separator orientation="vertical" />
             <span>{formatReviewDate(review.createdAt)}</span>
