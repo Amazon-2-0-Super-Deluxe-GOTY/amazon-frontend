@@ -14,9 +14,11 @@ import { getRatesCountString } from "@/lib/review";
 export const ReviewCard = ({
   review,
   onClick,
+  onImageClick,
 }: {
   review: Review;
   onClick?: () => void;
+  onImageClick?: (imageIndex: number) => void;
 }) => {
   const maxImages = 5;
   const starsElements = React.useMemo(() => {
@@ -77,6 +79,7 @@ export const ReviewCard = ({
         <ImagesList
           images={review.images.slice(0, maxImages)}
           imagesLeft={review.images.length - maxImages}
+          onClick={onImageClick}
         />
       )}
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-2">
@@ -97,9 +100,11 @@ export const ReviewCard = ({
 const ImagesList = ({
   images,
   imagesLeft,
+  onClick,
 }: {
   images: string[];
   imagesLeft?: number;
+  onClick?: (index: number) => void;
 }) => {
   return (
     <div className="mb-6 flex gap-4 overflow-y-auto">
@@ -113,6 +118,7 @@ const ImagesList = ({
             fill={true}
             alt="Placeholder"
             className="object-cover"
+            onClick={() => onClick?.(i)}
           />
           {!!imagesLeft && imagesLeft > 0 && i + 1 === images.length && (
             <div className="absolute inset-0 bg-black/60 flex justify-center items-center">

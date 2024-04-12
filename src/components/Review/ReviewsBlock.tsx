@@ -15,6 +15,7 @@ export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
   const [openedReviewIndex, setOpenedReviewIndex] = useState<
     number | undefined
   >();
+  const [startImageIndex, setStartImageIndex] = useState(0);
   const isFullOpen = openedReviewIndex !== undefined;
 
   const hasPrev = useMemo(() => {
@@ -28,15 +29,20 @@ export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
 
   const createOnCardClick = (index: number) => () =>
     setOpenedReviewIndex(index);
-  const closeFullView = () => setOpenedReviewIndex(undefined);
+  const closeFullView = () => {
+    setOpenedReviewIndex(undefined);
+    setStartImageIndex(0);
+  };
   const toPrev = () => {
     if (hasPrev && openedReviewIndex !== undefined) {
       setOpenedReviewIndex(openedReviewIndex - 1);
+      setStartImageIndex(0);
     }
   };
   const toNext = () => {
     if (hasNext && openedReviewIndex !== undefined) {
       setOpenedReviewIndex(openedReviewIndex + 1);
+      setStartImageIndex(0);
     }
   };
 
@@ -62,7 +68,12 @@ export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
         <div className="space-y-3 lg:space-y-8">
           {reviewsFiltered.length ? (
             reviewsFiltered.map((r, i) => (
-              <ReviewCard review={r} onClick={createOnCardClick(i)} key={i} />
+              <ReviewCard
+                review={r}
+                onClick={createOnCardClick(i)}
+                onImageClick={setStartImageIndex}
+                key={i}
+              />
             ))
           ) : (
             <p className="text-center text-gray-600">No reviews</p>
@@ -72,6 +83,7 @@ export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
       <ReviewCardFull
         review={reviewsFiltered[openedReviewIndex ?? 0]}
         isOpen={isFullOpen}
+        startImageIndex={startImageIndex}
         hasPrev={hasPrev}
         hasNext={hasNext}
         onPrev={toPrev}

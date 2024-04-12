@@ -31,6 +31,7 @@ import Image from "next/image";
 interface ReviewCardProps {
   review?: Review;
   isOpen: boolean;
+  startImageIndex: number;
   hasPrev: boolean;
   hasNext: boolean;
   onPrev: () => void;
@@ -40,6 +41,7 @@ interface ReviewCardProps {
 
 export const ReviewCardFull = ({
   isOpen,
+  startImageIndex,
   review,
   hasPrev,
   hasNext,
@@ -88,6 +90,7 @@ export const ReviewCardFull = ({
               images={review.images}
               isImageExpanded={isImageExpanded}
               onToggle={onImageExpandToggle}
+              startImageIndex={startImageIndex}
             />
           )}
         </SheetContent>
@@ -111,7 +114,10 @@ export const ReviewCardFull = ({
             <ReviewFooter review={review} />
           </div>
           {!!review.images?.length && (
-            <ReviewImageCarouselMobile images={review.images} />
+            <ReviewImageCarouselMobile
+              images={review.images}
+              startImageIndex={startImageIndex}
+            />
           )}
         </DrawerContent>
       </Drawer>
@@ -132,6 +138,7 @@ interface HeaderControlsProps {
 
 interface ReviewImageCarouselProps {
   images: string[];
+  startImageIndex: number;
 }
 
 interface ReviewImageCarouselDesktopProps extends ReviewImageCarouselProps {
@@ -171,6 +178,7 @@ const ReviewImageCarouselDesktop = ({
   images,
   isImageExpanded,
   onToggle,
+  startImageIndex,
 }: ReviewImageCarouselDesktopProps) => {
   return (
     // calc(width + parent padding)
@@ -185,6 +193,7 @@ const ReviewImageCarouselDesktop = ({
       <Carousel
         opts={{
           align: "center",
+          startIndex: startImageIndex,
         }}
       >
         <CarouselContent>
@@ -222,12 +231,16 @@ const ReviewImageCarouselDesktop = ({
   );
 };
 
-const ReviewImageCarouselMobile = ({ images }: ReviewImageCarouselProps) => {
+const ReviewImageCarouselMobile = ({
+  images,
+  startImageIndex,
+}: ReviewImageCarouselProps) => {
   return (
     <div className="fixed top-0 left-0 right-0 -translate-y-full">
       <Carousel
         opts={{
           align: "center",
+          startIndex: startImageIndex,
         }}
       >
         <CarouselContent>
