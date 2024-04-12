@@ -3,8 +3,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Sheet, SheetClose, SheetContent } from "../ui/sheet";
 import type { Review } from "./types";
 import { Separator } from "../ui/separator";
-import React from "react";
-import { ChevronLeft, ChevronRight, StarIcon, X } from "lucide-react";
+import React, { useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  StarIcon,
+  X,
+} from "lucide-react";
 import clsx from "clsx";
 import { formatReviewDate } from "@/lib/date";
 import { Button } from "../ui/button";
@@ -41,9 +48,15 @@ export const ReviewCardFull = ({
   closeModal,
 }: ReviewCardProps) => {
   const isDesktop = useScreenSize({ minSize: "lg" });
+  const [isImageExpanded, setIsImageExpanded] = useState(false);
+
+  const onImageExpandToggle = () => setIsImageExpanded((v) => !v);
 
   const onOpenChange = (value: boolean) => {
-    if (!value) closeModal();
+    if (!value) {
+      closeModal();
+      setIsImageExpanded(false);
+    }
   };
 
   if (!review) return null;
@@ -52,7 +65,10 @@ export const ReviewCardFull = ({
     return (
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent
-          className="sm:max-w-full w-[40vw] flex flex-col"
+          className={clsx(
+            "sm:max-w-full w-[40vw] flex flex-col transition-transform",
+            isImageExpanded && "translate-x-full"
+          )}
           hideClose={true}
         >
           <div className="flex flex-col gap-6 grow">
@@ -68,7 +84,11 @@ export const ReviewCardFull = ({
             <ReviewFooter review={review} />
           </div>
           {!!review.images?.length && (
-            <ReviewImageCarouselDesktop images={review.images} />
+            <ReviewImageCarouselDesktop
+              images={review.images}
+              isImageExpanded={isImageExpanded}
+              onToggle={onImageExpandToggle}
+            />
           )}
         </SheetContent>
       </Sheet>
@@ -114,6 +134,11 @@ interface ReviewImageCarouselProps {
   images: string[];
 }
 
+interface ReviewImageCarouselDesktopProps extends ReviewImageCarouselProps {
+  isImageExpanded: boolean;
+  onToggle: () => void;
+}
+
 interface ReviewHeaderProps extends BasePartProps, HeaderControlsProps {}
 
 const HeaderControls = ({
@@ -142,10 +167,21 @@ const HeaderControls = ({
   );
 };
 
-const ReviewImageCarouselDesktop = ({ images }: ReviewImageCarouselProps) => {
+const ReviewImageCarouselDesktop = ({
+  images,
+  isImageExpanded,
+  onToggle,
+}: ReviewImageCarouselDesktopProps) => {
   return (
-    // width + parent padding
-    <div className="fixed top-0 bottom-0 -translate-x-[calc(60vw+1.5rem)] w-[60vw] px-6">
+    // calc(width + parent padding)
+    <div
+      className={clsx(
+        "fixed top-0 bottom-0",
+        isImageExpanded
+          ? "inset-0 w-screen px-[15%] -translate-x-full"
+          : "w-[60vw] -translate-x-[calc(60vw+1.5rem)] px-6"
+      )}
+    >
       <Carousel
         opts={{
           align: "center",
@@ -154,7 +190,13 @@ const ReviewImageCarouselDesktop = ({ images }: ReviewImageCarouselProps) => {
         <CarouselContent>
           {images.map((img, index) => {
             return (
-              <CarouselItem className="h-screen py-[15%] w-full" key={index}>
+              <CarouselItem
+                className={clsx(
+                  "h-screen w-full",
+                  isImageExpanded ? "py-6" : "py-[15%]"
+                )}
+                key={index}
+              >
                 <div className="h-full w-full mx-auto relative">
                   <Image
                     src={img}
@@ -170,6 +212,12 @@ const ReviewImageCarouselDesktop = ({ images }: ReviewImageCarouselProps) => {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
+      <button
+        className="absolute top-6 right-6 w-10 h-10 bg-white rounded-full flex justify-center items-center"
+        onClick={onToggle}
+      >
+        {isImageExpanded ? <ChevronsLeftIcon /> : <ChevronsRightIcon />}
+      </button>
     </div>
   );
 };
