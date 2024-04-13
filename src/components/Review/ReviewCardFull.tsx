@@ -63,6 +63,8 @@ export const ReviewCardFull = ({
 
   if (!review) return null;
 
+  const withImages = !!review.images?.length;
+
   if (isDesktop) {
     return (
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -85,9 +87,9 @@ export const ReviewCardFull = ({
             <ReviewBody review={review} />
             <ReviewFooter review={review} />
           </div>
-          {!!review.images?.length && (
+          {withImages && (
             <ReviewImageCarouselDesktop
-              images={review.images}
+              images={review.images!}
               isImageExpanded={isImageExpanded}
               onToggle={onImageExpandToggle}
               startImageIndex={startImageIndex}
@@ -101,7 +103,7 @@ export const ReviewCardFull = ({
   return (
     <>
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
-        <DrawerContent className="h-[45vh]">
+        <DrawerContent className={withImages ? "h-[45vh]" : "h-[63vh]"}>
           <div className="px-4 py-3 h-full flex flex-col gap-3 overflow-y-auto">
             <ReviewHeaderMobile
               review={review}
@@ -113,9 +115,9 @@ export const ReviewCardFull = ({
             <ReviewBody review={review} />
             <ReviewFooter review={review} />
           </div>
-          {!!review.images?.length && (
+          {withImages && (
             <ReviewImageCarouselMobile
-              images={review.images}
+              images={review.images!}
               startImageIndex={startImageIndex}
             />
           )}
