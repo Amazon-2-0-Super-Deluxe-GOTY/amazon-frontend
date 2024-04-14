@@ -43,7 +43,7 @@ import {
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { ProductCard } from "@/components/Product/ProductCard";
 import { FilterCardVariationMobile } from "@/components/ProductByCategoryPage/FilterCardVariationMobile";
-import { FilterItem } from "@/components/ProductByCategoryPage/filtersDataTypes";
+import { FilterItem, FilterCheckedType } from "@/components/ProductByCategoryPage/filtersDataTypes";
 import { MediaQueryCSS } from "@/components/MediaQuery";
 import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
 
@@ -166,7 +166,6 @@ export default function CategoryPage({
   params: { categoryId: string };
 }) {
   const searchParams = useSearchParamsTools();
-  const [dataParamsChange, setDataParamsChange] = useState<{ title: string; values: string[] } | undefined>();
 
   //#region ButtonDefaultCardTemplateClick
   const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] =
@@ -180,19 +179,17 @@ export default function CategoryPage({
   //#endregion
 
   //#region CheckedParams
-  const [data, setData] = useState<{ title: string; values: string[] }[] | undefined>(() => {
-    let result: { title: string; values: string[] }[] = [{ title: "", values: [] }];
+  const [checkedItems, setCheckedItems] = useState<FilterCheckedType>(() => {
+    let result: FilterCheckedType = [];
 
     FiltersData.forEach((filter, index) => {
       const defaultValue = searchParams.get(filter.title);
       if (defaultValue) {
         const itemNamesArray = defaultValue.split(",").filter(
           (v) =>
-            filter.type !== "price" &&
-            ((filter.type === "rating" &&
-              !isNaN(parseInt(v)) &&
-              filter.values.includes(parseInt(v))) ||
-              (filter.type !== "rating" && filter.values.includes(v)))
+            (filter.type === "price" && (filter.values.min.toString() === v || filter.values.max.toString() === v)) || 
+            (filter.type === "rating" && !isNaN(parseInt(v)) && filter.values.includes(parseInt(v))) ||
+            (filter.type !== "rating" && filter.type !== "price" && filter.values.includes(v))
         );
     
         if (itemNamesArray.length > 0) {
@@ -203,71 +200,32 @@ export default function CategoryPage({
       }
     });
 
-    return result;
-  });
+    return result;}
+  );
   //#endregion
 
   //#region indicatorCheckedFilterCount
   const [indicatorCount, setIndicatorCount] = useState<number>(() => {
-    if (data) {
-      return data?.reduce((total, item) => total + item.values.length, 0);
+    if (checkedItems) {
+      return checkedItems?.reduce((total, item) => total + item.values.length, 0);
     }
     return 0;
   });
-  //#endregion
-
-  const filterParamsChange = (titleItems: string, checkedItems: string[]) => {
-
-    setDataParamsChange({title: titleItems, values: checkedItems});
-
-    setData((prevData) => {
-      if (!prevData) {
-        return [{ title: titleItems, values: checkedItems }];
-      }
-
-      const index = prevData.findIndex((item) => item.title === titleItems);
-      if (index !== -1)
-      {
-        const updatedItem = {
-          ...prevData[index],
-          values: checkedItems,
-        };
-        return [...prevData.slice(0, index), updatedItem, ...prevData.slice(index + 1)];
-      }
-      else
-      {
-        const newItem = { title: titleItems, values: checkedItems };
-        return [...prevData, newItem];
-      }
-    });
-
-  };
 
   useEffect(() => {
-
-    if(dataParamsChange)
-    {
-      const params = searchParams.get(dataParamsChange.title);
-      if(params)
-      {
-        if(dataParamsChange.values.length !== 0)
-          searchParams.set(dataParamsChange.title, dataParamsChange.values.join(","));
-        else
-          searchParams.set(dataParamsChange.title, undefined);
-      }
-      else
-      {
-        if(dataParamsChange.values.length !== 0)
-          searchParams.set(dataParamsChange.title, dataParamsChange.values.join(","));
-        else
-          setDataParamsChange(undefined);
-      }
-    }
-
-    const newCount = data?.reduce((total, item) => total + item.values.length, 0);
+    const newCount = checkedItems?.reduce((total, item) => total + item.values.length, 0);
     setIndicatorCount(newCount ? newCount : 0);
+  }, [checkedItems]);
+  //#endregion
 
-  }, [filterParamsChange])
+  const clearAllFilters = () => {
+    setCheckedItems([]);
+  };
+
+  const uncheckFilter = (titleItem: string, checkedItem: string) => {
+    // ...
+  };
+
 
   useEffect(() => {
     if (params.categoryId) {
@@ -320,7 +278,7 @@ export default function CategoryPage({
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <MediaQueryCSS minSize="lg">
           <div className="flex flex-col gap-2 w-80">
-            <FilterCardVariation filters={FiltersData} onFilterParamsChange={filterParamsChange} />
+            <FilterCardVariation filters={FiltersData} checkedItems={checkedItems} setCheckedItems={setCheckedItems} />
           </div>
         </MediaQueryCSS>
         <div className="grow">
@@ -329,6 +287,8 @@ export default function CategoryPage({
               <FilterCardVariationMobile
                 categoryId={params.categoryId}
                 filters={FiltersData}
+                checkedItems={checkedItems} 
+                setCheckedItems={setCheckedItems} 
               />
             </MediaQueryCSS>
             <MediaQueryCSS minSize="lg">
@@ -348,8 +308,8 @@ export default function CategoryPage({
                     <div className="p-3">
                       <ScrollArea>
                         <ul className="list-none p-0 m-0 max-h-[230px]">
-                          {data &&
-                          data.map((item, index) => (
+                          {checkedItems &&
+                          checkedItems.map((item, index) => (
                             <ul key={index}>
                               {item.values.map((value, valueIndex) => (
                                 <li key={valueIndex} className="flex items-center space-x-2 pb-1">
@@ -357,6 +317,7 @@ export default function CategoryPage({
                                     key={valueIndex}
                                     variant="ghost"
                                     className="bg-gray-300 justify-between flex gap-2"
+                                    onClick={() => { uncheckFilter(item.title, value) }}
                                   >
                                     <span>{value}</span>
                                     <XIcon />
@@ -368,10 +329,11 @@ export default function CategoryPage({
                         </ul>
                       </ScrollArea>
                       <hr className="my-4 border-gray-400 border-y"></hr>
-                      <Button variant={"ghost"} asChild >
-                        <Link href={`/category/${params.categoryId}`}>
-                          Clear all
-                        </Link>
+                      <Button 
+                        variant={"ghost"} 
+                        onClick={clearAllFilters}
+                      >
+                        <Link href={`/category/${params.categoryId}`} >Clear all</Link>
                       </Button>
                     </div>
                   </SelectContent>

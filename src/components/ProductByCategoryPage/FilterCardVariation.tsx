@@ -5,7 +5,7 @@ import RatingFillStar from "@/../public/Icons/RatingFillStar.svg";
 import RatingLineStar from "@/../public/Icons/RatingLineStar.svg";
 
 import { Checkbox } from "../ui/checkbox";
-import { FilterCheckboxItem, FilterTilesItem, FilterPriceItem, FilterRatingItem, FilterItem } from "./filtersDataTypes";
+import { FilterCheckboxItem, FilterTilesItem, FilterPriceItem, FilterRatingItem, FilterItem, FilterCheckedType } from "./filtersDataTypes";
 import {
   Accordion,
   AccordionContent,
@@ -20,10 +20,11 @@ import { Button } from "../ui/button";
 import { DoubleThumbSlider } from "../ui/slider";
 import { MediaQueryCSS } from "../MediaQuery";
 
-export const FilterCardVariation = ({ filters, onFilterParamsChange, isOpen = true }: { filters: FilterItem[], onFilterParamsChange: (title: string, checkedItems: string[]) => void, isOpen?: boolean }) => {
+
+export const FilterCardVariation = ({ filters, checkedItems, setCheckedItems, isOpen = true }: 
+  { filters: FilterItem[], checkedItems: FilterCheckedType, setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>, isOpen?: boolean }) => {
   
   const [searchTextArray, setSearchTextArray] = useState<string[]>(filters.map(() => ''));
-
   const handleSearchTextChange = (index: number, value: string) => {
     const updatedSearchTextArray = [...searchTextArray];
     updatedSearchTextArray[index] = value.toLowerCase();
@@ -49,13 +50,13 @@ export const FilterCardVariation = ({ filters, onFilterParamsChange, isOpen = tr
                   {(() => {
                     switch (filter.type) {
                       case "checkbox":
-                        return <FilterCheckbox data={filter} searchText={searchTextArray[i]} onFilterParamsChange={onFilterParamsChange} />;
+                        return <FilterCheckbox data={filter} searchText={searchTextArray[i]} checkedItems={checkedItems.filter((v) => v.title === filter.title)} setCheckedItems={setCheckedItems} />;
                       case "tiles":
-                        return <FilterTiles data={filter} searchText={searchTextArray[i]} onFilterParamsChange={onFilterParamsChange} />;
+                        return <FilterTiles data={filter} searchText={searchTextArray[i]} checkedItems={checkedItems.filter((v) => v.title === filter.title)} setCheckedItems={setCheckedItems} />;
                       case "price":
-                        return <FilterPrice data={filter} />;
+                        return <FilterPrice data={filter} checkedItems={checkedItems.filter((v) => v.title === filter.title)} setCheckedItems={setCheckedItems} />;
                       case "rating":
-                        return <FilterRating data={filter} onFilterParamsChange={onFilterParamsChange} />;
+                        return <FilterRating data={filter} checkedItems={checkedItems.filter((v) => v.title === filter.title)} setCheckedItems={setCheckedItems} />;
 
                       default:
                         return null;
@@ -74,30 +75,56 @@ export const FilterCardVariation = ({ filters, onFilterParamsChange, isOpen = tr
   ));
 };
 
-const FilterCheckbox = ({ data, onFilterParamsChange, searchText }: { data: FilterCheckboxItem, onFilterParamsChange: (title: string, checkedItems: string[]) => void, searchText: string }) => {
+const FilterCheckbox = ({ data, checkedItems, setCheckedItems, searchText }: { data: FilterCheckboxItem, checkedItems: FilterCheckedType, setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>, searchText: string }) => {
   const searchParams = useSearchParamsTools();
-  const [checkedItems, setCheckedItems] = useState<string[]>(() => {
-    const defaultValue = searchParams.get(data.title);
-
-    if (defaultValue) {
-      return defaultValue.split(",").filter((v) => data.values.includes(v));
-    }
-
-    return [];
-  });
 
   const onToggle = (value: string) => () => {
-    const isChecked = checkedItems.includes(value);
+    if(value.length <= 0) return;
+
+    const isChecked = checkedItems.some(item => item.title === data.title && item.values.includes(value));
     if (isChecked) {
-      setCheckedItems((items) => items.filter((v) => v !== value));
+      setCheckedItems(prevItems => prevItems.map(item =>
+        item.title === data.title
+          ? { ...item, values: item.values.filter(val => val !== value) }
+          : item
+      ));
     } else {
-      setCheckedItems((items) => [...items, value]);
+      setCheckedItems(prevItems => [
+        ...prevItems.filter(item => item.title !== data.title),
+        { title: data.title, values: [...prevItems.find(item => item.title === data.title)?.values || [], value] }
+      ]);
     }
   };
 
+  const setSearchParams = () => {
+    const items = checkedItems.find((v) => v.title === data.title);
+    if (!items) return;
+
+    const params = searchParams.get(items.title);
+    if (params)
+    {
+      // console.log("------------------------------------------");
+      // console.log("params : " + params);
+      // console.log("items : " + items.title + "===" + items.values);
+      if(items.values.length !== 0) {
+        // console.log("1");
+        searchParams.set(items.title, items.values.join(",")); }
+      else {
+        // console.log("2");
+        searchParams.set(items.title, undefined); }
+    }
+    else
+    {
+      // console.log("items : " + items.title + "===" + items.values);
+      if(items.values.length !== 0) {
+        // console.log("3");
+        searchParams.set(items.title, items.values.join(","));
+    }}
+  };
+
   useEffect(() => {
-    onFilterParamsChange(data.title, checkedItems);
-  }, [checkedItems]);
+    setSearchParams();
+  }, [onToggle]);
 
   return (
     <ul>
@@ -105,7 +132,7 @@ const FilterCheckbox = ({ data, onFilterParamsChange, searchText }: { data: Filt
         <li key={index} className="flex items-center space-x-2 pb-1" onClick={onToggle(item)}>
             <Checkbox
               id={item + index}
-              checked={checkedItems.includes(item)}
+              checked={checkedItems.some(_item => _item.title === data.title && _item.values.includes(item))}
             />
             <label className="text-base" htmlFor={item + index}>
               {item}
@@ -116,31 +143,49 @@ const FilterCheckbox = ({ data, onFilterParamsChange, searchText }: { data: Filt
   );
 };
 
-const FilterTiles = ({ data, onFilterParamsChange, searchText }: { data: FilterTilesItem, onFilterParamsChange: (title: string, checkedItems: string[]) => void, searchText: string }) => {
+const FilterTiles = ({ data, checkedItems, setCheckedItems, searchText }: { data: FilterTilesItem, checkedItems: FilterCheckedType, setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>, searchText: string }) => {
   const searchParams = useSearchParamsTools();
-  const [checkedItems, setCheckedItems] = useState<string[]>(() => {
-    const defaultValue = searchParams.get(data.title);
-
-    if (defaultValue) {
-      return defaultValue.split(",").filter((v) => data.values.includes(v));
-    }
-
-    return [];
-  });
 
   const onToggle = (value: string) => () => {
-    const isChecked = checkedItems.includes(value);
+    if(value.length <= 0) return;
 
+    const isChecked = checkedItems.some(item => item.title === data.title && item.values.includes(value));
     if (isChecked) {
-      setCheckedItems((items) => items.filter((v) => v !== value));
+      setCheckedItems(prevItems => prevItems.map(item =>
+        item.title === data.title
+          ? { ...item, values: item.values.filter(val => val !== value) }
+          : item
+      ));
     } else {
-      setCheckedItems((items) => [...items, value]);
+      setCheckedItems(prevItems => [
+        ...prevItems.filter(item => item.title !== data.title),
+        { title: data.title, values: [...prevItems.find(item => item.title === data.title)?.values || [], value] }
+      ]);
+    }
+  };
+
+  const setSearchParams = () => {
+    const items = checkedItems.find((v) => v.title === data.title);
+    if (!items) return;
+
+    const params = searchParams.get(items.title);
+    if (params)
+    {
+      if(items.values.length !== 0)
+        searchParams.set(items.title, items.values.join(","));
+      else
+        searchParams.set(items.title, undefined);
+    }
+    else
+    {
+      if(items.values.length !== 0)
+        searchParams.set(items.title, items.values.join(","));
     }
   };
 
   useEffect(() => {
-    onFilterParamsChange(data.title, checkedItems);
-  }, [checkedItems]);
+    setSearchParams();
+  }, [onToggle]);
 
   return (
     <>
@@ -155,7 +200,7 @@ const FilterTiles = ({ data, onFilterParamsChange, searchText }: { data: FilterT
             value={item}
             aria-label={"Toggle" + item}
             className="border-black border-[1.5px]"
-            data-state={checkedItems.includes(item) ? "on" : "off"} 
+            data-state={checkedItems.some(_item => _item.title === data.title && _item.values.includes(item)) ? "on" : "off"} 
             onClick={onToggle(item)}
           >
             {item}
@@ -166,7 +211,7 @@ const FilterTiles = ({ data, onFilterParamsChange, searchText }: { data: FilterT
   );
 };
 
-const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
+const FilterPrice = ({ data, checkedItems, setCheckedItems }: { data: FilterPriceItem, checkedItems: FilterCheckedType, setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>> }) => {
   const searchParams = useSearchParamsTools();
   const [priceValue, setPriceValue] = useState<{ min:number, max:number }>(() => {
     const defaultValue = searchParams.get(data.title);
@@ -185,24 +230,48 @@ const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
 
   const onInputMinValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMin = parseFloat(event.target.value);
-    setPriceValue(prevValue => ({ ...prevValue, min: newMin }));
+    if(newMin)
+      setPriceValue(prevValue => ({ ...prevValue, min: newMin }));
   };
   const onInputMaxValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMax = parseFloat(event.target.value);
-    setPriceValue(prevValue => ({ ...prevValue, max: newMax }));
+    if(newMax)
+      setPriceValue(prevValue => ({ ...prevValue, max: newMax }));
   };
 
   const onSliderValueChange = (value: number[]) => {
     setPriceValue(prevValue => ({ ...prevValue, min: value[0], max: value[1] }));
   };
 
-  useEffect(() => {
-    searchParams.set(data.title, priceValue.min + "," + priceValue.max);
-  }, [priceValue.min, priceValue.max, data.title, searchParams]);
-
   const savePriceChange = () => {
-    // ...
+    setCheckedItems(prevItems => prevItems.map(item =>
+      item.title === data.title
+        ? { ...item, values: [ priceValue.min + "," + priceValue.max ] }
+        : item
+    ));
+    console.log([ priceValue.min + "-" + priceValue.max ] );
   };
+
+  const setSearchParams = () => {
+
+    const params = searchParams.get(data.title);
+    if (params)
+    {
+      if(priceValue.min && priceValue.max)
+        searchParams.set(data.title, priceValue.min + "," + priceValue.max);
+      else
+        searchParams.set(data.title, undefined);
+    }
+    else
+    {
+      if(priceValue.min && priceValue.max)
+        searchParams.set(data.title, priceValue.min + "," + priceValue.max);
+    }
+  };
+  
+  useEffect(() => {
+    setSearchParams();
+  }, [checkedItems]);
 
   return (
     <div className="h-full overflow-hidden mt-3">
@@ -216,6 +285,7 @@ const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
           <Button 
             variant={"ghost"} 
             className="bg-gray-300"
+            onClick={savePriceChange}
           >
             Save
           </Button>
@@ -224,6 +294,7 @@ const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
       <div className="h-[20px]">
         <DoubleThumbSlider 
           defaultValue={[priceValue.min, priceValue.max]} 
+          value={[priceValue.min, priceValue.max]}
           max={data.values.max} 
           min={data.values.min} 
           step={1} minStepsBetweenThumbs={1}
@@ -233,41 +304,56 @@ const FilterPrice = ({ data }: { data: FilterPriceItem }) => {
   );
 };
 
-const FilterRating = ({ data, onFilterParamsChange }: { data: FilterRatingItem, onFilterParamsChange: (title: string, checkedItems: string[]) => void }) => {
+const FilterRating = ({ data, checkedItems, setCheckedItems }: { data: FilterRatingItem, checkedItems: FilterCheckedType, setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>> }) => {
   const searchParams = useSearchParamsTools();
-  const [checkedItems, setCheckedItems] = useState<number[]>(() => {
-    const defaultValue = searchParams.get(data.title);
 
-    if (defaultValue) {
-      return defaultValue.split(",").map((v) => parseInt(v)).filter((v) => !isNaN(v) && data.values.includes(v));
-    }
+  const onToggle = (value: string) => () => {
+    if(value.length <= 0) return;
 
-    return [];
-  });
-
-  const onToggle = (value: number) => () => {
-    const isChecked = checkedItems.includes(value);
-
+    const isChecked = checkedItems.some(item => item.title === data.title && item.values.includes(value));
     if (isChecked) {
-      setCheckedItems((items) => items.filter((v) => v !== value));
+      setCheckedItems(prevItems => prevItems.map(item =>
+        item.title === data.title
+          ? { ...item, values: item.values.filter(val => val !== value) }
+          : item
+      ));
     } else {
-      setCheckedItems((items) => [...items, value]);
+      setCheckedItems(prevItems => [
+        ...prevItems.filter(item => item.title !== data.title),
+        { title: data.title, values: [...prevItems.find(item => item.title === data.title)?.values || [], value] }
+      ]);
     }
   };
 
-  
-  useEffect(() => {
-    const checkedItemsAsString = checkedItems.map((item) => item.toString());
-    onFilterParamsChange(data.title, checkedItemsAsString);
-  }, [checkedItems]);
+  const setSearchParams = () => {
+    const items = checkedItems.find((v) => v.title === data.title);
+    if (!items) return;
 
+    const params = searchParams.get(items.title);
+    if (params)
+    {
+      if(items.values.length !== 0)
+        searchParams.set(items.title, items.values.join(","));
+      else
+        searchParams.set(items.title, undefined);
+    }
+    else
+    {
+      if(items.values.length !== 0)
+        searchParams.set(items.title, items.values.join(","));
+    }
+  };
+
+  useEffect(() => {
+    setSearchParams();
+  }, [onToggle]);
 
   return (
     <div className="mt-3">
       {data.values.map((item, index) => (
-        <li key={index} className="flex items-center space-x-2 pb-2" onClick={onToggle(item)}>
+        <li key={index} className="flex items-center space-x-2 pb-2" onClick={onToggle(item.toString())}>
           <Checkbox id={data.title + item} 
-            checked={checkedItems.includes(item)}
+            checked={checkedItems.some(_item => _item.title === data.title && _item.values.includes(item.toString()))}
           />
           <label
             className="text-base flex gap-[3.44px]"
