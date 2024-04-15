@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ChevronsLeftIcon,
   ChevronsRightIcon,
+  ChevronsUpIcon,
   StarIcon,
   X,
 } from "lucide-react";
@@ -103,7 +104,13 @@ export const ReviewCardFull = ({
   return (
     <>
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
-        <DrawerContent className={withImages ? "h-[45vh]" : "h-[63vh]"}>
+        <DrawerContent
+          className={clsx(
+            "transition-all",
+            withImages ? "h-[45vh]" : "h-[63vh]",
+            isImageExpanded && "[translate:0%_100%]"
+          )}
+        >
           <div className="px-4 py-3 h-full flex flex-col gap-3 overflow-y-auto">
             <ReviewHeaderMobile
               review={review}
@@ -118,6 +125,8 @@ export const ReviewCardFull = ({
           {withImages && (
             <ReviewImageCarouselMobile
               images={review.images!}
+              isImageExpanded={isImageExpanded}
+              onToggle={onImageExpandToggle}
               startImageIndex={startImageIndex}
             />
           )}
@@ -141,9 +150,6 @@ interface HeaderControlsProps {
 interface ReviewImageCarouselProps {
   images: string[];
   startImageIndex: number;
-}
-
-interface ReviewImageCarouselDesktopProps extends ReviewImageCarouselProps {
   isImageExpanded: boolean;
   onToggle: () => void;
 }
@@ -181,7 +187,7 @@ const ReviewImageCarouselDesktop = ({
   isImageExpanded,
   onToggle,
   startImageIndex,
-}: ReviewImageCarouselDesktopProps) => {
+}: ReviewImageCarouselProps) => {
   return (
     // calc(width + parent padding)
     <div
@@ -236,6 +242,8 @@ const ReviewImageCarouselDesktop = ({
 const ReviewImageCarouselMobile = ({
   images,
   startImageIndex,
+  isImageExpanded,
+  onToggle,
 }: ReviewImageCarouselProps) => {
   return (
     <div className="fixed top-0 left-0 right-0 -translate-y-full">
@@ -248,13 +256,20 @@ const ReviewImageCarouselMobile = ({
         <CarouselContent>
           {images.map((img, index) => {
             return (
-              <CarouselItem className="max-h-[55vh] h-screen py-3" key={index}>
+              <CarouselItem
+                className={clsx(
+                  "max-h-[55vh] h-screen py-3 transition-all",
+                  isImageExpanded && "max-h-screen py-[13vh]"
+                )}
+                key={index}
+              >
                 <div className="h-full relative">
                   <Image
                     src={img}
                     alt="Placeholder"
                     fill={true}
                     className="object-cover"
+                    onClick={onToggle}
                   />
                 </div>
               </CarouselItem>
@@ -264,6 +279,14 @@ const ReviewImageCarouselMobile = ({
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
+      {isImageExpanded && (
+        <button
+          className="absolute bottom-[6vh] right-4 w-10 h-10 bg-white rounded-full flex justify-center items-center"
+          onClick={onToggle}
+        >
+          <ChevronsUpIcon />
+        </button>
+      )}
     </div>
   );
 };

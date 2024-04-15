@@ -40,5 +40,5 @@ const day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export function formatReviewDate(date: Date) {
   return `${
     monthFull[date.getMonth()]
-  } ${date.getDay()}, ${date.getFullYear()}`;
+  } ${date.getDate()}, ${date.getFullYear()}`;
 }
