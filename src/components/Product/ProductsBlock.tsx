@@ -1,12 +1,17 @@
 import { ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
-import { CarouselProduct } from "../MainPage/CarouselProduct";
+import { ProductCarousel } from "./ProductCarousel";
 import { ProductsListMobile } from "./ProductsListMobile";
 import { MediaQueryCSS } from "../MediaQuery";
 
-export const ProductsBlock = ({ title }: { title: string }) => {
+interface Props {
+  title: string;
+  maxSizeMobile?: number;
+}
+
+export const ProductsBlock = ({ title, maxSizeMobile }: Props) => {
   const products = Array.from({ length: 10 }).map((_, index) => ({
-    title: `Product ${index}`,
+    title: `Product ${index + 1}`,
     price: 39.99,
   }));
 
@@ -19,10 +24,10 @@ export const ProductsBlock = ({ title }: { title: string }) => {
         </Button>
       </div>
       <MediaQueryCSS maxSize="lg">
-        <ProductsListMobile products={products} />
+        <ProductsListMobile products={products} maxSize={maxSizeMobile} />
       </MediaQueryCSS>
       <MediaQueryCSS minSize="lg">
-        <CarouselProduct products={products} />
+        <ProductCarousel products={products} />
       </MediaQueryCSS>
     </div>
   );

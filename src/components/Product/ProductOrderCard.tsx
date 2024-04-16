@@ -1,6 +1,7 @@
 import {
   ChevronDownIcon,
   ChevronRightIcon,
+  HeartIcon,
   MinusIcon,
   PlusIcon,
 } from "lucide-react";
@@ -13,6 +14,8 @@ import {
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MediaQueryCSS } from "../MediaQuery";
+import { createPortal } from "react-dom";
+import ClientOnlyPortal from "../ClientOnlyPortal";
 
 export const ProductOrderCard = () => {
   const [count, setCount] = useState(1);
@@ -72,6 +75,12 @@ export const ProductOrderCard = () => {
           <ChevronDownIcon />
         </CardFooter>
       </MediaQueryCSS>
+
+      <MobileQuickActions
+        count={count}
+        increment={increment}
+        decrement={decrement}
+      />
     </Card>
   );
 };
@@ -82,5 +91,52 @@ const InfoLabel = ({ title }: { title: string }) => {
       <span className="text-base">{title}</span>
       <ChevronRightIcon className="w-4 h-4" />
     </li>
+  );
+};
+
+export const MobileQuickActions = ({
+  count,
+  increment,
+  decrement,
+}: {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+}) => {
+  return (
+    <ClientOnlyPortal selector="body">
+      <MediaQueryCSS maxSize="md">
+        <Card className="bg-gray-200 fixed bottom-0 left-0 right-0 rounded-t-md z-10">
+          <CardHeader className="space-y-3 p-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="text-3xl font-bold">
+                  $24<sup>99</sup>
+                </span>
+                <sub className="ml-2 line-through text-gray-400 text-lg">
+                  $39.99
+                </sub>
+              </div>
+              <div className="flex items-center gap-2">
+                <button>
+                  <HeartIcon />
+                </button>
+                <Button variant={"outline"}>To cart</Button>
+                <Button>Buy</Button>
+              </div>
+            </div>
+            <hr className="border-black" />
+            <div className="flex justify-between items-center py-1">
+              <span className="text-base">Quantity</span>
+              <div className="flex items-center gap-4">
+                <MinusIcon className="w-4 cursor-pointer" onClick={decrement} />
+                <span className="text-sm select-none">{count}</span>
+                <PlusIcon className="w-4 cursor-pointer" onClick={increment} />
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+      </MediaQueryCSS>
+    </ClientOnlyPortal>
   );
 };
