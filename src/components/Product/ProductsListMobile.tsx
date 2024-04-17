@@ -18,7 +18,7 @@ export const ProductsListMobile = ({
     });
 
   return (
-    <div className="grid grid-cols-2 auto-rows-max gap-4 place-items-center">
+    <div className="grid grid-cols-2 sm:grid-cols-3 auto-rows-max gap-4 place-items-center">
       {items.map((product, index) => (
         <Link href={`/product/${index + 1}`} className="w-full" key={index}>
           <ProductCard title={product.title} price={product.price} />
