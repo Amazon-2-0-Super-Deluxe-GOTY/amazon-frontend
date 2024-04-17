@@ -1,4 +1,4 @@
-import { ChevronDownIcon, UserRoundIcon } from "lucide-react";
+import { ChevronRightIcon, UserRoundIcon } from "lucide-react";
 import { Card } from "../ui/card";
 import { MediaQueryCSS } from "../MediaQuery";
 
@@ -34,7 +34,7 @@ export const SellerInfoCard = () => {
       <hr className="border-black" />
       <div className="flex justify-between items-center py-1 cursor-pointer">
         <span className="text-base">About seller</span>
-        <ChevronDownIcon className="w-4 h-4" />
+        <ChevronRightIcon className="w-4 h-4" />
       </div>
     </Card>
   );

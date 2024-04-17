@@ -25,7 +25,7 @@ export const ProductsListMobile = ({
         </Link>
       ))}
       {isExpandable && (
-        <div className="flex justify-center col-span-2">
+        <div className="flex justify-center col-span-2 sm:col-span-3">
           {isExpanded ? (
             <Button variant={"outline"} onClick={onHide}>
               Hide

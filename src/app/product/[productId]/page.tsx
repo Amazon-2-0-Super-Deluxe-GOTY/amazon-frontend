@@ -525,12 +525,12 @@ export default function ProductPage({
         <ReviewsBlock reviews={reviews} reviewsStatistic={reviewsStatistic} />
       </section>
       <div className="py-6 border-t-2">
-        <ProductsBlock title="You may also like" maxSizeMobile={4} />
+        <ProductsBlock title="You may also like" maxSizeMobile={6} />
       </div>
       <div className="py-6 border-t-2">
         <ProductsBlock
           title="Best sellers in women's fashion"
-          maxSizeMobile={4}
+          maxSizeMobile={6}
         />
       </div>
     </main>

@@ -3,6 +3,8 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronRightIcon,
+  CreditCardIcon,
+  HandCoinsIcon,
   HeartIcon,
   MinusIcon,
   PlusIcon,
@@ -14,7 +16,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { useEffect, useMemo, useState } from "react";
+import { type ChangeEventHandler, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MediaQueryCSS } from "../MediaQuery";
 import ClientOnlyPortal from "../ClientOnlyPortal";
@@ -22,37 +24,38 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetDescription,
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
 import { countriesList, getCountry } from "@/lib/location";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { Separator } from "../ui/separator";
+import ReactSelect, { SingleValue } from "react-select";
+import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { it } from "node:test";
 
 const infoElements = [
   {
     title: "Delivery",
-    render: (isOpen: boolean, closeModal: () => void) => (
-      <DeliveryContent isOpen={isOpen} closeModal={closeModal} />
-    ),
+    render: () => <DeliveryContent />,
   },
   {
     title: "Payment methods",
-    render: () => <></>,
+    render: () => <PaymentContent />,
   },
   {
-    title: "Guarantee",
-    render: () => <></>,
+    title: "Security",
+    render: () => <SecurityContent />,
   },
   {
     title: "Returns",
-    render: () => <></>,
+    render: () => <ReturnsContent />,
   },
 ];
 
@@ -117,16 +120,7 @@ export const ProductOrderCard = () => {
               <span>Status</span>
               <span>In stock</span>
             </li>
-            {infoElements.map((elem, i) => (
-              <li
-                key={i}
-                className="w-full flex justify-between items-center py-1 cursor-pointer"
-                onClick={() => openTab(i)}
-              >
-                <span className="text-base">{elem.title}</span>
-                <ChevronRightIcon className="w-4 h-4" />
-              </li>
-            ))}
+            <InfoLabelsList openTab={openTab} />
           </ul>
         </MediaQueryCSS>
         <hr className="border-black" />
@@ -147,9 +141,17 @@ export const ProductOrderCard = () => {
         </Button>
       </CardContent>
       <MediaQueryCSS maxSize="lg">
-        <CardFooter className="justify-center gap-1">
-          Details
-          <ChevronDownIcon />
+        <CardFooter className="justify-center gap-2">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger className="flex justify-center items-center gap-1">
+                Details
+              </AccordionTrigger>
+              <AccordionContent className="p-4 pt-0">
+                <InfoLabelsList openTab={openTab} />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </CardFooter>
       </MediaQueryCSS>
 
@@ -165,14 +167,14 @@ export const ProductOrderCard = () => {
             hideClose
             className="sm:max-w-full w-screen lg:w-[40vw] flex flex-col"
           >
-            <HeaderDesktop
+            <SheetHeader
               title={infoElements[openedTabIndex].title}
               hasPrev={hasPrev}
               hasNext={hasNext}
               onPrev={toPrev}
               onNext={toNext}
             />
-            {infoElements[openedTabIndex].render(isOpen, closeTab)}
+            {infoElements[openedTabIndex].render()}
           </SheetContent>
         )}
       </Sheet>
@@ -180,7 +182,7 @@ export const ProductOrderCard = () => {
   );
 };
 
-export const MobileQuickActions = ({
+const MobileQuickActions = ({
   count,
   increment,
   decrement,
@@ -227,39 +229,17 @@ export const MobileQuickActions = ({
   );
 };
 
-const InfoButton = ({
-  title,
-  render,
-}: {
-  title: string;
-  render: (isOpen: boolean, closeModal: () => void) => React.ReactNode;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
-
-  const onOpenChange = (value: boolean) => {
-    if (!value) {
-      closeModal();
-    }
-  };
-
-  return (
-    <li>
-      <Sheet open={isOpen} onOpenChange={onOpenChange}>
-        <SheetTrigger
-          className="w-full flex justify-between items-center py-1 cursor-pointer"
-          onClick={openModal}
-        >
-          <span className="text-base">{title}</span>
-          <ChevronRightIcon className="w-4 h-4" />
-        </SheetTrigger>
-
-        {render(isOpen, closeModal)}
-      </Sheet>
+const InfoLabelsList = ({ openTab }: { openTab: (index: number) => void }) => {
+  return infoElements.map((elem, i) => (
+    <li
+      key={i}
+      className="w-full flex justify-between items-center py-1 cursor-pointer"
+      onClick={() => openTab(i)}
+    >
+      <span className="text-base">{elem.title}</span>
+      <ChevronRightIcon className="w-4 h-4" />
     </li>
-  );
+  ));
 };
 
 interface HeaderControlsProps {
@@ -273,33 +253,7 @@ interface HeaderProps extends HeaderControlsProps {
   title: string;
 }
 
-const HeaderControls = ({
-  hasPrev,
-  hasNext,
-  onPrev,
-  onNext,
-}: HeaderControlsProps) => {
-  return (
-    <div className="flex items-center gap-6">
-      <button
-        className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-        disabled={!hasPrev}
-        onClick={onPrev}
-      >
-        <ChevronLeft className="group-disabled:stroke-gray-300" />
-      </button>
-      <button
-        className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-        disabled={!hasNext}
-        onClick={onNext}
-      >
-        <ChevronRight className="group-disabled:stroke-gray-300" />
-      </button>
-    </div>
-  );
-};
-
-const HeaderDesktop = ({
+const SheetHeader = ({
   title,
   hasPrev,
   hasNext,
@@ -308,13 +262,23 @@ const HeaderDesktop = ({
 }: HeaderProps) => {
   return (
     <div className="flex items-center gap-4">
-      <SheetTitle className="mr-auto lg:text-3xl">{title}</SheetTitle>
-      <HeaderControls
-        hasPrev={hasPrev}
-        hasNext={hasNext}
-        onPrev={onPrev}
-        onNext={onNext}
-      />
+      <SheetTitle className="mr-auto text-lg lg:text-3xl">{title}</SheetTitle>
+      <div className="flex items-center gap-6">
+        <button
+          className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+          disabled={!hasPrev}
+          onClick={onPrev}
+        >
+          <ChevronLeft className="group-disabled:stroke-gray-300" />
+        </button>
+        <button
+          className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+          disabled={!hasNext}
+          onClick={onNext}
+        >
+          <ChevronRight className="group-disabled:stroke-gray-300" />
+        </button>
+      </div>
       <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary ml-[10%]">
         <X className="h-5 w-5" />
         <span className="sr-only">Close</span>
@@ -323,99 +287,289 @@ const HeaderDesktop = ({
   );
 };
 
-const DeliveryContent = ({
-  isOpen,
-  closeModal,
-}: {
-  isOpen: boolean;
-  closeModal: () => void;
-}) => {
-  // const [position, setPosition] = useState<GeolocationPosition>();
-  // const [isError, setIsError] = useState(false);
-  const [location, setLocation] = useState(() => getCountry()?.code);
-  const countries = useMemo(() => Object.entries(countriesList), []);
+const DeliveryContent = () => {
+  const [location, setLocation] = useState(() => {
+    const country = getCountry();
+    if (!country) return undefined;
+    return {
+      label: country.country,
+      value: country.code,
+    };
+  });
+  const countries = useMemo(
+    () =>
+      Object.entries(countriesList).map(([code, name]) => ({
+        label: name,
+        value: code,
+      })),
+    []
+  );
 
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     navigator.geolocation.getCurrentPosition(setPosition, () =>
-  //       setIsError(true)
-  //     );
-  //   }
-  // }, [isOpen]);
+  const onSearchQueryChange = (
+    value: SingleValue<{ label: string; value: string }>
+  ) => {
+    if (!value) return;
+    setLocation(value);
+  };
 
   return (
-    <div className="space-y-6">
-      <Separator orientation="horizontal" />
+    <div className="grow overflow-y-auto">
+      <Separator orientation="horizontal" className="mb-4 lg:mb-6" />
 
-      <div className="space-y-5">
-        <p className="flex justify-between items-center text-base">
-          <span className="font-semibold">Delivery from</span>
-          <span>New York, United States</span>
-        </p>
-        <div className="space-y-2">
-          <Select value={location} onValueChange={setLocation}>
-            <SelectTrigger className="w-full relative text-base p-3 h-max">
-              <SelectValue placeholder="Country" />
+      <div className="space-y-4 lg:space-y-6">
+        <div className="space-y-5">
+          <p className="flex justify-between items-center text-base">
+            <span className="font-semibold">Delivery from</span>
+            <span>New York, United States</span>
+          </p>
+          <div className="space-y-2">
+            <div className="relative px-0.5 sm:px-0">
               <label
-                className="absolute left-5 bottom-10 bg-white text-sm"
+                className="absolute left-5 bottom-10 bg-white text-sm z-10 pointer-events-none"
                 htmlFor="country-select"
               >
                 Country of delivery
               </label>
-            </SelectTrigger>
-            <SelectContent id="country-select">
-              {countries.map(([code, name]) => (
-                <SelectItem value={code} key={code}>
-                  {name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <ReactSelect
+                name={"Country"}
+                unstyled={true}
+                isSearchable={true}
+                hideSelectedOptions={true}
+                placeholder={"Country"}
+                id="country-select"
+                classNames={{
+                  control: (e) =>
+                    cn(
+                      `rounded-md border`,
+                      `border-input p-3 text-base`,
+                      e.isFocused ? "ring-1 ring-ring" : ""
+                    ),
+                  dropdownIndicator: () => "text-gray-400",
+                  menu: () =>
+                    cn(
+                      "absolute top-0 mt-1 text-sm z-10 w-full",
+                      "rounded-md border bg-popover shadow-md overflow-x-hidden"
+                    ),
+                  option: () =>
+                    cn(
+                      "cursor-default",
+                      "rounded-sm py-1.5 my-1 px-2 text-sm outline-none",
+                      "focus:bg-gray-200 hover:bg-gray-200 w-auto"
+                    ),
+                  noOptionsMessage: () => "p-5",
+                  multiValue: () => "bg-gray-200 px-2 p-1 rounded mr-2",
+                  input: () => "text-sm overflow-x-hidden",
+                }}
+                options={countries}
+                value={location}
+                onChange={onSearchQueryChange}
+              />
+            </div>
+          </div>
+        </div>
+
+        <Separator orientation="horizontal" />
+
+        <div className="space-y-3">
+          <p className="text-lg font-semibold">Pickup points</p>
+          {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
+          <table className="w-full">
+            <tbody>
+              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+                <td>
+                  <p>Pilot Freight Services</p>
+                  <p className="text-sm">Mar 24 to point</p>
+                </td>
+                <td>$27.00</td>
+              </tr>
+              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+                <td>
+                  <p>Pilot Freight Services</p>
+                  <p className="text-sm">Mar 24 to point</p>
+                </td>
+                <td>$27.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-lg font-semibold">Delivery by courier</p>
+          {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
+          <table className="w-full">
+            <tbody>
+              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+                <td>
+                  <p>Pilot Freight Services</p>
+                  <p className="text-sm">Mar 24 to point</p>
+                </td>
+                <td>$27.00</td>
+              </tr>
+              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+                <td>
+                  <p>Pilot Freight Services</p>
+                  <p className="text-sm">Mar 24 to point</p>
+                </td>
+                <td>$27.00</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
+  );
+};
 
+type PaymentTypes =
+  | "credit_card"
+  | "google_pay"
+  | "apple_pay"
+  | "paypal"
+  | "receipt";
+
+const paymentMethodsData: {
+  type: PaymentTypes;
+  title: string;
+  text: string;
+  icon: React.ReactNode;
+}[] = [
+  {
+    type: "credit_card",
+    title: "Credit card",
+    text: "Save your card in your [Marketplace’s name] account to pay faster and more conveniently. After saving your card, you don’t have to login to the bank, enter codes or enter data for subsequent purchases. Lear more",
+    icon: <CreditCardIcon />,
+  },
+  {
+    type: "google_pay",
+    title: "Google Pay",
+    text: "Do you have a device with an Android operating system? In this case, use Google Pay without providing payment data. This is simple and convenient, and importantly - your card data is not stored on the device and not transferred during the transaction.",
+    icon: <CreditCardIcon />,
+  },
+  {
+    type: "apple_pay",
+    title: "Apple Pay",
+    text: "If you are a user of an iOS device, Apple Pay is built-in. This does not require downloading any separate application. In addition, payment with Apple Pay is also possible in the Safari browser.",
+    icon: <CreditCardIcon />,
+  },
+  {
+    type: "paypal",
+    title: "PayPal",
+    text: "PayPal is a global payment method that allows you to pay anywhere in the world without revealing your financial data. Simply top up your PayPal or use your credit or debit card. You can also pay by card once without having to login.Simply top up your PayPal or use a credit or debit card. You can also pay by card once without having to log in.",
+    icon: <CreditCardIcon />,
+  },
+  {
+    type: "receipt",
+    title: "Pay on delivery",
+    text: "If you choose the shipping method, you can choose the payment on receipt. This means that you will pay the goods by cash or payment card to the courier who will deliver the parcel to you or at the point of receipt.",
+    icon: <HandCoinsIcon />,
+  },
+];
+
+const PaymentContent = () => {
+  return (
+    <div className="grow space-y-4 lg:space-y-6 overflow-y-auto">
       <Separator orientation="horizontal" />
+      <p className="text-base">
+        On [Marketplace’s name] you can pay for your purchases in various ways.
+        At checkout you will see a list of methods available for your purchase.
+      </p>
+      <Separator orientation="horizontal" />
+      <div>
+        {paymentMethodsData.map((item, i) => (
+          <Accordion
+            type="single"
+            collapsible
+            className="even:bg-gray-200 rounded-md"
+            key={item.type}
+          >
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger className="p-4">
+                <div className="flex items-center gap-4">
+                  {item.icon}
+                  {item.title}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 pt-0">
+                {item.text}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-      <p className="text-lg font-semibold">Pickup points</p>
+const SecurityContent = () => {
+  return (
+    <div className="grow space-y-4 lg:space-y-6 overflow-y-auto">
+      <Separator orientation="horizontal" />
+      <p className="text-base">
+        You buy safely in [Marketplace’s name]. Here you will learn about your
+        rights after purchase.
+      </p>
+      <Separator orientation="horizontal" />
+      <div className="space-y-3">
+        <h3 className="text-lg lg:text-xl font-semibold">Complaint</h3>
+        <p>
+          Seller is responsible for defective goods within{" "}
+          <span className="font-semibold">1 year</span> from the moment of
+          delivery.
+        </p>
+        <h3 className="lg:text-lg font-semibold flex justify-between items-center">
+          <span>Complaint deadline</span>
+          <span>1 year</span>
+        </h3>
+        <p>
+          Applies to complaints about the guarantee or non-conformity of the
+          goods to the contract.
+        </p>
+      </div>
+      <Separator orientation="horizontal" />
+      <div className="space-y-3">
+        <h3 className="text-lg lg:text-xl font-semibold">Guarantee</h3>
+        <p>
+          Will apply to the seller’s goods for 1 month from the date of
+          purchase.
+        </p>
+        <h3 className="lg:text-lg font-semibold flex justify-between items-center">
+          <span>Guarantee deadline</span>
+          <span>1 month</span>
+        </h3>
+      </div>
+    </div>
+  );
+};
 
-      {/* TODO: add real data */}
+const ReturnsContent = () => {
+  return (
+    <div className="grow space-y-4 lg:space-y-6 overflow-y-auto">
+      <Separator orientation="horizontal" />
+      <p>You have 14 days to terminate the contract.</p>
+      <Separator orientation="horizontal" />
+      <div>
+        <h3 className="text-lg lg:text-xl font-semibold">Cost of returning</h3>
+        <p>
+          The refund rate depends on the shipping method you choose when
+          purchasing.
+        </p>
+      </div>
+      {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
       <table className="w-full">
-        <tbody className="[&>*:nth-child(even)]:bg-gray-200">
-          <tr className="flex justify-between items-center p-4">
+        <tbody>
+          <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
             <td>
               <p>Pilot Freight Services</p>
-              <p className="text-sm">Mar 24 to point</p>
+              <p className="text-sm">Free on purchase from $150</p>
             </td>
-            <td>$27.00</td>
+            <td>At your expense</td>
           </tr>
-          <tr className="flex justify-between items-center p-4">
+          <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
             <td>
-              <p>Pilot Freight Services</p>
-              <p className="text-sm">Mar 24 to point</p>
+              <p>USPS</p>
+              <p className="text-sm">Free on purchase from $100</p>
             </td>
-            <td>$27.00</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p className="text-lg font-semibold">Delivery by courier</p>
-
-      {/* TODO: add real data */}
-      <table className="w-full">
-        <tbody className="[&>*:nth-child(even)]:bg-gray-200">
-          <tr className="flex justify-between items-center p-4">
-            <td>
-              <p>Pilot Freight Services</p>
-              <p className="text-sm">Mar 24 to point</p>
-            </td>
-            <td>$27.00</td>
-          </tr>
-          <tr className="flex justify-between items-center p-4">
-            <td>
-              <p>Pilot Freight Services</p>
-              <p className="text-sm">Mar 24 to point</p>
-            </td>
-            <td>$27.00</td>
+            <td>At your expense</td>
           </tr>
         </tbody>
       </table>
