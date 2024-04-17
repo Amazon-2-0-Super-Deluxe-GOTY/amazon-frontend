@@ -1,22 +1,25 @@
 "use client"
 import * as React from "react";
 import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
-import { ModalLogInSignUp } from "@/components/SignUpLogIn/ModalSignUp";
+import { ModalSignInUpVariation } from "@/components/SignInUpModal/ModalSignInUpVariation";
+import { useSearhParamsTools } from "@/lib/router";
 
 export const SingInUpBanner = () => {
+  const searchParams = useSearhParamsTools();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (variant: string ) => {
+    searchParams.set("modal", variant);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
+    searchParams.set("modal", undefined);
     setIsModalOpen(false);
   };
 
@@ -38,13 +41,14 @@ export const SingInUpBanner = () => {
             </p>
           </div>
           <div className="flex justify-center items-center gap-6">
-            <Button size={"lg"} className="text-base lg:text-xl" onClick={handleOpenModal} >
+            <Button size={"lg"} className="text-base lg:text-xl" onClick={() => handleOpenModal("signup")}>
               Sing up
             </Button>
             <Button
               size={"lg"}
               className="text-base lg:text-xl"
               variant={"outline"}
+              onClick={() => handleOpenModal("login")} 
             >
               Log in
             </Button>
@@ -56,7 +60,7 @@ export const SingInUpBanner = () => {
           className="w-full max-w-md object-cover max-h-[260px]"
         />
       </CardContent>
-      {isModalOpen && <ModalLogInSignUp onClose={handleCloseModal} />}
+      {isModalOpen && <ModalSignInUpVariation onClose={handleCloseModal} />}
     </Card>
   );
 }

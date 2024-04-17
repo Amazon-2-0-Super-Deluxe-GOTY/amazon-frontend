@@ -21,35 +21,28 @@ const FormSchema = z.object({
     message: "Wrong or Invalid email address",
   }),
   password: z.string().min(6, {
-    message: "Minimum 6 characters required",
-  }),
-  confirmPassword: z.string().min(2, {
-    message: "Passwords must match",
+    message: "Your password is incorrect",
   }),
 })
 
-export function SignUpForm({ onChangeModal } : { onChangeModal: (modal:string) => void }) {
+export function LogInForm() {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
     },
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     // Checking data for validity
 
-    console.log("SignUp :: You submitted the following values:");
+    console.log("You submitted the following values:");
     console.log(JSON.stringify(data, null, 2));
-
-    onChangeModal("signup-code");
   }
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   return (
     <Form {...form}>
@@ -78,38 +71,21 @@ export function SignUpForm({ onChangeModal } : { onChangeModal: (modal:string) =
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Password</FormLabel>
                 <div className="flex justify-end">
                   <FormControl>
-                    <Input placeholder="Create your password" type={showPassword ? "text" : "password"} {...field} />
+                    <Input placeholder="Enter your password" type={showPassword ? "text" : "password"} {...field} />
                   </FormControl>
                   <Button variant={"ghost"} type="button" className="absolute" onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeIcon/> : <EyeOffIcon/> }
                   </Button>
                 </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <div>
-                <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Confirm password</FormLabel>
-                <div className="flex justify-end">
-                  <FormControl>
-                    <Input placeholder="Repeat your password" type={showConfirmPassword ? "text" : "password"} {...field} />
-                  </FormControl>
-                  <Button variant={"ghost"} type="button" className="absolute" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                    {showConfirmPassword ? <EyeIcon/> : <EyeOffIcon/> }
-                  </Button>
+                <div className="w-full flex justify-end p-0">
+                  <Button variant={"link"} type="button" className="text-xs p-0">Forgot password?</Button>
                 </div>
               </div>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">Sign up</Button>
+        <Button type="submit" className="w-full">Log in</Button>
       </form>
     </Form>
   )
