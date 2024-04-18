@@ -3,7 +3,7 @@ import { MessageCircle, StarIcon } from "lucide-react";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 export const ProductCard = ({
   title,
@@ -52,8 +52,8 @@ export const ProductCard = ({
       {isOutOfStock && (
         <div className="absolute inset-0 bg-gray-200/50">
           <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-center max-w-[230px] w-full">
-            <span className="text-2xl">Out of Stock</span>
-            <Button className="mt-4">Notify when available</Button>
+            <span className="xl:text-xl text-base">Out of Stock</span>
+            <Button className="mt-4 text-wrap xl:text-sm text-xs">Notify when available</Button>
           </div>
         </div>
       )}
