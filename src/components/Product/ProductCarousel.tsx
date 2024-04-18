@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import {
   Carousel,
@@ -7,9 +6,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ProductCard } from "../Product/ProductCard";
+import { ProductCard } from "./ProductCard";
 
-export function CarouselProduct({
+export function ProductCarousel({
   products,
 }: {
   products: { title: string; price: number }[];
