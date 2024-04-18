@@ -262,7 +262,9 @@ const SheetHeader = ({
 }: HeaderProps) => {
   return (
     <div className="flex items-center gap-4">
-      <SheetTitle className="mr-auto text-lg lg:text-3xl">{title}</SheetTitle>
+      <SheetTitle className="mr-auto text-lg sm:text-2xl lg:text-3xl">
+        {title}
+      </SheetTitle>
       <div className="flex items-center gap-6">
         <button
           className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
@@ -323,7 +325,7 @@ const DeliveryContent = () => {
             <span>New York, United States</span>
           </p>
           <div className="space-y-2">
-            <div className="relative px-0.5 sm:px-0">
+            <div className="relative px-0.5">
               <label
                 className="absolute left-5 bottom-10 bg-white text-sm z-10 pointer-events-none"
                 htmlFor="country-select"
@@ -371,21 +373,21 @@ const DeliveryContent = () => {
         <Separator orientation="horizontal" />
 
         <div className="space-y-3">
-          <p className="text-lg font-semibold">Pickup points</p>
+          <p className="sm:text-lg font-semibold">Pickup points</p>
           {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
           <table className="w-full">
             <tbody>
-              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
-                  <p className="text-sm">Mar 24 to point</p>
+                  <p className="text-xs sm:text-sm">Mar 24 to point</p>
                 </td>
                 <td>$27.00</td>
               </tr>
-              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
-                  <p className="text-sm">Mar 24 to point</p>
+                  <p className="text-xs sm:text-sm">Mar 24 to point</p>
                 </td>
                 <td>$27.00</td>
               </tr>
@@ -394,21 +396,21 @@ const DeliveryContent = () => {
         </div>
 
         <div className="space-y-3">
-          <p className="text-lg font-semibold">Delivery by courier</p>
+          <p className="sm:text-lg font-semibold">Delivery by courier</p>
           {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
           <table className="w-full">
             <tbody>
-              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
-                  <p className="text-sm">Mar 24 to point</p>
+                  <p className="text-xs sm:text-sm">Mar 24 to point</p>
                 </td>
                 <td>$27.00</td>
               </tr>
-              <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
-                  <p className="text-sm">Mar 24 to point</p>
+                  <p className="text-xs sm:text-sm">Mar 24 to point</p>
                 </td>
                 <td>$27.00</td>
               </tr>
@@ -469,7 +471,7 @@ const PaymentContent = () => {
   return (
     <div className="grow space-y-4 lg:space-y-6 overflow-y-auto">
       <Separator orientation="horizontal" />
-      <p className="text-base">
+      <p className="text-sm sm:text-base">
         On [Marketplace’s name] you can pay for your purchases in various ways.
         At checkout you will see a list of methods available for your purchase.
       </p>
@@ -489,7 +491,7 @@ const PaymentContent = () => {
                   {item.title}
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="p-4 pt-0">
+              <AccordionContent className="p-4 pt-0 text-sm sm:text-base">
                 {item.text}
               </AccordionContent>
             </AccordionItem>
@@ -504,14 +506,14 @@ const SecurityContent = () => {
   return (
     <div className="grow space-y-4 lg:space-y-6 overflow-y-auto">
       <Separator orientation="horizontal" />
-      <p className="text-base">
+      <p className="text-sm sm:text-base">
         You buy safely in [Marketplace’s name]. Here you will learn about your
         rights after purchase.
       </p>
       <Separator orientation="horizontal" />
       <div className="space-y-3">
         <h3 className="text-lg lg:text-xl font-semibold">Complaint</h3>
-        <p>
+        <p className="text-sm sm:text-base">
           Seller is responsible for defective goods within{" "}
           <span className="font-semibold">1 year</span> from the moment of
           delivery.
@@ -520,7 +522,7 @@ const SecurityContent = () => {
           <span>Complaint deadline</span>
           <span>1 year</span>
         </h3>
-        <p>
+        <p className="text-sm sm:text-base">
           Applies to complaints about the guarantee or non-conformity of the
           goods to the contract.
         </p>
@@ -528,7 +530,7 @@ const SecurityContent = () => {
       <Separator orientation="horizontal" />
       <div className="space-y-3">
         <h3 className="text-lg lg:text-xl font-semibold">Guarantee</h3>
-        <p>
+        <p className="text-sm sm:text-base">
           Will apply to the seller’s goods for 1 month from the date of
           purchase.
         </p>
@@ -545,11 +547,13 @@ const ReturnsContent = () => {
   return (
     <div className="grow space-y-4 lg:space-y-6 overflow-y-auto">
       <Separator orientation="horizontal" />
-      <p>You have 14 days to terminate the contract.</p>
+      <p className="text-sm sm:text-base">
+        You have 14 days to terminate the contract.
+      </p>
       <Separator orientation="horizontal" />
       <div>
         <h3 className="text-lg lg:text-xl font-semibold">Cost of returning</h3>
-        <p>
+        <p className="text-sm sm:text-base">
           The refund rate depends on the shipping method you choose when
           purchasing.
         </p>
@@ -557,17 +561,17 @@ const ReturnsContent = () => {
       {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
       <table className="w-full">
         <tbody>
-          <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+          <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
             <td>
               <p>Pilot Freight Services</p>
-              <p className="text-sm">Free on purchase from $150</p>
+              <p className="text-xs sm:text-sm">Free on purchase from $150</p>
             </td>
             <td>At your expense</td>
           </tr>
-          <tr className="flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+          <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
             <td>
               <p>USPS</p>
-              <p className="text-sm">Free on purchase from $100</p>
+              <p className="text-xs sm:text-sm">Free on purchase from $100</p>
             </td>
             <td>At your expense</td>
           </tr>
