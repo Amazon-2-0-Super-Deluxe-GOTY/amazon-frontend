@@ -1,9 +1,9 @@
 import {
-  ChevronDownIcon,
   ChevronRightIcon,
   HeartIcon,
   MinusIcon,
   PlusIcon,
+  X,
 } from "lucide-react";
 import {
   Card,
@@ -11,17 +11,80 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MediaQueryCSS } from "../MediaQuery";
-import { createPortal } from "react-dom";
 import ClientOnlyPortal from "../ClientOnlyPortal";
+import { Sheet, SheetContent } from "../ui/sheet";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { DeliveryContent } from "./OrderInfoContent/DeliveryContent";
+import { PaymentContent } from "./OrderInfoContent/PaymentContent";
+import { SecurityContent } from "./OrderInfoContent/SecurityContent";
+import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
+import { SheetHeader } from "../ProductPage/SteetParts";
+import { ScrollArea } from "../ui/scroll-area";
+
+const infoElements = [
+  {
+    title: "Delivery",
+    render: () => <DeliveryContent />,
+  },
+  {
+    title: "Payment methods",
+    render: () => <PaymentContent />,
+  },
+  {
+    title: "Security",
+    render: () => <SecurityContent />,
+  },
+  {
+    title: "Returns",
+    render: () => <ReturnsContent />,
+  },
+];
 
 export const ProductOrderCard = () => {
   const [count, setCount] = useState(1);
+  const [openedTabIndex, setOpenedTabIndex] = useState<number>();
+
+  const isOpen = openedTabIndex !== undefined;
+
+  const openTab = (index: number) => setOpenedTabIndex(index);
+  const closeTab = () => setOpenedTabIndex(undefined);
+
+  const onOpenChange = (value: boolean) => {
+    if (!value) {
+      closeTab();
+    }
+  };
 
   const increment = () => setCount((c) => c + 1);
   const decrement = () => setCount((c) => (c > 1 ? c - 1 : 1));
+
+  const hasPrev = useMemo(() => {
+    return openedTabIndex === undefined ? false : openedTabIndex > 0;
+  }, [openedTabIndex]);
+  const hasNext = useMemo(() => {
+    return openedTabIndex === undefined
+      ? false
+      : openedTabIndex + 1 < infoElements.length;
+  }, [openedTabIndex]);
+
+  const toPrev = () => {
+    if (hasPrev && openedTabIndex !== undefined) {
+      setOpenedTabIndex(openedTabIndex - 1);
+    }
+  };
+  const toNext = () => {
+    if (hasNext && openedTabIndex !== undefined) {
+      setOpenedTabIndex(openedTabIndex + 1);
+    }
+  };
 
   return (
     <Card className="bg-gray-200">
@@ -46,10 +109,7 @@ export const ProductOrderCard = () => {
               <span>Status</span>
               <span>In stock</span>
             </li>
-            <InfoLabel title="Delivery" />
-            <InfoLabel title="Payment methods" />
-            <InfoLabel title="Guarantee" />
-            <InfoLabel title="Returns" />
+            <InfoLabelsList openTab={openTab} />
           </ul>
         </MediaQueryCSS>
         <hr className="border-black" />
@@ -70,9 +130,17 @@ export const ProductOrderCard = () => {
         </Button>
       </CardContent>
       <MediaQueryCSS maxSize="lg">
-        <CardFooter className="justify-center gap-1">
-          Details
-          <ChevronDownIcon />
+        <CardFooter className="justify-center gap-2">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger className="flex justify-center items-center gap-1">
+                Details
+              </AccordionTrigger>
+              <AccordionContent className="p-4 pt-0">
+                <InfoLabelsList openTab={openTab} />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </CardFooter>
       </MediaQueryCSS>
 
@@ -81,20 +149,33 @@ export const ProductOrderCard = () => {
         increment={increment}
         decrement={decrement}
       />
+
+      <Sheet open={isOpen} onOpenChange={onOpenChange}>
+        <SheetContent
+          hideClose
+          className="sm:max-w-full w-screen lg:w-[40vw] flex flex-col"
+        >
+          {isOpen && (
+            <>
+              <SheetHeader
+                title={infoElements[openedTabIndex].title}
+                pageControls={{
+                  hasPrev,
+                  hasNext,
+                  onPrev: toPrev,
+                  onNext: toNext,
+                }}
+              />
+              <ScrollArea>{infoElements[openedTabIndex].render()}</ScrollArea>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </Card>
   );
 };
 
-const InfoLabel = ({ title }: { title: string }) => {
-  return (
-    <li className="flex justify-between items-center py-1 cursor-pointer">
-      <span className="text-base">{title}</span>
-      <ChevronRightIcon className="w-4 h-4" />
-    </li>
-  );
-};
-
-export const MobileQuickActions = ({
+const MobileQuickActions = ({
   count,
   increment,
   decrement,
@@ -139,4 +220,17 @@ export const MobileQuickActions = ({
       </MediaQueryCSS>
     </ClientOnlyPortal>
   );
+};
+
+const InfoLabelsList = ({ openTab }: { openTab: (index: number) => void }) => {
+  return infoElements.map((elem, i) => (
+    <li
+      key={i}
+      className="w-full flex justify-between items-center py-1 cursor-pointer"
+      onClick={() => openTab(i)}
+    >
+      <span className="text-base">{elem.title}</span>
+      <ChevronRightIcon className="w-4 h-4" />
+    </li>
+  ));
 };
