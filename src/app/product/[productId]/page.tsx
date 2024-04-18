@@ -34,6 +34,7 @@ import { ReviewsStatisticCard } from "@/components/Review/ReviewsStatisticCard";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
 import { ReviewCard } from "@/components/Review/ReviewCard";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
+import { SellerInfo } from "@/components/Seller/types";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -383,6 +384,21 @@ const reviews: Review[] = [
   },
 ];
 
+const sellerInfo: SellerInfo = {
+  fullName: "Hilary Mason",
+  isTopSeller: true,
+  byersRatingPercent: 99.7,
+  descriptionRating: 5,
+  serviceRating: 5,
+  registerAt: new Date(),
+  complaintsPercent: 0.4,
+  ratingsExcluded: 813,
+  ratingsRemoved: {
+    marketplace: 0,
+    byers: 4,
+  },
+};
+
 export default function ProductPage({
   params,
 }: {
@@ -494,7 +510,7 @@ export default function ProductPage({
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
             <ProductOrderCard />
-            <SellerInfoCard />
+            <SellerInfoCard sellerInfo={sellerInfo} />
           </div>
         </div>
       </section>

@@ -26,7 +26,7 @@ import { DeliveryContent } from "./OrderInfoContent/DeliveryContent";
 import { PaymentContent } from "./OrderInfoContent/PaymentContent";
 import { SecurityContent } from "./OrderInfoContent/SecurityContent";
 import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
-import { SheetHeader } from "./SteetParts";
+import { SheetHeader } from "../ProductPage/SteetParts";
 
 const infoElements = [
   {
@@ -150,21 +150,25 @@ export const ProductOrderCard = () => {
       />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
-        {isOpen && (
-          <SheetContent
-            hideClose
-            className="sm:max-w-full w-screen lg:w-[40vw] flex flex-col"
-          >
-            <SheetHeader
-              title={infoElements[openedTabIndex].title}
-              hasPrev={hasPrev}
-              hasNext={hasNext}
-              onPrev={toPrev}
-              onNext={toNext}
-            />
-            {infoElements[openedTabIndex].render()}
-          </SheetContent>
-        )}
+        <SheetContent
+          hideClose
+          className="sm:max-w-full w-screen lg:w-[40vw] flex flex-col"
+        >
+          {isOpen && (
+            <>
+              <SheetHeader
+                title={infoElements[openedTabIndex].title}
+                pageControls={{
+                  hasPrev,
+                  hasNext,
+                  onPrev: toPrev,
+                  onNext: toNext,
+                }}
+              />
+              {infoElements[openedTabIndex].render()}
+            </>
+          )}
+        </SheetContent>
       </Sheet>
     </Card>
   );
