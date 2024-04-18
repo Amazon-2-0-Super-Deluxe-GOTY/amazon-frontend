@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import { formatAboutSellerDate } from "@/lib/date";
+import { ScrollArea } from "../ui/scroll-area";
 
 export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
   const sellerGrade = getSellerGrade(sellerInfo.byersRatingPercent);
@@ -62,117 +63,121 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
           hideClose
         >
           <SheetHeader title="About seller" />
-          <div className="space-y-4 lg:space-y-6 overflow-y-auto">
-            <Separator orientation="horizontal" />
+          <ScrollArea>
+            <div className="space-y-4 lg:space-y-6">
+              <Separator orientation="horizontal" />
 
-            <div className="flex items-center gap-3">
-              <UserRoundIcon className="w-10 h-10 lg:w-14 lg:h-14" />
-              <div>
-                <h3 className="text-lg lg:text-2xl font-semibold">
-                  {sellerInfo.fullName}
-                </h3>
-                <p className="text-xs lg:text-base">
-                  {sellerGrade ? sellerGrade + " " : null}Seller
-                </p>
+              <div className="flex items-center gap-3">
+                <UserRoundIcon className="w-10 h-10 lg:w-14 lg:h-14" />
+                <div>
+                  <h3 className="text-lg lg:text-2xl font-semibold">
+                    {sellerInfo.fullName}
+                  </h3>
+                  <p className="text-xs lg:text-base">
+                    {sellerGrade ? sellerGrade + " " : null}Seller
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div className="flex gap-4">
-              <p className="flex flex-col basis-2/4 xl:basis-1/3">
-                <span className="text-lg lg:text-2xl font-semibold">
-                  {sellerInfo.byersRatingPercent.toFixed(1)}%
-                </span>
-                <span className="text-sm xl:text-base">
-                  buyers recommended this seller in the last 12 months{" "}
-                </span>
-              </p>
-              <div className="flex flex-col basis-1/4 xl:basis-1/3">
-                <p className="flex items-center gap-3">
+              <div className="flex gap-4">
+                <p className="flex flex-col basis-2/4 xl:basis-1/3">
                   <span className="text-lg lg:text-2xl font-semibold">
-                    {sellerInfo.descriptionRating.toFixed(1)}/
-                    <span className="text-lg">5</span>
+                    {sellerInfo.byersRatingPercent.toFixed(1)}%
                   </span>
-                  <StarIcon className="fill-black" />
-                </p>
-                <p className="text-sm xl:text-base">matching description</p>
-              </div>
-              <div className="flex flex-col basis-1/4 xl:basis-1/3">
-                <p className="flex items-center gap-3">
-                  <span className="text-lg lg:text-2xl font-semibold">
-                    {sellerInfo.serviceRating.toFixed(1)}/
-                    <span className="text-lg">5</span>
+                  <span className="text-sm xl:text-base">
+                    buyers recommended this seller in the last 12 months{" "}
                   </span>
-                  <StarIcon className="fill-black" />
                 </p>
-                <p className="text-sm xl:text-base">customer service</p>
+                <div className="flex flex-col basis-1/4 xl:basis-1/3">
+                  <p className="flex items-center gap-3">
+                    <span className="text-lg lg:text-2xl font-semibold">
+                      {sellerInfo.descriptionRating.toFixed(1)}/
+                      <span className="text-lg">5</span>
+                    </span>
+                    <StarIcon className="fill-black" />
+                  </p>
+                  <p className="text-sm xl:text-base">matching description</p>
+                </div>
+                <div className="flex flex-col basis-1/4 xl:basis-1/3">
+                  <p className="flex items-center gap-3">
+                    <span className="text-lg lg:text-2xl font-semibold">
+                      {sellerInfo.serviceRating.toFixed(1)}/
+                      <span className="text-lg">5</span>
+                    </span>
+                    <StarIcon className="fill-black" />
+                  </p>
+                  <p className="text-sm xl:text-base">customer service</p>
+                </div>
               </div>
-            </div>
 
-            <Accordion
-              type="single"
-              collapsible
-              className="bg-gray-200 rounded-md"
-            >
-              <AccordionItem value="item-1" className="border-none">
-                <AccordionTrigger className="p-4 font-semibold text-sm sm:text-lg lg:text-xl">
-                  All opinions are confirmed by purchase
-                </AccordionTrigger>
-                <AccordionContent className="p-4 pt-0 text-sm sm:text-base">
-                  Only registered users who have entered into a transaction with
-                  the vendor on the platform are given the form to express their
-                  opinion on the progress of such a transaction. We calculate
-                  average values based on the unique ratings that the seller
-                  received during the last 12 months. Perry checks and removes
-                  ratings that do not meet the standards when they are detected.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+              <Accordion
+                type="single"
+                collapsible
+                className="bg-gray-200 rounded-md"
+              >
+                <AccordionItem value="item-1" className="border-none">
+                  <AccordionTrigger className="p-4 font-semibold text-sm sm:text-lg lg:text-xl">
+                    All opinions are confirmed by purchase
+                  </AccordionTrigger>
+                  <AccordionContent className="p-4 pt-0 text-sm sm:text-base">
+                    Only registered users who have entered into a transaction
+                    with the vendor on the platform are given the form to
+                    express their opinion on the progress of such a transaction.
+                    We calculate average values based on the unique ratings that
+                    the seller received during the last 12 months. Perry checks
+                    and removes ratings that do not meet the standards when they
+                    are detected.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
-            <Separator orientation="horizontal" />
+              <Separator orientation="horizontal" />
 
-            <div className="flex justify-between items-center lg:text-lg">
-              <h3 className="font-semibold">On Perry</h3>
-              <span>from {formatAboutSellerDate(sellerInfo.registerAt)}</span>
-            </div>
-            <div className="flex justify-between items-center lg:text-lg">
-              <h3 className="font-semibold">Complaints in orders</h3>
-              <span>{sellerInfo.complaintsPercent.toFixed(1)}%</span>
-            </div>
+              <div className="flex justify-between items-center lg:text-lg">
+                <h3 className="font-semibold">On Perry</h3>
+                <span>from {formatAboutSellerDate(sellerInfo.registerAt)}</span>
+              </div>
+              <div className="flex justify-between items-center lg:text-lg">
+                <h3 className="font-semibold">Complaints in orders</h3>
+                <span>{sellerInfo.complaintsPercent.toFixed(1)}%</span>
+              </div>
 
-            <Separator orientation="horizontal" />
+              <Separator orientation="horizontal" />
 
-            <div className="space-y-3 lg:space-y-3.5">
-              <div>
+              <div className="space-y-3 lg:space-y-3.5">
+                <div>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold">
+                    {sellerInfo.ratingsRemoved.marketplace +
+                      sellerInfo.ratingsRemoved.byers}{" "}
+                    grades removed
+                  </h3>
+                  <p className="text-xs sm:text-sm">
+                    ({sellerInfo.ratingsRemoved.marketplace} by Perry,{" "}
+                    {sellerInfo.ratingsRemoved.byers} by byers)
+                  </p>
+                </div>
+                <p className="text-sm sm:text-base">
+                  Perry removes ratings that do not conform to the{" "}
+                  <span className="font-semibold">regulation</span> or at the
+                  buyer’s request. The buyer may modify or withdraw the
+                  assessment on its own initiative, at the seller’s request,
+                  after clarifying the matter with the seller or obtaining
+                  compensation.
+                </p>
+              </div>
+
+              <div className="space-y-3 lg:space-y-4">
                 <h3 className="text-base sm:text-lg lg:text-xl font-semibold">
-                  {sellerInfo.ratingsRemoved.marketplace +
-                    sellerInfo.ratingsRemoved.byers}{" "}
-                  grades removed
+                  {sellerInfo.ratingsExcluded} excluded ratings
                 </h3>
-                <p className="text-xs sm:text-sm">
-                  ({sellerInfo.ratingsRemoved.marketplace} by Perry,{" "}
-                  {sellerInfo.ratingsRemoved.byers} by byers)
+                <p className="text-sm sm:text-base">
+                  Ratings that are not included in the calculation of the
+                  average sales quality. Reasons for exclusion are given for
+                  each excluded rating.
                 </p>
               </div>
-              <p className="text-sm sm:text-base">
-                Perry removes ratings that do not conform to the{" "}
-                <span className="font-semibold">regulation</span> or at the
-                buyer’s request. The buyer may modify or withdraw the assessment
-                on its own initiative, at the seller’s request, after clarifying
-                the matter with the seller or obtaining compensation.
-              </p>
             </div>
-
-            <div className="space-y-3 lg:space-y-4">
-              <h3 className="text-base sm:text-lg lg:text-xl font-semibold">
-                {sellerInfo.ratingsExcluded} excluded ratings
-              </h3>
-              <p className="text-sm sm:text-base">
-                Ratings that are not included in the calculation of the average
-                sales quality. Reasons for exclusion are given for each excluded
-                rating.
-              </p>
-            </div>
-          </div>
+          </ScrollArea>
         </SheetContent>
       </Sheet>
     </Card>

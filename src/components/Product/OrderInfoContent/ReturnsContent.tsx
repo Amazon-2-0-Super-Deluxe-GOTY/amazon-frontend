@@ -2,7 +2,7 @@ import { Separator } from "@/components/ui/separator";
 
 export const ReturnsContent = () => {
   return (
-    <div className="grow space-y-4 lg:space-y-6 overflow-y-auto">
+    <div className="grow space-y-4 lg:space-y-6">
       <Separator orientation="horizontal" />
       <p className="text-sm sm:text-base">
         You have 14 days to terminate the contract.

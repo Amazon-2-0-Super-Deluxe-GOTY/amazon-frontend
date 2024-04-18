@@ -30,7 +30,7 @@ export const DeliveryContent = () => {
   };
 
   return (
-    <div className="grow overflow-y-auto">
+    <div className="grow">
       <Separator orientation="horizontal" className="mb-4 lg:mb-6" />
 
       <div className="space-y-4 lg:space-y-6">

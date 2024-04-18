@@ -27,6 +27,7 @@ import { PaymentContent } from "./OrderInfoContent/PaymentContent";
 import { SecurityContent } from "./OrderInfoContent/SecurityContent";
 import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../ProductPage/SteetParts";
+import { ScrollArea } from "../ui/scroll-area";
 
 const infoElements = [
   {
@@ -165,7 +166,7 @@ export const ProductOrderCard = () => {
                   onNext: toNext,
                 }}
               />
-              {infoElements[openedTabIndex].render()}
+              <ScrollArea>{infoElements[openedTabIndex].render()}</ScrollArea>
             </>
           )}
         </SheetContent>
