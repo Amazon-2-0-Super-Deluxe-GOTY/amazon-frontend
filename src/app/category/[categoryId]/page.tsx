@@ -187,9 +187,9 @@ export default function CategoryPage({
       if (defaultValue) {
         const itemNamesArray = defaultValue.split(",").filter(
           (v) =>
-            (filter.type === "price" && (filter.values.min.toString() === v || filter.values.max.toString() === v)) || 
+            (filter.type === "price") ||
             (filter.type === "rating" && !isNaN(parseInt(v)) && filter.values.includes(parseInt(v))) ||
-            (filter.type !== "rating" && filter.type !== "price" && filter.values.includes(v))
+            (filter.type !== "rating" && filter.values.includes(v))
         );
     
         if (itemNamesArray.length > 0) {
@@ -200,8 +200,8 @@ export default function CategoryPage({
       }
     });
 
-    return result;}
-  );
+    return result;
+  });
   //#endregion
 
   //#region indicatorCheckedFilterCount
@@ -223,9 +223,25 @@ export default function CategoryPage({
   };
 
   const uncheckFilter = (titleItem: string, checkedItem: string) => {
-    // ...
+    const isExists = checkedItems.find((v) => v.title === titleItem);
+    if (isExists)
+    {
+      if (isExists.values.length === 1 && isExists.values.includes(checkedItem))
+      {
+        searchParams.set(titleItem, undefined);
+        setCheckedItems(prevItems => [...prevItems.filter(item => item.title !== titleItem)]);
+      }
+      else
+      {
+        searchParams.set(titleItem, checkedItems?.find((v) => v.title === titleItem)?.values.filter((v) => v !== checkedItem).join(","));
+        setCheckedItems(prevItems => prevItems.map(item =>
+          item.title === titleItem
+            ? { ...item, values: item.values.filter(val => val !== checkedItem) }
+            : item
+        ));
+      }
+    }
   };
-
 
   useEffect(() => {
     if (params.categoryId) {
@@ -332,8 +348,7 @@ export default function CategoryPage({
                       <Button 
                         variant={"ghost"} 
                         onClick={clearAllFilters}
-                      >
-                        <Link href={`/category/${params.categoryId}`} >Clear all</Link>
+                      ><Link href={`/category/${params.categoryId}`}>Clear all</Link>
                       </Button>
                     </div>
                   </SelectContent>

@@ -47,7 +47,24 @@ export const FilterCardVariationMobile = ({ categoryId, filters, checkedItems, s
   };
 
   const uncheckFilter = (titleItem: string, checkedItem: string) => {
-
+    const isExists = checkedItems.find((v) => v.title === titleItem);
+    if (isExists)
+    {
+      if (isExists.values.length === 1 && isExists.values.includes(checkedItem))
+      {
+        searchParams.set(titleItem, undefined);
+        setCheckedItems(prevItems => [...prevItems.filter(item => item.title !== titleItem)]);
+      }
+      else
+      {
+        searchParams.set(titleItem, checkedItems?.find((v) => v.title === titleItem)?.values.filter((v) => v !== checkedItem).join(","));
+        setCheckedItems(prevItems => prevItems.map(item =>
+          item.title === titleItem
+            ? { ...item, values: item.values.filter(val => val !== checkedItem) }
+            : item
+        ));
+      }
+    }
   };
 
   return (
@@ -88,7 +105,7 @@ export const FilterCardVariationMobile = ({ categoryId, filters, checkedItems, s
               <ScrollArea className="flex w-full h-full gap-2 items-start">
                 {checkedItems && checkedItems.map((item, index) =>
                   item.values.map((value, valueIndex) => (
-                    <Button key={index + "_" + valueIndex} variant="ghost" className="bg-gray-300 justify-between m-[2px]">
+                    <Button key={index + "_" + valueIndex} variant="ghost" className="bg-gray-300 justify-between m-[2px]" onClick={() => {uncheckFilter(item.title, value)}}>
                       <span>{value}</span>
                       <XIcon />
                     </Button>
