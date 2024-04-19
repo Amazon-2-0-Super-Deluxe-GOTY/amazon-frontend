@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const ProductsBlock = ({ title, maxSizeMobile }: Props) => {
-  const products = Array.from({ length: 10 }).map((_, index) => ({
+  const products = Array.from({ length: 9 }).map((_, index) => ({
     title: `Product ${index + 1}`,
     price: 39.99,
   }));

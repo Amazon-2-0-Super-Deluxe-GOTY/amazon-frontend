@@ -22,7 +22,7 @@ export function ProductCarousel({
         <CarouselContent>
           {products.map((product, index) => (
             <CarouselItem
-              className="md:basis-1/3 lg:basis-1/6 flex justify-center pl-4"
+              className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"
               key={index}
             >
               <Link href={`/product/${index + 1}`} className="w-full">
