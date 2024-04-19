@@ -94,6 +94,11 @@ export const FilterCardVariationMobile = ({
     }
   };
 
+  const [searchText, setSearchText] = useState<string>("");
+  const handleSearchTextChange = (value: string) => {
+    setSearchText(value.toLowerCase());
+  };
+
   return (
     <>
       <Drawer>
@@ -114,7 +119,7 @@ export const FilterCardVariationMobile = ({
             </div>
             <div className="flex justify-between items-center gap-2 max-h-8 h-full">
               <div className="flex-1 flex max-w-[950px] relative">
-                <Input placeholder="Search..." />
+                <Input placeholder="Search..." value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchTextChange(e.target.value)}/>
                 <Button
                   className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto"
                   variant={"ghost"}
@@ -137,7 +142,7 @@ export const FilterCardVariationMobile = ({
                 <div className="flex flex-wrap w-full gap-1">
                   {checkedItems &&
                     checkedItems.map((item, index) =>
-                      item.values.map((value, valueIndex) => (
+                      item.values.filter((v) => v.toLowerCase().includes(searchText)).map((value, valueIndex) => (
                         <Button
                           key={index + "_" + valueIndex}
                           variant="ghost"
