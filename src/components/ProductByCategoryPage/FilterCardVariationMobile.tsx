@@ -101,16 +101,16 @@ export const FilterCardVariationMobile = ({ categoryId, filters, checkedItems, s
                 </Button>
               </div>
             </div>
-            <div className="flex max-h-[100px] mt-2 gap-1">
-              <ScrollArea className="flex w-full h-full gap-2 items-start">
-                {checkedItems && checkedItems.map((item, index) =>
+            <div className="flex max-h-[100px] mt-2">
+              <ScrollArea className="flex w-full h-full gap-2">
+                {checkedItems && checkedItems.map((item, index) => (
                   item.values.map((value, valueIndex) => (
                     <Button key={index + "_" + valueIndex} variant="ghost" className="bg-gray-300 justify-between m-[2px]" onClick={() => {uncheckFilter(item.title, value)}}>
                       <span>{value}</span>
                       <XIcon />
                     </Button>
                   ))
-                )}
+                ))}
               </ScrollArea>
             </div>
             <hr className="mt-1 border-gray-400 border-y"></hr>

@@ -308,9 +308,9 @@ export default function CategoryPage({
               />
             </MediaQueryCSS>
             <MediaQueryCSS minSize="lg">
-              <div className="max-w-52 w-full">
+              <div className="w-full">
                 <Select>
-                  <SelectTrigger className="bg-gray-200">
+                  <SelectTrigger className="py-3 px-4 max-w-52 w-full min-w-48 bg-gray-200">
                     <SelectValue
                       placeholder={
                         indicatorCount +

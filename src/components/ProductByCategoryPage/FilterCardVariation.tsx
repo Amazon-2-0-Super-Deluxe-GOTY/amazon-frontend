@@ -33,7 +33,7 @@ export const FilterCardVariation = ({ filters, checkedItems, setCheckedItems, is
 
   return filters.map((filter, i) => (
     <div key={filter.title + i}>
-      <div className={"max-h-[414px] w-full p-6 pt-3 bg-gray-200 rounded-lg lg:shadow"}>
+      <div className={"max-h-[414px] w-full py-6 px-5 pt-3 bg-gray-200 rounded-lg lg:shadow"}>
         <Accordion type="single" defaultValue={isOpen ? i.toString() : ""} collapsible>
           <AccordionItem value={i.toString()}>
             <AccordionTrigger className="font-semibold">
@@ -41,11 +41,13 @@ export const FilterCardVariation = ({ filters, checkedItems, setCheckedItems, is
             </AccordionTrigger>
             <AccordionContent>
               {filter.isSearch ? (
-                <Input placeholder="Search..." className="my-3" value={searchTextArray[i]} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchTextChange(i, e.target.value)} />
+                <div className="px-1">
+                  <Input placeholder="Search..." className="my-3" value={searchTextArray[i]} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchTextChange(i, e.target.value)} />
+                </div>
               ) : (
                 <></>
               )}
-              <ScrollArea>
+              <ScrollArea className="px-1">
                 <div className="list-none p-0 m-0 max-h-64 w-full">
                   {(() => {
                     switch (filter.type) {
@@ -107,13 +109,10 @@ const FilterCheckbox = ({ data, checkedItems, setCheckedItems, searchText }: { d
     <ul>
       {data.values.filter((v) => v.toLowerCase().includes(searchText)).map((item, index) => (
         <li key={index} className="flex items-center space-x-2 pb-1" onClick={onToggle(item)}>
-            <Checkbox
-              id={item + index}
-              checked={checkedItems?.values.find((v) => v === item) ? true : false}
-            />
-            <label className="text-base" htmlFor={item + index}>
+            <Checkbox checked={checkedItems?.values.find((v) => v === item) ? true : false} />
+            <span className="text-base" >
               {item}
-            </label>
+            </span>
         </li>
       ))}
     </ul>
@@ -248,7 +247,7 @@ const FilterPrice = ({ data, checkedItems, setCheckedItems }: { data: FilterPric
 
   return (
     <div className="h-full overflow-hidden mt-3">
-      <div className="flex justify-between w-full pb-3">
+      <div className="flex justify-between w-full p-1 pb-3">
         <div className="flex justify-center items-center gap-2">
           <Input className="max-w-16" value={priceValue.min} onChange={onInputMinValueChange}></Input>
           <span className="font-bold">—</span>
@@ -264,7 +263,7 @@ const FilterPrice = ({ data, checkedItems, setCheckedItems }: { data: FilterPric
           </Button>
         </div>
       </div>
-      <div className="h-5">
+      <div className="h-5 px-1">
         <DoubleThumbSlider 
           defaultValue={[data.values.min, data.values.max]} 
           value={[priceValue.min, priceValue.max]}
@@ -309,13 +308,8 @@ const FilterRating = ({ data, checkedItems, setCheckedItems }: { data: FilterRat
     <div className="mt-3">
       {data.values.map((item, index) => (
         <li key={index} className="flex items-center space-x-2 pb-2" onClick={onToggle(item.toString())}>
-          <Checkbox id={data.title + item} 
-            checked={checkedItems?.values.find((v) => v === item.toString()) ? true : false}
-          />
-          <label
-            className="text-base flex gap-[3.44px]"
-            htmlFor={data.title + item}
-          >
+          <Checkbox checked={checkedItems?.values.find((v) => v === item.toString()) ? true : false} />
+          <span className="text-base flex gap-[3.44px]" >
             {Array.from({ length: item }).map((_, _index) => (
               <Image key={_index} src={RatingFillStar} alt="placeholder" />
             ))}
@@ -327,7 +321,7 @@ const FilterRating = ({ data, checkedItems, setCheckedItems }: { data: FilterRat
                 fill={false}
               />
             ))}
-          </label>
+          </span>
         </li>
       ))}
     </div>
