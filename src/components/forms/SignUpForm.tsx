@@ -16,17 +16,20 @@ import { Input } from "@/components/ui/input"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
 
-const FormSchema = z.object({
+const FormSchema: z.infer<typeof FormSchema> = z.object({
   email: z.string().min(6, {
     message: "Wrong or Invalid email address",
   }),
   password: z.string().min(6, {
     message: "Minimum 6 characters required",
   }),
-  confirmPassword: z.string().min(2, {
+  confirmPassword: z.string().min(6, {
     message: "Passwords must match",
-  }),
-})
+  })
+}).refine((data => data.password === data.confirmPassword), {
+  message: "Passwords do not match",
+  path: ['confirmPassword'],
+});
 
 export function SignUpForm({ onChangeModal } : { onChangeModal: (modal:string) => void }) {
 

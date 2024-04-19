@@ -7,19 +7,28 @@ import { useSearhParamsTools } from "@/lib/router";
 import { SignUpForm } from "../forms/SignUpForm";
 import { SignUpCodeForm } from "../forms/SignUpCodeForm";
 import { ChevronLeft, XIcon } from "lucide-react";
+import { useState } from "react";
 
 export const ModalSignInUpVariation = ({ onClose } : { onClose: () => void }) => {
   const searchParams = useSearhParamsTools();
-  let modal = searchParams.get("modal");
+
+  const [modal, setModal] = useState<string>(() => {
+    const defaultValue = searchParams.get("modal");
+    if (defaultValue)
+      return defaultValue;
+
+    return "";
+  });
 
   const handleChangeModal = (newModal : string) => {
-    modal = newModal;
+    setModal(newModal);
     searchParams.set("modal", newModal);
   }
 
   return (
-    <div className="fixed flex inset-0 justify-center items-center bg-gray-500 bg-opacity-50 z-50">
-      <div className="flex max-w-7xl max-h-[560px] w-full h-full gap-6 p-6 bg-white rounded-lg justify-between">
+    <div className="fixed flex inset-0 justify-center items-center z-50">
+      <div className="absolute flex inset-0 bg-gray-500 bg-opacity-50 z-49" onClick={onClose} />
+      <div className="flex max-w-7xl max-h-[560px] w-full h-full gap-6 p-6 bg-white rounded-lg justify-between z-50">
         <>
           {(() => {
             switch (modal) {
@@ -36,7 +45,7 @@ export const ModalSignInUpVariation = ({ onClose } : { onClose: () => void }) =>
                 return null;
             }
           })()}
-          <div className="md:max-w-xl md:block hidden">
+          <div className="lg:max-w-xl md:max-w-sm md:block hidden">
             <Image
               src={placeholder}
               alt="Placeholder"
@@ -116,7 +125,7 @@ const ModalSignUpSuccessful = ({ onClose } : { onClose: () => void }) => {
       <div>
         <h1 className="text-center lg:text-5xl sm:text-4xl text-3xl font-semibold">Congratulation!</h1>
         <h2 className="text-center lg:text-2xl sm:text-xl text-md mt-1">The registration was completed</h2>
-        <Button variant={"default"} className="w-full mt-32" onClick={() => {onClose()}} >Let&apos;s go shopping</Button>
+        <Button variant={"default"} className="w-full mt-32" onClick={onClose} >Let&apos;s go shopping</Button>
       </div>
     </div>
   );
