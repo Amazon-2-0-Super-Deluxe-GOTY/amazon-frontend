@@ -1,6 +1,6 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export const useSearhParamsTools = () => {
+export const useSearchParamsTools = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
