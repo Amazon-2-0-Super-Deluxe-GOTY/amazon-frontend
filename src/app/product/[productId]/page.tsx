@@ -31,16 +31,12 @@ import { AboutProduct } from "@/components/Product/AboutProduct";
 import type { DescriptionBlock } from "@/components/Product/Description/types";
 import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import { ProductDescription } from "@/components/Product/ProductDescription";
-import { ReviewsStatisticCard } from "@/components/Review/ReviewsStatisticCard";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
-import { ReviewCard } from "@/components/Review/ReviewCard";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
 import { ProductImageFullView } from "@/components/Product/ProductImageFullView";
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
-import { useSearchParamsTools } from "@/lib/router";
-import { useRouterEvents } from "@/store/events";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -427,19 +423,11 @@ export default function ProductPage({
   const [isOptionsSelected, setIsOptionsSelected] = React.useState(() =>
     checkOptionsSelected(searchParams)
   );
-  const routerEvents = useRouterEvents();
   const hasOptions = productOptions.length > 0;
 
   React.useEffect(() => {
-    return routerEvents.addEventListener("change", (url) => {
-      const searchStartIndex = url.indexOf("?");
-      const search =
-        searchStartIndex !== -1 ? url.substring(searchStartIndex) : "";
-
-      const searchParams = new URLSearchParams(search);
-      setIsOptionsSelected(checkOptionsSelected(searchParams));
-    });
-  }, []);
+    setIsOptionsSelected(checkOptionsSelected(searchParams));
+  }, [searchParams]);
 
   React.useEffect(() => {
     if (params.productId) {

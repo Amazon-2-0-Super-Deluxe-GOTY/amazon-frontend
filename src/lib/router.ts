@@ -21,7 +21,7 @@ export const useSearchParamsTools = () => {
   };
 
   return {
-    get: searchParams.get,
+    get: searchParams.get.bind(searchParams),
     set,
   };
 };
