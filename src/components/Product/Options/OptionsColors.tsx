@@ -6,15 +6,9 @@ import { cn } from "@/lib/utils";
 
 const type: ProductOptionsTypes = "color";
 
-export const OptionColors = ({
-  data,
-  onChange,
-}: {
-  data: ColorsData;
-  onChange: () => void;
-}) => {
+export const OptionColors = ({ data }: { data: ColorsData }) => {
   const searchParams = useSearchParamsTools();
-  // const [index, setIndex] = useState<number>();
+
   const [index, setIndex] = useState<number | undefined>(() => {
     const defaultValue = searchParams.get(type);
 
@@ -34,7 +28,6 @@ export const OptionColors = ({
   const onSelect = (i: number) => () => {
     setIndex(i);
     searchParams.set(type, data[i].title);
-    onChange();
   };
 
   return (

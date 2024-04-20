@@ -40,6 +40,7 @@ import { ProductImageFullView } from "@/components/Product/ProductImageFullView"
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
 import { useSearchParamsTools } from "@/lib/router";
+import { useRouterEvents } from "@/store/events";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -426,14 +427,19 @@ export default function ProductPage({
   const [isOptionsSelected, setIsOptionsSelected] = React.useState(() =>
     checkOptionsSelected(searchParams)
   );
+  const routerEvents = useRouterEvents();
   const hasOptions = productOptions.length > 0;
 
-  const onOptionsChange = () => {
-    new Promise((res) => setTimeout(res, 500)).then(() => {
-      const searchParams = new URLSearchParams(window.location.search);
+  React.useEffect(() => {
+    return routerEvents.addEventListener("change", (url) => {
+      const searchStartIndex = url.indexOf("?");
+      const search =
+        searchStartIndex !== -1 ? url.substring(searchStartIndex) : "";
+
+      const searchParams = new URLSearchParams(search);
       setIsOptionsSelected(checkOptionsSelected(searchParams));
     });
-  };
+  }, []);
 
   React.useEffect(() => {
     if (params.productId) {
@@ -524,10 +530,7 @@ export default function ProductPage({
           <div className="mt-3 mb-6 lg:mt-8 lg:mb-0">
             {hasOptions ? (
               <div className="flex flex-col gap-3 lg:gap-8">
-                <ProductOptionsMapper
-                  options={productOptions}
-                  onChange={onOptionsChange}
-                />
+                <ProductOptionsMapper options={productOptions} />
               </div>
             ) : (
               <div>
