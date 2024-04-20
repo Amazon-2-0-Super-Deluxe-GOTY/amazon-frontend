@@ -9,10 +9,11 @@ import {
 } from "@/components/ui/breadcrumb";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import React from "react";
 import { Slash, Star, StarHalf } from "lucide-react";
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
@@ -35,6 +36,10 @@ import type { Review, ReviewsStatistic } from "@/components/Review/types";
 import { ReviewCard } from "@/components/Review/ReviewCard";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
+import { ProductImageFullView } from "@/components/Product/ProductImageFullView";
+import clsx from "clsx";
+import { useSearchParams } from "next/navigation";
+import { useSearchParamsTools } from "@/lib/router";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -404,9 +409,33 @@ export default function ProductPage({
 }: {
   params: { productId: string };
 }) {
+  const checkOptionsSelected = (searchParams: URLSearchParams) => {
+    let isAllOptionsSelected = true;
+    productOptions.forEach((opt) => {
+      if (!isAllOptionsSelected) return;
+
+      const value = searchParams.get(opt.type);
+      if (!value) {
+        isAllOptionsSelected = false;
+      }
+    });
+    return isAllOptionsSelected;
+  };
+
+  const searchParams = useSearchParams();
+  const [isOptionsSelected, setIsOptionsSelected] = React.useState(() =>
+    checkOptionsSelected(searchParams)
+  );
   const hasOptions = productOptions.length > 0;
 
-  useEffect(() => {
+  const onOptionsChange = () => {
+    new Promise((res) => setTimeout(res, 500)).then(() => {
+      const searchParams = new URLSearchParams(window.location.search);
+      setIsOptionsSelected(checkOptionsSelected(searchParams));
+    });
+  };
+
+  React.useEffect(() => {
     if (params.productId) {
       console.log(`Loading page for product ${params.productId}`);
     }
@@ -495,7 +524,10 @@ export default function ProductPage({
           <div className="mt-3 mb-6 lg:mt-8 lg:mb-0">
             {hasOptions ? (
               <div className="flex flex-col gap-3 lg:gap-8">
-                <ProductOptionsMapper options={productOptions} />
+                <ProductOptionsMapper
+                  options={productOptions}
+                  onChange={onOptionsChange}
+                />
               </div>
             ) : (
               <div>
@@ -509,7 +541,7 @@ export default function ProductPage({
         </div>
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
-            <ProductOrderCard />
+            <ProductOrderCard isOptionsSelected={isOptionsSelected} />
             <SellerInfoCard sellerInfo={sellerInfo} />
           </div>
         </div>
@@ -554,22 +586,76 @@ export default function ProductPage({
 }
 
 const ImagesBlock = () => {
+  const [mainCarouselApi, setMainCarouselApi] = React.useState<CarouselApi>();
+  const [previewCarouselApi, setPreviewCarouselApi] =
+    React.useState<CarouselApi>();
+  const [currentImageIndex, setCurrentImageIndex] = React.useState<number>(0);
+  const currentImageIndexRef = React.useRef<number>(currentImageIndex);
+  const firstEventSkippedRef = React.useRef(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const images = React.useMemo(
+    () => Array.from({ length: 10 }).map(() => placeholder),
+    []
+  );
+
+  React.useEffect(() => {
+    currentImageIndexRef.current = currentImageIndex;
+  }, [currentImageIndex]);
+
+  React.useEffect(() => {
+    if (!mainCarouselApi) return;
+
+    const onSlidesChange = (api: NonNullable<CarouselApi>) => {
+      // fix slide change on page reload
+      if (!firstEventSkippedRef.current) {
+        firstEventSkippedRef.current = true;
+        return;
+      }
+
+      const slides = api.slidesInView();
+
+      slides.forEach((index) => {
+        if (index !== currentImageIndexRef.current) {
+          setCurrentImageIndex(index);
+          previewCarouselApi?.scrollTo(index);
+        }
+      });
+    };
+
+    mainCarouselApi.on("slidesInView", onSlidesChange);
+
+    return () => {
+      mainCarouselApi.off("slidesInView", onSlidesChange);
+    };
+  }, [mainCarouselApi]);
+
+  // const onPreviewImageClick = (index: number) => () => {
+  //   setCurrentImageIndex(index);
+  //   mainCarouselApi?.scrollTo(index);
+  // };
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
   return (
     <>
       <Carousel
         className="w-full"
         opts={{
           align: "center",
+          skipSnaps: true,
         }}
+        setApi={setMainCarouselApi}
       >
         <CarouselContent>
-          {Array.from({ length: 10 }).map((_, index) => {
+          {images.map((_, index) => {
             return (
               <CarouselItem key={index}>
                 <Image
                   src={placeholder}
                   alt="Placeholder"
                   className="object-cover"
+                  onClick={openModal}
                 />
               </CarouselItem>
             );
@@ -587,9 +673,10 @@ const ImagesBlock = () => {
           opts={{
             align: "center",
           }}
+          setApi={setPreviewCarouselApi}
         >
           <CarouselContent>
-            {Array.from({ length: 10 }).map((_, index) => {
+            {images.map((_, index) => {
               return (
                 <CarouselItem
                   key={index}
@@ -600,7 +687,10 @@ const ImagesBlock = () => {
                   <Image
                     src={placeholder}
                     alt="Placeholder"
-                    className="w-14 h-14 lg:w-20 lg:h-20 object-cover"
+                    className={clsx(
+                      "w-14 h-14 lg:w-20 lg:h-20 object-cover",
+                      currentImageIndex !== index && "brightness-75"
+                    )}
                   />
                 </CarouselItem>
               );
@@ -608,6 +698,12 @@ const ImagesBlock = () => {
           </CarouselContent>
         </Carousel>
       </div>
+      <ProductImageFullView
+        images={images}
+        isOpen={isOpen}
+        closeModal={closeModal}
+        startIndex={currentImageIndex}
+      />
     </>
   );
 };

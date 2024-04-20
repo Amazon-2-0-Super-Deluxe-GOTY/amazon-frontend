@@ -8,7 +8,13 @@ import { PencilRulerIcon, ShirtIcon } from "lucide-react";
 
 const type: ProductOptionsTypes = "size";
 
-export const OptionSizes = ({ data }: { data: SizesData }) => {
+export const OptionSizes = ({
+  data,
+  onChange,
+}: {
+  data: SizesData;
+  onChange: () => void;
+}) => {
   const searchParams = useSearchParamsTools();
   const [index, setIndex] = useState<number | undefined>(() => {
     const defaultValue = searchParams.get(type);
@@ -30,6 +36,7 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
   const onSelect = (i: number) => () => {
     setIndex(i);
     searchParams.set(type, data[i].short);
+    onChange();
   };
 
   useEffect(() => {}, []);

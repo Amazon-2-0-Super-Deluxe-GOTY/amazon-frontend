@@ -48,7 +48,11 @@ const infoElements = [
   },
 ];
 
-export const ProductOrderCard = () => {
+export const ProductOrderCard = ({
+  isOptionsSelected,
+}: {
+  isOptionsSelected: boolean;
+}) => {
   const [count, setCount] = useState(1);
   const [openedTabIndex, setOpenedTabIndex] = useState<number>();
 
@@ -123,8 +127,8 @@ export const ProductOrderCard = () => {
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
-        <Button>Add to cart</Button>
-        <Button>Buy now</Button>
+        <Button disabled={!isOptionsSelected}>Add to cart</Button>
+        <Button disabled={!isOptionsSelected}>Buy now</Button>
         <Button variant={"outline"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
