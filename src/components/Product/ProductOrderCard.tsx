@@ -134,7 +134,7 @@ export const ProductOrderCard = ({
         </Button>
       </CardContent>
       <MediaQueryCSS maxSize="lg">
-        <CardFooter className="justify-center gap-2">
+        <CardFooter className="justify-center gap-2 ">
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
               <AccordionTrigger className="flex justify-center items-center gap-1">

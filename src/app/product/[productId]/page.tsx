@@ -10,15 +10,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { Slash, Star, StarHalf } from "lucide-react";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Slash, Star, StarHalf, TrophyIcon } from "lucide-react";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import type { OptionsComponent } from "@/components/Product/Options/types";
@@ -34,9 +26,8 @@ import { ProductDescription } from "@/components/Product/ProductDescription";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
-import { ProductImageFullView } from "@/components/Product/ProductImageFullView";
-import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
+import { ImagesBlock } from "@/components/ProductPage/ProductImagesBlock";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -534,6 +525,13 @@ export default function ProductPage({
           <div className="sticky top-4 space-y-2 lg:space-y-4">
             <ProductOrderCard isOptionsSelected={isOptionsSelected} />
             <SellerInfoCard sellerInfo={sellerInfo} />
+            <div className="p-4 lg:p-6 bg-gray-200 rounded-lg flex items-center gap-3">
+              <TrophyIcon className="w-8 h-8 lg:w-10 lg:h-10" />
+              <div>
+                <p className="font-semibold">Best seller</p>
+                <p className="text-xs">Sold most frequently</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -575,126 +573,3 @@ export default function ProductPage({
     </main>
   );
 }
-
-const ImagesBlock = () => {
-  const [mainCarouselApi, setMainCarouselApi] = React.useState<CarouselApi>();
-  const [previewCarouselApi, setPreviewCarouselApi] =
-    React.useState<CarouselApi>();
-  const [currentImageIndex, setCurrentImageIndex] = React.useState<number>(0);
-  const currentImageIndexRef = React.useRef<number>(currentImageIndex);
-  const firstEventSkippedRef = React.useRef(false);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const images = React.useMemo(
-    () => Array.from({ length: 10 }).map(() => placeholder),
-    []
-  );
-
-  React.useEffect(() => {
-    currentImageIndexRef.current = currentImageIndex;
-  }, [currentImageIndex]);
-
-  React.useEffect(() => {
-    if (!mainCarouselApi) return;
-
-    const onSlidesChange = (api: NonNullable<CarouselApi>) => {
-      // fix slide change on page reload
-      if (!firstEventSkippedRef.current) {
-        firstEventSkippedRef.current = true;
-        return;
-      }
-
-      const slides = api.slidesInView();
-
-      slides.forEach((index) => {
-        if (index !== currentImageIndexRef.current) {
-          setCurrentImageIndex(index);
-          previewCarouselApi?.scrollTo(index);
-        }
-      });
-    };
-
-    mainCarouselApi.on("slidesInView", onSlidesChange);
-
-    return () => {
-      mainCarouselApi.off("slidesInView", onSlidesChange);
-    };
-  }, [mainCarouselApi]);
-
-  // const onPreviewImageClick = (index: number) => () => {
-  //   setCurrentImageIndex(index);
-  //   mainCarouselApi?.scrollTo(index);
-  // };
-
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
-
-  return (
-    <>
-      <Carousel
-        className="w-full"
-        opts={{
-          align: "center",
-          skipSnaps: true,
-        }}
-        setApi={setMainCarouselApi}
-      >
-        <CarouselContent>
-          {images.map((_, index) => {
-            return (
-              <CarouselItem key={index}>
-                <Image
-                  src={placeholder}
-                  alt="Placeholder"
-                  className="object-cover"
-                  onClick={openModal}
-                />
-              </CarouselItem>
-            );
-          })}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-        <span className="w-1/5 absolute top-[4%] lg:top-8 left-0 pl-[3%] py-2 bg-gray-50 rounded-e-full text-base lg:text-2xl">
-          -24%
-        </span>
-      </Carousel>
-      <div className="mt-2 lg:mt-8">
-        <Carousel
-          className="w-full"
-          opts={{
-            align: "center",
-          }}
-          setApi={setPreviewCarouselApi}
-        >
-          <CarouselContent>
-            {images.map((_, index) => {
-              return (
-                <CarouselItem
-                  key={index}
-                  className={
-                    "basis-[unset] pl-2 first:pl-4 lg:pl-6 md:pl-4 lg:first:pl-4"
-                  }
-                >
-                  <Image
-                    src={placeholder}
-                    alt="Placeholder"
-                    className={clsx(
-                      "w-14 h-14 lg:w-20 lg:h-20 object-cover",
-                      currentImageIndex !== index && "brightness-75"
-                    )}
-                  />
-                </CarouselItem>
-              );
-            })}
-          </CarouselContent>
-        </Carousel>
-      </div>
-      <ProductImageFullView
-        images={images}
-        isOpen={isOpen}
-        closeModal={closeModal}
-        startIndex={currentImageIndex}
-      />
-    </>
-  );
-};
