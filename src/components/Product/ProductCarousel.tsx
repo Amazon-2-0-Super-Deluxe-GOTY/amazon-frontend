@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import {
   Carousel,
@@ -7,9 +6,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ProductCard } from "../Product/ProductCard";
+import { ProductCard } from "./ProductCard";
 
-export function CarouselProduct({
+export function ProductCarousel({
   products,
 }: {
   products: { title: string; price: number }[];
@@ -23,7 +22,7 @@ export function CarouselProduct({
         <CarouselContent>
           {products.map((product, index) => (
             <CarouselItem
-              className="md:basis-1/3 lg:basis-1/6 flex justify-center pl-4"
+              className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"
               key={index}
             >
               <Link href={`/product/${index + 1}`} className="w-full">

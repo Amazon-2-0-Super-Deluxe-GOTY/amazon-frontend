@@ -26,7 +26,7 @@ export function Header() {
           </Link>
         </div>
         <div className="flex-1 flex max-w-[950px] relative ml-5 lg:mx-auto">
-          <Input placeholder="Search..." className="lg:rounded-e-none" />
+          <Input placeholder="Search..." />
           <Button
             className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto"
             variant={isMobile ? "ghost" : "default"}

@@ -38,7 +38,7 @@ export function CarouselCategory() {
             <CarouselItem
               key={index}
               className={
-                "basis-[unset] md:basis-1/3 lg:basis-1/6 flex justify-center pl-4 lg:pl-6"
+                "basis-[unset] md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4 lg:pl-6"
               }
             >
               <Link href={`/category/${index + 1}`} className="h-full">

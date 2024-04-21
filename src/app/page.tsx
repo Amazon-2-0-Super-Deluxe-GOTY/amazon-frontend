@@ -1,14 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
-
 import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpBanner } from "@/components/MainPage/SingInUpBanner";
 import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
-import { CarouselProduct } from "@/components/MainPage/CarouselProduct";
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-import { MediaQuery } from "@/components/MediaQuery";
-import { ProductsBlock } from "@/components/MainPage/ProductsBlock";
+import { ProductsBlock } from "@/components/Product/ProductsBlock";
 
 export default function Home() {
   return (
