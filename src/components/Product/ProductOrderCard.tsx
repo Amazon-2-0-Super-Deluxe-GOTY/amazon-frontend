@@ -152,6 +152,7 @@ export const ProductOrderCard = ({
         count={count}
         increment={increment}
         decrement={decrement}
+        isOptionsSelected={isOptionsSelected}
       />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -183,10 +184,12 @@ const MobileQuickActions = ({
   count,
   increment,
   decrement,
+  isOptionsSelected,
 }: {
   count: number;
   increment: () => void;
   decrement: () => void;
+  isOptionsSelected: boolean;
 }) => {
   return (
     <ClientOnlyPortal selector="body">
@@ -206,8 +209,10 @@ const MobileQuickActions = ({
                 <button>
                   <HeartIcon />
                 </button>
-                <Button variant={"outline"}>To cart</Button>
-                <Button>Buy</Button>
+                <Button variant={"outline"} disabled={!isOptionsSelected}>
+                  To cart
+                </Button>
+                <Button disabled={!isOptionsSelected}>Buy</Button>
               </div>
             </div>
             <hr className="border-black" />
