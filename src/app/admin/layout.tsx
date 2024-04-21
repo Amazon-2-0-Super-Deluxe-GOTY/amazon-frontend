@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
-import "./globals.css";
-import Providers from "./providers";
+import "../globals.css";
+import Providers from "../providers";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -18,11 +18,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <Providers>
-        <body className={mulish.className}>{children}</body>
-      </Providers>
-    </html>
-  );
+  return <>{children}</>;
 }
