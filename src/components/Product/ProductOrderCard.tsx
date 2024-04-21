@@ -48,7 +48,11 @@ const infoElements = [
   },
 ];
 
-export const ProductOrderCard = () => {
+export const ProductOrderCard = ({
+  isOptionsSelected,
+}: {
+  isOptionsSelected: boolean;
+}) => {
   const [count, setCount] = useState(1);
   const [openedTabIndex, setOpenedTabIndex] = useState<number>();
 
@@ -123,14 +127,14 @@ export const ProductOrderCard = () => {
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
-        <Button>Add to cart</Button>
-        <Button>Buy now</Button>
+        <Button disabled={!isOptionsSelected}>Add to cart</Button>
+        <Button disabled={!isOptionsSelected}>Buy now</Button>
         <Button variant={"outline"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
       </CardContent>
       <MediaQueryCSS maxSize="lg">
-        <CardFooter className="justify-center gap-2">
+        <CardFooter className="justify-center gap-2 ">
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
               <AccordionTrigger className="flex justify-center items-center gap-1">
@@ -148,6 +152,7 @@ export const ProductOrderCard = () => {
         count={count}
         increment={increment}
         decrement={decrement}
+        isOptionsSelected={isOptionsSelected}
       />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -179,10 +184,12 @@ const MobileQuickActions = ({
   count,
   increment,
   decrement,
+  isOptionsSelected,
 }: {
   count: number;
   increment: () => void;
   decrement: () => void;
+  isOptionsSelected: boolean;
 }) => {
   return (
     <ClientOnlyPortal selector="body">
@@ -202,8 +209,10 @@ const MobileQuickActions = ({
                 <button>
                   <HeartIcon />
                 </button>
-                <Button variant={"outline"}>To cart</Button>
-                <Button>Buy</Button>
+                <Button variant={"outline"} disabled={!isOptionsSelected}>
+                  To cart
+                </Button>
+                <Button disabled={!isOptionsSelected}>Buy</Button>
               </div>
             </div>
             <hr className="border-black" />

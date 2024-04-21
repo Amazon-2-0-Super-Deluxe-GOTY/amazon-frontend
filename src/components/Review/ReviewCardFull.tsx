@@ -337,7 +337,7 @@ const ReviewHeaderMobile = ({
 }: ReviewHeaderProps) => {
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="w-full flex justify-between items-center">
+      <div className="w-full flex justify-between items-center mb-1">
         <HeaderControls
           hasPrev={hasPrev}
           hasNext={hasNext}
@@ -385,7 +385,7 @@ const ReviewBody = ({ review }: BasePartProps) => {
 
   return (
     <div className="grow">
-      <div className="mb-4">
+      <div className="mb-3 -mt-0.5 lg:mt-0 lg:mb-4">
         <div className="flex items-center gap-2 lg:gap-4 h-5 text-xs lg:text-base">
           <div className="flex items-center gap-1 h-full">{starsElements}</div>
           {review.options.map((opt, i) => (
@@ -398,7 +398,7 @@ const ReviewBody = ({ review }: BasePartProps) => {
           ))}
         </div>
       </div>
-      <div className="mb-6">
+      <div className="mb-6 space-y-2">
         <p className="font-semibold">{review.title}</p>
         <p className="whitespace-pre-line">{review.text}</p>
       </div>

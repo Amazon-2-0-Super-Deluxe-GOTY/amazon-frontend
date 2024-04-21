@@ -8,7 +8,7 @@ const type: ProductOptionsTypes = "color";
 
 export const OptionColors = ({ data }: { data: ColorsData }) => {
   const searchParams = useSearchParamsTools();
-  // const [index, setIndex] = useState<number>();
+
   const [index, setIndex] = useState<number | undefined>(() => {
     const defaultValue = searchParams.get(type);
 

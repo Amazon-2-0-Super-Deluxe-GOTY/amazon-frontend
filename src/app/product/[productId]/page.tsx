@@ -9,15 +9,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
-import { Slash, Star, StarHalf } from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import React from "react";
+import { Slash, Star, StarHalf, TrophyIcon } from "lucide-react";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import type { OptionsComponent } from "@/components/Product/Options/types";
@@ -30,11 +23,11 @@ import { AboutProduct } from "@/components/Product/AboutProduct";
 import type { DescriptionBlock } from "@/components/Product/Description/types";
 import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import { ProductDescription } from "@/components/Product/ProductDescription";
-import { ReviewsStatisticCard } from "@/components/Review/ReviewsStatisticCard";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
-import { ReviewCard } from "@/components/Review/ReviewCard";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
+import { useSearchParams } from "next/navigation";
+import { ImagesBlock } from "@/components/ProductPage/ProductImagesBlock";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -404,9 +397,30 @@ export default function ProductPage({
 }: {
   params: { productId: string };
 }) {
+  const checkOptionsSelected = (searchParams: URLSearchParams) => {
+    let isAllOptionsSelected = true;
+    productOptions.forEach((opt) => {
+      if (!isAllOptionsSelected) return;
+
+      const value = searchParams.get(opt.type);
+      if (!value) {
+        isAllOptionsSelected = false;
+      }
+    });
+    return isAllOptionsSelected;
+  };
+
+  const searchParams = useSearchParams();
+  const [isOptionsSelected, setIsOptionsSelected] = React.useState(() =>
+    checkOptionsSelected(searchParams)
+  );
   const hasOptions = productOptions.length > 0;
 
-  useEffect(() => {
+  React.useEffect(() => {
+    setIsOptionsSelected(checkOptionsSelected(searchParams));
+  }, [searchParams]);
+
+  React.useEffect(() => {
     if (params.productId) {
       console.log(`Loading page for product ${params.productId}`);
     }
@@ -509,8 +523,15 @@ export default function ProductPage({
         </div>
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
-            <ProductOrderCard />
+            <ProductOrderCard isOptionsSelected={isOptionsSelected} />
             <SellerInfoCard sellerInfo={sellerInfo} />
+            <div className="p-4 lg:p-6 bg-gray-200 rounded-lg flex items-center gap-3">
+              <TrophyIcon className="w-8 h-8 lg:w-10 lg:h-10" />
+              <div>
+                <p className="font-semibold">Best seller</p>
+                <p className="text-xs">Sold most frequently</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -552,62 +573,3 @@ export default function ProductPage({
     </main>
   );
 }
-
-const ImagesBlock = () => {
-  return (
-    <>
-      <Carousel
-        className="w-full"
-        opts={{
-          align: "center",
-        }}
-      >
-        <CarouselContent>
-          {Array.from({ length: 10 }).map((_, index) => {
-            return (
-              <CarouselItem key={index}>
-                <Image
-                  src={placeholder}
-                  alt="Placeholder"
-                  className="object-cover"
-                />
-              </CarouselItem>
-            );
-          })}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-        <span className="w-1/5 absolute top-[4%] lg:top-8 left-0 pl-[3%] py-2 bg-gray-50 rounded-e-full text-base lg:text-2xl">
-          -24%
-        </span>
-      </Carousel>
-      <div className="mt-2 lg:mt-8">
-        <Carousel
-          className="w-full"
-          opts={{
-            align: "center",
-          }}
-        >
-          <CarouselContent>
-            {Array.from({ length: 10 }).map((_, index) => {
-              return (
-                <CarouselItem
-                  key={index}
-                  className={
-                    "basis-[unset] pl-2 first:pl-4 lg:pl-6 md:pl-4 lg:first:pl-4"
-                  }
-                >
-                  <Image
-                    src={placeholder}
-                    alt="Placeholder"
-                    className="w-14 h-14 lg:w-20 lg:h-20 object-cover"
-                  />
-                </CarouselItem>
-              );
-            })}
-          </CarouselContent>
-        </Carousel>
-      </div>
-    </>
-  );
-};
