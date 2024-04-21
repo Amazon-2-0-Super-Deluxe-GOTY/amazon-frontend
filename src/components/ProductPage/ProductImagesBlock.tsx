@@ -18,7 +18,6 @@ export const ImagesBlock = () => {
     React.useState<CarouselApi>();
   const [currentImageIndex, setCurrentImageIndex] = React.useState<number>(0);
   const currentImageIndexRef = React.useRef<number>(currentImageIndex);
-  const firstEventSkippedRef = React.useRef(false);
   const [isOpen, setIsOpen] = React.useState(false);
   const images = React.useMemo(
     () => Array.from({ length: 10 }).map(() => placeholder),
@@ -33,20 +32,9 @@ export const ImagesBlock = () => {
     if (!mainCarouselApi) return;
 
     const onSlidesChange = (api: NonNullable<CarouselApi>) => {
-      // fix slide change on page reload
-      if (!firstEventSkippedRef.current) {
-        firstEventSkippedRef.current = true;
-        return;
-      }
-
-      const slides = api.slidesInView();
-
-      slides.forEach((index) => {
-        if (index !== currentImageIndexRef.current) {
-          setCurrentImageIndex(index);
-          previewCarouselApi?.scrollTo(index);
-        }
-      });
+      const index = api.selectedScrollSnap();
+      setCurrentImageIndex(index);
+      previewCarouselApi?.scrollTo(index);
     };
 
     mainCarouselApi.on("slidesInView", onSlidesChange);
@@ -56,10 +44,10 @@ export const ImagesBlock = () => {
     };
   }, [mainCarouselApi]);
 
-  // const onPreviewImageClick = (index: number) => () => {
-  //   setCurrentImageIndex(index);
-  //   mainCarouselApi?.scrollTo(index);
-  // };
+  const onPreviewImageClick = (index: number) => () => {
+    setCurrentImageIndex(index);
+    mainCarouselApi?.scrollTo(index);
+  };
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
@@ -70,7 +58,7 @@ export const ImagesBlock = () => {
         className="w-full"
         opts={{
           align: "center",
-          skipSnaps: true,
+          containScroll: "keepSnaps",
         }}
         setApi={setMainCarouselApi}
       >
@@ -99,6 +87,7 @@ export const ImagesBlock = () => {
           className="w-full"
           opts={{
             align: "center",
+            containScroll: "keepSnaps",
           }}
           setApi={setPreviewCarouselApi}
         >
@@ -118,6 +107,7 @@ export const ImagesBlock = () => {
                       "w-14 h-14 lg:w-20 lg:h-20 object-cover rounded-lg",
                       currentImageIndex !== index && "brightness-75"
                     )}
+                    onClick={onPreviewImageClick(index)}
                   />
                 </CarouselItem>
               );
