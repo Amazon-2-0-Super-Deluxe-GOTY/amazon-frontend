@@ -16,7 +16,7 @@ import placeholder from "@/../public/Icons/placeholder.svg";
 import type { OptionsComponent } from "@/components/Product/Options/types";
 import { ProductOptionsMapper } from "@/components/Product/Options/ProductOptionsMapper";
 import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
-import { MediaQueryCSS } from "@/components/MediaQuery";
+import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
 import { ProductDetails } from "@/components/Product/ProductDetails";
 import { AboutProduct } from "@/components/Product/AboutProduct";

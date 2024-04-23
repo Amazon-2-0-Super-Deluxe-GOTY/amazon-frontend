@@ -1,9 +1,9 @@
 import { ChevronRightIcon, StarIcon, UserRoundIcon } from "lucide-react";
 import { Card } from "../ui/card";
-import { MediaQueryCSS } from "../MediaQuery";
+import { MediaQueryCSS } from "../Shared/MediaQuery";
 import { SellerInfo } from "./types";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
-import { SheetHeader } from "../ProductPage/SteetParts";
+import { SheetHeader } from "../Shared/SteetParts";
 import { Separator } from "../ui/separator";
 import {
   Accordion,

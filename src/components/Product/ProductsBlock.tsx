@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { ProductCarousel } from "./ProductCarousel";
 import { ProductsListMobile } from "./ProductsListMobile";
-import { MediaQueryCSS } from "../MediaQuery";
+import { MediaQueryCSS } from "../Shared/MediaQuery";
 
 interface Props {
   title: string;
