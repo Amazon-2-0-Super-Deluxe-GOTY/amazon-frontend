@@ -1,11 +1,14 @@
+import { useScreenSize } from "@/lib/media";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet";
+import { ChevronsLeftIcon, XIcon } from "lucide-react";
 
 export const Sidebar = ({
   isOpen,
@@ -16,14 +19,26 @@ export const Sidebar = ({
   closeModal: () => void;
   children: React.ReactNode;
 }) => {
+  const isDesktop = useScreenSize({ minSize: "lg" });
+
   const onOpenChange = (value: boolean) => {
     if (!value) closeModal();
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side={"left"} className="w-full space-y-4 lg:space-y-6">
+      <SheetContent
+        side={"left"}
+        hideClose={isDesktop}
+        className="w-full space-y-4 lg:space-y-6"
+      >
         {children}
+        {isDesktop && isOpen && (
+          <SheetClose className="absolute -right-16 top-0  w-10 h-10 bg-white rounded-full flex justify-center items-center">
+            <ChevronsLeftIcon />
+            <span className="sr-only">Close</span>
+          </SheetClose>
+        )}
       </SheetContent>
     </Sheet>
   );
