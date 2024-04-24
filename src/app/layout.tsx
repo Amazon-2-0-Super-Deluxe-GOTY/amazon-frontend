@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
-import "./globals.css";
 import Providers from "./providers";
-
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -24,13 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Providers>
-        <body className={mulish.className}>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <div className="w-full grow px-4">{children}</div>
-            <Footer />
-          </div>
-        </body>
+        <body className={mulish.className}>{children}</body>
       </Providers>
     </html>
   );

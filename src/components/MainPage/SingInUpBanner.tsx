@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -6,16 +6,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import { ModalSignInUpVariation } from "@/components/SignInUpModal/ModalSignInUpVariation";
-import { useSearhParamsTools } from "@/lib/router";
+import { useSearchParamsTools } from "@/lib/router";
 
 export const SingInUpBanner = () => {
-  const searchParams = useSearhParamsTools();
+  const searchParams = useSearchParamsTools();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
     const defaultValue = searchParams.get("modal");
-    if (defaultValue)
-      return true;
-    
+    if (defaultValue) return true;
+
     return false;
   });
 
@@ -30,14 +29,12 @@ export const SingInUpBanner = () => {
   };
 
   useEffect(() => {
-    if(searchParams.get("modal"))
-      setIsModalOpen(true);
-  }, [openSignUpModal, openLogInModal])
+    if (searchParams.get("modal")) setIsModalOpen(true);
+  }, [openSignUpModal, openLogInModal]);
 
   useEffect(() => {
-    if(!searchParams.get("modal"))
-      setIsModalOpen(false);
-  }, [closeModal])
+    if (!searchParams.get("modal")) setIsModalOpen(false);
+  }, [closeModal]);
 
   return (
     <Card className="w-full bg-gray-100 border-none">
@@ -57,14 +54,18 @@ export const SingInUpBanner = () => {
             </p>
           </div>
           <div className="flex justify-center items-center gap-6">
-            <Button size={"lg"} className="text-base lg:text-xl" onClick={openSignUpModal}>
+            <Button
+              size={"lg"}
+              className="text-base lg:text-xl"
+              onClick={openSignUpModal}
+            >
               Sing up
             </Button>
             <Button
               size={"lg"}
               className="text-base lg:text-xl"
               variant={"outline"}
-              onClick={openLogInModal} 
+              onClick={openLogInModal}
             >
               Log in
             </Button>
@@ -79,4 +80,4 @@ export const SingInUpBanner = () => {
       {isModalOpen && <ModalSignInUpVariation onClose={closeModal} />}
     </Card>
   );
-}
+};

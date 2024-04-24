@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { ProductOptionsTypes, SizesData } from "./types";
-import { useSearhParamsTools } from "@/lib/router";
+import { useSearchParamsTools } from "@/lib/router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PencilRulerIcon, ShirtIcon } from "lucide-react";
@@ -9,7 +9,7 @@ import { PencilRulerIcon, ShirtIcon } from "lucide-react";
 const type: ProductOptionsTypes = "size";
 
 export const OptionSizes = ({ data }: { data: SizesData }) => {
-  const searchParams = useSearhParamsTools();
+  const searchParams = useSearchParamsTools();
   const [index, setIndex] = useState<number | undefined>(() => {
     const defaultValue = searchParams.get(type);
 

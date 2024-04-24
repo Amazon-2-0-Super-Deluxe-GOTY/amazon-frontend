@@ -1,15 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ProductOptionsTypes, ColorsData } from "./types";
-import clsx from "clsx";
-import { useSearhParamsTools } from "@/lib/router";
+import { useSearchParamsTools } from "@/lib/router";
 import { cn } from "@/lib/utils";
 
 const type: ProductOptionsTypes = "color";
 
 export const OptionColors = ({ data }: { data: ColorsData }) => {
-  const searchParams = useSearhParamsTools();
-  // const [index, setIndex] = useState<number>();
+  const searchParams = useSearchParamsTools();
+
   const [index, setIndex] = useState<number | undefined>(() => {
     const defaultValue = searchParams.get(type);
 

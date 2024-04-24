@@ -2,7 +2,7 @@ import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpBanner } from "@/components/MainPage/SingInUpBanner";
 import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
 
-import ScrollToTopButton from "@/components/ScrollToTopButton";
+import ScrollToTopButton from "@/components/Shared/ScrollToTopButton";
 import { ProductsBlock } from "@/components/Product/ProductsBlock";
 
 export default function Home() {

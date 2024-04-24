@@ -1,19 +1,19 @@
 "use client";
+import React from "react";
 import { useState, useEffect } from "react";
+
+import { cn } from "@/lib/utils";
+import { useSearchParamsTools } from "@/lib/router";
+
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Slash, StarIcon } from "lucide-react";
+import { Slash, XIcon } from "lucide-react";
 
 import HouseLine from "@/../public/Icons/HouseLine.svg";
-import RatingFillStar from "@/../public/Icons/RatingFillStar.svg";
-import RatingLineStar from "@/../public/Icons/RatingLineStar.svg";
 import SwitchCard33 from "@/../public/Icons/SwitchCard33.svg";
 import SwitchCard44 from "@/../public/Icons/SwitchCard44.svg";
-import placeholder from "@/../public/Icons/placeholder.svg";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Breadcrumb,
@@ -24,14 +24,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Slider } from "@/components/ui/slider";
-import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -40,7 +32,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -49,20 +40,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import ScrollToTopButton from "@/components/ScrollToTopButton";
-import { cn } from "@/lib/utils";
+import ScrollToTopButton from "@/components/Shared/ScrollToTopButton";
 import { ProductCard } from "@/components/Product/ProductCard";
+import { FilterCardVariationMobile } from "@/components/ProductByCategoryPage/FilterCardVariationMobile";
+import {
+  FilterItem,
+  FilterCheckedType,
+} from "@/components/ProductByCategoryPage/filtersDataTypes";
+import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
+import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
 
-type FiltersDataItem = {
-  title: string;
-  type: string;
-  isSearch: boolean;
-  values: string[];
-};
-const FiltersData: FiltersDataItem[] = [
+const FiltersData: FilterItem[] = [
   {
     title: "Brand",
-    type: "Checkbox",
+    type: "checkbox",
     isSearch: true,
     values: [
       "Brand 1",
@@ -84,7 +75,7 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Fabric type",
-    type: "Checkbox",
+    type: "checkbox",
     isSearch: true,
     values: [
       "Fabric type 1",
@@ -106,7 +97,7 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Size",
-    type: "Tiles",
+    type: "tiles",
     isSearch: true,
     values: [
       "2XS",
@@ -138,7 +129,7 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Color",
-    type: "Checkbox",
+    type: "checkbox",
     isSearch: true,
     values: [
       "Color 1",
@@ -160,15 +151,15 @@ const FiltersData: FiltersDataItem[] = [
   },
   {
     title: "Price",
-    type: "Price",
+    type: "price",
     isSearch: false,
-    values: ["0"],
+    values: { min: 0, max: 1000 },
   },
   {
     title: "Customer reviews",
-    type: "Rating",
+    type: "rating",
     isSearch: false,
-    values: ["5", "4", "3", "2", "1"],
+    values: [5, 4, 3, 2, 1],
   },
 ];
 
@@ -177,6 +168,9 @@ export default function CategoryPage({
 }: {
   params: { categoryId: string };
 }) {
+  const searchParams = useSearchParamsTools();
+
+  //#region ButtonDefaultCardTemplateClick
   const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] =
     useState(true);
   const ButtonDefaultCardTemplateClick = () => {
@@ -184,6 +178,94 @@ export default function CategoryPage({
   };
   const ButtonSecondaryCardTemplateClick = () => {
     setIsDefaultTemplateDisplayCardOn(false);
+  };
+  //#endregion
+
+  //#region CheckedParams
+  const [checkedItems, setCheckedItems] = useState<FilterCheckedType>(() => {
+    let result: FilterCheckedType = [];
+
+    FiltersData.forEach((filter, index) => {
+      const defaultValue = searchParams.get(filter.title);
+      if (defaultValue) {
+        const itemNamesArray = defaultValue
+          .split(",")
+          .filter(
+            (v) =>
+              filter.type === "price" ||
+              (filter.type === "rating" &&
+                !isNaN(parseInt(v)) &&
+                filter.values.includes(parseInt(v))) ||
+              (filter.type !== "rating" && filter.values.includes(v))
+          );
+
+        if (itemNamesArray.length > 0) {
+          result.push({ title: filter.title, values: itemNamesArray });
+        } else {
+          searchParams.set(filter.title, undefined);
+        }
+      }
+    });
+
+    return result;
+  });
+  //#endregion
+
+  //#region indicatorCheckedFilterCount
+  const [indicatorCount, setIndicatorCount] = useState<number>(() => {
+    if (checkedItems) {
+      return checkedItems?.reduce(
+        (total, item) => total + item.values.length,
+        0
+      );
+    }
+    return 0;
+  });
+
+  useEffect(() => {
+    const newCount = checkedItems?.reduce(
+      (total, item) => total + item.values.length,
+      0
+    );
+    setIndicatorCount(newCount ? newCount : 0);
+  }, [checkedItems]);
+  //#endregion
+
+  const clearAllFilters = () => {
+    setCheckedItems([]);
+  };
+
+  const uncheckFilter = (titleItem: string, checkedItem: string) => {
+    const isExists = checkedItems.find((v) => v.title === titleItem);
+    if (isExists) {
+      if (
+        isExists.values.length === 1 &&
+        isExists.values.includes(checkedItem)
+      ) {
+        searchParams.set(titleItem, undefined);
+        setCheckedItems((prevItems) => [
+          ...prevItems.filter((item) => item.title !== titleItem),
+        ]);
+      } else {
+        searchParams.set(
+          titleItem,
+          checkedItems
+            ?.find((v) => v.title === titleItem)
+            ?.values.filter((v) => v !== checkedItem)
+            .join(",")
+        );
+        setCheckedItems((prevItems) =>
+          prevItems.map((item) =>
+            item.title === titleItem
+              ? {
+                  ...item,
+                  values: item.values.filter((val) => val !== checkedItem),
+                }
+              : item
+          )
+        );
+      }
+    }
   };
 
   useEffect(() => {
@@ -235,45 +317,78 @@ export default function CategoryPage({
         <span className="text-4xl font-semibold">Title</span>
       </section>
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
-        <div className="flex flex-col gap-2 basis-[385px] max-md:w-full">
-          {Array.from({ length: FiltersData.length }).map((_, index) => (
-            <FiltersCard key={index} item={FiltersData[index]} />
-          ))}
-        </div>
+        <MediaQueryCSS minSize="lg">
+          <div className="flex flex-col gap-2 w-80">
+            <FilterCardVariation
+              filters={FiltersData}
+              checkedItems={checkedItems}
+              setCheckedItems={setCheckedItems}
+            />
+          </div>
+        </MediaQueryCSS>
         <div className="grow">
-          {/* Filters here */}
           <div className="w-full flex justify-between items-center gap-2">
-            <div className="max-w-[200px] w-full">
-              <Select>
-                <SelectTrigger className="bg-gray-200">
-                  <SelectValue placeholder="Selected filters" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-200">
-                  <div className=" p-3">
-                    <ScrollArea>
-                      <ul className="list-none p-0 m-0 max-h-[230px]">
-                        {Array.from({ length: 15 }).map((_, index) => (
-                          <li
-                            key={index}
-                            className="flex items-center space-x-2 pb-1"
-                          >
-                            <Button
-                              variant={"ghost"}
-                              className="flex gap-2 bg-gray-300"
-                            >
-                              <span>Filter {index}</span>
-                              <span className="px-1">X</span>
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                    </ScrollArea>
-                    <hr className="my-4 border-gray-400 border-y"></hr>
-                    <Button variant={"ghost"}>Clear all</Button>
-                  </div>
-                </SelectContent>
-              </Select>
-            </div>
+            <MediaQueryCSS maxSize="lg">
+              <FilterCardVariationMobile
+                categoryId={params.categoryId}
+                filters={FiltersData}
+                checkedItems={checkedItems}
+                setCheckedItems={setCheckedItems}
+              />
+            </MediaQueryCSS>
+            <MediaQueryCSS minSize="lg">
+              <div className="w-full">
+                <Select>
+                  <SelectTrigger className="py-3 px-4 max-w-52 w-full min-w-48 bg-gray-200">
+                    <SelectValue
+                      placeholder={
+                        indicatorCount +
+                        (indicatorCount === 1
+                          ? " filter applied"
+                          : " filters applied")
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-200">
+                    <div className="p-3">
+                      <ScrollArea>
+                        <ul className="list-none p-0 m-0 max-h-[230px]">
+                          {checkedItems &&
+                            checkedItems.map((item, index) => (
+                              <ul key={index}>
+                                {item.values.map((value, valueIndex) => (
+                                  <li
+                                    key={valueIndex}
+                                    className="flex items-center space-x-2 pb-1"
+                                  >
+                                    <Button
+                                      key={valueIndex}
+                                      variant="ghost"
+                                      className="bg-gray-300 justify-between flex gap-2"
+                                      onClick={() => {
+                                        uncheckFilter(item.title, value);
+                                      }}
+                                    >
+                                      <span>{value}</span>
+                                      <XIcon />
+                                    </Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            ))}
+                        </ul>
+                      </ScrollArea>
+                      <hr className="my-4 border-gray-400 border-y"></hr>
+                      <Button variant={"ghost"} onClick={clearAllFilters}>
+                        <Link href={`/category/${params.categoryId}`}>
+                          Clear all
+                        </Link>
+                      </Button>
+                    </div>
+                  </SelectContent>
+                </Select>
+              </div>
+            </MediaQueryCSS>
             <div className="flex gap-2 items-center w-full justify-end">
               <div className="max-w-[260px] w-full">
                 <Select>
@@ -281,12 +396,13 @@ export default function CategoryPage({
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mostpopular">Most popular</SelectItem>
-                    <SelectItem value="tocheap">
-                      From expensive to cheap
-                    </SelectItem>
+                    <SelectItem value="byrating">By rating</SelectItem>
+                    <SelectItem value="novelty">Novelty</SelectItem>
                     <SelectItem value="toexpensive">
                       From cheap to expensive
+                    </SelectItem>
+                    <SelectItem value="tocheap">
+                      From expensive to cheap
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -322,7 +438,7 @@ export default function CategoryPage({
           <hr className="mt-6 mb-10 border-gray-300"></hr>
           <div
             className={cn(
-              "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6",
+              "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6",
               !isDefaultTemplateDisplayCardOn && "md:grid-cols-3 lg:grid-cols-4"
             )}
           >
@@ -358,132 +474,3 @@ export default function CategoryPage({
     </main>
   );
 }
-
-const FiltersCard = ({ item }: { item: FiltersDataItem }) => {
-  return (
-    <div className="max-h-[414px] p-6 pt-3 bg-gray-200 rounded-lg shadow">
-      <Accordion type="single" defaultValue="item-1" collapsible>
-        <AccordionItem value="item-1">
-          <AccordionTrigger className="font-semibold">
-            {item["title"]}
-          </AccordionTrigger>
-          <AccordionContent>
-            {item["isSearch"] ? (
-              <Input placeholder="Search..." className="my-3" />
-            ) : (
-              <></>
-            )}
-            <ScrollArea>
-              <ul className="list-none p-0 m-0 max-h-[272px] ">
-                <FilterCardVariation
-                  title={item["title"]}
-                  type={item["type"]}
-                  values={item["values"]}
-                />
-              </ul>
-            </ScrollArea>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </div>
-  );
-};
-
-const FilterCardVariation = ({
-  title,
-  type,
-  values,
-}: {
-  title: string;
-  type: string;
-  values: string[];
-}) => {
-  switch (type) {
-    case "Checkbox": {
-      return (
-        <>
-          {Array.from({ length: values.length }).map((_, index) => (
-            <li key={index} className="flex items-center space-x-2 pb-1">
-              <Checkbox id={title + index} />
-              <label className="text-base" htmlFor={title + index}>
-                {values[index]}
-              </label>
-            </li>
-          ))}
-        </>
-      );
-    }
-    case "Tiles": {
-      return (
-        <>
-          <ToggleGroup
-            variant="outline"
-            type="multiple"
-            className={`grid grid-cols-5 max-[340px]:grid-cols-4 max-[250px]:grid-cols-3 max-[180px]:grid-cols-2 `}
-          >
-            {Array.from({ length: values.length }).map((_, index) => (
-              <ToggleGroupItem
-                key={title + index}
-                value={values[index]}
-                aria-label={"Toggle" + values[index]}
-                className="border-black border-[1.5px]"
-              >
-                {values[index]}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </>
-      );
-    }
-    case "Price": {
-      return (
-        <>
-          <div className="h-full overflow-hidden mt-3">
-            <div className="flex justify-between w-full pb-3">
-              <div className="flex justify-center items-center gap-2">
-                <Input className="max-w-[64px]" defaultValue={"0"}></Input>
-                <span className="font-bold">—</span>
-                <Input className="max-w-[64px]" defaultValue={"100"}></Input>
-              </div>
-              <div>
-                <Button variant={"ghost"} className="bg-gray-300">
-                  Save
-                </Button>
-              </div>
-            </div>
-            <div className="h-[20px]">
-              <Slider defaultValue={[15, 90]} max={100} step={1} />
-            </div>
-          </div>
-        </>
-      );
-    }
-    case "Rating": {
-      return (
-        <div className="mt-3">
-          {Array.from({ length: values.length }).map((_, index) => (
-            <li key={index} className="flex items-center space-x-2 pb-2">
-              <Checkbox id={title + index} />
-              <label
-                className="text-base flex gap-[3.44px]"
-                htmlFor={title + index}
-              >
-                {Array.from({ length: 5 - index }).map((_, _index) => (
-                  <Image key={_index} src={RatingFillStar} alt="placeholder" />
-                ))}
-                {Array.from({ length: index }).map((_, _index) => (
-                  <Image
-                    key={_index}
-                    src={RatingLineStar}
-                    alt="placeholder"
-                    fill={false}
-                  />
-                ))}
-              </label>
-            </li>
-          ))}
-        </div>
-      );
-    }
-  }
-};
