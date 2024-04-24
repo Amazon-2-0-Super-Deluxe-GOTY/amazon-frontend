@@ -7,7 +7,7 @@ import { useSearchParamsTools } from "@/lib/router";
 import { SignUpForm } from "../forms/SignUpForm";
 import { SignUpCodeForm } from "../forms/SignUpCodeForm";
 import { ChevronLeft, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const modalParamName = "modal";
 const modalStates = [
@@ -43,6 +43,13 @@ export const ModalSignInUpVariation = ({
     }
   }, [searchParams.params]);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [modal]);
+  
   return (
     <div className="fixed flex inset-0 justify-center items-center z-50">
       <div

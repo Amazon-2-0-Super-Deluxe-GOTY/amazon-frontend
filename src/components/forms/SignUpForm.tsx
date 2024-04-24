@@ -16,22 +16,23 @@ import { Input } from "@/components/ui/input";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 
-const FormSchema = z
-  .object({
-    email: z.string().min(6, {
-      message: "Wrong or Invalid email address",
-    }),
-    password: z.string().min(6, {
-      message: "Minimum 6 characters required",
-    }),
-    confirmPassword: z.string().min(6, {
-      message: "Passwords must match",
-    }),
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+const FormSchema = z.object({
+  email: z.string().min(6, {
+    message: "Wrong or Invalid email address",
+  }),
+  password: z.string().refine((value) => passwordRegex.test(value), {
+    message:
+      "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, and be at least 8 characters long",
+  }),
+  confirmPassword: z.string().min(8, {
+    message: "Passwords must match",
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+}).refine((data => data.password === data.confirmPassword), {
+  message: "Passwords do not match",
+  path: ['confirmPassword'],
+});
 
 export function SignUpForm({
   onChangeModal,
@@ -73,11 +74,7 @@ export function SignUpForm({
                   Email
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter your email"
-                    type="email"
-                    {...field}
-                  />
+                  <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
                 </FormControl>
               </div>
               <FormMessage />
@@ -95,11 +92,7 @@ export function SignUpForm({
                 </FormLabel>
                 <div className="flex justify-end">
                   <FormControl>
-                    <Input
-                      placeholder="Create your password"
-                      type={showPassword ? "text" : "password"}
-                      {...field}
-                    />
+                    <Input placeholder="Create your password" type={showPassword ? "text" : "password"} autoComplete="new-password" {...field} />
                   </FormControl>
                   <Button
                     variant={"ghost"}
@@ -126,11 +119,7 @@ export function SignUpForm({
                 </FormLabel>
                 <div className="flex justify-end">
                   <FormControl>
-                    <Input
-                      placeholder="Repeat your password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      {...field}
-                    />
+                    <Input placeholder="Repeat your password" type={showConfirmPassword ? "text" : "password"} autoComplete="repeat-password" {...field} />
                   </FormControl>
                   <Button
                     variant={"ghost"}
