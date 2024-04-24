@@ -29,10 +29,10 @@ const FormSchema = z.object({
   confirmPassword: z.string().min(8, {
     message: "Passwords must match",
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+}).refine((data => data.password === data.confirmPassword), {
+  message: "Passwords do not match",
+  path: ['confirmPassword'],
+});
 
 export function SignUpForm({
   onChangeModal,
