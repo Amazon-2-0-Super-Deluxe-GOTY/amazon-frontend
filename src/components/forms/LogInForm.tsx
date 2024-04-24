@@ -15,14 +15,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
+import { Checkbox } from "../ui/checkbox"
 
 const FormSchema = z.object({
   email: z.string().min(6, {
     message: "Wrong or Invalid email address",
   }),
-  password: z.string().min(6, {
-    message: "Your password is incorrect",
+  password: z.string().min(8, {
+    message: "Minimum 8 characters required",
   }),
+  staySignedIn: z.boolean()
 })
 
 export function LogInForm() {
@@ -32,6 +34,7 @@ export function LogInForm() {
     defaultValues: {
       email: "",
       password: "",
+      staySignedIn: false,
     },
   })
 
@@ -55,7 +58,7 @@ export function LogInForm() {
               <div>
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" type="email" {...field} />
+                  <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
                 </FormControl>
               </div>
               <FormMessage />
@@ -71,17 +74,40 @@ export function LogInForm() {
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Password</FormLabel>
                 <div className="flex justify-end">
                   <FormControl>
-                    <Input placeholder="Enter your password" type={showPassword ? "text" : "password"} {...field} />
+                    <Input placeholder="Enter your password" type={showPassword ? "text" : "password"} autoComplete="current-password" {...field} />
                   </FormControl>
                   <Button variant={"ghost"} type="button" className="absolute" onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeIcon/> : <EyeOffIcon/> }
                   </Button>
                 </div>
-                <div className="w-full flex justify-end p-0">
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="staySignedIn"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex justify-between items-center gap-1 -mt-6">
+                <div className="flex gap-1">
+                  <FormControl>
+                    <Checkbox 
+                      id="idStaySignIn" 
+                      {...field} 
+                      value={field.value.toString()}
+                      onCheckedChange={(e) => {
+                        field.onChange(e);
+                      }}
+                    />
+                  </FormControl>
+                  <FormLabel htmlFor="idStaySignIn" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" >Stay signed in</FormLabel>
+                </div>
+                <div>
                   <Button variant={"link"} type="button" className="text-xs p-0">Forgot password?</Button>
                 </div>
               </div>
-              <FormMessage />
             </FormItem>
           )}
         />

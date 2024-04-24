@@ -16,14 +16,17 @@ import { Input } from "@/components/ui/input"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
 
-const FormSchema: z.infer<typeof FormSchema> = z.object({
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+const FormSchema = z.object({
   email: z.string().min(6, {
     message: "Wrong or Invalid email address",
   }),
-  password: z.string().min(6, {
-    message: "Minimum 6 characters required",
+  password: z.string().refine((value) => passwordRegex.test(value), {
+    message:
+      "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, and be at least 8 characters long",
   }),
-  confirmPassword: z.string().min(6, {
+  confirmPassword: z.string().min(8, {
     message: "Passwords must match",
   })
 }).refine((data => data.password === data.confirmPassword), {
@@ -65,7 +68,7 @@ export function SignUpForm({ onChangeModal } : { onChangeModal: (modal:string) =
               <div>
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" type="email" {...field} />
+                  <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
                 </FormControl>
               </div>
               <FormMessage />
@@ -81,7 +84,7 @@ export function SignUpForm({ onChangeModal } : { onChangeModal: (modal:string) =
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Password</FormLabel>
                 <div className="flex justify-end">
                   <FormControl>
-                    <Input placeholder="Create your password" type={showPassword ? "text" : "password"} {...field} />
+                    <Input placeholder="Create your password" type={showPassword ? "text" : "password"} autoComplete="new-password" {...field} />
                   </FormControl>
                   <Button variant={"ghost"} type="button" className="absolute" onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeIcon/> : <EyeOffIcon/> }
@@ -101,7 +104,7 @@ export function SignUpForm({ onChangeModal } : { onChangeModal: (modal:string) =
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Confirm password</FormLabel>
                 <div className="flex justify-end">
                   <FormControl>
-                    <Input placeholder="Repeat your password" type={showConfirmPassword ? "text" : "password"} {...field} />
+                    <Input placeholder="Repeat your password" type={showConfirmPassword ? "text" : "password"} autoComplete="repeat-password" {...field} />
                   </FormControl>
                   <Button variant={"ghost"} type="button" className="absolute" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                     {showConfirmPassword ? <EyeIcon/> : <EyeOffIcon/> }
