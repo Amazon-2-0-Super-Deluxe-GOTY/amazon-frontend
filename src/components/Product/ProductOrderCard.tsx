@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/card";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MediaQueryCSS } from "../MediaQuery";
-import ClientOnlyPortal from "../ClientOnlyPortal";
+import { MediaQueryCSS } from "../Shared/MediaQuery";
+import ClientOnlyPortal from "../Shared/ClientOnlyPortal";
 import { Sheet, SheetContent } from "../ui/sheet";
 import {
   Accordion,
@@ -26,7 +26,7 @@ import { DeliveryContent } from "./OrderInfoContent/DeliveryContent";
 import { PaymentContent } from "./OrderInfoContent/PaymentContent";
 import { SecurityContent } from "./OrderInfoContent/SecurityContent";
 import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
-import { SheetHeader } from "../ProductPage/SteetParts";
+import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 
 const infoElements = [

@@ -9,6 +9,14 @@ import { SignUpCodeForm } from "../forms/SignUpCodeForm";
 import { ChevronLeft, XIcon } from "lucide-react";
 import { useState } from "react";
 
+const modalParamName = "modal";
+const modalStates = [
+  "login",
+  "signup",
+  "signup-code",
+  "successful-registration",
+];
+
 export const ModalSignInUpVariation = ({
   onClose,
 }: {
@@ -17,7 +25,7 @@ export const ModalSignInUpVariation = ({
   const searchParams = useSearchParamsTools();
 
   const [modal, setModal] = useState<string>(() => {
-    const defaultValue = searchParams.get("modal");
+    const defaultValue = searchParams.get(modalParamName);
     if (defaultValue) return defaultValue;
 
     return "";
@@ -25,8 +33,15 @@ export const ModalSignInUpVariation = ({
 
   const handleChangeModal = (newModal: string) => {
     setModal(newModal);
-    searchParams.set("modal", newModal);
+    searchParams.set(modalParamName, newModal);
   };
+
+  React.useEffect(() => {
+    const value = searchParams.get(modalParamName);
+    if (value && modalStates.includes(value) && modal !== value) {
+      handleChangeModal(value);
+    }
+  }, [searchParams.params]);
 
   return (
     <div className="fixed flex inset-0 justify-center items-center z-50">
