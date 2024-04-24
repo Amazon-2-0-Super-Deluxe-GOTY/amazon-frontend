@@ -7,7 +7,7 @@ import { useSearhParamsTools } from "@/lib/router";
 import { SignUpForm } from "../forms/SignUpForm";
 import { SignUpCodeForm } from "../forms/SignUpCodeForm";
 import { ChevronLeft, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const ModalSignInUpVariation = ({ onClose } : { onClose: () => void }) => {
   const searchParams = useSearhParamsTools();
@@ -25,6 +25,13 @@ export const ModalSignInUpVariation = ({ onClose } : { onClose: () => void }) =>
     searchParams.set("modal", newModal);
   }
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "scroll";
+    };
+  }, [modal]);
+  
   return (
     <div className="fixed flex inset-0 justify-center items-center z-50">
       <div className="absolute flex inset-0 bg-gray-500 bg-opacity-50 z-49" onClick={onClose} />
