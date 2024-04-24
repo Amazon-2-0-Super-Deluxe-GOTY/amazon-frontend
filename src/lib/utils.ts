@@ -25,11 +25,11 @@ export const useExpandableList = <T>(params: {
   return { items, isExpandable, isExpanded, onExpand, onHide };
 };
 
-export const textAvatar = (text: string) => {
+export const textAvatar = (text: string, avatarMaxLenght = 2) => {
   const parts = text.split(" ");
   let avatar = "";
 
-  const lenght = text.length > 2 ? 2 : avatar.length;
+  const lenght = Math.min(parts.length, avatarMaxLenght);
   for (let i = 0; i < lenght; i++) {
     avatar += parts[i][0].toUpperCase();
   }
