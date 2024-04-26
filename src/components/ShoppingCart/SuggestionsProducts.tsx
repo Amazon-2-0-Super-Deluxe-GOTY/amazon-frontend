@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ProductCard } from "@/components/Product/ProductCard";
+import { ProductCard } from "../Product/ProductCard";
 
 export function SuggestionsProducts({
   products,
@@ -14,17 +14,15 @@ export function SuggestionsProducts({
   products: { title: string; price: number }[];
 }) {
   return (
-    <div>
-      <Carousel
-        opts={{ align: "end" }}
-      >
+    <div className="max-w-[1230px]">
+      <Carousel>
         <CarouselContent>
           {products.map((product, index) => (
             <CarouselItem
               className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"
               key={index}
             >
-              <Link href={`/product/${index + 1}`} className="w-full">
+              <Link href={`/product/${index + 1}`} >
                 <ProductCard title={product.title} price={product.price} />
               </Link>
             </CarouselItem>
