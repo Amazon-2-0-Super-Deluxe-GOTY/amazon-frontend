@@ -275,7 +275,7 @@ export default function CategoryPage({
   }, [params.categoryId]);
 
   return (
-    <main className="flex flex-col items-center max-w-[1600px] px-4 py-10 grow w-full mx-auto">
+    <main className="flex flex-col items-center px-4">
       <section className="w-full flex items-left gap-1">
         <Breadcrumb>
           <BreadcrumbList>
