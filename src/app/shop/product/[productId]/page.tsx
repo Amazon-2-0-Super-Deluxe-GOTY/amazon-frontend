@@ -243,6 +243,7 @@ const reviewsStatistic: ReviewsStatistic = {
 
 const reviews: Review[] = [
   {
+    id: "1",
     user: {
       avatar: placeholder,
       fullName: "Jessica Jimenez",
@@ -270,9 +271,11 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 1,
     isRatedByUser: true,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "2",
     user: {
       avatar: placeholder,
       fullName: "Adrienne O’Brien",
@@ -303,9 +306,11 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 25,
     isRatedByUser: true,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "3",
     user: {
       avatar: placeholder,
       fullName: "Joe Gatto",
@@ -327,9 +332,11 @@ const reviews: Review[] = [
     rating: 3,
     reviewRatesCount: 1,
     isRatedByUser: false,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "4",
     user: {
       avatar: placeholder,
       fullName: "Sylvio",
@@ -350,9 +357,11 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 0,
     isRatedByUser: false,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "5",
     user: {
       avatar: placeholder,
       fullName: "Sylvio",
@@ -373,6 +382,7 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 0,
     isRatedByUser: false,
+    language: "es",
     createdAt: new Date(),
   },
 ];

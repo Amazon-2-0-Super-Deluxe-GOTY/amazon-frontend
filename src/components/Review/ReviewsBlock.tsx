@@ -80,16 +80,18 @@ export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
           )}
         </div>
       </div>
-      <ReviewCardFull
-        review={reviewsFiltered[openedReviewIndex ?? 0]}
-        isOpen={isFullOpen}
-        startImageIndex={startImageIndex}
-        hasPrev={hasPrev}
-        hasNext={hasNext}
-        onPrev={toPrev}
-        onNext={toNext}
-        closeModal={closeFullView}
-      />
+      {isFullOpen && (
+        <ReviewCardFull
+          review={reviewsFiltered[openedReviewIndex]}
+          isOpen={isFullOpen}
+          startImageIndex={startImageIndex}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+          onPrev={toPrev}
+          onNext={toNext}
+          closeModal={closeFullView}
+        />
+      )}
     </div>
   );
 };

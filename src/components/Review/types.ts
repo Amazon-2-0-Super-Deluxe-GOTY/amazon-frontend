@@ -11,6 +11,7 @@ export interface ReviewsStatistic {
 }
 
 export interface Review {
+  id: string;
   user: {
     avatar: string;
     fullName: string;
@@ -24,6 +25,7 @@ export interface Review {
   rating: 1 | 2 | 3 | 4 | 5;
   reviewRatesCount: number;
   isRatedByUser: boolean;
+  language: string;
   createdAt: Date;
 }
 
