@@ -1,21 +1,28 @@
 import type {
   Category,
-  CategoryTreeType,
+  CategoryTreeNodeType,
   CheckedState,
 } from "@/components/Admin/Category/types";
+import {
+  ArmchairIcon,
+  HomeIcon,
+  MonitorIcon,
+  ShirtIcon,
+  WrenchIcon,
+} from "lucide-react";
 
 export function groupCategoriesByParentId(
   data: Category[],
   parentId?: string
-): CategoryTreeType[] {
+): CategoryTreeNodeType[] {
   const elems = data.filter((i) => {
     return i.parentId === parentId;
   });
 
-  const elemsTree: CategoryTreeType[] = [];
+  const elemsTree: CategoryTreeNodeType[] = [];
   for (let elem of elems) {
     elemsTree.push({
-      ...elem,
+      category: elem,
       isRoot: !elem.parentId,
       subcategories: groupCategoriesByParentId(data, elem.id),
       checkboxState: false,
@@ -25,10 +32,10 @@ export function groupCategoriesByParentId(
 }
 
 function updateNodesCheckedState(
-  children: CategoryTreeType[],
+  children: CategoryTreeNodeType[],
   checked: CheckedState
 ) {
-  const updatedNodes: CategoryTreeType[] = [];
+  const updatedNodes: CategoryTreeNodeType[] = [];
   for (let elem of children) {
     updatedNodes.push({
       ...elem,
@@ -40,11 +47,11 @@ function updateNodesCheckedState(
 }
 
 export function updateCategoryTree(
-  root: CategoryTreeType,
-  updatedNode: CategoryTreeType,
+  root: CategoryTreeNodeType,
+  updatedNode: CategoryTreeNodeType,
   updatedNodeChecked: CheckedState
-): CategoryTreeType {
-  if (root.id === updatedNode.id) {
+): CategoryTreeNodeType {
+  if (root.category.id === updatedNode.category.id) {
     return {
       ...updatedNode,
       checkboxState: updatedNodeChecked,
@@ -55,7 +62,7 @@ export function updateCategoryTree(
     };
   }
 
-  const copiedNodes: CategoryTreeType[] = [];
+  const copiedNodes: CategoryTreeNodeType[] = [];
   for (let node of root.subcategories) {
     copiedNodes.push(updateCategoryTree(node, updatedNode, updatedNodeChecked));
   }
@@ -77,4 +84,28 @@ export function updateCategoryTree(
     checkboxState: checked,
     subcategories: copiedNodes,
   };
+}
+
+const icons = new Map<string, (className?: string) => React.ReactNode>([
+  ["shirt", (className) => <ShirtIcon className={className} key={"shirt"} />],
+  [
+    "monitor",
+    (className) => <MonitorIcon className={className} key={"monitor"} />,
+  ],
+  ["home", (className) => <HomeIcon className={className} key={"home"} />],
+  [
+    "armchair",
+    (className) => <ArmchairIcon className={className} key={"armchair"} />,
+  ],
+  [
+    "wrench",
+    (className) => <WrenchIcon className={className} key={"wrench"} />,
+  ],
+]);
+
+export function getIcon(
+  iconId: string,
+  className?: string
+): React.ReactNode | undefined {
+  return icons.get(iconId)?.(className);
 }

@@ -1,61 +1,84 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import type { CategoryTreeType, CheckedState } from "./types";
+import type { CategoryTreeNodeType, CheckedState } from "./types";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import clsx from "clsx";
 
 function getOffset(index: number) {
   const baseOffset = 40;
   const offsetStep = 16;
-  return index < 1 ? 0 : baseOffset + (offsetStep * index - 1);
+  return index < 1 ? offsetStep : baseOffset + (offsetStep * index - 1);
 }
 
 export const CategoryTreeNode = ({
-  category,
+  node,
   index,
   onCheckedChange: onChange,
+  onSelect,
+  isSelected,
 }: {
-  category: CategoryTreeType;
+  node: CategoryTreeNodeType;
   index: number;
   onCheckedChange: (
-    updatedNode: CategoryTreeType,
+    updatedNode: CategoryTreeNodeType,
     updatedNodeChecked: CheckedState
   ) => void;
+  onSelect: (node: CategoryTreeNodeType) => void;
+  isSelected: (categoryId: string) => boolean;
 }) => {
+  const category = node.category;
+  const nodeSelected = isSelected(category.id);
+
   const onCheckedChange = (checked: CheckedState) => {
-    onChange(category, checked);
+    onChange(node, checked);
+  };
+
+  const onSelectNode = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSelect(node);
   };
 
   const checkboxElem = (
     <Checkbox
       size="lg"
-      checked={category.checkboxState}
+      checked={node.checkboxState}
       onCheckedChange={onCheckedChange}
+      onClick={(e) => e.stopPropagation()}
     />
   );
 
-  return category.subcategories.length ? (
+  return node.subcategories.length ? (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1" className="border-none">
         <div
-          className="flex items-center gap-4 w-full mt-4"
+          className={clsx(
+            "flex items-center gap-4 w-full py-2 px-4",
+            nodeSelected && "bg-gray-200 rounded-lg"
+          )}
           style={{ paddingLeft: `${getOffset(index)}px` }}
         >
           {checkboxElem}
-          <AccordionTrigger className="pt-0" headerClassName="grow">
+          <AccordionTrigger
+            className="pt-0"
+            headerClassName="grow"
+            onClick={onSelectNode}
+          >
             <span className="text-xl font-medium">{category.title}</span>
           </AccordionTrigger>
         </div>
         <AccordionContent>
-          {category.subcategories.map((c) => (
+          {node.subcategories.map((c) => (
             <CategoryTreeNode
-              category={c}
+              node={c}
               index={index + 1}
               onCheckedChange={onChange}
-              key={c.id}
+              onSelect={onSelect}
+              isSelected={isSelected}
+              key={c.category.id}
             />
           ))}
         </AccordionContent>
@@ -63,13 +86,17 @@ export const CategoryTreeNode = ({
     </Accordion>
   ) : (
     <div
-      className="flex items-center gap-4 mt-4"
+      className={clsx(
+        "flex items-center gap-4 py-2 px-4",
+        nodeSelected && "bg-gray-200 rounded-lg"
+      )}
       style={{ paddingLeft: `${getOffset(index)}px` }}
     >
       {checkboxElem}
       <label
         htmlFor={`subcategory-${category.id}-check`}
         className="text-xl font-medium basis-full"
+        onClick={onSelectNode}
       >
         {category.title}
       </label>

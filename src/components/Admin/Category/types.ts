@@ -3,16 +3,16 @@ import type { CheckedState as RadixCheckedState } from "@radix-ui/react-checkbox
 export interface Category {
   id: string;
   parentId?: string;
-  title: string;
   iconId?: string;
+  title: string;
+  description: string;
+  keywords: string[];
 }
 
-export interface CategoryTreeType {
-  id: string;
-  title: string;
-  iconId?: string;
+export interface CategoryTreeNodeType {
+  category: Category;
   isRoot: boolean;
-  subcategories: CategoryTreeType[];
+  subcategories: CategoryTreeNodeType[];
   checkboxState: CheckedState;
 }
 
