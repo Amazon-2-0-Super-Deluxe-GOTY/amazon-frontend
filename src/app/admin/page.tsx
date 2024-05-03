@@ -15,7 +15,7 @@ import type {
 } from "@/components/Admin/Category/types";
 import { CategoryTree } from "@/components/Admin/Category/CategoryTree";
 import { getIcon, groupCategoriesByParentId } from "@/lib/categories";
-import { Separator } from "@/components/ui/separator";
+import { CategoryAsideCard } from "@/components/Admin/Category/CategoryAsideCard";
 
 const defaultCategoryData: Category[] = [
   {
@@ -25,6 +25,7 @@ const defaultCategoryData: Category[] = [
     description:
       "Explore a diverse collection of clothing, footwear, accessories, and more to elevate your style and keep up with the latest fashion trends. From timeless classics to bold statements, find everything you need to express your individuality and stay fashionable.",
     keywords: ["fashion", "clothes"],
+    isDeleted: false,
   },
   {
     id: "2",
@@ -32,6 +33,7 @@ const defaultCategoryData: Category[] = [
     iconId: "monitor",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "3",
@@ -39,6 +41,7 @@ const defaultCategoryData: Category[] = [
     iconId: "home",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "4",
@@ -46,6 +49,7 @@ const defaultCategoryData: Category[] = [
     iconId: "armchair",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "5",
@@ -53,6 +57,7 @@ const defaultCategoryData: Category[] = [
     iconId: "wrench",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "11",
@@ -60,6 +65,7 @@ const defaultCategoryData: Category[] = [
     title: "Women's Fashion",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "12",
@@ -67,6 +73,7 @@ const defaultCategoryData: Category[] = [
     title: "Casual Women's Clothing",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "13",
@@ -74,6 +81,7 @@ const defaultCategoryData: Category[] = [
     title: "Tops",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "14",
@@ -81,6 +89,7 @@ const defaultCategoryData: Category[] = [
     title: "T-shirts and Tank Tops",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "15",
@@ -88,6 +97,7 @@ const defaultCategoryData: Category[] = [
     title: "Blouses and Shirts",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "16",
@@ -95,6 +105,7 @@ const defaultCategoryData: Category[] = [
     title: "Bottoms",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "17",
@@ -102,6 +113,7 @@ const defaultCategoryData: Category[] = [
     title: "Jeans and Denim",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "18",
@@ -109,6 +121,7 @@ const defaultCategoryData: Category[] = [
     title: "Pants and Trousers",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "19",
@@ -116,6 +129,7 @@ const defaultCategoryData: Category[] = [
     title: "Men's Fashion",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
   {
     id: "20",
@@ -123,11 +137,11 @@ const defaultCategoryData: Category[] = [
     title: "Computers",
     description: "Test description",
     keywords: [],
+    isDeleted: false,
   },
 ];
 
 const iconClassSmall = "w-5 h-5";
-const iconClassLarge = "w-8 h-8";
 
 export default function Page() {
   const allCategoriesTree = React.useMemo(
@@ -203,28 +217,16 @@ export default function Page() {
         )}
       </div>
 
-      <aside className="lg:basis-1/3 grow bg-gray-200 rounded-lg sticky top-0">
-        {!!selectedCategory ? (
-          <div className="p-6 space-y-6 h-full">
-            <div className="space-y-3.5">
-              <div className="flex items-center gap-4">
-                {selectedCategory.iconId &&
-                  getIcon(selectedCategory.iconId, iconClassLarge)}
-                <h1 className="text-2xl font-semibold">
-                  {selectedCategory.title}
-                </h1>
-              </div>
-              <Separator />
-            </div>
-          </div>
-        ) : (
-          <div className="h-full flex justify-center items-center">
-            <p className="px-6 py-3 rounded-sm bg-gray-100">
-              Select a category to see its information
-            </p>
-          </div>
+      <CategoryAsideCard
+        category={selectedCategory}
+        parentCategory={defaultCategoryData.find(
+          (c) => c.id === selectedCategory?.parentId
         )}
-      </aside>
+        mainCategory={selectedRootCategory?.category}
+        onViewMain={() =>
+          !!selectedRootCategory && onSelectCategory(selectedRootCategory)
+        }
+      />
     </div>
   );
 }

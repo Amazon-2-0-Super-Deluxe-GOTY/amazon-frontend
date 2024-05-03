@@ -56,19 +56,22 @@ export const CategoryTreeNode = ({
       <AccordionItem value="item-1" className="border-none">
         <div
           className={clsx(
-            "flex items-center gap-4 w-full py-2 px-4",
+            "flex items-center gap-4 w-full py-2 pr-4",
             nodeSelected && "bg-gray-200 rounded-lg"
           )}
           style={{ paddingLeft: `${getOffset(index)}px` }}
         >
           {checkboxElem}
-          <AccordionTrigger
-            className="pt-0"
-            headerClassName="grow"
+          <span
+            className="text-xl font-medium cursor-pointer grow"
             onClick={onSelectNode}
           >
-            <span className="text-xl font-medium">{category.title}</span>
-          </AccordionTrigger>
+            {category.title}
+          </span>
+          <AccordionTrigger
+            className="pt-0 w-6 h-6 justify-center"
+            onClick={(e) => e.stopPropagation()}
+          ></AccordionTrigger>
         </div>
         <AccordionContent>
           {node.subcategories.map((c) => (
@@ -87,7 +90,7 @@ export const CategoryTreeNode = ({
   ) : (
     <div
       className={clsx(
-        "flex items-center gap-4 py-2 px-4",
+        "flex items-center gap-4 py-2 pr-4",
         nodeSelected && "bg-gray-200 rounded-lg"
       )}
       style={{ paddingLeft: `${getOffset(index)}px` }}
@@ -95,7 +98,7 @@ export const CategoryTreeNode = ({
       {checkboxElem}
       <label
         htmlFor={`subcategory-${category.id}-check`}
-        className="text-xl font-medium basis-full"
+        className="text-xl font-medium basis-full cursor-pointer"
         onClick={onSelectNode}
       >
         {category.title}
