@@ -1,4 +1,7 @@
-import type { CheckedState as RadixCheckedState } from "@radix-ui/react-checkbox";
+import type {
+  TreeNodeType,
+  CheckedState as BaseCheckedState,
+} from "@/lib/checkboxTree";
 
 export interface Category {
   id: string;
@@ -10,11 +13,5 @@ export interface Category {
   isDeleted: boolean;
 }
 
-export interface CategoryTreeNodeType {
-  category: Category;
-  isRoot: boolean;
-  subcategories: CategoryTreeNodeType[];
-  checkboxState: CheckedState;
-}
-
-export type CheckedState = RadixCheckedState;
+export type CategoryTreeNodeType = TreeNodeType<Category>;
+export type CheckedState = BaseCheckedState;

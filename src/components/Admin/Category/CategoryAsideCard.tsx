@@ -3,6 +3,10 @@ import type { Category } from "./types";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, FilePenLineIcon, Trash2Icon } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 
 interface Props {
   category?: Category;
@@ -19,8 +23,12 @@ export const CategoryAsideCard = ({
   mainCategory,
   onViewMain,
 }: Props) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const hasParent = !!parentCategory;
   const hasMain = !!mainCategory && mainCategory.id !== category?.id;
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <aside className="lg:basis-1/3 grow bg-gray-200 rounded-lg sticky top-0">
@@ -38,7 +46,7 @@ export const CategoryAsideCard = ({
           <div className="space-y-2">
             <InfoElement
               title="Status"
-              value={category.isDeleted ? "Deleted" : "Active"}
+              value={category.isDeleted ? "Inactive" : "Active"}
             />
             <InfoElement
               title="Role"
@@ -79,7 +87,10 @@ export const CategoryAsideCard = ({
             </>
           )}
           <div className="mt-auto flex gap-3.5">
-            <Button className="w-full flex items-center gap-2 text-base">
+            <Button
+              className="w-full flex items-center gap-2 text-base"
+              onClick={openModal}
+            >
               <FilePenLineIcon className={"w-5 h-5"} />
               Edit
             </Button>
@@ -88,6 +99,11 @@ export const CategoryAsideCard = ({
               Delete
             </Button>
           </div>
+          <EditCategoryModal
+            isOpen={isModalOpen}
+            closeModal={closeModal}
+            category={category}
+          />
         </div>
       ) : (
         <div className="h-full flex justify-center items-center">
@@ -108,3 +124,95 @@ const InfoElement = ({ title, value }: { title: string; value: string }) => {
     </p>
   );
 };
+
+interface EditCategoryModalProps {
+  isOpen: boolean;
+  closeModal: () => void;
+  category: Category;
+}
+
+// TODO: this modal also will be used to create category
+const EditCategoryModal = ({
+  isOpen,
+  closeModal,
+  category,
+}: EditCategoryModalProps) => {
+  const onOpenChange = (open: boolean) => {
+    if (!open) {
+      closeModal();
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="w-[70vw] h-[75vh] p-6 max-w-full">
+        <Tabs defaultValue="primary" className="flex gap-6 w-full">
+          <TabsList className="basis-1/3 flex-col gap-3.5 h-max p-0 bg-transparent">
+            <CustomTabsTrigger value="primary">Primary</CustomTabsTrigger>
+            <CustomTabsTrigger value="keywords">Keywords</CustomTabsTrigger>
+            <CustomTabsTrigger value="specificity">
+              Category specificity
+            </CustomTabsTrigger>
+          </TabsList>
+          <Separator orientation="vertical" />
+          <div className="basis-2/3 relative">
+            <CustomTabsContent value="primary">
+              <div className="space-y-3.5">
+                <h2 className="text-3xl font-semibold">Primary</h2>
+                <Separator />
+              </div>
+
+              <CategoryPrimaryForm
+                category={category}
+                onSubmit={console.log}
+                onCancel={closeModal}
+              />
+            </CustomTabsContent>
+            <CustomTabsContent value="keywords">
+              <div className="space-y-3.5">
+                <h2 className="text-3xl font-semibold">Keywords</h2>
+                <Separator />
+              </div>
+            </CustomTabsContent>
+            <CustomTabsContent value="specificity">
+              <div className="space-y-3.5">
+                <h2 className="text-3xl font-semibold">Category specificity</h2>
+                <Separator />
+              </div>
+            </CustomTabsContent>
+          </div>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const CustomTabsTrigger = ({
+  value,
+  children,
+}: {
+  value: string;
+  children: string;
+}) => (
+  <TabsTrigger
+    className="w-full justify-start text-base lg:text-lg px-4 py-3 bg-none rounded-sm data-[state=active]:ring-2 ring-gray-200"
+    value={value}
+  >
+    {children}
+  </TabsTrigger>
+);
+
+const CustomTabsContent = ({
+  value,
+  children,
+}: {
+  value: string;
+  children: React.ReactNode;
+}) => (
+  <TabsContent
+    value={value}
+    className="flex flex-col gap-6 mt-0 absolute inset-0 data-[state=inactive]:invisible"
+  >
+    {children}
+  </TabsContent>
+);

@@ -30,7 +30,7 @@ export const CategoryTreeNode = ({
   onSelect: (node: CategoryTreeNodeType) => void;
   isSelected: (categoryId: string) => boolean;
 }) => {
-  const category = node.category;
+  const category = node.value;
   const nodeSelected = isSelected(category.id);
 
   const onCheckedChange = (checked: CheckedState) => {
@@ -45,13 +45,13 @@ export const CategoryTreeNode = ({
   const checkboxElem = (
     <Checkbox
       size="lg"
-      checked={node.checkboxState}
+      checked={node.checked}
       onCheckedChange={onCheckedChange}
       onClick={(e) => e.stopPropagation()}
     />
   );
 
-  return node.subcategories.length ? (
+  return node.nodes.length ? (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1" className="border-none">
         <div
@@ -74,14 +74,14 @@ export const CategoryTreeNode = ({
           ></AccordionTrigger>
         </div>
         <AccordionContent>
-          {node.subcategories.map((c) => (
+          {node.nodes.map((c) => (
             <CategoryTreeNode
               node={c}
               index={index + 1}
               onCheckedChange={onChange}
               onSelect={onSelect}
               isSelected={isSelected}
-              key={c.category.id}
+              key={c.value.id}
             />
           ))}
         </AccordionContent>

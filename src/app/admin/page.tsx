@@ -12,10 +12,12 @@ import React, { useState } from "react";
 import type {
   Category,
   CategoryTreeNodeType,
+  CheckedState,
 } from "@/components/Admin/Category/types";
 import { CategoryTree } from "@/components/Admin/Category/CategoryTree";
-import { getIcon, groupCategoriesByParentId } from "@/lib/categories";
+import { getIcon } from "@/lib/categories";
 import { CategoryAsideCard } from "@/components/Admin/Category/CategoryAsideCard";
+import { createTreeArray, useCheckboxTree } from "@/lib/checkboxTree";
 
 const defaultCategoryData: Category[] = [
   {
@@ -143,25 +145,59 @@ const defaultCategoryData: Category[] = [
 
 const iconClassSmall = "w-5 h-5";
 
+const treeOptions = {
+  getId: (value: Category) => value.id,
+  getParentId: (value: Category) => value.parentId,
+};
+
 export default function Page() {
   const allCategoriesTree = React.useMemo(
-    () => groupCategoriesByParentId(defaultCategoryData),
+    () => createTreeArray(defaultCategoryData, treeOptions),
     []
   );
-  const [selectedRootCategory, setSelectedRootCategory] =
-    useState<CategoryTreeNodeType>();
+  // const [selectedRootCategory, setSelectedRootCategory] =
+  //   useState<CategoryTreeNodeType>();
   const [selectedCategory, setSelectedCategory] = useState<Category>();
+  const checkboxTree = useCheckboxTree<Category, string>({
+    options: treeOptions,
+  });
+  const [search, setSearch] = useState("");
+
+  const displayedTreeRoot = React.useMemo(() => {
+    return search
+      ? checkboxTree.filter((n) => n.value.title.toLowerCase().includes(search))
+      : checkboxTree.root;
+  }, [checkboxTree.root, search]);
 
   const onSelectRootCategory = (value: string) => {
-    const node = allCategoriesTree.find((c) => c.category.id === value);
+    const node = allCategoriesTree.find((c) => c.value.id === value);
     if (node) {
-      setSelectedRootCategory(node);
-      setSelectedCategory(node.category);
+      checkboxTree.set(node);
+      setSelectedCategory(node.value);
+    }
+  };
+
+  const onCheckedChange = (
+    updatedNode: CategoryTreeNodeType,
+    updatedNodeChecked: CheckedState
+  ) => {
+    if (checkboxTree.root) {
+      // copy node from original tree if search query is't empty, so it won't replace original node
+      const nodeToUpdate = search
+        ? checkboxTree.findById(updatedNode.value.id)
+        : updatedNode;
+
+      const updatedTree = checkboxTree.update(
+        checkboxTree.root,
+        nodeToUpdate!,
+        updatedNodeChecked
+      );
+      checkboxTree.set(updatedTree);
     }
   };
 
   const onSelectCategory = (node: CategoryTreeNodeType) => {
-    setSelectedCategory(node.category);
+    setSelectedCategory(node.value);
   };
 
   const isSelected = (categoryId: string) =>
@@ -182,7 +218,7 @@ export default function Page() {
                   <PlusIcon className={iconClassSmall} />
                   <span className="text-sm">Add category</span>
                 </button>
-                {allCategoriesTree.map(({ category }) => (
+                {allCategoriesTree.map(({ value: category }) => (
                   <SelectItem
                     value={category.id}
                     key={category.title}
@@ -200,16 +236,26 @@ export default function Page() {
               </SelectContent>
             </Select>
           </div>
-          <Input type="text" placeholder="Search..." className="basis-2/3" />
+          <Input
+            type="text"
+            placeholder="Search..."
+            className="basis-2/3"
+            value={search}
+            onChange={(e) => setSearch(e.target.value.toLowerCase())}
+          />
         </div>
 
-        {!!selectedRootCategory ? (
+        {!!displayedTreeRoot ? (
           <CategoryTree
-            root={selectedRootCategory}
-            onChange={setSelectedRootCategory}
+            root={displayedTreeRoot}
+            onCheckedChange={onCheckedChange}
             onSelect={onSelectCategory}
             isSelected={isSelected}
           />
+        ) : !!checkboxTree.root ? (
+          <div className="pt-6 flex justify-center items-center">
+            <p>Nothing found by your search query</p>
+          </div>
         ) : (
           <div className="pt-6 flex justify-center items-center">
             <p>Choose a category to view it&apos;s subcategories</p>
@@ -222,9 +268,9 @@ export default function Page() {
         parentCategory={defaultCategoryData.find(
           (c) => c.id === selectedCategory?.parentId
         )}
-        mainCategory={selectedRootCategory?.category}
+        mainCategory={checkboxTree.root?.value}
         onViewMain={() =>
-          !!selectedRootCategory && onSelectCategory(selectedRootCategory)
+          !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
       />
     </div>
