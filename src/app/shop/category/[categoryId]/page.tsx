@@ -268,12 +268,6 @@ export default function CategoryPage({
     }
   };
 
-  useEffect(() => {
-    if (params.categoryId) {
-      console.log(`Loading page for category ${params.categoryId}`);
-    }
-  }, [params.categoryId]);
-
   return (
     <main className="flex flex-col items-center max-w-[1600px] px-4 py-10 grow w-full mx-auto">
       <section className="w-full flex items-left gap-1">
