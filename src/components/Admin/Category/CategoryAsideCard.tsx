@@ -7,6 +7,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
+import { CategoryKeywordsForm } from "@/components/forms/CategoryKeywordsForm";
 
 interface Props {
   category?: Category;
@@ -173,6 +174,12 @@ const EditCategoryModal = ({
                 <h2 className="text-3xl font-semibold">Keywords</h2>
                 <Separator />
               </div>
+
+              <CategoryKeywordsForm
+                keywords={["test1", "test2"]}
+                onSubmit={console.log}
+                onCancel={closeModal}
+              />
             </CustomTabsContent>
             <CustomTabsContent value="specificity">
               <div className="space-y-3.5">
@@ -211,7 +218,7 @@ const CustomTabsContent = ({
 }) => (
   <TabsContent
     value={value}
-    className="flex flex-col gap-6 mt-0 absolute inset-0 data-[state=inactive]:invisible"
+    className="flex flex-col gap-6 mt-0 h-full data-[state=inactive]:hidden"
   >
     {children}
   </TabsContent>

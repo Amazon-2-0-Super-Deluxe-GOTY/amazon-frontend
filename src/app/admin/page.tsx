@@ -155,8 +155,6 @@ export default function Page() {
     () => createTreeArray(defaultCategoryData, treeOptions),
     []
   );
-  // const [selectedRootCategory, setSelectedRootCategory] =
-  //   useState<CategoryTreeNodeType>();
   const [selectedCategory, setSelectedCategory] = useState<Category>();
   const checkboxTree = useCheckboxTree<Category, string>({
     options: treeOptions,

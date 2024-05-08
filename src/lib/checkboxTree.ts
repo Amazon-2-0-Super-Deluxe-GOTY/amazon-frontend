@@ -53,8 +53,11 @@ function updateNodesCheckedState<TValue>(
 
 function getCheckedState(
   checkedValues: CheckedState[],
-  rootChecked: CheckedState
+  nodeChecked: CheckedState,
+  isRoot: boolean
 ) {
+  if (checkedValues.length === 0 && !nodeChecked) return false;
+
   const hasTrue = checkedValues.some((v) => v === true);
   const hasFalse = checkedValues.some((v) => v === false);
   const hasIndeterminate = checkedValues.some((v) => v === "indeterminate");
@@ -62,7 +65,7 @@ function getCheckedState(
   const checked =
     hasIndeterminate || (hasTrue && hasFalse)
       ? "indeterminate"
-      : (rootChecked === true && !hasFalse) ||
+      : (nodeChecked === true && !hasFalse && !isRoot) ||
         (!!checkedValues.length && checkedValues.every((v) => v === true));
 
   return checked;
@@ -91,7 +94,7 @@ export function updateTree<TValue, TId>(
   }
 
   const checkedValues = copiedNodes.map((n) => n.checked);
-  const checked = getCheckedState(checkedValues, root.checked);
+  const checked = getCheckedState(checkedValues, root.checked, root.isRoot);
 
   return {
     value: root.value,
@@ -105,25 +108,25 @@ export function filterTree<TValue>(
   root: TreeNodeType<TValue>,
   predicate: (node: TreeNodeType<TValue>) => boolean
 ): TreeNodeType<TValue> | undefined {
-  const copiedNodes: TreeNodeType<TValue>[] = [];
+  const filteredNodes: TreeNodeType<TValue>[] = [];
   for (let node of root.nodes) {
-    const filteredNode = filterTree(node, predicate);
-    if (filteredNode) {
-      copiedNodes.push(filteredNode);
+    const matchedNode = filterTree(node, predicate);
+    if (matchedNode) {
+      filteredNodes.push(matchedNode);
     }
   }
 
-  const isMatch = copiedNodes.length > 0 ? true : predicate(root);
+  const isMatch = filteredNodes.length > 0 ? true : predicate(root);
 
-  const checkedValues = copiedNodes.map((n) => n.checked);
-  const checked = getCheckedState(checkedValues, root.checked);
+  const checkedValues = filteredNodes.map((n) => n.checked);
+  const checked = getCheckedState(checkedValues, root.checked, root.isRoot);
 
   return isMatch
     ? {
         value: root.value,
         isRoot: root.isRoot,
         checked: checked,
-        nodes: copiedNodes,
+        nodes: filteredNodes,
       }
     : undefined;
 }
@@ -145,6 +148,98 @@ export function findNodeById<TValue, TId>(
   return undefined;
 }
 
+export function treeToArray<TValue>(
+  root: TreeNodeType<TValue>
+): TreeNodeType<TValue>[] {
+  const childNodesArray = root.nodes.flatMap((n) => treeToArray(n));
+  return [root, ...childNodesArray];
+}
+
+export function getNodesByCheckedState<TValue>(
+  root: TreeNodeType<TValue>,
+  checkedState: CheckedState
+): TreeNodeType<TValue>[] {
+  const filteredNodes: TreeNodeType<TValue>[][] = [];
+  for (let node of root.nodes) {
+    const matchedNodes = getNodesByCheckedState(node, checkedState);
+    if (matchedNodes) {
+      filteredNodes.push(matchedNodes);
+    }
+  }
+
+  const isMatch = root.checked === checkedState;
+  const nodesFlattened = filteredNodes.flat();
+
+  return isMatch ? [root, ...nodesFlattened] : nodesFlattened;
+}
+
+export function appendTreeNode<TValue, TId>(
+  root: TreeNodeType<TValue>,
+  appendRoot: TreeNodeType<TValue>,
+  value: TValue,
+  options: NodeOptions<TValue, TId>
+): TreeNodeType<TValue> {
+  if (options.getId(root.value) === options.getId(appendRoot.value)) {
+    const newNodes: TreeNodeType<TValue>[] = [
+      ...appendRoot.nodes,
+      { value, isRoot: false, checked: false, nodes: [] },
+    ];
+    return {
+      value: appendRoot.value,
+      isRoot: appendRoot.isRoot,
+      checked: getCheckedState(
+        newNodes.map((n) => n.checked),
+        appendRoot.checked,
+        appendRoot.isRoot
+      ),
+      nodes: newNodes,
+    };
+  }
+
+  const copiedNodes: TreeNodeType<TValue>[] = [];
+  for (let node of root.nodes) {
+    copiedNodes.push(appendTreeNode(node, appendRoot, value, options));
+  }
+
+  const checkedValues = copiedNodes.map((n) => n.checked);
+  const checked = getCheckedState(checkedValues, root.checked, root.isRoot);
+
+  return {
+    value: root.value,
+    isRoot: root.isRoot,
+    checked: checked,
+    nodes: copiedNodes,
+  };
+}
+
+export function removeTreeNode<TValue, TId>(
+  root: TreeNodeType<TValue>,
+  nodeToRemove: TreeNodeType<TValue>,
+  options: NodeOptions<TValue, TId>
+): TreeNodeType<TValue> | undefined {
+  if (options.getId(root.value) === options.getId(nodeToRemove.value)) {
+    return undefined;
+  }
+
+  const copiedNodes: TreeNodeType<TValue>[] = [];
+  for (let node of root.nodes) {
+    const nodeCopy = removeTreeNode(node, nodeToRemove, options);
+    if (nodeCopy) {
+      copiedNodes.push(nodeCopy);
+    }
+  }
+
+  const checkedValues = copiedNodes.map((n) => n.checked);
+  const checked = getCheckedState(checkedValues, root.checked, root.isRoot);
+
+  return {
+    value: root.value,
+    isRoot: root.isRoot,
+    checked: checked,
+    nodes: copiedNodes,
+  };
+}
+
 export function useCheckboxTree<TValue, TId>({
   initialTree,
   options,
@@ -155,8 +250,10 @@ export function useCheckboxTree<TValue, TId>({
   const [tree, setTree] = useState(initialTree);
 
   return {
-    root: tree,
-    set: setTree,
+    root: tree as typeof initialTree extends undefined
+      ? TreeNodeType<TValue> | undefined
+      : TreeNodeType<TValue>,
+    set: (newTree: TreeNodeType<TValue>) => setTree(newTree),
     update: (
       root: TreeNodeType<TValue>,
       updatedNode: TreeNodeType<TValue>,
@@ -171,6 +268,21 @@ export function useCheckboxTree<TValue, TId>({
       if (!tree) return;
 
       return findNodeById(tree, nodeId, options);
+    },
+    getByCheckedState: (checkedState: CheckedState) => {
+      if (!tree) return;
+
+      return getNodesByCheckedState(tree, checkedState);
+    },
+    append: (appendRoot: TreeNodeType<TValue>, value: TValue) => {
+      if (!tree) return;
+
+      return appendTreeNode(tree, appendRoot, value, options);
+    },
+    remove: (nodeToRemove: TreeNodeType<TValue>) => {
+      if (!tree) return;
+
+      return removeTreeNode(tree, nodeToRemove, options);
     },
   };
 }
