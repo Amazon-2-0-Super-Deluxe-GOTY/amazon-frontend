@@ -15,3 +15,10 @@ export interface Category {
 
 export type CategoryTreeNodeType = TreeNodeType<Category>;
 export type CheckedState = BaseCheckedState;
+
+export interface CategorySpecificity {
+  id: string;
+  name: string;
+  appearance: "tiles" | "rows";
+  type: "color" | "text";
+}

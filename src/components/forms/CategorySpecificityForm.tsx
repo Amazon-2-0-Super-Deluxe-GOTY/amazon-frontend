@@ -16,118 +16,61 @@ import { Separator } from "../ui/separator";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { createCheckboxArray, useCheckboxArray } from "@/lib/checkboxArray";
-import { ArrowUpDownIcon } from "lucide-react";
+import { ArrowUpDownIcon, FilePenLineIcon, PlusIcon } from "lucide-react";
+import type { CategorySpecificity } from "../Admin/Category/types";
 
 interface Props {
-  keywords: string[];
-  onSubmit: (keywords: string[]) => void;
+  specificities: CategorySpecificity[];
+  onSubmit: () => void;
   onCancel: () => void;
 }
 
-interface KeywordsCheckboxArrayApi {
-  isKeywordExist: (keyword: string) => boolean;
-  appendKeyword: (value: string) => void;
-  getKeywords: () => string[];
+interface SpecificsCheckboxArrayApi {
+  getSpecificities: () => CategorySpecificity[];
 }
 
 const createFormSchema = z.object({
-  keyword: z.string().min(1, {
-    message: "Keyword must be at least 1 character.",
+  name: z.string().min(1, {
+    message: "Name must be at least 1 character.",
   }),
+  appearance: z.enum(["tiles", "rows"]),
+  type: z.enum(["color", "text"]),
 });
 
 type CreateFormValues = z.infer<typeof createFormSchema>;
 
-export const CategoryKeywordsForm = ({
-  keywords,
+export const CategorySpecificityForm = ({
+  specificities,
   onSubmit,
   onCancel,
 }: Props) => {
-  const createForm = useForm<CreateFormValues>({
-    resolver: zodResolver(createFormSchema),
-    defaultValues: {
-      keyword: "",
-    },
-  });
-  const [api, setApi] = useState<KeywordsCheckboxArrayApi>();
-
-  const onCreateKeyword = (values: CreateFormValues) => {
-    if (api?.isKeywordExist(values.keyword)) {
-      return createForm.setError("keyword", {
-        type: "exist",
-        message: `The keyword '${values.keyword}' already exist`,
-      });
-    }
-
-    api?.appendKeyword(values.keyword);
-    createForm.reset();
-  };
-
-  const onSave = () => {
-    const keywords = api?.getKeywords();
-    if (keywords) {
-      onSubmit(keywords);
-    }
-  };
+  const [api, setApi] = useState<SpecificsCheckboxArrayApi>();
 
   return (
     <div className="grow flex flex-col gap-6">
-      <Form {...createForm}>
-        <form
-          className="flex items-center"
-          onSubmit={createForm.handleSubmit(onCreateKeyword)}
-        >
-          <FormField
-            control={createForm.control}
-            name="keyword"
-            render={({ field }) => (
-              <FormItem className="w-full space-y-0 relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
-                  Keyword
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="rounded-e-none"
-                    placeholder="Enter keyword or key phrase"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription hidden>
-                  This is category public display name.
-                </FormDescription>
-                <FormMessage className="absolute left-0 -bottom-5" />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" className="rounded-s-none">
-            Create
-          </Button>
-        </form>
-      </Form>
-      <Separator />
-      <KeywordsCheckboxArray keywords={keywords} setApi={setApi} />
+      <SpecificsCheckboxArray specificities={specificities} setApi={setApi} />
       <div className="mt-auto ml-auto space-x-3.5">
         <Button variant={"secondary"} onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={onSave}>Save</Button>
+        <Button>Save</Button>
       </div>
     </div>
   );
 };
 
-interface KeywordsCheckboxArrayProps {
-  keywords: string[];
-  setApi: (api: KeywordsCheckboxArrayApi) => void;
+interface SpecificsCheckboxArrayProps {
+  specificities: CategorySpecificity[];
+  setApi: (api: SpecificsCheckboxArrayApi) => void;
 }
 
-const KeywordsCheckboxArray = ({
-  keywords,
+const SpecificsCheckboxArray = ({
+  specificities,
   setApi,
-}: KeywordsCheckboxArrayProps) => {
+}: SpecificsCheckboxArrayProps) => {
   const [search, setSearch] = useState("");
   const [isSortDesc, setIsSortDesc] = useState(false);
-  const initialArray = useMemo(() => createCheckboxArray(keywords), []);
+  const initialArray = useMemo(() => createCheckboxArray(specificities), []);
   const checkboxArray = useCheckboxArray(initialArray);
   const checkboxArrayRef = useRef(checkboxArray);
   checkboxArrayRef.current = checkboxArray;
@@ -136,16 +79,16 @@ const KeywordsCheckboxArray = ({
     () =>
       search
         ? checkboxArray.array
-            .filter((elem) => elem.value.toLowerCase().includes(search))
+            .filter((elem) => elem.value.name.toLowerCase().includes(search))
             .sort((a, b) =>
               isSortDesc
-                ? -a.value.localeCompare(b.value)
-                : a.value.localeCompare(b.value)
+                ? -a.value.name.localeCompare(b.value.name)
+                : a.value.name.localeCompare(b.value.name)
             )
         : [...checkboxArray.array].sort((a, b) =>
             isSortDesc
-              ? -a.value.localeCompare(b.value)
-              : a.value.localeCompare(b.value)
+              ? -a.value.name.localeCompare(b.value.name)
+              : a.value.name.localeCompare(b.value.name)
           ),
     [checkboxArray.array, search, isSortDesc]
   );
@@ -156,15 +99,7 @@ const KeywordsCheckboxArray = ({
 
   useEffect(() => {
     setApi({
-      appendKeyword(value) {
-        checkboxArray.append(value);
-      },
-      isKeywordExist(keyword) {
-        return checkboxArrayRef.current.array.some(
-          (elem) => elem.value === keyword
-        );
-      },
-      getKeywords() {
+      getSpecificities() {
         return checkboxArrayRef.current.array.map((e) => e.value);
       },
     });
@@ -204,7 +139,7 @@ const KeywordsCheckboxArray = ({
                 <ArrowUpDownIcon className="w-6 h-6" />
               </button>
             </div>
-            {!!checkedElements?.length && (
+            {!!checkedElements?.length ? (
               <Button
                 variant={"link"}
                 className="py-0 h-max text-lg text-red-600"
@@ -212,6 +147,10 @@ const KeywordsCheckboxArray = ({
               >
                 Delete
               </Button>
+            ) : (
+              <button>
+                <PlusIcon className="w-6 h-6" />
+              </button>
             )}
           </div>
           <Separator />
@@ -220,20 +159,28 @@ const KeywordsCheckboxArray = ({
       <div className="space-y-4 h-[25vh] overflow-y-auto relative">
         {filteredElements.length > 0 ? (
           filteredElements.map((elem) => (
-            <div className="flex items-center gap-4" key={elem.value}>
-              <Checkbox
-                size="lg"
-                checked={elem.checked}
-                onCheckedChange={(checked) =>
-                  checkboxArray.changeChecked(elem, !!checked)
-                }
-              />
-              <p className="text-lg">{elem.value}</p>
+            <div
+              className="flex justify-between items-center"
+              key={elem.value.id}
+            >
+              <div className="flex items-center gap-4">
+                <Checkbox
+                  size="lg"
+                  checked={elem.checked}
+                  onCheckedChange={(checked) =>
+                    checkboxArray.changeChecked(elem, !!checked)
+                  }
+                />
+                <p className="text-lg">{elem.value.name}</p>
+              </div>
+              <button>
+                <FilePenLineIcon className="w-6 h-6" />
+              </button>
             </div>
           ))
         ) : (
           <p className="text-lg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max">
-            There are no keywords in this category
+            There are no specifics in this category
           </p>
         )}
       </div>

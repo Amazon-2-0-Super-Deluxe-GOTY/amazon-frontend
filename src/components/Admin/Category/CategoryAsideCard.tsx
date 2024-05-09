@@ -1,5 +1,5 @@
 import { getIcon } from "@/lib/categories";
-import type { Category } from "./types";
+import type { Category, CategorySpecificity } from "./types";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, FilePenLineIcon, Trash2Icon } from "lucide-react";
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { CategoryKeywordsForm } from "@/components/forms/CategoryKeywordsForm";
+import { CategorySpecificityForm } from "@/components/forms/CategorySpecificityForm";
 
 interface Props {
   category?: Category;
@@ -132,7 +133,33 @@ interface EditCategoryModalProps {
   category: Category;
 }
 
-// TODO: this modal also will be used to create category
+const specificities: CategorySpecificity[] = [
+  {
+    id: "1",
+    name: "Color",
+    appearance: "tiles",
+    type: "color",
+  },
+  {
+    id: "2",
+    name: "Color 2",
+    appearance: "rows",
+    type: "color",
+  },
+  {
+    id: "3",
+    name: "Size",
+    appearance: "tiles",
+    type: "text",
+  },
+  {
+    id: "4",
+    name: "Size 2",
+    appearance: "rows",
+    type: "text",
+  },
+];
+
 const EditCategoryModal = ({
   isOpen,
   closeModal,
@@ -186,6 +213,12 @@ const EditCategoryModal = ({
                 <h2 className="text-3xl font-semibold">Category specificity</h2>
                 <Separator />
               </div>
+
+              <CategorySpecificityForm
+                specificities={specificities}
+                onSubmit={console.log}
+                onCancel={closeModal}
+              />
             </CustomTabsContent>
           </div>
         </Tabs>
