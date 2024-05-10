@@ -103,8 +103,8 @@ const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCa
                   return (
                     <div>
                       <div className="py-10">
-                        <div className="text-center text-xl gap-4">
-                          <h1 className="font-medium text-3xl">No items added</h1>
+                        <div className="text-center text-lg gap-4">
+                          <h1 className="font-medium text-2xl">No items added</h1>
                           <h3>Browse to find your perfect product :)</h3>
                         </div>
                       </div>
@@ -114,8 +114,8 @@ const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCa
                   return (
                     <div>
                       <div className="py-10">
-                        <div className="text-center text-xl gap-4">
-                          <h1 className="font-medium text-3xl">Not logged in</h1>
+                        <div className="text-center text-lg gap-4">
+                          <h1 className="font-medium text-2xl">Not logged in</h1>
                           <h3>Log in to enjoy the best experience on PERRY</h3>
                         </div>
                       </div>
@@ -189,9 +189,9 @@ const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeC
           <div className="flex justify-between items-center pb-6">
             <div className="flex gap-4">
               <ShoppingCartIcon className="text-gray-700 w-8 h-8" />
-              <span className="text-3xl">Shopping cart</span>
+              <span className="text-2xl">Shopping cart</span>
             </div>
-            <DialogClose className="w-4 h-4 mr-4" >
+            <DialogClose className="w-4 h-4 flex justify-center items-center" >
               <XIcon />
             </DialogClose>
           </div>
@@ -207,8 +207,8 @@ const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeC
                     return (
                       <div>
                         <div className="pb-10 pt-6">
-                          <div className="text-center text-xl gap-4">
-                            <h1 className="font-medium text-3xl">No items added</h1>
+                          <div className="text-center text-lg gap-4">
+                            <h1 className="font-medium text-2xl">No items added</h1>
                             <h3>Browse to find your perfect product :)</h3>
                           </div>
                         </div>
@@ -218,8 +218,8 @@ const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeC
                     return (
                       <div>
                         <div className="pb-10 pt-6">
-                          <div className="text-center text-xl gap-4">
-                            <h1 className="font-medium text-3xl">Not logged in</h1>
+                          <div className="text-center text-lg gap-4">
+                            <h1 className="font-medium text-2xl">Not logged in</h1>
                             <h3>Log in to enjoy the best experience on PERRY</h3>
                           </div>
                         </div>
@@ -237,8 +237,8 @@ const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeC
                         <div className="flex justify-between py-6">
                           <Button variant={"secondary"} className="text-xl">Continue shopping</Button>
                           <div className="flex justify-center items-center gap-4">
-                            <span className="text-3xl font-medium">Total:</span>
-                            <span className="text-4xl font-medium">$ 999</span>
+                            <span className="text-2xl font-medium">Total:</span>
+                            <span className="text-2xl font-medium">$ 999</span>
                             <sup className="text-xl font-bold mt-3 -ml-3">00</sup>
                             <Button variant={"default"} className="text-xl">Checkout</Button>
                           </div>
@@ -255,12 +255,12 @@ const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeC
           </div>
           <div className=" mt-6">
             {cartState.includes("products") ?
-              <span className="font-medium text-3xl">You might also like</span> :
+              <span className="font-medium text-2xl">You might also like</span> :
               (<>
                 <div className="pb-6">
                   <Separator />
                 </div>
-                <span className="font-medium text-3xl">Suggestions</span>
+                <span className="font-medium text-2xl">Suggestions</span>
               </>)}
             <div className="pt-6">
               <SuggestionsProducts products={suggestionsProducts} />
