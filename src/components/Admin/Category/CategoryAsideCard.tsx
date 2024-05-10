@@ -9,6 +9,7 @@ import { useState } from "react";
 import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { CategoryKeywordsForm } from "@/components/forms/CategoryKeywordsForm";
 import { CategorySpecificityForm } from "@/components/forms/CategorySpecificityForm";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Props {
   category?: Category;
@@ -174,54 +175,61 @@ const EditCategoryModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-[70vw] h-[75vh] p-6 max-w-full">
-        <Tabs defaultValue="primary" className="flex gap-6 w-full">
-          <TabsList className="basis-1/3 flex-col gap-3.5 h-max p-0 bg-transparent">
-            <CustomTabsTrigger value="primary">Primary</CustomTabsTrigger>
-            <CustomTabsTrigger value="keywords">Keywords</CustomTabsTrigger>
-            <CustomTabsTrigger value="specificity">
-              Category specificity
-            </CustomTabsTrigger>
-          </TabsList>
-          <Separator orientation="vertical" />
-          <div className="basis-2/3 relative">
-            <CustomTabsContent value="primary">
-              <div className="space-y-3.5">
-                <h2 className="text-3xl font-semibold">Primary</h2>
-                <Separator />
-              </div>
+        <ScrollArea className="h-full" viewportClassName="[&>div]:h-full">
+          <Tabs
+            defaultValue="primary"
+            className="flex flex-col xl:flex-row gap-6 w-full p-1 h-full"
+          >
+            <TabsList className="basis-1/3 xl:flex-col gap-3.5 h-max p-0 bg-transparent">
+              <CustomTabsTrigger value="primary">Primary</CustomTabsTrigger>
+              <CustomTabsTrigger value="keywords">Keywords</CustomTabsTrigger>
+              <CustomTabsTrigger value="specificity">
+                Category specificity
+              </CustomTabsTrigger>
+            </TabsList>
+            <Separator orientation="vertical" />
+            <div className="basis-2/3 relative">
+              <CustomTabsContent value="primary">
+                <div className="space-y-3.5">
+                  <h2 className="text-3xl font-semibold">Primary</h2>
+                  <Separator />
+                </div>
 
-              <CategoryPrimaryForm
-                category={category}
-                onSubmit={console.log}
-                onCancel={closeModal}
-              />
-            </CustomTabsContent>
-            <CustomTabsContent value="keywords">
-              <div className="space-y-3.5">
-                <h2 className="text-3xl font-semibold">Keywords</h2>
-                <Separator />
-              </div>
+                <CategoryPrimaryForm
+                  category={category}
+                  onSubmit={console.log}
+                  onCancel={closeModal}
+                />
+              </CustomTabsContent>
+              <CustomTabsContent value="keywords">
+                <div className="space-y-3.5">
+                  <h2 className="text-3xl font-semibold">Keywords</h2>
+                  <Separator />
+                </div>
 
-              <CategoryKeywordsForm
-                keywords={["test1", "test2"]}
-                onSubmit={console.log}
-                onCancel={closeModal}
-              />
-            </CustomTabsContent>
-            <CustomTabsContent value="specificity">
-              <div className="space-y-3.5">
-                <h2 className="text-3xl font-semibold">Category specificity</h2>
-                <Separator />
-              </div>
+                <CategoryKeywordsForm
+                  keywords={["test1", "test2"]}
+                  onSubmit={console.log}
+                  onCancel={closeModal}
+                />
+              </CustomTabsContent>
+              <CustomTabsContent value="specificity">
+                <div className="space-y-3.5">
+                  <h2 className="text-3xl font-semibold">
+                    Category specificity
+                  </h2>
+                  <Separator />
+                </div>
 
-              <CategorySpecificityForm
-                specificities={specificities}
-                onSubmit={console.log}
-                onCancel={closeModal}
-              />
-            </CustomTabsContent>
-          </div>
-        </Tabs>
+                <CategorySpecificityForm
+                  specificities={specificities}
+                  onSubmit={console.log}
+                  onCancel={closeModal}
+                />
+              </CustomTabsContent>
+            </div>
+          </Tabs>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
@@ -235,7 +243,7 @@ const CustomTabsTrigger = ({
   children: string;
 }) => (
   <TabsTrigger
-    className="w-full justify-start text-base lg:text-lg px-4 py-3 bg-none rounded-sm data-[state=active]:ring-2 ring-gray-200"
+    className="w-full justify-center xl:justify-start text-base lg:text-lg px-4 py-3 bg-none rounded-sm data-[state=active]:ring-2 ring-gray-200"
     value={value}
   >
     {children}
