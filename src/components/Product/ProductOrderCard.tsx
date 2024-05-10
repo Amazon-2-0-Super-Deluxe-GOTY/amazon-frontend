@@ -3,7 +3,6 @@ import {
   HeartIcon,
   MinusIcon,
   PlusIcon,
-  X,
 } from "lucide-react";
 import {
   Card,
@@ -28,6 +27,8 @@ import { SecurityContent } from "./OrderInfoContent/SecurityContent";
 import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
+import { useSearchParamsTools } from "@/lib/router";
+import { useStorageCart } from "@/lib/storage";
 
 const infoElements = [
   {
@@ -90,6 +91,23 @@ export const ProductOrderCard = ({
     }
   };
 
+  //#region AddProductToCart
+  const searchParams = useSearchParamsTools();
+  const { AddToCart, setIsOpenCartModal } = useStorageCart();
+  const onAddToCartClick = () => {
+    const params = searchParams.get("product");
+    if(params)
+    {
+      const newCartItem = { title: "Product_" + params, price: 39.99, quantity: count };
+      AddToCart(newCartItem);
+    }
+  };
+  const onBuyNowClick = () => {
+    onAddToCartClick();
+    setIsOpenCartModal(true);
+  };
+  //#endregion
+
   return (
     <Card className="bg-gray-200">
       <CardHeader className="space-y-3">
@@ -127,8 +145,8 @@ export const ProductOrderCard = ({
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
-        <Button disabled={!isOptionsSelected}>Add to cart</Button>
-        <Button disabled={!isOptionsSelected}>Buy now</Button>
+        <Button disabled={!isOptionsSelected} onClick={onAddToCartClick}>Add to cart</Button>
+        <Button disabled={!isOptionsSelected} onClick={onBuyNowClick}>Buy now</Button>
         <Button variant={"outline"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
@@ -191,6 +209,27 @@ const MobileQuickActions = ({
   decrement: () => void;
   isOptionsSelected: boolean;
 }) => {
+
+  //#region AddProductToCart
+  const searchParams = useSearchParamsTools();
+  const { AddToCart, setIsOpenCartModal } = useStorageCart();
+  const onAddToCartClick = () => {
+    const params = searchParams.get("product");
+    if(params)
+    {
+      const newCartItem = { title: "Product_" + params, price: 39.99, quantity: count };
+      AddToCart(newCartItem);
+      console.log("AddToCart -=> ", newCartItem);
+    }
+  };
+
+  const onBuyNowClick = () => {
+    onAddToCartClick();
+    setIsOpenCartModal(true);
+  };
+
+  //#endregion
+
   return (
     <ClientOnlyPortal selector="body">
       <MediaQueryCSS maxSize="md">
@@ -209,10 +248,8 @@ const MobileQuickActions = ({
                 <button>
                   <HeartIcon />
                 </button>
-                <Button variant={"outline"} disabled={!isOptionsSelected}>
-                  To cart
-                </Button>
-                <Button disabled={!isOptionsSelected}>Buy</Button>
+                <Button variant={"outline"} disabled={!isOptionsSelected} onClick={onAddToCartClick}>To cart</Button>
+                <Button disabled={!isOptionsSelected} onClick={onBuyNowClick}>Buy</Button>
               </div>
             </div>
             <hr className="border-black" />

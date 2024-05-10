@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/drawer";
 import { ShoppingCartIcon, XIcon } from "lucide-react";
 import { SuggestionsProducts } from "./SuggestionsProducts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { CartProducts } from "./CartProducts";
 import { useScreenSize } from "@/lib/media";
+import { useStorageCart } from "@/lib/storage";
 
 const Separator = () => {
   return (
@@ -33,25 +34,30 @@ const Separator = () => {
 export const ShoppingCart = () => {
   const isDesktop = useScreenSize({ minSize: "md" });
 
-  // const [cartState, setCartState] = useState<string>("empty");
+  //#region get cart products
+  const { products } = useStorageCart();
+  let cartProducts = products.map((item, index) => ({
+    title: item.title,
+    price: item.price,
+    quantity: item.quantity,
+  }));
+  //#endregion
+
+  const suggestionsProducts = Array.from({ length: 12 }).map((_, index) => ({
+    title: `Product ${index + 1}`,
+    price: 39.99,
+  }));
+
   // const [cartState, setCartState] = useState<string>("not-authorized");
-  const [cartState, setCartState] = useState<string>("products");
+  const [cartState, setCartState] = useState<string>(products.length > 0 ? "products" : "empty");
   const ChangeCartState = (value:string) => {
-    if(value)
-    {
-      setCartState(value);
-    }
+    setCartState(value);
   }
 
-  const suggestionsProducts = Array.from({ length: 9 }).map((_, index) => ({
-    title: `Product ${index + 1}`,
-    price: 39.99,
-  }));
-
-  let cartProducts = Array.from({ length: 9 }).map((_, index) => ({
-    title: `Product ${index + 1}`,
-    price: 39.99,
-  }));
+  useEffect(() => {
+    if(cartState !== "not-authorized")
+      setCartState(products.length > 0 ? "products" : "empty");
+  }, [products]);
 
   return (
     <>
@@ -63,16 +69,17 @@ export const ShoppingCart = () => {
 };
 
 const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCartState }: {
-  products: { title: string; price: number; }[],
+  products: { title: string; price: number; quantity: number; }[],
   suggestionsProducts: { title: string; price: number; }[],
   cartState: string,
   ChangeCartState: (value:string) => void
  }) => {
+  const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
 
   return (
-    <Drawer>
-      <DrawerTrigger><ShoppingCartIcon className="text-gray-700" /></DrawerTrigger>
-      <DrawerContent className="h-full max-h-[95%]">
+    <Drawer open={isOpenCartModal} onOpenChange={setIsOpenCartModal} >
+      <DrawerTrigger ><ShoppingCartIcon className="text-gray-700" /></DrawerTrigger>
+      <DrawerContent className="h-full max-h-[95%]" >
         <DrawerHeader className="pt-2">
           <DrawerTitle>
             <div className="flex justify-between items-center pb-6">
@@ -85,10 +92,10 @@ const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCa
               </DrawerClose>
             </div>
           </DrawerTitle>
-        </DrawerHeader>
-        <ScrollArea className="pl-3">
-          <div>
           <Separator />
+        </DrawerHeader>
+        <ScrollArea className="pl-4 pr-1">
+          <div>
           <div className="w-full h-full flex justify-center items-center">
             {(() => {
               switch (cartState) {
@@ -118,11 +125,9 @@ const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCa
                   return (
                     <div className="w-full h-full">
                       <div className="mt-2 mb-4">
-                        <ScrollArea>
-                          <div className="max-h-56">
-                            <CartProducts products={products} ChangeCartState={ChangeCartState} />
+                          <div>
+                            <CartProducts ChangeCartState={ChangeCartState} />
                           </div>
-                        </ScrollArea>
                       </div>
                       <Separator />
                       <div className="my-3">
@@ -168,85 +173,87 @@ const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCa
 };
 
 const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeCartState }: {
-  products: { title: string; price: number; }[],
+  products: { title: string; price: number; quantity: number; }[],
   suggestionsProducts: { title: string; price: number; }[],
   cartState: string,
   ChangeCartState: (value:string) => void
  }) => {
+  const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
 
   return (
-    <Dialog>
+    <Dialog open={isOpenCartModal} onOpenChange={setIsOpenCartModal} >
       <DialogTrigger><ShoppingCartIcon className="text-gray-700" /></DialogTrigger>
-      <DialogContent hideClose className="max-w-7xl max-h-[780px] w-full h-full">
-        <DialogHeader>
-          <DialogTitle>
-            <div className="flex justify-between items-center pb-6">
-              <div className="flex gap-4">
-                <ShoppingCartIcon className="text-gray-700 w-8 h-8" />
-                <span className="text-3xl">Shopping cart</span>
-              </div>
-              <DialogClose className="w-4 h-4 mr-4" >
-                <XIcon />
-              </DialogClose>
+      <DialogContent hideClose className="max-w-7xl max-h-[750px] w-full h-full p-6 pr-3">
+        <div className="pr-3">
+        <DialogTitle>
+          <div className="flex justify-between items-center pb-6">
+            <div className="flex gap-4">
+              <ShoppingCartIcon className="text-gray-700 w-8 h-8" />
+              <span className="text-3xl">Shopping cart</span>
             </div>
-          </DialogTitle>
-          <Separator />
-          <div className="w-full h-full flex justify-center items-center">
-            {(() => {
-              switch (cartState) {
-                case "empty":
-                  return (
-                    <div>
-                      <div className="py-10">
-                        <div className="text-center text-xl gap-4">
-                          <h1 className="font-medium text-3xl">No items added</h1>
-                          <h3>Browse to find your perfect product :)</h3>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                case "not-authorized":
-                  return (
-                    <div>
-                      <div className="py-10">
-                        <div className="text-center text-xl gap-4">
-                          <h1 className="font-medium text-3xl">Not logged in</h1>
-                          <h3>Log in to enjoy the best experience on PERRY</h3>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                case "products":
-                  return (
-                    <div className="w-full h-full">
-                      <div className="mt-2 mb-4">
-                        <ScrollArea>
-                          <div className="max-h-56">
-                            <CartProducts products={products} ChangeCartState={ChangeCartState} />
-                          </div>
-                        </ScrollArea>
-                      </div>
-                      <Separator />
-                      <div className="flex justify-between py-6">
-                        <Button variant={"secondary"} className="text-xl">Continue shopping</Button>
-                        <div className="flex justify-center items-center gap-4">
-                          <span className="text-3xl font-medium">Total:</span>
-                          <span className="text-4xl font-medium">$ 999</span>
-                          <sup className="text-xl font-bold mt-3 -ml-3">00</sup>
-                          <Button variant={"default"} className="text-xl">Checkout</Button>
-                        </div>
-                      </div>
-                      <Separator />
-                    </div>
-                  );
-                    
-                default:
-                  return null;
-              }
-            })()}
+            <DialogClose className="w-4 h-4 mr-4" >
+              <XIcon />
+            </DialogClose>
           </div>
-        </DialogHeader>
+        </DialogTitle>
+        <Separator />
+        </div>
+        <ScrollArea>
           <div>
+            <div className="w-full h-full flex justify-center items-center">
+              {(() => {
+                switch (cartState) {
+                  case "empty":
+                    return (
+                      <div>
+                        <div className="pb-10 pt-6">
+                          <div className="text-center text-xl gap-4">
+                            <h1 className="font-medium text-3xl">No items added</h1>
+                            <h3>Browse to find your perfect product :)</h3>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  case "not-authorized":
+                    return (
+                      <div>
+                        <div className="pb-10 pt-6">
+                          <div className="text-center text-xl gap-4">
+                            <h1 className="font-medium text-3xl">Not logged in</h1>
+                            <h3>Log in to enjoy the best experience on PERRY</h3>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  case "products":
+                    return (
+                      <div className="w-full h-full">
+                        <div className="mt-2 mb-4">
+                          <div>
+                            <CartProducts ChangeCartState={ChangeCartState} />
+                          </div>
+                        </div>
+                        <Separator />
+                        <div className="flex justify-between py-6">
+                          <Button variant={"secondary"} className="text-xl">Continue shopping</Button>
+                          <div className="flex justify-center items-center gap-4">
+                            <span className="text-3xl font-medium">Total:</span>
+                            <span className="text-4xl font-medium">$ 999</span>
+                            <sup className="text-xl font-bold mt-3 -ml-3">00</sup>
+                            <Button variant={"default"} className="text-xl">Checkout</Button>
+                          </div>
+                        </div>
+                        <Separator />
+                      </div>
+                    );
+                    
+                  default:
+                    return null;
+                }
+              })()}
+            </div>
+          </div>
+          <div className=" mt-6">
             {cartState.includes("products") ?
               <span className="font-medium text-3xl">You might also like</span> :
               (<>
@@ -255,12 +262,12 @@ const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeC
                 </div>
                 <span className="font-medium text-3xl">Suggestions</span>
               </>)}
-            <div className="max-w-[1254px] pt-6">
+            <div className="pt-6">
               <SuggestionsProducts products={suggestionsProducts} />
             </div>
           </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
 };
-

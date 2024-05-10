@@ -28,6 +28,7 @@ import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
 import { useSearchParams } from "next/navigation";
 import { ImagesBlock } from "@/components/ProductPage/ProductImagesBlock";
+import { useSearchParamsTools } from "@/lib/router";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -415,6 +416,11 @@ export default function ProductPage({
     checkOptionsSelected(searchParams)
   );
   const hasOptions = productOptions.length > 0;
+
+  const searchParamsTools = useSearchParamsTools();
+  React.useEffect(() => {
+    searchParamsTools.set("product", params.productId);
+  }, [params.productId]);
 
   React.useEffect(() => {
     setIsOptionsSelected(checkOptionsSelected(searchParams));

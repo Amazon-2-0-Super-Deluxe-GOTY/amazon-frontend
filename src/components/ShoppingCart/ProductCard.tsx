@@ -17,7 +17,7 @@ export const ProductCard = ({
   const fraction = priceParts[1];
 
   return (
-    <Card className="max-w-sm w-full border-0 relative shadow-none before:ring-1 before:ring-gray-300 before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
+    <Card className="max-w-sm w-full h-full border-0 relative shadow-none before:ring-1 before:ring-gray-300 before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
       <CardHeader className="pb-0">
         <div className="relative aspect-square flex">
           <Image src={placeholder} fill={true} alt="Placeholder" />

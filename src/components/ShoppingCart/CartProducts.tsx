@@ -1,37 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import { useScreenSize } from "@/lib/media";
 import { cn } from "@/lib/utils";
+import { useStorageCart } from "@/lib/storage";
 
 export const CartProducts = ({
-  products,
   ChangeCartState,
 }: {
-  products: { title: string; price: number }[];
   ChangeCartState: (value:string) => void;
 }) => {
-  const [cartProducts, setCartProducts] = useState<{ title: string; price: number }[]>(products);
 
-  const onDelete = (value:number) => {
-    if(value >= 0)
+  const { products, RemoveFromCart } = useStorageCart();
+  const onDelete = (value:string) => {
+    if(value)
     {
-      const newArr = cartProducts.filter((_, index) => index !== value );
-      setCartProducts(newArr);
-      products = newArr;
-      if(newArr.length === 0)
+      const product = products.find((item, index) => item.title === value );
+      if(product && products.length === 1)
       {
         ChangeCartState("empty");
       }
+      RemoveFromCart(product);
     }
-  }
+  };
 
   return (
     <div>
-    {cartProducts.map((product, index) => (
+    {products.map((product, index) => (
       <div key={index} className={cn("my-2", index%2 !== 0 && "bg-gray-100")} >
-        <CartProductCard index={index} title={product.title} price={product.price} onDelete={onDelete} />
+        <CartProductCard title={product.title} price={product.price} quantity={product.quantity} onDelete={onDelete} />
       </div>
     ))}
     </div>
@@ -39,17 +37,15 @@ export const CartProducts = ({
 };
 
 const CartProductCard = ({
-  index,
   title,
   price,
   quantity,
   onDelete,
 }: {
-  index: number;
   title: string;
   price: number;
-  quantity?: number;
-  onDelete: (value:number) => void;
+  quantity: number;
+  onDelete: (value:string) => void;
 }) => {
   const isDesktop = useScreenSize({ minSize: "md" });
 
@@ -57,9 +53,10 @@ const CartProductCard = ({
   const whole = priceParts[0];
   const fraction = priceParts[1];
 
-  const [count, setCount] = useState(1);
-  const increment = () => setCount((c) => c + 1);
-  const decrement = () => setCount((c) => (c > 1 ? c - 1 : 1));
+  const { IncrementQuantity, DecrementQuantity } = useStorageCart();
+  const [count, setCount] = useState(quantity);
+  const increment = () => { IncrementQuantity({title: title, price: price, quantity: quantity}); setCount((c) => c + 1); };
+  const decrement = () => { DecrementQuantity({title: title, price: price, quantity: quantity}); setCount((c) => (c > 1 ? c - 1 : 1)); };
 
   return (
     <div className="w-full border-0 relative shadow-none ring-1 ring-transparent hover:ring-gray-300 ring-inset transition-all duration-300 rounded-lg">
@@ -70,7 +67,7 @@ const CartProductCard = ({
         <div className={cn("w-full pl-6 flex flex-col justify-between", !isDesktop && "pl-2")}>
           <div className="w-full flex justify-between items-center">
             <span className="text-sm">{title}</span>
-            <TrashIcon className={cn(!isDesktop && "h-4 w-4")} onClick={() => onDelete(index)} />
+            <TrashIcon className={cn(!isDesktop && "h-4 w-4")} onClick={() => onDelete(title)} />
           </div>
           <div className="w-full flex justify-end items-end">
             <div className={cn(!isDesktop && "flex justify-end items-end")}>
