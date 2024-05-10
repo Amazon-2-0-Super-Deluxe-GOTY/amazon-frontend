@@ -165,6 +165,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
               <FormControl>
                 <ToggleGroup
                   type="single"
+                  className="gap-3.5"
                   onValueChange={field.onChange}
                   {...field}
                 >

@@ -20,5 +20,4 @@ export interface CategorySpecificity {
   id: string;
   name: string;
   appearance: "tiles" | "rows";
-  type: "color" | "text";
 }

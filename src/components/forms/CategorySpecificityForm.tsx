@@ -186,9 +186,6 @@ const specificityFormSchema = z.object({
   appearance: z.enum(["tiles", "rows"], {
     errorMap: () => ({ message: "You must select appearance" }),
   }),
-  type: z.enum(["color", "text"], {
-    errorMap: () => ({ message: "You must select type" }),
-  }),
 });
 
 type SpecificityFormValues = z.infer<typeof specificityFormSchema>;
@@ -213,11 +210,8 @@ const SpecificityForm = ({
       : {
           name: "",
           appearance: "tiles",
-          type: "text",
         },
   });
-
-  const appearance = form.watch("appearance");
 
   return (
     <Form {...form}>
@@ -301,131 +295,6 @@ const SpecificityForm = ({
                         </div>
                       </div>
                     </div>
-                  </ToggleGroupItem>
-                </ToggleGroup>
-              </FormControl>
-              <FormDescription hidden>Active or inactive</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="type"
-          disabled={isEdit}
-          render={({ field }) => (
-            <FormItem className="relative space-y-3.5">
-              <FormLabel className="text-xl font-semibold">
-                Attribute format
-              </FormLabel>
-              <FormControl>
-                <ToggleGroup
-                  type="single"
-                  className="gap-3.5"
-                  onValueChange={field.onChange}
-                  {...field}
-                >
-                  <ToggleGroupItem className="h-40 basis-1/2" value="color">
-                    {appearance === "tiles" ? (
-                      <div className="space-y-3.5 text-start">
-                        <p className="text-xl space-x-3">
-                          <span className="font-normal">Color</span>
-                          <span className="font-semibold">Pink</span>
-                        </p>
-                        <div className="flex gap-3">
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 bg-[#74A0E2] rounded-sm" />
-                          </div>
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 bg-[#BF74E2] rounded-sm" />
-                          </div>
-                          <div className="p-2 ring-1 ring-black rounded-sm">
-                            <div className="w-6 h-6 bg-[#E274A2] rounded-sm" />
-                          </div>
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 bg-[#E27474] rounded-sm" />
-                          </div>
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 bg-[#E2A974] rounded-sm" />
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-3.5 text-start w-[70%]">
-                        <p className="text-xl space-x-3">
-                          <span className="font-normal">Color</span>
-                          <span className="font-semibold">Pink</span>
-                        </p>
-                        <div className="flex flex-col gap-3">
-                          <div className="p-2 rounded-sm flex items-center gap-2">
-                            <div className="w-6 h-6 bg-[#BF74E2] rounded-sm" />
-                            <span>Purple</span>
-                          </div>
-                          <div className="p-2 rounded-sm flex items-center gap-2 ring-1 ring-black">
-                            <div className="w-6 h-6 bg-[#E274A2] rounded-sm" />
-                            <span>Pink</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </ToggleGroupItem>
-                  <ToggleGroupItem className="h-40 basis-1/2" value="text">
-                    {appearance === "tiles" ? (
-                      <div className="space-y-3.5 text-start">
-                        <p className="text-xl space-x-3">
-                          <span className="font-normal">Size</span>
-                          <span className="font-semibold">Medium</span>
-                        </p>
-                        <div className="flex gap-3">
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 flex justify-center items-center">
-                              XS
-                            </div>
-                          </div>
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 flex justify-center items-center">
-                              S
-                            </div>
-                          </div>
-                          <div className="p-2 ring-1 ring-black rounded-sm">
-                            <div className="w-6 h-6 flex justify-center items-center">
-                              M
-                            </div>
-                          </div>
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 flex justify-center items-center">
-                              L
-                            </div>
-                          </div>
-                          <div className="p-2 rounded-sm">
-                            <div className="w-6 h-6 flex justify-center items-center">
-                              XL
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-3.5 text-start w-[70%]">
-                        <p className="text-xl space-x-3">
-                          <span className="font-normal">Size</span>
-                          <span className="font-semibold">Medium</span>
-                        </p>
-                        <div className="flex flex-col gap-3">
-                          <div className="p-2 rounded-sm flex items-center gap-2">
-                            <div className="w-6 h-6 flex justify-center items-center">
-                              S
-                            </div>
-                            <span>Small</span>
-                          </div>
-                          <div className="p-2 rounded-sm flex items-center gap-2 ring-1 ring-black">
-                            <div className="w-6 h-6 flex justify-center items-center">
-                              M
-                            </div>
-                            <span>Medium</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </ToggleGroupItem>
                 </ToggleGroup>
               </FormControl>

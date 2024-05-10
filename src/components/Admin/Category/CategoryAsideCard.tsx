@@ -7,7 +7,6 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
-import { CategoryKeywordsForm } from "@/components/forms/CategoryKeywordsForm";
 import { CategorySpecificityForm } from "@/components/forms/CategorySpecificityForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -139,25 +138,21 @@ const specificities: CategorySpecificity[] = [
     id: "1",
     name: "Color",
     appearance: "tiles",
-    type: "color",
   },
   {
     id: "2",
     name: "Color 2",
     appearance: "rows",
-    type: "color",
   },
   {
     id: "3",
     name: "Size",
     appearance: "tiles",
-    type: "text",
   },
   {
     id: "4",
     name: "Size 2",
     appearance: "rows",
-    type: "text",
   },
 ];
 
@@ -178,17 +173,17 @@ const EditCategoryModal = ({
         <ScrollArea className="h-full" viewportClassName="[&>div]:h-full">
           <Tabs
             defaultValue="primary"
-            className="flex flex-col xl:flex-row gap-6 w-full p-1 h-full"
+            // className="flex flex-col xl:flex-row gap-6 w-full p-1 h-full"
+            className="grid xl:grid-cols-[1fr_min-content_1fr_1fr] gap-6 w-full p-1 h-full"
           >
-            <TabsList className="basis-1/3 xl:flex-col gap-3.5 h-max p-0 bg-transparent">
+            <TabsList className="max-xl:col-span-2 xl:flex-col gap-3.5 h-max p-0 bg-transparent">
               <CustomTabsTrigger value="primary">Primary</CustomTabsTrigger>
-              <CustomTabsTrigger value="keywords">Keywords</CustomTabsTrigger>
               <CustomTabsTrigger value="specificity">
                 Category specificity
               </CustomTabsTrigger>
             </TabsList>
-            <Separator orientation="vertical" />
-            <div className="basis-2/3 relative">
+            <Separator orientation="vertical" className="hidden xl:block" />
+            <div className="col-span-2 relative">
               <CustomTabsContent value="primary">
                 <div className="space-y-3.5">
                   <h2 className="text-3xl font-semibold">Primary</h2>
@@ -197,18 +192,6 @@ const EditCategoryModal = ({
 
                 <CategoryPrimaryForm
                   category={category}
-                  onSubmit={console.log}
-                  onCancel={closeModal}
-                />
-              </CustomTabsContent>
-              <CustomTabsContent value="keywords">
-                <div className="space-y-3.5">
-                  <h2 className="text-3xl font-semibold">Keywords</h2>
-                  <Separator />
-                </div>
-
-                <CategoryKeywordsForm
-                  keywords={["test1", "test2"]}
                   onSubmit={console.log}
                   onCancel={closeModal}
                 />
