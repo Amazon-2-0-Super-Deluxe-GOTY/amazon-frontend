@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ProductCard } from "./ProductCard";
+import { ProductCard } from "../Product/ProductCard";
 
 export function SuggestionsProducts({
   products,

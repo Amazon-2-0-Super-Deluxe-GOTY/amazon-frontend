@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 //#region StorageCart
 type CartProductType = {
+  id: string,
   title: string, 
   price: number, 
   quantity: number
@@ -10,33 +11,33 @@ type CartProductType = {
 
 type StorageCart = {
   products: CartProductType[],
-  AddToCart: (product:CartProductType) => void,
-  RemoveFromCart: (product:CartProductType | undefined) => void,
-  IncrementQuantity: (product:CartProductType) => void,
-  DecrementQuantity: (product:CartProductType) => void,
+  addToCart: (product:CartProductType) => void,
+  removeFromCart: (productId:string) => void,
+  incrementQuantity: (productId:string) => void,
+  decrementQuantity: (productId:string) => void,
   isOpenCartModal: boolean,
   setIsOpenCartModal: (value:boolean) => void,
 }
 
 export const useStorageCart = create<StorageCart>()((set) => ({
   products: [],
-  AddToCart: (product:CartProductType) => set((state) => ({ products: state.products.find((el) => el.title === product.title) ? state.products.map((el) => {
+  addToCart: (product:CartProductType) => set((state) => ({ products: state.products.find((el) => el.id === product.id) ? state.products.map((el) => {
     if (el.title === product.title) {
       return { ...el, quantity: el.quantity + product.quantity };
     } else {
       return el;
     }}) : state.products.concat(product)
   })),
-  RemoveFromCart: (product:CartProductType | undefined) => set((state) => ({ products: product ? state.products.filter((el) => el.title !== product.title) : state.products })),
-  IncrementQuantity: (product:CartProductType) => set((state) => ({ products: state.products.map((el) => {
-    if (el.title === product.title) {
+  removeFromCart: (productId:string) => set((state) => ({ products: productId ? state.products.filter((el) => el.id !== productId) : state.products })),
+  incrementQuantity: (productId:string) => set((state) => ({ products: state.products.map((el) => {
+    if (el.id === productId) {
       return { ...el, quantity: el.quantity + 1 };
     } else {
       return el;
     }})
   })),
-  DecrementQuantity: (product:CartProductType) => set((state) => ({ products: state.products.map((el) => {
-    if (el.title === product.title) {
+  decrementQuantity: (productId:string) => set((state) => ({ products: state.products.map((el) => {
+    if (el.id === productId) {
       return { ...el, quantity: el.quantity !== 1 ? el.quantity - 1 : el.quantity };
     } else {
       return el;

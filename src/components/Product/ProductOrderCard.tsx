@@ -93,13 +93,13 @@ export const ProductOrderCard = ({
 
   //#region AddProductToCart
   const searchParams = useSearchParamsTools();
-  const { AddToCart, setIsOpenCartModal } = useStorageCart();
+  const { addToCart, setIsOpenCartModal } = useStorageCart();
   const onAddToCartClick = () => {
     const params = searchParams.get("product");
     if(params)
     {
-      const newCartItem = { title: "Product_" + params, price: 39.99, quantity: count };
-      AddToCart(newCartItem);
+      const newCartItem = { id: params, title: "Product_" + params, price: 39.99, quantity: count };
+      addToCart(newCartItem);
     }
   };
   const onBuyNowClick = () => {
@@ -212,14 +212,13 @@ const MobileQuickActions = ({
 
   //#region AddProductToCart
   const searchParams = useSearchParamsTools();
-  const { AddToCart, setIsOpenCartModal } = useStorageCart();
+  const { addToCart, setIsOpenCartModal } = useStorageCart();
   const onAddToCartClick = () => {
     const params = searchParams.get("product");
     if(params)
     {
-      const newCartItem = { title: "Product_" + params, price: 39.99, quantity: count };
-      AddToCart(newCartItem);
-      console.log("AddToCart -=> ", newCartItem);
+      const newCartItem = { id: params, title: "Product_" + params, price: 39.99, quantity: count };
+      addToCart(newCartItem);
     }
   };
 

@@ -22,14 +22,7 @@ import { Button } from "../ui/button";
 import { CartProducts } from "./CartProducts";
 import { useScreenSize } from "@/lib/media";
 import { useStorageCart } from "@/lib/storage";
-
-const Separator = () => {
-  return (
-    <div>
-      <hr className="border-gray-300 border-[1px]"/>
-    </div>
-  );
-};
+import { Separator } from "../ui/separator";
 
 export const ShoppingCart = () => {
   const isDesktop = useScreenSize({ minSize: "md" });
@@ -37,6 +30,7 @@ export const ShoppingCart = () => {
   //#region get cart products
   const { products } = useStorageCart();
   let cartProducts = products.map((item, index) => ({
+    id: item.id, 
     title: item.title,
     price: item.price,
     quantity: item.quantity,
@@ -62,14 +56,13 @@ export const ShoppingCart = () => {
   return (
     <>
       {isDesktop ? 
-      <ShoppingCartDesktop products={cartProducts} suggestionsProducts={suggestionsProducts} cartState={cartState} ChangeCartState={ChangeCartState} /> : 
-      <ShoppingCartMobile products={cartProducts} suggestionsProducts={suggestionsProducts} cartState={cartState} ChangeCartState={ChangeCartState} />}
+      <ShoppingCartDesktop suggestionsProducts={suggestionsProducts} cartState={cartState} ChangeCartState={ChangeCartState} /> : 
+      <ShoppingCartMobile suggestionsProducts={suggestionsProducts} cartState={cartState} ChangeCartState={ChangeCartState} />}
     </>
   );
 };
 
-const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCartState }: {
-  products: { title: string; price: number; quantity: number; }[],
+const ShoppingCartMobile = ({ suggestionsProducts, cartState, ChangeCartState }: {
   suggestionsProducts: { title: string; price: number; }[],
   cartState: string,
   ChangeCartState: (value:string) => void
@@ -172,8 +165,7 @@ const ShoppingCartMobile = ({ products, suggestionsProducts, cartState, ChangeCa
   );
 };
 
-const ShoppingCartDesktop = ({ products, suggestionsProducts, cartState, ChangeCartState }: {
-  products: { title: string; price: number; quantity: number; }[],
+const ShoppingCartDesktop = ({ suggestionsProducts, cartState, ChangeCartState }: {
   suggestionsProducts: { title: string; price: number; }[],
   cartState: string,
   ChangeCartState: (value:string) => void
