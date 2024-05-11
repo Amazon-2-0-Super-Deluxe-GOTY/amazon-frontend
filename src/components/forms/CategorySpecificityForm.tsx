@@ -19,15 +19,12 @@ import { createCheckboxArray, useCheckboxArray } from "@/lib/checkboxArray";
 import { ArrowUpDownIcon, FilePenLineIcon, PlusIcon } from "lucide-react";
 import type { CategorySpecificity } from "../Admin/Category/types";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { AlertDialog } from "../Admin/AlertDialog";
 
 interface Props {
   specificities: CategorySpecificity[];
   onSubmit: () => void;
   onCancel: () => void;
-}
-
-interface SpecificsCheckboxArrayApi {
-  getSpecificities: () => CategorySpecificity[];
 }
 
 export const CategorySpecificityForm = ({
@@ -45,6 +42,11 @@ export const CategorySpecificityForm = ({
   const [isForm, setIsForm] = useState(false);
   const [editedSpecificity, setEditedSpecificity] =
     useState<CategorySpecificity>();
+
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  const openAlert = () => setIsAlertOpen(true);
+  const closeAlert = () => setIsAlertOpen(false);
 
   const filteredElements = useMemo(
     () =>
@@ -71,8 +73,10 @@ export const CategorySpecificityForm = ({
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(e.target.value.toLowerCase());
 
-  const onDelete = () =>
+  const onDelete = () => {
     checkboxArray.removeMany(checkedElements.map((e) => e.value));
+    closeAlert();
+  };
 
   const onSortOrderChange = () => setIsSortDesc((v) => !v);
 
@@ -128,7 +132,7 @@ export const CategorySpecificityForm = ({
                   <Button
                     variant={"link"}
                     className="py-0 h-max text-lg text-red-600"
-                    onClick={onDelete}
+                    onClick={openAlert}
                   >
                     Delete
                   </Button>
@@ -170,9 +174,18 @@ export const CategorySpecificityForm = ({
             )}
           </div>
           <div className="mt-auto ml-auto space-x-3.5">
-            <Button variant={"secondary"}>Cancel</Button>
+            <Button variant={"secondary"} onClick={onCancel}>
+              Cancel
+            </Button>
             <Button>Save</Button>
           </div>
+          <AlertDialog
+            isOpen={isAlertOpen}
+            closeModal={closeAlert}
+            onSubmit={onDelete}
+            title="Are you sure?"
+            text="You will not be able to recover selected specificities after deleting them!"
+          />
         </div>
       )}
     </div>
@@ -249,11 +262,11 @@ const SpecificityForm = ({
               <FormControl>
                 <ToggleGroup
                   type="single"
-                  className="gap-3.5"
+                  className="grid grid-cols-2 gap-3.5"
                   onValueChange={field.onChange}
                   {...field}
                 >
-                  <ToggleGroupItem className="h-40 basis-1/2" value="tiles">
+                  <ToggleGroupItem className="h-full p-6" value="tiles">
                     <div className="space-y-3.5 text-start">
                       <p className="text-xl space-x-3">
                         <span className="font-normal">Option</span>
@@ -278,7 +291,7 @@ const SpecificityForm = ({
                       </div>
                     </div>
                   </ToggleGroupItem>
-                  <ToggleGroupItem className="h-40 basis-1/2" value="rows">
+                  <ToggleGroupItem className="h-full p-6" value="rows">
                     <div className="space-y-3.5 text-start w-[70%]">
                       <p className="text-xl space-x-3">
                         <span className="font-normal">Option</span>

@@ -18,6 +18,7 @@ import { CategoryTree } from "@/components/Admin/Category/CategoryTree";
 import { getIcon } from "@/lib/categories";
 import { CategoryAsideCard } from "@/components/Admin/Category/CategoryAsideCard";
 import { createTreeArray, useCheckboxTree } from "@/lib/checkboxTree";
+import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 
 const defaultCategoryData: Category[] = [
   {
@@ -151,7 +152,7 @@ const treeOptions = {
 };
 
 export default function Page() {
-  const allCategoriesTree = React.useMemo(
+  const allCategoriesTrees = React.useMemo(
     () => createTreeArray(defaultCategoryData, treeOptions),
     []
   );
@@ -160,6 +161,7 @@ export default function Page() {
     options: treeOptions,
   });
   const [search, setSearch] = useState("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const displayedTreeRoot = React.useMemo(() => {
     return search
@@ -168,7 +170,7 @@ export default function Page() {
   }, [checkboxTree.root, search]);
 
   const onSelectRootCategory = (value: string) => {
-    const node = allCategoriesTree.find((c) => c.value.id === value);
+    const node = allCategoriesTrees.find((c) => c.value.id === value);
     if (node) {
       checkboxTree.set(node);
       setSelectedCategory(node.value);
@@ -201,6 +203,9 @@ export default function Page() {
   const isSelected = (categoryId: string) =>
     selectedCategory?.id === categoryId;
 
+  const openCreateModal = () => setIsCreateModalOpen(true);
+  const closeCreateModal = () => setIsCreateModalOpen(false);
+
   return (
     <div className="grow flex flex-col lg:flex-row gap-4 lg:gap-6">
       <div className="lg:basis-2/3 space-y-4 lg:space-y-6">
@@ -212,11 +217,14 @@ export default function Page() {
                 <SelectValue placeholder="Choose category" />
               </SelectTrigger>
               <SelectContent>
-                <button className="mb-2 px-5 py-3 flex items-center gap-3 border rounded-sm w-full">
+                <button
+                  className="mb-2 px-5 py-3 flex items-center gap-3 border rounded-sm w-full"
+                  onClick={openCreateModal}
+                >
                   <PlusIcon className={iconClassSmall} />
                   <span className="text-sm">Add category</span>
                 </button>
-                {allCategoriesTree.map(({ value: category }) => (
+                {allCategoriesTrees.map(({ value: category }) => (
                   <SelectItem
                     value={category.id}
                     key={category.title}
@@ -270,6 +278,12 @@ export default function Page() {
         onViewMain={() =>
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
+      />
+
+      <CreateCategoryModal
+        isOpen={isCreateModalOpen}
+        closeModal={closeCreateModal}
+        categoriesTrees={allCategoriesTrees}
       />
     </div>
   );
