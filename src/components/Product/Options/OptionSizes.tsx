@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { ProductOptionsTypes, SizesData } from "./types";
 import { useSearchParamsTools } from "@/lib/router";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { PencilRulerIcon, ShirtIcon } from "lucide-react";
 
 const type: ProductOptionsTypes = "size";
 
@@ -72,24 +70,6 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
             </div>
           );
         })}
-      </div>
-      <div className="flex gap-4">
-        <Button
-          size={"lg"}
-          variant={"outline"}
-          className="w-max h-max justify-start gap-2 p-2 lg:p-4 lg:basis-1/2"
-        >
-          <ShirtIcon className="w-4 lg:w-10" />
-          <span className="text-sm lg:text-lg">Size chart</span>
-        </Button>
-        <Button
-          size={"lg"}
-          variant={"outline"}
-          className="w-max h-max justify-start gap-2 p-2 lg:p-4 lg:basis-1/2"
-        >
-          <PencilRulerIcon className="w-4 lg:w-10" />
-          <span className="text-sm lg:text-lg">Unsure of size?</span>
-        </Button>
       </div>
     </div>
   );
