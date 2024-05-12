@@ -9,12 +9,14 @@ import { useState } from "react";
 import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { CategorySpecificityForm } from "@/components/forms/CategorySpecificityForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { AlertDialog } from "../AlertDialog";
 
 interface Props {
   category?: Category;
   parentCategory?: Category;
   mainCategory?: Category;
   onViewMain?: () => void;
+  onDelete: (id: string) => void;
 }
 
 const iconClassLarge = "w-8 h-8";
@@ -24,13 +26,25 @@ export const CategoryAsideCard = ({
   parentCategory,
   mainCategory,
   onViewMain,
+  onDelete,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const hasParent = !!parentCategory;
   const hasMain = !!mainCategory && mainCategory.id !== category?.id;
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const openAlert = () => setIsAlertOpen(true);
+  const closeAlert = () => setIsAlertOpen(false);
+
+  const handleDelete = () => {
+    if (category) {
+      closeAlert();
+      onDelete(category?.id);
+    }
+  };
 
   return (
     <aside className="lg:basis-1/3 grow bg-gray-200 rounded-lg sticky top-0">
@@ -96,7 +110,10 @@ export const CategoryAsideCard = ({
               <FilePenLineIcon className={"w-5 h-5"} />
               Edit
             </Button>
-            <Button className="w-full flex items-center gap-2 text-base">
+            <Button
+              className="w-full flex items-center gap-2 text-base"
+              onClick={openAlert}
+            >
               <Trash2Icon className={"w-5 h-5"} />
               Delete
             </Button>
@@ -114,6 +131,13 @@ export const CategoryAsideCard = ({
           </p>
         </div>
       )}
+      <AlertDialog
+        title="Are you sure?"
+        text="You will not be able to restore the category with the products there!"
+        isOpen={isAlertOpen}
+        closeModal={closeAlert}
+        onSubmit={handleDelete}
+      />
     </aside>
   );
 };

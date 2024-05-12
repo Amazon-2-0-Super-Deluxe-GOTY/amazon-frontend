@@ -88,20 +88,23 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
                       defaultValue={field.value}
                     >
                       <SelectTrigger className="gap-3.5 p-0 border-none w-max h-max">
-                        <SelectValue className="border-2" />
+                        <div className="p-3 border-2 rounded-sm">
+                          <SelectValue className="border-2" />
+                        </div>
                       </SelectTrigger>
                       <SelectContent className="w-max min-w-max">
-                        {getAllIcons().map((icon) => (
-                          <SelectItem
-                            value={icon.id}
-                            key={icon.id}
-                            className="w-max"
-                          >
-                            <div className="p-3 border-2 rounded-sm">
+                        <div className="grid grid-cols-9 gap-2 p-4">
+                          {getAllIcons().map((icon) => (
+                            <SelectItem
+                              value={icon.id}
+                              key={icon.id}
+                              className="w-max p-2 data-[state=checked]:ring-1 ring-black"
+                              showCheck={false}
+                            >
                               {icon.render("w-8 h-8")}
-                            </div>
-                          </SelectItem>
-                        ))}
+                            </SelectItem>
+                          ))}
+                        </div>
                       </SelectContent>
                     </Select>
                   </FormControl>

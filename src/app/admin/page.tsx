@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PlusIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import type {
   Category,
   CategoryTreeNodeType,
@@ -162,6 +162,10 @@ export default function Page() {
   });
   const [search, setSearch] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const createModalParams = useRef<{
+    defaultIsRoot?: boolean;
+    defaultRootId?: string;
+  }>({});
 
   const displayedTreeRoot = React.useMemo(() => {
     return search
@@ -200,11 +204,30 @@ export default function Page() {
     setSelectedCategory(node.value);
   };
 
+  const onDeleteCategory = (id: string) => {
+    const node = checkboxTree.findById(id);
+    if (!node) return;
+
+    const newTree = checkboxTree.remove(node);
+    if (!newTree) return;
+
+    checkboxTree.set(newTree);
+  };
+
   const isSelected = (categoryId: string) =>
     selectedCategory?.id === categoryId;
 
   const openCreateModal = () => setIsCreateModalOpen(true);
   const closeCreateModal = () => setIsCreateModalOpen(false);
+
+  const openCreateModalAsRoot = () => {
+    createModalParams.current = { defaultIsRoot: true };
+    openCreateModal();
+  };
+  const openCreateModalAsChild = (rootId: string) => {
+    createModalParams.current = { defaultIsRoot: false, defaultRootId: rootId };
+    openCreateModal();
+  };
 
   return (
     <div className="grow flex flex-col lg:flex-row gap-4 lg:gap-6">
@@ -219,7 +242,7 @@ export default function Page() {
               <SelectContent>
                 <button
                   className="mb-2 px-5 py-3 flex items-center gap-3 border rounded-sm w-full"
-                  onClick={openCreateModal}
+                  onClick={openCreateModalAsRoot}
                 >
                   <PlusIcon className={iconClassSmall} />
                   <span className="text-sm">Add category</span>
@@ -256,6 +279,7 @@ export default function Page() {
             root={displayedTreeRoot}
             onCheckedChange={onCheckedChange}
             onSelect={onSelectCategory}
+            onCreateClick={openCreateModalAsChild}
             isSelected={isSelected}
           />
         ) : !!checkboxTree.root ? (
@@ -278,12 +302,14 @@ export default function Page() {
         onViewMain={() =>
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
+        onDelete={onDeleteCategory}
       />
 
       <CreateCategoryModal
         isOpen={isCreateModalOpen}
         closeModal={closeCreateModal}
         categoriesTrees={allCategoriesTrees}
+        {...createModalParams.current}
       />
     </div>
   );

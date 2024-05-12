@@ -113,6 +113,7 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
 interface SelectItemProps
   extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {
+  showCheck?: boolean;
   checkAlign?: "left" | "right";
   checkOffset?: 2 | 4;
 }
@@ -120,35 +121,49 @@ interface SelectItemProps
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   SelectItemProps
->(({ className, children, checkAlign, checkOffset, ...props }, ref) => (
-  <SelectPrimitive.Item
-    ref={ref}
-    className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className
-    )}
-    {...props}
-  >
-    <span
+>(
+  (
+    {
+      className,
+      children,
+      showCheck = true,
+      checkAlign,
+      checkOffset,
+      ...props
+    },
+    ref
+  ) => (
+    <SelectPrimitive.Item
+      ref={ref}
       className={cn(
-        "absolute flex h-3.5 w-3.5 items-center justify-center",
-        checkAlign === "right"
-          ? checkOffset === 4
-            ? "right-4"
-            : "right-2"
-          : checkOffset === 4
-          ? "left-4"
-          : "left-2"
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        className
       )}
+      {...props}
     >
-      <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </SelectPrimitive.ItemIndicator>
-    </span>
+      {showCheck && (
+        <span
+          className={cn(
+            "absolute flex h-3.5 w-3.5 items-center justify-center",
+            checkAlign === "right"
+              ? checkOffset === 4
+                ? "right-4"
+                : "right-2"
+              : checkOffset === 4
+              ? "left-4"
+              : "left-2"
+          )}
+        >
+          <SelectPrimitive.ItemIndicator>
+            <Check className="h-4 w-4" />
+          </SelectPrimitive.ItemIndicator>
+        </span>
+      )}
 
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-  </SelectPrimitive.Item>
-));
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    </SelectPrimitive.Item>
+  )
+);
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
 const SelectSeparator = React.forwardRef<

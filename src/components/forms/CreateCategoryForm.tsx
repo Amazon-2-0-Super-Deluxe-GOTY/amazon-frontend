@@ -69,6 +69,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface Props {
   isRoot: boolean;
+  defaultRootId?: string;
   categoriesTrees: TreeNodeType<Category>[];
   onSubmit: (values: FormValues) => void;
   onCancel: () => void;
@@ -78,6 +79,7 @@ export const CreateCategoryForm = ({
   onSubmit,
   onCancel,
   isRoot,
+  defaultRootId,
   categoriesTrees,
 }: Props) => {
   const form = useForm<FormValues>({
@@ -101,7 +103,11 @@ export const CreateCategoryForm = ({
     control: form.control,
   });
 
-  const [selectedRootId, setSelectedRootId] = useState<string>();
+  const [selectedRootId, setSelectedRootId] = useState(defaultRootId);
+
+  useEffect(() => {
+    setSelectedRootId(defaultRootId);
+  }, [defaultRootId]);
 
   const rootCategories = categoriesTrees;
   const childCategories = useMemo(() => {
@@ -174,20 +180,23 @@ export const CreateCategoryForm = ({
                         defaultValue={field.value}
                       >
                         <SelectTrigger className="gap-3.5 p-0 border-none w-max h-max">
-                          <SelectValue className="border-2" />
+                          <div className="p-3 border-2 rounded-sm">
+                            <SelectValue className="border-2" />
+                          </div>
                         </SelectTrigger>
                         <SelectContent className="w-max min-w-max">
-                          {getAllIcons().map((icon) => (
-                            <SelectItem
-                              value={icon.id}
-                              key={icon.id}
-                              className="w-max"
-                            >
-                              <div className="p-3 border-2 rounded-sm">
+                          <div className="grid grid-cols-9 gap-2 p-4">
+                            {getAllIcons().map((icon) => (
+                              <SelectItem
+                                value={icon.id}
+                                key={icon.id}
+                                className="w-max p-2 data-[state=checked]:ring-1 ring-black"
+                                showCheck={false}
+                              >
                                 {icon.render("w-8 h-8")}
-                              </div>
-                            </SelectItem>
-                          ))}
+                              </SelectItem>
+                            ))}
+                          </div>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -244,7 +253,7 @@ export const CreateCategoryForm = ({
           />
           {!isRoot && (
             <>
-              <Select onValueChange={setSelectedRootId}>
+              <Select value={selectedRootId} onValueChange={setSelectedRootId}>
                 <SelectTrigger className="w-full relative">
                   <label className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
                     Main category
