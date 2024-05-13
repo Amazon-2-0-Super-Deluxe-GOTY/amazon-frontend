@@ -50,9 +50,9 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
               className={cn(
                 "min-w-11 max-w-14 w-full aspect-square flex justify-center items-center rounded-md border-2 cursor-pointer text-sm lg:text-xl",
                 {
-                  "border-gray-300": !isSelected,
+                  "border-transparent": !isSelected,
                   "border-black": isSelected,
-                  "cursor-not-allowed relative before:absolute before:inset-0 before:bg-gray-100/80":
+                  "cursor-not-allowed relative before:absolute before:inset-0 before:bg-gray-100/80 border-gray-300":
                     !item.isAvailable,
                 }
               )}
