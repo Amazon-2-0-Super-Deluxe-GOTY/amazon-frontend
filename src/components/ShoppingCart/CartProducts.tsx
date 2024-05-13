@@ -49,18 +49,18 @@ const CartProductCard = ({
         </div>
         <div className="w-full pl-6 flex flex-col justify-between max-md:pl-2" >
           <div className="w-full flex justify-between items-center">
-            <span className="text-sm">{title}</span>
+            <span className="text-xl max-md:text-sm">{title}</span>
             <TrashIcon className="max-md:h-4 max-md:w-4" onClick={onDelete} />
           </div>
           <div className="w-full flex justify-end items-end">
-            <div className="max-md:flex max-md:justify-end max-md:items-end" >
-              <div className="flex justify-end items-center gap-4 mb-2 max-md:gap-2 max-md:mb-0 max-md:mr-6 max-sm:mr-2" >
+            <div className="max-md:flex max-md:justify-end max-md:items-end max-md:gap-3" >
+              <div className="flex justify-end items-center gap-4 md:mb-2 max-md:gap-2 max-md:mr-6 max-sm:mr-2" >
                 <MinusIcon className="w-4 cursor-pointer" onClick={decrement} />
                 <span className="text-sm select-none max-md:text-xs" >{count}</span>
                 <PlusIcon className="w-4 cursor-pointer" onClick={increment} />
               </div>
               <div className="flex justify-end items-center max-md:justify-end max-md:items-end" >
-                <div className="flex max-md:flex-col mb-3 md:justify-end md:items-end">
+                <div className="flex max-md:flex-col md:justify-end md:items-end">
                   <div>
                     <span className="text-2xl font-medium text-black max-md:text-base" >${whole}</span>
                     <sup>{fraction}</sup>
