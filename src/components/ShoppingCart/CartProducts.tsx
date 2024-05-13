@@ -6,24 +6,13 @@ import { cn } from "@/lib/utils";
 import { useStorageCart } from "@/lib/storage";
 
 export const CartProducts = () => {
-
-  const { products, removeFromCart } = useStorageCart();
-  const onDelete = (value:string) => {
-    if(value)
-    {
-      const product = products.find((item, index) => item.id === value);
-      if(product)
-      {
-        removeFromCart(product.id);
-      }
-    }
-  };
+  const { products } = useStorageCart();
 
   return (
     <div>
     {products.map((product, index) => (
-      <div key={index} className={cn("my-2", index%2 !== 0 && "bg-gray-100")} >
-        <CartProductCard id={product.id} title={product.title} price={product.price} quantity={product.quantity} onDelete={onDelete} />
+      <div key={product.id} className={cn("my-2", index%2 !== 0 && "bg-gray-100")} >
+        <CartProductCard id={product.id} title={product.title} price={product.price} quantity={product.quantity} />
       </div>
     ))}
     </div>
@@ -35,23 +24,22 @@ const CartProductCard = ({
   title,
   price,
   quantity,
-  onDelete,
 }: {
   id: string;
   title: string;
   price: number;
   quantity: number;
-  onDelete: (value:string) => void;
 }) => {
 
   const priceParts = price.toFixed(2).split(".");
   const whole = priceParts[0];
   const fraction = priceParts[1];
 
-  const { incrementQuantity, decrementQuantity } = useStorageCart();
+  const { removeFromCart, incrementQuantity, decrementQuantity } = useStorageCart();
   const [count, setCount] = useState(quantity);
   const increment = () => { incrementQuantity(id); setCount((c) => c + 1); };
   const decrement = () => { decrementQuantity(id); setCount((c) => (c > 1 ? c - 1 : 1)); };
+  const onDelete = () => { removeFromCart(id); };
 
   return (
     <div className="w-full border-0 relative shadow-none ring-1 ring-transparent hover:ring-gray-300 ring-inset transition-all duration-300 rounded-lg">
@@ -62,7 +50,7 @@ const CartProductCard = ({
         <div className="w-full pl-6 flex flex-col justify-between max-md:pl-2" >
           <div className="w-full flex justify-between items-center">
             <span className="text-sm">{title}</span>
-            <TrashIcon className="max-md:h-4 max-md:w-4" onClick={() => onDelete(id)} />
+            <TrashIcon className="max-md:h-4 max-md:w-4" onClick={onDelete} />
           </div>
           <div className="w-full flex justify-end items-end">
             <div className="max-md:flex max-md:justify-end max-md:items-end" >

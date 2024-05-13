@@ -34,8 +34,8 @@ export const ShoppingCart = () => {
   return (
     <>
       {isDesktop ? 
-      <ShoppingCartDesktop suggestionsProducts={suggestionsProducts}  /> : 
-      <ShoppingCartMobile suggestionsProducts={suggestionsProducts}  />}
+      <ShoppingCartDesktop suggestionsProducts={suggestionsProducts} /> : 
+      <ShoppingCartMobile suggestionsProducts={suggestionsProducts} />}
     </>
   );
 };
