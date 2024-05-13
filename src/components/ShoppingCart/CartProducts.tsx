@@ -5,24 +5,16 @@ import placeholder from "@/../public/Icons/placeholder.svg";
 import { cn } from "@/lib/utils";
 import { useStorageCart } from "@/lib/storage";
 
-export const CartProducts = ({
-  ChangeCartState,
-}: {
-  ChangeCartState: (value:string) => void;
-}) => {
+export const CartProducts = () => {
 
   const { products, removeFromCart } = useStorageCart();
   const onDelete = (value:string) => {
     if(value)
     {
-      const product = products.find((item, index) => item.id === value );
-      if(product && products.length === 1)
-      {
-        ChangeCartState("empty");
-      }
+      const product = products.find((item, index) => item.id === value);
       if(product)
       {
-        removeFromCart(product?.id);
+        removeFromCart(product.id);
       }
     }
   };

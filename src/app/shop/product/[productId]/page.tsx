@@ -28,7 +28,6 @@ import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
 import { useSearchParams } from "next/navigation";
 import { ImagesBlock } from "@/components/ProductPage/ProductImagesBlock";
-import { useSearchParamsTools } from "@/lib/router";
 
 const productOptions: OptionsComponent[] = [
   {
@@ -417,11 +416,6 @@ export default function ProductPage({
   );
   const hasOptions = productOptions.length > 0;
 
-  const searchParamsTools = useSearchParamsTools();
-  React.useEffect(() => {
-    searchParamsTools.set("product", params.productId);
-  }, [params.productId]);
-
   React.useEffect(() => {
     setIsOptionsSelected(checkOptionsSelected(searchParams));
   }, [searchParams]);
@@ -529,7 +523,7 @@ export default function ProductPage({
         </div>
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
-            <ProductOrderCard isOptionsSelected={isOptionsSelected} />
+            <ProductOrderCard productId={params.productId} isOptionsSelected={isOptionsSelected} />
             <SellerInfoCard sellerInfo={sellerInfo} />
             <div className="p-4 lg:p-6 bg-gray-200 rounded-lg flex items-center gap-3">
               <TrophyIcon className="w-8 h-8 lg:w-10 lg:h-10" />

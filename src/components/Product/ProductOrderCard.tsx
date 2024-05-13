@@ -27,7 +27,6 @@ import { SecurityContent } from "./OrderInfoContent/SecurityContent";
 import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
-import { useSearchParamsTools } from "@/lib/router";
 import { useStorageCart } from "@/lib/storage";
 
 const infoElements = [
@@ -50,8 +49,10 @@ const infoElements = [
 ];
 
 export const ProductOrderCard = ({
+  productId,
   isOptionsSelected,
 }: {
+  productId: string;
   isOptionsSelected: boolean;
 }) => {
   const [count, setCount] = useState(1);
@@ -92,19 +93,14 @@ export const ProductOrderCard = ({
   };
 
   //#region AddProductToCart
-  const searchParams = useSearchParamsTools();
-  const { addToCart, setIsOpenCartModal } = useStorageCart();
+  const { addToCart, buyNow } = useStorageCart();
   const onAddToCartClick = () => {
-    const params = searchParams.get("product");
-    if(params)
-    {
-      const newCartItem = { id: params, title: "Product_" + params, price: 39.99, quantity: count };
-      addToCart(newCartItem);
-    }
+    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
+    addToCart(newCartItem);
   };
   const onBuyNowClick = () => {
-    onAddToCartClick();
-    setIsOpenCartModal(true);
+    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
+    buyNow(newCartItem);
   };
   //#endregion
 
@@ -170,6 +166,7 @@ export const ProductOrderCard = ({
         count={count}
         increment={increment}
         decrement={decrement}
+        productId={productId}
         isOptionsSelected={isOptionsSelected}
       />
 
@@ -202,31 +199,26 @@ const MobileQuickActions = ({
   count,
   increment,
   decrement,
+  productId,
   isOptionsSelected,
 }: {
   count: number;
   increment: () => void;
   decrement: () => void;
+  productId: string;
   isOptionsSelected: boolean;
 }) => {
 
   //#region AddProductToCart
-  const searchParams = useSearchParamsTools();
   const { addToCart, setIsOpenCartModal } = useStorageCart();
   const onAddToCartClick = () => {
-    const params = searchParams.get("product");
-    if(params)
-    {
-      const newCartItem = { id: params, title: "Product_" + params, price: 39.99, quantity: count };
-      addToCart(newCartItem);
-    }
+    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
+    addToCart(newCartItem);
   };
-
   const onBuyNowClick = () => {
     onAddToCartClick();
     setIsOpenCartModal(true);
   };
-
   //#endregion
 
   return (

@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/drawer";
 import { ShoppingCartIcon, XIcon } from "lucide-react";
 import { SuggestionsProducts } from "./SuggestionsProducts";
-import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { CartProducts } from "./CartProducts";
@@ -27,51 +26,29 @@ import { Separator } from "../ui/separator";
 export const ShoppingCart = () => {
   const isDesktop = useScreenSize({ minSize: "md" });
 
-  //#region get cart products
-  const { products } = useStorageCart();
-  let cartProducts = products.map((item, index) => ({
-    id: item.id, 
-    title: item.title,
-    price: item.price,
-    quantity: item.quantity,
-  }));
-  //#endregion
-
   const suggestionsProducts = Array.from({ length: 12 }).map((_, index) => ({
     title: `Product ${index + 1}`,
     price: 39.99,
   }));
 
-  // const [cartState, setCartState] = useState<string>("not-authorized");
-  const [cartState, setCartState] = useState<string>(products.length > 0 ? "products" : "empty");
-  const ChangeCartState = (value:string) => {
-    setCartState(value);
-  }
-
-  useEffect(() => {
-    if(cartState !== "not-authorized")
-      setCartState(products.length > 0 ? "products" : "empty");
-  }, [products]);
-
   return (
     <>
       {isDesktop ? 
-      <ShoppingCartDesktop suggestionsProducts={suggestionsProducts} cartState={cartState} ChangeCartState={ChangeCartState} /> : 
-      <ShoppingCartMobile suggestionsProducts={suggestionsProducts} cartState={cartState} ChangeCartState={ChangeCartState} />}
+      <ShoppingCartDesktop suggestionsProducts={suggestionsProducts}  /> : 
+      <ShoppingCartMobile suggestionsProducts={suggestionsProducts}  />}
     </>
   );
 };
 
-const ShoppingCartMobile = ({ suggestionsProducts, cartState, ChangeCartState }: {
+const ShoppingCartMobile = ({ suggestionsProducts }: {
   suggestionsProducts: { title: string; price: number; }[],
-  cartState: string,
-  ChangeCartState: (value:string) => void
  }) => {
-  const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const { products, isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const isAuthorized = false;
 
   return (
     <Drawer open={isOpenCartModal} onOpenChange={setIsOpenCartModal} >
-      <DrawerTrigger ><ShoppingCartIcon className="text-gray-700" /></DrawerTrigger>
+      <DrawerTrigger><ShoppingCartIcon className="text-gray-700" /></DrawerTrigger>
       <DrawerContent className="h-full max-h-[95%]" >
         <DrawerHeader className="pt-2">
           <DrawerTitle>
@@ -91,6 +68,7 @@ const ShoppingCartMobile = ({ suggestionsProducts, cartState, ChangeCartState }:
           <div>
           <div className="w-full h-full flex justify-center items-center">
             {(() => {
+              const cartState = !isAuthorized ? (products.length > 0 ? "products" : "empty" ) : ( "not-authorized" );
               switch (cartState) {
                 case "empty":
                   return (
@@ -119,7 +97,7 @@ const ShoppingCartMobile = ({ suggestionsProducts, cartState, ChangeCartState }:
                     <div className="w-full h-full">
                       <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts ChangeCartState={ChangeCartState} />
+                            <CartProducts />
                           </div>
                       </div>
                       <Separator />
@@ -146,7 +124,7 @@ const ShoppingCartMobile = ({ suggestionsProducts, cartState, ChangeCartState }:
             })()}
           </div>
           <div className="w-full h-full">
-            {cartState.includes("products") ?
+            {products.length > 0 ?
               <div className="font-semibold text-center text-xl mx-4 mt-3">You might also like</div> :
               (<>
                 <div className="pb-6">
@@ -165,12 +143,11 @@ const ShoppingCartMobile = ({ suggestionsProducts, cartState, ChangeCartState }:
   );
 };
 
-const ShoppingCartDesktop = ({ suggestionsProducts, cartState, ChangeCartState }: {
+const ShoppingCartDesktop = ({ suggestionsProducts }: {
   suggestionsProducts: { title: string; price: number; }[],
-  cartState: string,
-  ChangeCartState: (value:string) => void
  }) => {
-  const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const { products, isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const isAuthorized = false;
 
   return (
     <Dialog open={isOpenCartModal} onOpenChange={setIsOpenCartModal} >
@@ -194,6 +171,7 @@ const ShoppingCartDesktop = ({ suggestionsProducts, cartState, ChangeCartState }
           <div>
             <div className="w-full h-full flex justify-center items-center">
               {(() => {
+                const cartState = !isAuthorized ? (products.length > 0 ? "products" : "empty" ) : ( "not-authorized" );
                 switch (cartState) {
                   case "empty":
                     return (
@@ -222,7 +200,7 @@ const ShoppingCartDesktop = ({ suggestionsProducts, cartState, ChangeCartState }
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts ChangeCartState={ChangeCartState} />
+                            <CartProducts />
                           </div>
                         </div>
                         <Separator />
@@ -246,7 +224,7 @@ const ShoppingCartDesktop = ({ suggestionsProducts, cartState, ChangeCartState }
             </div>
           </div>
           <div className=" mt-6">
-            {cartState.includes("products") ?
+            {products.length > 0 ?
               <span className="font-medium text-2xl">You might also like</span> :
               (<>
                 <div className="pb-6">
