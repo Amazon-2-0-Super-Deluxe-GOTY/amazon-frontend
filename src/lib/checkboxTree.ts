@@ -240,6 +240,38 @@ export function removeTreeNode<TValue, TId>(
   };
 }
 
+export function removeTreeNodes<TValue, TId>(
+  root: TreeNodeType<TValue>,
+  nodesToRemove: TreeNodeType<TValue>[],
+  options: NodeOptions<TValue, TId>
+): TreeNodeType<TValue> | undefined {
+  if (
+    nodesToRemove.some(
+      (node) => options.getId(root.value) === options.getId(node.value)
+    )
+  ) {
+    return undefined;
+  }
+
+  const copiedNodes: TreeNodeType<TValue>[] = [];
+  for (let node of root.nodes) {
+    const nodeCopy = removeTreeNodes(node, nodesToRemove, options);
+    if (nodeCopy) {
+      copiedNodes.push(nodeCopy);
+    }
+  }
+
+  const checkedValues = copiedNodes.map((n) => n.checked);
+  const checked = getCheckedState(checkedValues, root.checked, root.isRoot);
+
+  return {
+    value: root.value,
+    isRoot: root.isRoot,
+    checked: checked,
+    nodes: copiedNodes,
+  };
+}
+
 export function useCheckboxTree<TValue, TId>({
   initialTree,
   options,
@@ -250,10 +282,8 @@ export function useCheckboxTree<TValue, TId>({
   const [tree, setTree] = useState(initialTree);
 
   return {
-    root: tree as typeof initialTree extends undefined
-      ? TreeNodeType<TValue> | undefined
-      : TreeNodeType<TValue>,
-    set: (newTree: TreeNodeType<TValue>) => setTree(newTree),
+    root: tree,
+    set: setTree,
     update: (
       root: TreeNodeType<TValue>,
       updatedNode: TreeNodeType<TValue>,
@@ -283,6 +313,11 @@ export function useCheckboxTree<TValue, TId>({
       if (!tree) return;
 
       return removeTreeNode(tree, nodeToRemove, options);
+    },
+    removeMany: (nodesToRemove: TreeNodeType<TValue>[]) => {
+      if (!tree) return;
+
+      return removeTreeNodes(tree, nodesToRemove, options);
     },
   };
 }

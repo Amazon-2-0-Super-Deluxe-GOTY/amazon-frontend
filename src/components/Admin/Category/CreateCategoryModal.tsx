@@ -40,7 +40,7 @@ export const CreateCategoryModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[70vw] h-[75vh] p-6 max-w-full">
+      <DialogContent className="w-[70vw] h-[75vh] p-6 max-w-full" hideClose>
         <ScrollArea
           className="h-full"
           viewportClassName="[&>div]:h-full scroll-smooth"
@@ -89,7 +89,7 @@ const FormLink = ({ elementId, children }: FormLinkProps) => {
       (entries) => {
         setIsSelected(entries[0].isIntersecting);
       },
-      { threshold: 0.6 }
+      { threshold: [0.55, 0.6] }
     );
     const elem = document.getElementById(elementId);
     if (elem) {

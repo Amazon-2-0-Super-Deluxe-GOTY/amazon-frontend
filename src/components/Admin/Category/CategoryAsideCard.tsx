@@ -78,17 +78,6 @@ export const CategoryAsideCard = ({
               <InfoElement title="Main category" value={mainCategory.title} />
             )}
           </div>
-          <Separator className="bg-black" />
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xl">Keywords</span>
-              <ChevronRight className={"w-6 h-6"} />
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xl">Category specificity</span>
-              <ChevronRight className={"w-6 h-6"} />
-            </div>
-          </div>
           {hasMain && (
             <>
               <Separator className="bg-black" />
@@ -125,8 +114,8 @@ export const CategoryAsideCard = ({
           />
         </div>
       ) : (
-        <div className="h-full flex justify-center items-center">
-          <p className="px-6 py-3 rounded-sm bg-gray-100">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
+          <p className="px-6 py-3 rounded-sm bg-gray-100 w-max">
             Select a category to see its information
           </p>
         </div>
@@ -193,8 +182,11 @@ const EditCategoryModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[70vw] h-[75vh] p-6 max-w-full">
-        <ScrollArea className="h-full" viewportClassName="[&>div]:h-full">
+      <DialogContent className="w-[70vw] h-[75vh] p-6 max-w-full" hideClose>
+        <ScrollArea
+          className="h-full relative"
+          viewportClassName="[&>div]:h-full"
+        >
           <Tabs
             defaultValue="primary"
             // className="flex flex-col xl:flex-row gap-6 w-full p-1 h-full"
@@ -236,6 +228,10 @@ const EditCategoryModal = ({
               </CustomTabsContent>
             </div>
           </Tabs>
+          <p className="absolute bottom-0 left-0 flex items-center gap-3 bg-white z-20">
+            <FilePenLineIcon className="w-6 h-6" />
+            <span className="text-xl font-semibold">Edit category</span>
+          </p>
         </ScrollArea>
       </DialogContent>
     </Dialog>
@@ -266,7 +262,7 @@ const CustomTabsContent = ({
 }) => (
   <TabsContent
     value={value}
-    className="flex flex-col gap-6 mt-0 h-full data-[state=inactive]:hidden"
+    className="flex flex-col gap-6 mt-0 h-full data-[state=inactive]:hidden p-1"
   >
     {children}
   </TabsContent>

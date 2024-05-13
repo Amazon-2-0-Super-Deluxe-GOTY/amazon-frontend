@@ -169,7 +169,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
                 <ToggleGroup
                   type="single"
                   className="gap-3.5"
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => value && field.onChange(value)}
                   {...field}
                 >
                   <ToggleGroupItem value="active">Active</ToggleGroupItem>

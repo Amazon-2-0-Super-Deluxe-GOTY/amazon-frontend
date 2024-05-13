@@ -50,7 +50,7 @@ const formSchema = z.object({
   status: z.enum(["active", "inactive"]),
   options: z.array(
     z.object({
-      name: z.string().min(1, {
+      title: z.string().min(1, {
         message: "Option must not be empty.",
       }),
       appearance: z.enum(["tiles", "rows"]),
@@ -59,7 +59,7 @@ const formSchema = z.object({
 });
 
 const optionFormSchema = z.object({
-  name: z.string().min(1, {
+  title: z.string().min(1, {
     message: "Option name must not be empty.",
   }),
   appearance: z.enum(["tiles", "rows"]),
@@ -94,7 +94,7 @@ export const CreateCategoryForm = ({
   const optionForm = useForm<z.infer<typeof optionFormSchema>>({
     resolver: zodResolver(optionFormSchema),
     defaultValues: {
-      name: "",
+      title: "",
       appearance: "tiles",
     },
   });
@@ -137,9 +137,9 @@ export const CreateCategoryForm = ({
   };
 
   const onCreateOption = (value: z.infer<typeof optionFormSchema>) => {
-    if (optionsArray.fields.some((v) => v.name === value.name)) {
+    if (optionsArray.fields.some((v) => v.title === value.title)) {
       return optionForm.setError(
-        "name",
+        "title",
         {
           type: "duplicate",
           message: "Option with this name already exist",
@@ -148,7 +148,7 @@ export const CreateCategoryForm = ({
       );
     }
     optionsArray.append(value);
-    optionForm.reset({ name: "", appearance: "tiles" });
+    optionForm.reset({ title: "", appearance: "tiles" });
   };
 
   const onDeleteOption = (index: number) => () => {
@@ -255,7 +255,7 @@ export const CreateCategoryForm = ({
             <>
               <Select value={selectedRootId} onValueChange={setSelectedRootId}>
                 <SelectTrigger className="w-full relative">
-                  <label className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                  <label className="absolute left-3 -top-3.5 font-light bg-white p-0.5">
                     Main category
                   </label>
                   <SelectValue placeholder="Choose main category..." />
@@ -314,7 +314,7 @@ export const CreateCategoryForm = ({
                   <ToggleGroup
                     type="single"
                     className="gap-3.5"
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => value && field.onChange(value)}
                     {...field}
                   >
                     <ToggleGroupItem value="active">Active</ToggleGroupItem>
@@ -328,31 +328,30 @@ export const CreateCategoryForm = ({
               </FormItem>
             )}
           />
+          <div className="pt-2">
+            <Separator />
+          </div>
         </div>
 
         <div className="space-y-6" id="options">
-          <div className="space-y-3.5 pt-2">
-            <Separator />
+          <div className="space-y-3.5">
             <h2 className="text-3xl font-semibold">Option configuration</h2>
             <Separator />
           </div>
           <div className="flex flex-col gap-4 px-1">
-            <h2 className="text-xl font-semibold">
-              Create category specificity
-            </h2>
             <FormField
               control={optionForm.control}
-              name="name"
+              name="title"
               render={({ field, fieldState }) => (
                 <FormItem className="w-full relative">
                   <FormLabel className="absolute left-3 -top-0.5 font-light bg-white p-0.5">
                     Name
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter specificity name" {...field} />
+                    <Input placeholder="Enter option name" {...field} />
                   </FormControl>
                   <FormDescription hidden>
-                    This is specificity display name.
+                    This is option display name.
                   </FormDescription>
                   <FormMessage>{fieldState.error?.message}</FormMessage>
                 </FormItem>
@@ -370,7 +369,7 @@ export const CreateCategoryForm = ({
                     <ToggleGroup
                       type="single"
                       className="grid grid-cols-2 gap-3.5"
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => value && field.onChange(value)}
                       {...field}
                     >
                       <ToggleGroupItem className="h-full p-6" value="tiles">
@@ -451,7 +450,7 @@ export const CreateCategoryForm = ({
                       key={option.id}
                       className="flex justify-between items-center"
                     >
-                      <p className="text-xl">{option.name}</p>
+                      <p className="text-xl">{option.title}</p>
                       <button
                         type="button"
                         className="w-4 h-4"

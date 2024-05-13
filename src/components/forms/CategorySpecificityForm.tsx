@@ -154,13 +154,19 @@ export const CategorySpecificityForm = ({
                 >
                   <div className="flex items-center gap-4">
                     <Checkbox
+                      id={elem.value.id}
                       size="lg"
                       checked={elem.checked}
                       onCheckedChange={(checked) =>
                         checkboxArray.changeChecked(elem, !!checked)
                       }
                     />
-                    <p className="text-lg">{elem.value.name}</p>
+                    <label
+                      className="text-lg cursor-pointer"
+                      htmlFor={elem.value.id}
+                    >
+                      {elem.value.name}
+                    </label>
                   </div>
                   <button onClick={() => onEditClick(elem.value)}>
                     <FilePenLineIcon className="w-6 h-6" />
@@ -263,7 +269,7 @@ const SpecificityForm = ({
                 <ToggleGroup
                   type="single"
                   className="grid grid-cols-2 gap-3.5"
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => value && field.onChange(value)}
                   {...field}
                 >
                   <ToggleGroupItem className="h-full p-6" value="tiles">

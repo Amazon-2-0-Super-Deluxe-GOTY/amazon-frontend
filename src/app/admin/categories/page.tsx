@@ -17,8 +17,14 @@ import type {
 import { CategoryTree } from "@/components/Admin/Category/CategoryTree";
 import { getIcon } from "@/lib/categories";
 import { CategoryAsideCard } from "@/components/Admin/Category/CategoryAsideCard";
-import { createTreeArray, useCheckboxTree } from "@/lib/checkboxTree";
+import {
+  TreeNodeType,
+  createTreeArray,
+  useCheckboxTree,
+} from "@/lib/checkboxTree";
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
+import Image from "next/image";
+import placeholder from "@/../public/Icons/placeholder.svg";
 
 const defaultCategoryData: Category[] = [
   {
@@ -209,8 +215,11 @@ export default function Page() {
     if (!node) return;
 
     const newTree = checkboxTree.remove(node);
-    if (!newTree) return;
+    checkboxTree.set(newTree);
+  };
 
+  const onDeleteCategories = (nodes: TreeNodeType<Category>[]) => {
+    const newTree = checkboxTree.removeMany(nodes);
     checkboxTree.set(newTree);
   };
 
@@ -231,7 +240,7 @@ export default function Page() {
 
   return (
     <div className="grow flex flex-col lg:flex-row gap-4 lg:gap-6">
-      <div className="lg:basis-2/3 space-y-4 lg:space-y-6">
+      <div className="lg:basis-2/3 flex flex-col gap-4 lg:gap-6">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 basis-1/3">
             <h2 className="font-medium">Category</h2>
@@ -274,23 +283,44 @@ export default function Page() {
           />
         </div>
 
-        {!!displayedTreeRoot ? (
-          <CategoryTree
-            root={displayedTreeRoot}
-            onCheckedChange={onCheckedChange}
-            onSelect={onSelectCategory}
-            onCreateClick={openCreateModalAsChild}
-            isSelected={isSelected}
-          />
-        ) : !!checkboxTree.root ? (
-          <div className="pt-6 flex justify-center items-center">
-            <p>Nothing found by your search query</p>
-          </div>
-        ) : (
-          <div className="pt-6 flex justify-center items-center">
-            <p>Choose a category to view it&apos;s subcategories</p>
-          </div>
-        )}
+        <div className="grow">
+          {!!displayedTreeRoot ? (
+            displayedTreeRoot.nodes.length > 0 ? (
+              <CategoryTree
+                root={displayedTreeRoot}
+                onCheckedChange={onCheckedChange}
+                onSelect={onSelectCategory}
+                onDelete={onDeleteCategories}
+                onCreateClick={openCreateModalAsChild}
+                isSelected={isSelected}
+              />
+            ) : (
+              <div className="h-full flex justify-center items-center">
+                <button
+                  className="p-8 max-w-sm w-full border rounded-lg flex flex-col gap-3 items-center"
+                  onClick={() =>
+                    checkboxTree.root &&
+                    openCreateModalAsChild(checkboxTree.root.value.id)
+                  }
+                >
+                  <PlusIcon className="w-12 h-12" />
+                  <span className="text-xl font-medium">
+                    Create subcategory
+                  </span>
+                </button>
+              </div>
+            )
+          ) : (
+            <div className="h-full flex flex-col justify-center items-center gap-3">
+              <Image
+                src={placeholder}
+                alt="placeholder"
+                className="max-w-xs aspect-video object-cover"
+              />
+              <p>No subcategories in the selected category</p>
+            </div>
+          )}
+        </div>
       </div>
 
       <CategoryAsideCard

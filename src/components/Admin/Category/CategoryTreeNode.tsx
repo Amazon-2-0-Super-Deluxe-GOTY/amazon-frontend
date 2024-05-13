@@ -97,7 +97,6 @@ export const CategoryTreeNode = ({
     >
       {checkboxElem}
       <label
-        htmlFor={`subcategory-${category.id}-check`}
         className="text-xl font-medium basis-full cursor-pointer"
         onClick={onSelectNode}
       >
