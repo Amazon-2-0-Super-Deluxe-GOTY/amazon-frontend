@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { ProductOptionsTypes, SizesData } from "./types";
 import { useSearchParamsTools } from "@/lib/router";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { PencilRulerIcon, ShirtIcon } from "lucide-react";
 
 const type: ProductOptionsTypes = "size";
 
@@ -52,9 +50,9 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
               className={cn(
                 "min-w-11 max-w-14 w-full aspect-square flex justify-center items-center rounded-md border-2 cursor-pointer text-sm lg:text-xl",
                 {
-                  "border-gray-300": !isSelected,
+                  "border-transparent": !isSelected,
                   "border-black": isSelected,
-                  "cursor-not-allowed relative before:absolute before:inset-0 before:bg-gray-100/80":
+                  "cursor-not-allowed relative before:absolute before:inset-0 before:bg-gray-100/80 border-gray-300":
                     !item.isAvailable,
                 }
               )}
@@ -72,24 +70,6 @@ export const OptionSizes = ({ data }: { data: SizesData }) => {
             </div>
           );
         })}
-      </div>
-      <div className="flex gap-4">
-        <Button
-          size={"lg"}
-          variant={"outline"}
-          className="w-max h-max justify-start gap-2 p-2 lg:p-4 lg:basis-1/2"
-        >
-          <ShirtIcon className="w-4 lg:w-10" />
-          <span className="text-sm lg:text-lg">Size chart</span>
-        </Button>
-        <Button
-          size={"lg"}
-          variant={"outline"}
-          className="w-max h-max justify-start gap-2 p-2 lg:p-4 lg:basis-1/2"
-        >
-          <PencilRulerIcon className="w-4 lg:w-10" />
-          <span className="text-sm lg:text-lg">Unsure of size?</span>
-        </Button>
       </div>
     </div>
   );
