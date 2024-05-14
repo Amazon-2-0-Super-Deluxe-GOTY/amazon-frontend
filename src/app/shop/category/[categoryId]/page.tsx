@@ -268,12 +268,6 @@ export default function CategoryPage({
     }
   };
 
-  useEffect(() => {
-    if (params.categoryId) {
-      console.log(`Loading page for category ${params.categoryId}`);
-    }
-  }, [params.categoryId]);
-
   return (
     <main className="flex flex-col items-center px-4">
       <section className="w-full flex items-left gap-1">

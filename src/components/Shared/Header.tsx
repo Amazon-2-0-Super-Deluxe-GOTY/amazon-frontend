@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { useScreenSize } from "@/lib/media";
 import { UserSidebar } from "./UserSidebar";
+import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
 
 const sidebarData = {
   // user: { fullName: "Marsha Shields", avatar: "" },
@@ -81,7 +82,7 @@ export function Header() {
           <HeartIcon className="text-gray-700 hidden md:block" />
           <BellIcon className="text-gray-700 hidden md:block" />
           <UserIcon className="text-gray-700 hidden md:block" />
-          <ShoppingCartIcon className="text-gray-700" />
+          <ShoppingCart />
         </div>
       </div>
       <UserSidebar

@@ -1,15 +1,17 @@
+"use client"
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { MessageCircle, StarIcon } from "lucide-react";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 
 export const ProductCard = ({
+  code,
   title,
   price,
   quantity,
 }: {
+  code?: number;
   title: string;
   price: number;
   quantity?: number;
