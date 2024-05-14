@@ -95,7 +95,7 @@ export const CategorySpecificityForm = ({
   };
 
   return (
-    <div className="grow flex flex-col gap-6 overflow-y-auto">
+    <div className="grow flex flex-col gap-6 overflow-y-auto p-1">
       {isForm ? (
         <SpecificityForm
           specificity={editedSpecificity}
