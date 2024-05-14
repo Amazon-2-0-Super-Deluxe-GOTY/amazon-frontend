@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <>
       <Header />
-      <div className="w-full grow px-4">{children}</div>
+      <div className="grow w-full max-w-[1600px] mx-auto">{children}</div>
       <Footer />
     </>
   );

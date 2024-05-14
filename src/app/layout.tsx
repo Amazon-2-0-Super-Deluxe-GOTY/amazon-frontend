@@ -20,7 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Providers>
-        <body className={mulish.className}>{children}</body>
+        <body
+          className={`${mulish.className} min-h-screen flex flex-col gap-5 lg:gap-10`}
+        >
+          {children}
+        </body>
       </Providers>
     </html>
   );
