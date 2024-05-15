@@ -3,11 +3,12 @@ import { Separator } from "@/components/ui/separator";
 import { CategoryTreeNode } from "./CategoryTreeNode";
 import type { Category, CategoryTreeNodeType, CheckedState } from "./types";
 import { PlusIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
 import { Button } from "@/components/ui/button";
 import { AlertDialog } from "../AlertDialog";
 import clsx from "clsx";
+import { useModal } from "../Modal";
 
 export const CategoryTree = ({
   root,
@@ -27,18 +28,20 @@ export const CategoryTree = ({
   onCreateClick: (rootId: string) => void;
   isSelected: (categoryId: string) => boolean;
 }) => {
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const { showModal } = useModal();
 
   const checkedNodes = useMemo(() => {
     return root ? treeToArray(root).filter((v) => v.checked === true) : [];
   }, [root]);
 
-  const openAlert = () => setIsAlertOpen(true);
-  const closeAlert = () => setIsAlertOpen(false);
-
   const handleDelete = () => {
-    closeAlert();
-    onDelete(checkedNodes);
+    showModal({
+      component: AlertDialog,
+      props: {
+        title: "Are you sure?",
+        text: "Deleting subcategories means losing both the categories and their products.",
+      },
+    }).then(({ action }) => action === "CONFIRM" && onDelete(checkedNodes));
   };
 
   return (
@@ -68,7 +71,7 @@ export const CategoryTree = ({
             <Button
               variant={"link"}
               className="py-0 h-max text-lg text-red-600"
-              onClick={openAlert}
+              onClick={handleDelete}
             >
               Delete
             </Button>
@@ -94,14 +97,6 @@ export const CategoryTree = ({
           />
         ))}
       </div>
-
-      <AlertDialog
-        isOpen={isAlertOpen}
-        closeModal={closeAlert}
-        onSubmit={handleDelete}
-        title="Are you sure?"
-        text="Deleting subcategories means losing both the categories and their products."
-      />
     </div>
   );
 };
