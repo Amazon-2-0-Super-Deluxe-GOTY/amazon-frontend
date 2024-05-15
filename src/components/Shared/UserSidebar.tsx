@@ -6,7 +6,7 @@ import {
   SidebarItem,
   SidebarTitle,
 } from "./Sidebar";
-import { textAvatar } from "@/lib/utils";
+import { cn, textAvatar } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import {
   Accordion,
@@ -22,9 +22,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useSearchParamsTools } from "@/lib/router";
-import { useEffect, useState } from "react";
-import { ModalSignInUpVariation } from "../SignInUpModal/ModalSignInUpVariation";
+import { SignInUpModals } from "../SignInUpModal/SignInUpModals";
+import { useState } from "react";
 
 export const UserSidebar = ({
   isOpen,
@@ -37,36 +36,7 @@ export const UserSidebar = ({
   user?: { fullName: string; avatar: string };
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
-  const searchParams = useSearchParamsTools();
-  
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
-    const defaultValue = searchParams.get("modal");
-    if (defaultValue) return true;
-
-    return false;
-  });
-
   const isLoggedIn = !!user;
-
-  const openLogInModal = () => {
-    closeSidebar();
-    searchParams.set("modal", "login");
-  };
-  const openSignUpModal = () => {
-    closeSidebar();
-    searchParams.set("modal", "signup");
-  };
-  const closeModal = () => {
-    searchParams.set("modal", undefined);
-  };
-  
-  useEffect(() => {
-    if (searchParams.get("modal")) setIsModalOpen(true);
-  }, [openLogInModal, openSignUpModal]);
-
-  useEffect(() => {
-    if (!searchParams.get("modal")) setIsModalOpen(false);
-  }, [closeModal]);
 
   const headerData = {
     avatarImage: isLoggedIn ? user.avatar : "",
@@ -91,10 +61,7 @@ export const UserSidebar = ({
           </div>
           {!isLoggedIn && (
             <div className="flex flex-col gap-2 pt-2 lg:pt-4">
-              <Button onClick={openSignUpModal}>Sign up</Button>
-              <Button onClick={openLogInModal} variant={"secondary"}>
-                Log in
-              </Button>
+              <SignInUpModals variant="sidebar" />
             </div>
           )}
         </SidebarHeader>
@@ -134,7 +101,6 @@ export const UserSidebar = ({
           </>
         )}
       </Sidebar>
-      {!isLoggedIn && isModalOpen && <ModalSignInUpVariation onClose={closeModal} />}
     </div>
   );
 };

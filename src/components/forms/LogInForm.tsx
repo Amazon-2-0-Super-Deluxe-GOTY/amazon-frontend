@@ -27,7 +27,11 @@ const FormSchema = z.object({
   staySignedIn: z.boolean()
 })
 
-export function LogInForm() {
+export function LogInForm({
+  changeModal,
+}: {
+  changeModal: (modal: string) => void;
+}) {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -49,7 +53,8 @@ export function LogInForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full h-full flex flex-col justify-between">
+      <div className="space-y-6 flex flex-col justify-center h-full">
         <FormField
           control={form.control}
           name="email"
@@ -105,12 +110,13 @@ export function LogInForm() {
                   <FormLabel htmlFor="idStaySignIn" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" >Stay signed in</FormLabel>
                 </div>
                 <div>
-                  <Button variant={"link"} type="button" className="text-xs p-0">Forgot password?</Button>
+                  <Button variant={"link"} type="button" className="text-xs p-0" onClick={() => changeModal("restore-password")}>Forgot password?</Button>
                 </div>
               </div>
             </FormItem>
           )}
         />
+        </div>
         <Button type="submit" className="w-full">Log in</Button>
       </form>
     </Form>

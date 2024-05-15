@@ -18,12 +18,15 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
+import { useState } from "react"
+import { randomInt } from "crypto"
 
 const FormSchema = z.object({
   code: z.string().min(1, {
-    message: "Wrong or Invalid code",
+    message: "Incorrect code, try again",
   }),
-})
+});
+
 
 export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:string) => void }) {
 
@@ -32,7 +35,7 @@ export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:strin
     defaultValues: {
       code: "",
     },
-  })
+  });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     // Checking data for validity
@@ -40,13 +43,50 @@ export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:strin
     console.log("SignUpCode :: You submitted the following values:");
     console.log(JSON.stringify(data, null, 2));
 
-    onChangeModal("successful-registration")
+    if(data.code === code)
+    {
+      onChangeModal("finishing-touches");
+    }
+    else
+    {
+      form.setError("code", { message: "Incorrect code, try again" });
+    }
   }
 
+  const [buttonText, setButtonText] = useState<string>("Send code");
+  const [code, setCode] = useState<string | undefined>(undefined);
+  const [timer, setTimer] = useState<number>(60);
+  const [isCodeActive, setIsCodeActive] = useState<boolean>(false);
+
+  function sendCode() {
+    const getCode = Math.floor(Math.random() * 999999).toString().padStart(6, '0');
+    setCode(getCode);
+    setIsCodeActive(true);
+    timerStart();
+    console.log("CODE: " + getCode);
+  }
+
+  function timerStart() {
+    let interval: NodeJS.Timeout | null = setInterval(() => {
+      setTimer((prevTimer) => {
+        if (prevTimer === 0) {
+          clearInterval(interval as NodeJS.Timeout);
+          setButtonText("Resend code");
+          setCode(undefined);
+          setIsCodeActive(false);
+          return 60;
+        } else {
+          return prevTimer - 1;
+        }
+      });
+    }, 1000);
+  }
+  
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full h-full flex flex-col justify-between">
+      <div className="space-y-6 flex flex-col justify-center h-full">
         <FormField
           control={form.control}
           name="code"
@@ -77,14 +117,16 @@ export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:strin
                     </InputOTP>
                   </FormControl>
                 </div>
-                <div className="flex justify-center items-center pt-1">
-                  <Button variant={"link"} type="button" className="m-auto">Send code</Button>
+                <h1 className="text-center mt-2"><FormMessage /></h1>
+                <div className="flex justify-center items-center">
+                  {!isCodeActive ? <Button variant={"link"} type="button" className="m-auto" onClick={sendCode}>{buttonText}</Button> :
+                  <Button variant={"link"} type="button" className="m-auto">Resend code {parseInt((timer/60).toString())}:{(timer%60).toString().padStart(2, '0')}</Button>}
                 </div>
               </div>
-              <FormMessage />
             </FormItem>
           )}
         />
+        </div>
         <Button type="submit" className="w-full">Continue</Button>
       </form>
     </Form>

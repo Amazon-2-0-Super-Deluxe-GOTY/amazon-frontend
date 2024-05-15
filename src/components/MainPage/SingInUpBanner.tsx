@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
-import { ModalSignInUpVariation } from "@/components/SignInUpModal/ModalSignInUpVariation";
+import { SignInUpModals } from "@/components/SignInUpModal/SignInUpModals";
 import { useSearchParamsTools } from "@/lib/router";
 
 export const SingInUpBanner = () => {
@@ -54,21 +54,22 @@ export const SingInUpBanner = () => {
             </p>
           </div>
           <div className="flex justify-center items-center gap-6">
-            <Button
+            {/* <Button
               size={"lg"}
               className="text-base lg:text-xl"
               onClick={openSignUpModal}
             >
-              Sing up
-            </Button>
-            <Button
+              
+            </Button> */}
+            <SignInUpModals variant="banner" />
+            {/* <Button
               size={"lg"}
               className="text-base lg:text-xl"
               variant={"outline"}
               onClick={openLogInModal}
             >
               Log in
-            </Button>
+            </Button> */}
           </div>
         </div>
         <Image
@@ -77,7 +78,7 @@ export const SingInUpBanner = () => {
           className="w-full sm:max-w-40 xl:max-w-md object-cover max-h-[260px]"
         />
       </CardContent>
-      {isModalOpen && <ModalSignInUpVariation onClose={closeModal} />}
+      {/* {isModalOpen && <ModalSignInUpVariation buttonTextTrigger="Sing up" onClose={closeModal} />} */}
     </Card>
   );
 };
