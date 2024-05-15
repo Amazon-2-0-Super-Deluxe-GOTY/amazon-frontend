@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { ModalRestorePassword, ModalLogIn, ModalSignUp, ModalSignUpCode, ModalSignUpSuccessful, ModalResetPassword, ModalFirstLastName } from "./ModalsContent";
 import { cn } from "@/lib/utils";
+import { useScreenSize } from "@/lib/media";
 
 const modalParamName = "modal";
 
@@ -37,6 +38,7 @@ const SignInUpModal = ({
 } : {
   variant: "default" | "outline" | "secondary";
 }) => {
+  const isDesktop = useScreenSize({minSize:"md"});
   const searchParams = useSearchParamsTools();
 
   const [modal, setModal] = useState<string>(() => {
@@ -94,7 +96,7 @@ const SignInUpModal = ({
           Log in
         </span>
       </DialogTrigger>
-      <DialogContent className="w-full h-full flex max-w-screen-xl max-h-[680px]" hideClose >
+      <DialogContent className="w-full h-full flex max-w-screen-xl max-h-[680px]" hideClose={isDesktop ? true : false} >
         <div className="flex justify-between items-center w-full h-full gap-6">
           {(() => {
             switch (modal) {

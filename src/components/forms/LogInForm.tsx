@@ -66,7 +66,7 @@ export function LogInForm({
                   <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
                 </FormControl>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -86,7 +86,7 @@ export function LogInForm({
                   </Button>
                 </div>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -107,7 +107,7 @@ export function LogInForm({
                       }}
                     />
                   </FormControl>
-                  <FormLabel htmlFor="idStaySignIn" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" >Stay signed in</FormLabel>
+                  <FormLabel htmlFor="idStaySignIn" className="text-sm max-md:text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" >Stay signed in</FormLabel>
                 </div>
                 <div>
                   <Button variant={"link"} type="button" className="text-xs p-0" onClick={() => changeModal("restore-password")}>Forgot password?</Button>

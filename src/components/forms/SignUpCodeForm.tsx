@@ -117,7 +117,7 @@ export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:strin
                     </InputOTP>
                   </FormControl>
                 </div>
-                <h1 className="text-center mt-2"><FormMessage /></h1>
+                <h1 className="text-center mt-2"><FormMessage className="max-md:text-xs" /></h1>
                 <div className="flex justify-center items-center">
                   {!isCodeActive ? <Button variant={"link"} type="button" className="m-auto" onClick={sendCode}>{buttonText}</Button> :
                   <Button variant={"link"} type="button" className="m-auto">Resend code {parseInt((timer/60).toString())}:{(timer%60).toString().padStart(2, '0')}</Button>}

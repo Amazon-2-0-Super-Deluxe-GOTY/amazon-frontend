@@ -77,7 +77,7 @@ export function SignUpForm({
                   <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
                 </FormControl>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -104,7 +104,7 @@ export function SignUpForm({
                   </Button>
                 </div>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -131,7 +131,7 @@ export function SignUpForm({
                   </Button>
                 </div>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />

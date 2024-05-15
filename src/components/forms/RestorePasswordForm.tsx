@@ -57,7 +57,7 @@ export function RestorePasswordForm({
                   <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
                 </FormControl>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />

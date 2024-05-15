@@ -63,7 +63,7 @@ export function SignUpFirstLastNameForm({
                   <Input placeholder="Enter your first name" type="text" autoComplete="name" {...field} />
                 </FormControl>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -80,7 +80,7 @@ export function SignUpFirstLastNameForm({
                   <Input placeholder="Enter your last name" type="text" autoComplete="name" {...field} />
                 </FormControl>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />

@@ -83,7 +83,7 @@ export function ResetPasswordForm({
                   </Button>
                 </div>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -110,7 +110,7 @@ export function ResetPasswordForm({
                   </Button>
                 </div>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
