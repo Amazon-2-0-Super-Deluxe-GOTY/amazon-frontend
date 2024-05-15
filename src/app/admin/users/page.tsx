@@ -46,6 +46,7 @@ import { useModal } from "@/components/Admin/Modal";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { textAvatar } from "@/lib/utils";
+import { Pagination } from "@/components/Shared/Pagination";
 
 export type Payment = {
   id: string;
@@ -173,7 +174,7 @@ export default function Page() {
           return (
             <div className="flex items-center gap-3">
               <Avatar className="w-12 h-12">
-                <AvatarImage src={placeholder} />
+                {/* <AvatarImage src={placeholder} /> */}
                 <AvatarFallback>{textAvatar(user.fullName)}</AvatarFallback>
               </Avatar>
               <div>
@@ -356,7 +357,6 @@ export default function Page() {
       {!!data && data.data.length > 0 && (
         <Pagination
           page={page}
-          pageSize={pageSize}
           pagesCount={data.count.pageCount}
           setPage={setPage}
         />
@@ -454,50 +454,6 @@ const TableHeader = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
-  );
-};
-
-const Pagination = ({
-  page,
-  pagesCount,
-  pageSize,
-  setPage,
-}: {
-  page: number;
-  pagesCount: number;
-  pageSize: number;
-  setPage: (value: number) => void;
-}) => {
-  const pages = Math.ceil(pagesCount / pageSize);
-  const hasPrev = page > 1;
-  const hasNext = page < pagesCount;
-
-  const onPrev = () => setPage(page - 1);
-  const onNext = () => setPage(page + 1);
-
-  return (
-    <div className="flex justify-center items-center gap-3">
-      <Button variant={"ghost"} disabled={!hasPrev} onClick={onPrev}>
-        <ChevronLeft className="w-6 h-6" />
-      </Button>
-      {Array.from({
-        length: pages,
-      }).map((_, i) => {
-        const pageNumber = i + 1;
-        return (
-          <Button
-            variant={pageNumber === page ? "default" : "secondary"}
-            key={pageNumber}
-            onClick={() => setPage(pageNumber)}
-          >
-            {pageNumber}
-          </Button>
-        );
-      })}
-      <Button variant={"ghost"} disabled={!hasNext} onClick={onNext}>
-        <ChevronRight className="w-6 h-6" />
-      </Button>
     </div>
   );
 };

@@ -140,7 +140,10 @@ export async function GET(req: Request) {
   const pagedData = filteredData.slice(sliceStart, sliceEnd);
 
   return Response.json(
-    { data: pagedData, count: { pageCount: filteredData.length } },
+    {
+      data: pagedData,
+      count: { pageCount: Math.ceil(filteredData.length / filters.pageSize) },
+    },
     { status: 200 }
   );
 }
