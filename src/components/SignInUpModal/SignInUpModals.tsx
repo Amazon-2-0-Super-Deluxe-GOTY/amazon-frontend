@@ -27,7 +27,7 @@ export const SignInUpModals = ({
 }) => {
   
   return (
-    <div className="flex gap-4">
+    <div className="flex">
       <SignInUpModal variant={variant === "banner" ? "outline" : "secondary"} />
     </div>
   );
@@ -47,7 +47,6 @@ const SignInUpModal = ({
     return "";
   });
   const handleChangeModal = (newModal: string) => {
-    searchParams.set(modalParamName, newModal);
     setModal(newModal);
   };
 
@@ -57,22 +56,26 @@ const SignInUpModal = ({
     return false;
   });
   const onOpenSignUpModal = () => {
-    searchParams.set(modalParamName, "signup");
     setModal("signup");
   };
   const onOpenLogInModal = () => {
-    searchParams.set(modalParamName, "login");
     setModal("login");
   };
   const onOpenModalChange = (value:boolean) => {
-    if(!value)
-      searchParams.set(modalParamName, undefined);
     setIsOpen(value);
   };
   const onClodeModal = () => {
-    searchParams.set(modalParamName, undefined);
     setIsOpen(false);
   };
+
+  React.useEffect(() => {
+    searchParams.set(modalParamName, modal);
+  }, [modal]);
+
+  React.useEffect(() => {
+    if(!isOpen)
+      searchParams.set(modalParamName, undefined);
+  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onOpenModalChange(!isOpen)} >

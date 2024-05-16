@@ -6,7 +6,7 @@ import {
   SidebarItem,
   SidebarTitle,
 } from "./Sidebar";
-import { cn, textAvatar } from "@/lib/utils";
+import { textAvatar } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import {
   Accordion,
@@ -23,7 +23,6 @@ import {
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { SignInUpModals } from "../SignInUpModal/SignInUpModals";
-import { useState } from "react";
 
 export const UserSidebar = ({
   isOpen,
