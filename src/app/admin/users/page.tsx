@@ -47,6 +47,7 @@ import { AlertDialog } from "@/components/Admin/AlertDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { textAvatar } from "@/lib/utils";
 import { Pagination } from "@/components/Shared/Pagination";
+import { useSearchParamsTools } from "@/lib/router";
 
 export type Payment = {
   id: string;
@@ -58,11 +59,23 @@ export type Payment = {
 const pageSize = 10;
 const delay = () => new Promise((res) => setTimeout(res, 1000));
 
+const roles = ["all", "user", "admin"] as const;
+
 export default function Page() {
-  const [selectedRole, setSelectedRole] = useState<UserRoles>("all");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [defferedSearch] = useDebounce(search, 300);
+  const searchParams = useSearchParamsTools();
+  const [selectedRole, setSelectedRole] = useState<UserRoles>(() => {
+    const roleFromUrl = searchParams.get("role") as UserRoles | undefined;
+    return !roleFromUrl || !roles.includes(roleFromUrl) ? "all" : roleFromUrl;
+  });
+  const [searchQuery, setSearchQuery] = useState(
+    () => searchParams.get("searchQuery") ?? ""
+  );
+  const [page, setPage] = useState(() => {
+    const pageFromUrl = searchParams.get("page");
+    const pageNum = Number(pageFromUrl);
+    return isNaN(pageNum) ? 1 : pageNum;
+  });
+  const [defferedSearch] = useDebounce(searchQuery, 300);
   const { showModal } = useModal();
 
   const fetchUsers = useCallback(
@@ -81,6 +94,19 @@ export default function Page() {
     queryFn: fetchUsers,
   });
   const [dataOptimistic, setDataOptimistic] = useOptimistic(data?.data);
+
+  const changeSelectedRole = (value: UserRoles) => {
+    setSelectedRole(value);
+    searchParams.set("role", value);
+  };
+  const changeSearchQuery = (value: string) => {
+    setSearchQuery(value);
+    searchParams.set("searchQuery", value);
+  };
+  const changePage = (value: number) => {
+    setPage(value);
+    searchParams.set("page", value.toString());
+  };
 
   const handleMakeCustomer = (id: string) => {
     startTransition(async () => {
@@ -332,10 +358,10 @@ export default function Page() {
         columns={columns}
         header={(table) => (
           <TableHeader
-            searchQuery={search}
-            onSearchQueryChange={setSearch}
+            searchQuery={searchQuery}
+            onSearchQueryChange={changeSearchQuery}
             selectedRole={selectedRole}
-            onSelectRole={setSelectedRole}
+            onSelectRole={changeSelectedRole}
             table={table}
           />
         )}
@@ -347,7 +373,7 @@ export default function Page() {
               className="max-w-xs aspect-video object-cover"
             />
             <p>
-              {search.length > 0
+              {searchQuery.length > 0
                 ? "User not found"
                 : "No users in the selected role"}
             </p>
@@ -358,7 +384,7 @@ export default function Page() {
         <Pagination
           page={page}
           pagesCount={data.count.pageCount}
-          setPage={setPage}
+          setPage={changePage}
         />
       )}
     </div>
