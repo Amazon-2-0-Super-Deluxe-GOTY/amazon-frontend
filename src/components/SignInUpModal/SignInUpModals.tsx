@@ -27,7 +27,7 @@ export const SignInUpModals = ({
 }) => {
   
   return (
-    <div className="flex">
+    <div className="flex gap-3">
       <SignInUpModal variant={variant === "banner" ? "outline" : "secondary"} />
     </div>
   );
