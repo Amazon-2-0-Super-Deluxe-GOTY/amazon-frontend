@@ -1,7 +1,6 @@
 import * as React from "react";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
-import { useSearchParamsTools } from "@/lib/router";
 import { useState } from "react";
 import {
   Dialog,
@@ -17,8 +16,6 @@ import {
 import { ModalRestorePassword, ModalLogIn, ModalSignUp, ModalSignUpCode, ModalSignUpSuccessful, ModalResetPassword, ModalFirstLastName } from "./ModalsContent";
 import { cn } from "@/lib/utils";
 import { useScreenSize } from "@/lib/media";
-
-const modalParamName = "modal";
 
 export const SignInUpModals = ({
   variant,
@@ -39,43 +36,25 @@ const SignInUpModal = ({
   variant: "default" | "outline" | "secondary";
 }) => {
   const isDesktop = useScreenSize({minSize:"md"});
-  const searchParams = useSearchParamsTools();
 
-  const [modal, setModal] = useState<string>(() => {
-    const defaultValue = searchParams.get(modalParamName);
-    if (defaultValue) return defaultValue;
-    return "";
-  });
+  const [modal, setModal] = useState<string>("");
   const handleChangeModal = (newModal: string) => {
     setModal(newModal);
   };
-
-  const [isOpen, setIsOpen] = useState<boolean>(() => {
-    const defaultValue = searchParams.get(modalParamName);
-    if (defaultValue) return true;
-    return false;
-  });
   const onOpenSignUpModal = () => {
     setModal("signup");
   };
   const onOpenLogInModal = () => {
     setModal("login");
   };
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const onOpenModalChange = (value:boolean) => {
     setIsOpen(value);
   };
   const onClodeModal = () => {
     setIsOpen(false);
   };
-
-  React.useEffect(() => {
-    searchParams.set(modalParamName, modal);
-  }, [modal]);
-
-  React.useEffect(() => {
-    if(!isOpen)
-      searchParams.set(modalParamName, undefined);
-  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onOpenModalChange(!isOpen)} >

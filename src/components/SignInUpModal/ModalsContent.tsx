@@ -208,7 +208,9 @@ export const ModalSignUpSuccessful = ({ onClose }: { onClose: () => void }) => {
         <h1 className={titleStyle} >Congratulation!</h1>
         <h2 className={textStyle} >The registration was completed</h2>
         <Button variant={"default"} className="w-full mt-32" onClick={onClose}>
-          Let&apos;s go shopping
+          <Link href={"/"}>
+            Let&apos;s go shopping
+          </Link>
         </Button>
       </div>
     </div>
