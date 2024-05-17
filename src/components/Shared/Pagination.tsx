@@ -25,7 +25,6 @@ export const Pagination = ({
   for (let i = pageStart; i <= pageEnd; i++) {
     pagesArray.push(i);
   }
-  console.log(pagesArray);
 
   const onPrev = () => setPage(page - 1);
   const onNext = () => setPage(page + 1);

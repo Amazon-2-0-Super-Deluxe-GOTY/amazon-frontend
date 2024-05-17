@@ -72,7 +72,7 @@ export default function Page() {
   );
   const [page, setPage] = useState(() => {
     const pageFromUrl = searchParams.get("page");
-    const pageNum = Number(pageFromUrl);
+    const pageNum = parseInt(pageFromUrl ?? "1");
     return isNaN(pageNum) ? 1 : pageNum;
   });
   const [defferedSearch] = useDebounce(searchQuery, 300);
@@ -98,10 +98,12 @@ export default function Page() {
   const changeSelectedRole = (value: UserRoles) => {
     setSelectedRole(value);
     searchParams.set("role", value);
+    changePage(1);
   };
   const changeSearchQuery = (value: string) => {
     setSearchQuery(value);
     searchParams.set("searchQuery", value);
+    changePage(1);
   };
   const changePage = (value: number) => {
     setPage(value);
