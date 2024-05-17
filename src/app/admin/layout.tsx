@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import { Header } from "@/components/Admin/Header";
+import { ModalProvider } from "@/components/Admin/Modal";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +17,7 @@ export default function RootLayout({
     <>
       <Header />
       <main className="grow w-full px-4 max-w-[1600px] mx-auto flex flex-col pb-5 lg:pb-10">
-        {children}
+        <ModalProvider>{children}</ModalProvider>
       </main>
     </>
   );

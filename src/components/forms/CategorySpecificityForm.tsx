@@ -20,6 +20,7 @@ import { ArrowUpDownIcon, FilePenLineIcon, PlusIcon } from "lucide-react";
 import type { CategorySpecificity } from "../Admin/Category/types";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { AlertDialog } from "../Admin/AlertDialog";
+import { useModal } from "../Admin/Modal";
 
 interface Props {
   specificities: CategorySpecificity[];
@@ -37,16 +38,12 @@ export const CategorySpecificityForm = ({
   const initialArray = useMemo(() => createCheckboxArray(specificities), []);
   const checkboxArray = useCheckboxArray(initialArray);
   const checkboxArrayRef = useRef(checkboxArray);
+  const { showModal } = useModal();
   checkboxArrayRef.current = checkboxArray;
 
   const [isForm, setIsForm] = useState(false);
   const [editedSpecificity, setEditedSpecificity] =
     useState<CategorySpecificity>();
-
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-
-  const openAlert = () => setIsAlertOpen(true);
-  const closeAlert = () => setIsAlertOpen(false);
 
   const filteredElements = useMemo(
     () =>
@@ -74,8 +71,17 @@ export const CategorySpecificityForm = ({
     setSearch(e.target.value.toLowerCase());
 
   const onDelete = () => {
-    checkboxArray.removeMany(checkedElements.map((e) => e.value));
-    closeAlert();
+    showModal({
+      component: AlertDialog,
+      props: {
+        title: "Are you sure?",
+        text: "You will not be able to recover selected specificities after deleting them!",
+      },
+    }).then(
+      ({ action }) =>
+        action === "CONFIRM" &&
+        checkboxArray.removeMany(checkedElements.map((e) => e.value))
+    );
   };
 
   const onSortOrderChange = () => setIsSortDesc((v) => !v);
@@ -132,7 +138,7 @@ export const CategorySpecificityForm = ({
                   <Button
                     variant={"link"}
                     className="py-0 h-max text-lg text-red-600"
-                    onClick={openAlert}
+                    onClick={onDelete}
                   >
                     Delete
                   </Button>
@@ -185,13 +191,6 @@ export const CategorySpecificityForm = ({
             </Button>
             <Button>Save</Button>
           </div>
-          <AlertDialog
-            isOpen={isAlertOpen}
-            closeModal={closeAlert}
-            onSubmit={onDelete}
-            title="Are you sure?"
-            text="You will not be able to recover selected specificities after deleting them!"
-          />
         </div>
       )}
     </div>

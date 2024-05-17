@@ -10,6 +10,7 @@ import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { CategorySpecificityForm } from "@/components/forms/CategorySpecificityForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog } from "../AlertDialog";
+import { useModal } from "../Modal";
 
 interface Props {
   category?: Category;
@@ -29,20 +30,22 @@ export const CategoryAsideCard = ({
   onDelete,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const { showModal } = useModal();
   const hasParent = !!parentCategory;
   const hasMain = !!mainCategory && mainCategory.id !== category?.id;
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const openAlert = () => setIsAlertOpen(true);
-  const closeAlert = () => setIsAlertOpen(false);
-
   const handleDelete = () => {
     if (category) {
-      closeAlert();
-      onDelete(category?.id);
+      showModal({
+        component: AlertDialog,
+        props: {
+          title: "Are you sure?",
+          text: "You will not be able to restore the category with the products there!",
+        },
+      }).then(({ action }) => action === "CONFIRM" && onDelete(category?.id));
     }
   };
 
@@ -101,7 +104,7 @@ export const CategoryAsideCard = ({
             </Button>
             <Button
               className="w-full flex items-center gap-2 text-base"
-              onClick={openAlert}
+              onClick={handleDelete}
             >
               <Trash2Icon className={"w-5 h-5"} />
               Delete
@@ -120,13 +123,6 @@ export const CategoryAsideCard = ({
           </p>
         </div>
       )}
-      <AlertDialog
-        title="Are you sure?"
-        text="You will not be able to restore the category with the products there!"
-        isOpen={isAlertOpen}
-        closeModal={closeAlert}
-        onSubmit={handleDelete}
-      />
     </aside>
   );
 };
