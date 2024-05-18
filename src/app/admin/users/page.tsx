@@ -415,7 +415,7 @@ const TableHeader = ({
           onValueChange={(v) => onSelectRole(v as UserRoles)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Choose category" />
+            <SelectValue placeholder="Choose role" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem

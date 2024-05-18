@@ -13,6 +13,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  type Row,
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
@@ -24,12 +25,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import clsx from "clsx";
 
 interface DataTableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   header: (table: TableType<T>) => React.ReactNode;
   empty?: React.ReactNode;
+  onRowClick?: (row: Row<T>) => void;
+  classNames?: { row?: (row: Row<T>) => string };
 }
 
 export function DataTable<T>(props: DataTableProps<T>) {
@@ -92,7 +96,8 @@ export function DataTable<T>(props: DataTableProps<T>) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-b-0"
+                  className={clsx("border-b-0", props.classNames?.row?.(row))}
+                  onClick={() => props.onRowClick?.(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3">

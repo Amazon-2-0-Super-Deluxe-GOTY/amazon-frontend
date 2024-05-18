@@ -1,5 +1,5 @@
 import { getIcon } from "@/lib/categories";
-import type { Category } from "./types";
+import type { CategorySpecificity } from "./types";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { FilePenLineIcon, Trash2Icon } from "lucide-react";
@@ -9,6 +9,7 @@ import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog } from "../AlertDialog";
 import { useModal } from "../Modal";
+import type { Category } from "@/api/categories";
 
 interface Props {
   category?: Category;

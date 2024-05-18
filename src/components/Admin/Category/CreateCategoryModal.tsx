@@ -2,7 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { CreateCategoryForm } from "@/components/forms/CreateCategoryForm";
-import type { Category } from "./types";
+import type { Category } from "@/api/categories";
 import type { TreeNodeType } from "@/lib/checkboxTree";
 import Link from "next/link";
 import clsx from "clsx";
