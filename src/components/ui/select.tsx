@@ -116,6 +116,7 @@ interface SelectItemProps
   showCheck?: boolean;
   checkAlign?: "left" | "right";
   checkOffset?: 2 | 4;
+  checkClassName?: string;
 }
 
 const SelectItem = React.forwardRef<
@@ -129,6 +130,7 @@ const SelectItem = React.forwardRef<
       showCheck = true,
       checkAlign,
       checkOffset,
+      checkClassName,
       ...props
     },
     ref
@@ -151,7 +153,8 @@ const SelectItem = React.forwardRef<
                 : "right-2"
               : checkOffset === 4
               ? "left-4"
-              : "left-2"
+              : "left-2",
+            checkClassName
           )}
         >
           <SelectPrimitive.ItemIndicator>

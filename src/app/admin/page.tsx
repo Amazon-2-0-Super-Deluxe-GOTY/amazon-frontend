@@ -9,6 +9,9 @@ export default function Page() {
       <Link href={"/users"} className="text-blue-700 underline">
         Users page
       </Link>
+      <Link href={"/products"} className="text-blue-700 underline">
+        Products page
+      </Link>
     </div>
   );
 }

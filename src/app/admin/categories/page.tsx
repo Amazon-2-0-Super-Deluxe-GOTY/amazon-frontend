@@ -10,7 +10,6 @@ import {
 import { PlusIcon } from "lucide-react";
 import React, { useRef, useState } from "react";
 import type {
-  Category,
   CategoryTreeNodeType,
   CheckedState,
 } from "@/components/Admin/Category/types";
@@ -25,130 +24,8 @@ import {
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
-
-const defaultCategoryData: Category[] = [
-  {
-    id: "1",
-    title: "Fashion",
-    iconId: "shirt",
-    description:
-      "Explore a diverse collection of clothing, footwear, accessories, and more to elevate your style and keep up with the latest fashion trends. From timeless classics to bold statements, find everything you need to express your individuality and stay fashionable.",
-    keywords: ["fashion", "clothes"],
-    isDeleted: false,
-  },
-  {
-    id: "2",
-    title: "Electronics",
-    iconId: "monitor",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "3",
-    title: "Household",
-    iconId: "home",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "4",
-    title: "Furniture",
-    iconId: "armchair",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "5",
-    title: "Work tools",
-    iconId: "wrench",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "11",
-    parentId: "1",
-    title: "Women's Fashion",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "12",
-    parentId: "11",
-    title: "Casual Women's Clothing",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "13",
-    parentId: "12",
-    title: "Tops",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "14",
-    parentId: "13",
-    title: "T-shirts and Tank Tops",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "15",
-    parentId: "13",
-    title: "Blouses and Shirts",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "16",
-    parentId: "12",
-    title: "Bottoms",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "17",
-    parentId: "16",
-    title: "Jeans and Denim",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "18",
-    parentId: "16",
-    title: "Pants and Trousers",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "19",
-    parentId: "1",
-    title: "Men's Fashion",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-  {
-    id: "20",
-    parentId: "2",
-    title: "Computers",
-    description: "Test description",
-    keywords: [],
-    isDeleted: false,
-  },
-];
+import { getCategories, type Category } from "@/api/categories";
+import { useQuery } from "@tanstack/react-query";
 
 const iconClassSmall = "w-5 h-5";
 
@@ -158,9 +35,13 @@ const treeOptions = {
 };
 
 export default function Page() {
+  const { data } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
   const allCategoriesTrees = React.useMemo(
-    () => createTreeArray(defaultCategoryData, treeOptions),
-    []
+    () => (data?.data ? createTreeArray(data.data, treeOptions) : []),
+    [data?.data]
   );
   const [selectedCategory, setSelectedCategory] = useState<Category>();
   const checkboxTree = useCheckboxTree<Category, string>({
@@ -325,7 +206,7 @@ export default function Page() {
 
       <CategoryAsideCard
         category={selectedCategory}
-        parentCategory={defaultCategoryData.find(
+        parentCategory={data?.data.find(
           (c) => c.id === selectedCategory?.parentId
         )}
         mainCategory={checkboxTree.root?.value}
