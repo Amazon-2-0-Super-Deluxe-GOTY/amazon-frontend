@@ -7,6 +7,7 @@ import {
 } from "@/api/categories";
 import { uploadImage } from "@/api/products";
 import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
+import { SpecificityForm } from "@/components/forms/CategorySpecificityForm";
 import {
   Accordion,
   AccordionContent,
@@ -24,18 +25,30 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useCheckboxArray } from "@/lib/checkboxArray";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { InfoIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { InfoIcon, MoreHorizontal, PlusIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { type UseFormReturn, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useModal } from "@/components/Admin/Modal";
+import { DataTable } from "@/components/ui/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const barcodeLenght = 13;
 const maxImages = 10;
@@ -43,6 +56,7 @@ const productDetailsMaxTextLength = 30;
 const aboutProductMaxTextLength = 250;
 
 const attributeSchema = z.object({
+  id: z.string(),
   type: z.enum(["color", "text"]),
   key: z.string().min(1, { message: "Key must not be empty." }),
   value: z.string().min(1, { message: "Value must not be empty." }),
@@ -72,14 +86,23 @@ const formSchema = z.object({
   quantity: z
     .number()
     .min(0, { message: "Quantity must be a positive number." }),
-  options: z.object({
-    name: z.string().min(1, { message: "Name must not be empty." }),
-    appearance: z.enum(["tiles", "rows"]),
-    attributes: z.array(attributeSchema),
-  }),
+  options: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string().min(1, { message: "Name must not be empty." }),
+      appearance: z.enum(["tiles", "rows"]),
+      isSelected: z.boolean(),
+      attributes: z.array(attributeSchema),
+    })
+  ),
   subproducts: z.array(
     z.object({
-      attributes: z.array(attributeSchema),
+      attributes: z.array(
+        z.object({
+          optionId: z.string(),
+          attributeId: z.string(),
+        })
+      ),
       quantity: z
         .number()
         .min(0, { message: "Quantity must be a positive number." }),
@@ -155,7 +178,7 @@ function CreateProductForm({ categories }: CreateProductFormProps) {
       name: "",
       code: "",
       images: [],
-      //   options: [],
+      // options: [],
       subproducts: [],
       productDetails: [],
       aboutProduct: [],
@@ -169,10 +192,10 @@ function CreateProductForm({ categories }: CreateProductFormProps) {
     control: form.control,
     name: "options.attributes",
   });
-  const subproductsArray = useFieldArray({
-    control: form.control,
-    name: "subproducts",
-  });
+  // const subproductsArray = useFieldArray({
+  //   control: form.control,
+  //   name: "subproducts",
+  // });
   const productDetailsArray = useFieldArray({
     control: form.control,
     name: "productDetails",
@@ -221,6 +244,7 @@ function CreateProductForm({ categories }: CreateProductFormProps) {
       maxImages - currentImagesCount - filesArray.length
     );
 
+    // TODO: set optimistic loading element, use transition and mutateAsync
     uploadImageMutation.mutate(filesToUpload);
   }
 
@@ -411,6 +435,7 @@ function CreateProductForm({ categories }: CreateProductFormProps) {
           </div>
 
           <OptionsFormBlock
+            form={form}
             categoryOptions={categoryOptionsQuery.data?.data ?? []}
           />
 
@@ -449,28 +474,144 @@ function CreateProductForm({ categories }: CreateProductFormProps) {
 
 function OptionsFormBlock({
   categoryOptions,
+  form,
 }: {
   categoryOptions: CategoryOption[];
+  form: UseFormReturn<FormValues>;
 }) {
-  const categoryOptionsCheckboxArray = useCheckboxArray<CategoryOption>([]);
-  const productOptionsCheckboxArray = useCheckboxArray<CategoryOption>([]);
+  const { showModal } = useModal();
 
-  const selectedOptions = useMemo(
-    () => [
-      ...categoryOptionsCheckboxArray.getCheckedElements(),
-      ...productOptionsCheckboxArray.getCheckedElements(),
-    ],
-    [categoryOptionsCheckboxArray, productOptionsCheckboxArray]
-  );
+  const optionsArray = useFieldArray({
+    control: form.control,
+    name: "options",
+  });
+  const subproductsArray = useFieldArray({
+    control: form.control,
+    name: "subproducts",
+  });
 
-  useEffect(() => {
-    if (
-      categoryOptions.length > 0 &&
-      categoryOptionsCheckboxArray.array.length === 0
-    ) {
-      categoryOptionsCheckboxArray.appendMany(categoryOptions);
-    }
-  }, [categoryOptions, categoryOptionsCheckboxArray]);
+  // const selectedOptions = useMemo(
+  //   () => [
+  //     ...categoryOptionsCheckboxArray.getCheckedElements(),
+  //     ...productOptionsCheckboxArray.getCheckedElements(),
+  //   ],
+  //   [categoryOptionsCheckboxArray, productOptionsCheckboxArray]
+  // );
+
+  // useEffect(() => {
+  //   if (
+  //     categoryOptions.length > 0 &&
+  //     categoryOptionsCheckboxArray.array.length === 0
+  //   ) {
+  //     const existingIds = categoryOptionsCheckboxArray.array.map(
+  //       (elem) => elem.value.id
+  //     );
+  //     categoryOptionsCheckboxArray.appendMany(
+  //       categoryOptions.filter((opt) => !existingIds.includes(opt.id))
+  //     );
+  //   }
+  // }, [categoryOptions, categoryOptionsCheckboxArray]);
+
+  function onCreateOption() {
+    showModal({
+      component: CreateOptionModal,
+    }).then((res) => {
+      if (res.action === "CONFIRM") {
+        // productOptionsCheckboxArray.append(res.option);
+        optionsArray.append({
+          ...res.option,
+          isSelected: false,
+          attributes: [],
+        });
+      }
+    });
+  }
+
+  // const columns = useMemo<ColumnDef<AttributeType>[]>(
+  //   () => [
+  //     {
+  //       id: "select",
+  //       header: ({ table }) => (
+  //         <div className="h-full flex items-center">
+  //           <Checkbox
+  //             size="lg"
+  //             checked={
+  //               table.getIsAllPageRowsSelected() ||
+  //               (table.getIsSomePageRowsSelected() && "indeterminate")
+  //             }
+  //             onCheckedChange={(value) =>
+  //               table.toggleAllPageRowsSelected(!!value)
+  //             }
+  //             aria-label="Select all"
+  //           />
+  //         </div>
+  //       ),
+  //       cell: ({ row }) => (
+  //         <Checkbox
+  //           size="lg"
+  //           checked={row.getIsSelected()}
+  //           onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //           aria-label="Select row"
+  //         />
+  //       ),
+  //       enableSorting: false,
+  //       enableHiding: false,
+  //     },
+  //     {
+  //       id: "attributes",
+  //       header: "Attributes",
+  //       cell: ({ row }) => {
+  //         const attr = row.original;
+  //         return (
+  //           <div className="flex items-start gap-3.5 text-xl">
+  //             <p>{attr.key}</p>
+  //             <p>{attr.value}</p>
+  //           </div>
+  //         );
+  //       },
+  //     },
+  //     {
+  //       id: "actions",
+  //       enableHiding: false,
+  //       header: ({ table }) => (
+  //         <div className="h-full flex justify-end items-center">
+  //           <button type="button">
+  //             <PlusIcon className="w-6 h-6" />
+  //           </button>
+  //         </div>
+  //       ),
+  //       cell: ({ row }) => {
+  //         const onEdit = () => {};
+  //         const onDelete = () => {};
+
+  //         return (
+  //           <DropdownMenu>
+  //             <DropdownMenuTrigger asChild>
+  //               <div className="h-full flex justify-end items-center">
+  //                 <Button variant="ghost" className="h-8 w-8 p-0">
+  //                   <span className="sr-only">Open menu</span>
+  //                   <MoreHorizontal className="h-4 w-4" />
+  //                 </Button>
+  //               </div>
+  //             </DropdownMenuTrigger>
+  //             <DropdownMenuContent align="end" className="p-4 w-72">
+  //               <DropdownMenuItem className="p-4 px-4 py-2.5" onClick={onEdit}>
+  //                 Edit
+  //               </DropdownMenuItem>
+  //               <DropdownMenuItem
+  //                 className={"p-4 px-4 py-2.5 text-destructive"}
+  //                 onClick={onDelete}
+  //               >
+  //                 Delete
+  //               </DropdownMenuItem>
+  //             </DropdownMenuContent>
+  //           </DropdownMenu>
+  //         );
+  //       },
+  //     },
+  //   ],
+  //   []
+  // );
 
   return (
     <Accordion type="single" collapsible>
@@ -500,7 +641,7 @@ function OptionsFormBlock({
                   Category options list
                 </label>
               </div>
-              <ScrollArea>
+              <ScrollArea className="only:h-full">
                 <div className="space-y-6 px-4">
                   {categoryOptionsCheckboxArray.array.map((elem, i) => {
                     const id = `category-option-${i}`;
@@ -530,7 +671,7 @@ function OptionsFormBlock({
                 </div>
               )}
             </div>
-            <Separator orientation="vertical" />
+            {/* <Separator orientation="vertical" />
             <div className="grow flex flex-col gap-5">
               <div className="border-y-2 p-4 flex justify-between items-center">
                 <div className="flex items-center gap-4">
@@ -549,11 +690,11 @@ function OptionsFormBlock({
                     Your options list
                   </label>
                 </div>
-                <button type="button">
+                <button type="button" onClick={onCreateOption}>
                   <PlusIcon className="w-6 h-6" />
                 </button>
               </div>
-              <ScrollArea>
+              <ScrollArea className="only:h-full">
                 <div className="space-y-6 px-4">
                   {productOptionsCheckboxArray.array.map((elem, i) => {
                     const id = `product-option-${i}`;
@@ -575,17 +716,108 @@ function OptionsFormBlock({
                   })}
                 </div>
               </ScrollArea>
-              {categoryOptionsCheckboxArray.array.length === 0 && (
+              {productOptionsCheckboxArray.array.length === 0 && (
                 <div className="w-full h-full flex justify-center items-center px-6">
                   <div className="text-lg">
                     There are no options in your list
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
+
+          {/* {selectedOptions.length === 0 ? (
+            <div className="space-y-5">
+              <div className="border-y-2 p-4 flex justify-between items-center">
+                <p className="font-medium text-xl">Select option(s) in list</p>
+                <button type="button" disabled>
+                  <PlusIcon className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="h-96 flex justify-center items-center">
+                <p className="text-xl">
+                  There are no attributes in this option
+                </p>
+              </div>
+            </div>
+          ) : (
+            <Tabs defaultValue={selectedOptions[0]?.id} className="space-y-3.5">
+              <TabsList className="bg-transparent flex justify-start gap-3.5 overflow-y-auto h-max">
+                {selectedOptions.map((opt) => (
+                  <TabsTrigger
+                    key={opt.id}
+                    value={opt.id}
+                    className="px-6 py-2 ring-2 ring-border rounded-lg text-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:ring-0"
+                  >
+                    {opt.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <div className="h-96">
+                {selectedOptions.map((opt) => (
+                  <TabsContent value={opt.id} key={opt.id}>
+                    <DataTable
+                      data={
+                        [
+                          {
+                            id: "1",
+                            type: "text",
+                            key: "GB",
+                            value: "128GB SSD",
+                          },
+                          {
+                            id: "1",
+                            type: "color",
+                            key: "#fff",
+                            value: "White",
+                          },
+                        ] as AttributeType[]
+                      }
+                      columns={columns}
+                      header={() => null}
+                    />
+                  </TabsContent>
+                ))}
+              </div>
+              <TabsContent value="account">
+                Make changes to your account here.
+              </TabsContent>
+              <TabsContent value="password">
+                Change your password here.
+              </TabsContent>
+            </Tabs>
+          )} */}
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+  );
+}
+
+function CreateOptionModal({
+  closeModal,
+}: {
+  closeModal: (
+    param?: { action: "CLOSE" } | { action: "CONFIRM"; option: CategoryOption }
+  ) => void;
+}) {
+  const onSubmit = (values: Omit<CategoryOption, "id">) => {
+    closeModal({
+      action: "CONFIRM",
+      option: { id: crypto.randomUUID(), ...values },
+    });
+  };
+
+  const onCancel = () => closeModal({ action: "CLOSE" });
+
+  return (
+    <Dialog open>
+      <DialogContent className="p-6 w-[55vw] max-w-full gap-6" hideClose>
+        <div className="space-y-3">
+          <h2 className="font-semibold text-3xl">Create option</h2>
+          <Separator />
+        </div>
+        <SpecificityForm onSubmit={onSubmit} onCancel={onCancel} />
+      </DialogContent>
+    </Dialog>
   );
 }

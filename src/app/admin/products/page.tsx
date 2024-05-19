@@ -223,10 +223,21 @@ export default function Page() {
             header={(table) => tableHeader}
             empty={
               <div className="flex flex-col justify-center items-center">
-                <button className="p-8 max-w-sm w-full border rounded-lg flex flex-col gap-3 items-center">
-                  <PlusIcon className="w-12 h-12" />
-                  <span className="text-xl font-medium">Create product</span>
-                </button>
+                {defferedSearch ? (
+                  <div className="grow flex flex-col gap-3 justify-center items-center">
+                    <Image
+                      src={placeholder}
+                      alt="not found"
+                      className="max-w-xs aspect-video object-cover"
+                    />
+                    <p>Product not found</p>
+                  </div>
+                ) : (
+                  <button className="p-8 max-w-sm w-full border rounded-lg flex flex-col gap-3 items-center">
+                    <PlusIcon className="w-12 h-12" />
+                    <span className="text-xl font-medium">Create product</span>
+                  </button>
+                )}
               </div>
             }
           />
@@ -239,11 +250,7 @@ export default function Page() {
                 alt="not found"
                 className="max-w-xs aspect-video object-cover"
               />
-              <p>
-                {searchQuery.length > 0
-                  ? "Product not found"
-                  : "No products in the selected category"}
-              </p>
+              <p>No products in the selected category</p>
             </div>
           </div>
         )}

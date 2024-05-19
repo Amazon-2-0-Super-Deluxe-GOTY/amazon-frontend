@@ -23,7 +23,7 @@ export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
   };
 
   return (
-    <aside className="lg:basis-1/3 grow bg-gray-200 rounded-lg sticky top-0 max-h-[85vh]">
+    <aside className="lg:basis-1/3 grow bg-gray-200 rounded-lg sticky top-4 max-h-[85vh]">
       {!!product ? (
         <div className="flex flex-col gap-3.5 h-full p-6">
           <div className="grid grid-cols-3 grid-rows-4 gap-2 h-1/2">
