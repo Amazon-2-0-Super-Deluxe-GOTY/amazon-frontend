@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import Providers from "./providers";
+import { Suspense } from "react";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -23,7 +24,7 @@ export default function RootLayout({
         <body
           className={`${mulish.className} min-h-screen flex flex-col gap-5 lg:gap-10`}
         >
-          {children}
+          <Suspense fallback={null}>{children}</Suspense>
         </body>
       </Providers>
     </html>
