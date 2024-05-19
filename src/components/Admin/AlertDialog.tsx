@@ -3,27 +3,19 @@ import { Dialog, DialogContent } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 
 interface Props {
-  isOpen: boolean;
-  closeModal: () => void;
   title: string;
   text: string;
-  onSubmit: () => void;
+  closeModal: (param?: { action: "CLOSE" } | { action: "CONFIRM" }) => void;
 }
 
-export const AlertDialog = ({
-  isOpen,
-  closeModal,
-  title,
-  text,
-  onSubmit,
-}: Props) => {
+export const AlertDialog = ({ closeModal, title, text }: Props) => {
   const onOpenChange = (open: boolean) => {
     if (!open) {
       closeModal();
     }
   };
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={true} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-md p-6" hideClose>
         <div className="space-y-6">
           <h3 className="text-center text-3xl font-semibold">{title}</h3>
@@ -33,14 +25,14 @@ export const AlertDialog = ({
             <Button
               variant={"secondary"}
               className="w-full"
-              onClick={closeModal}
+              onClick={() => closeModal({ action: "CLOSE" })}
             >
               Cancel
             </Button>
             <Button
               variant={"destructive"}
               className="w-full"
-              onClick={onSubmit}
+              onClick={() => closeModal({ action: "CONFIRM" })}
             >
               Delete
             </Button>

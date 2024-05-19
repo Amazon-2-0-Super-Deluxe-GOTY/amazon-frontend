@@ -44,3 +44,9 @@ export function formatReviewDate(date: Date) {
 }
 
 export const formatAboutSellerDate = formatReviewDate;
+
+export const formatUserRegistrationDate = (date: Date) => {
+  return `${date.getDate()} ${
+    monthFull[date.getMonth()]
+  } ${date.getFullYear()}`;
+};
