@@ -12,7 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { type TreeNodeType, createTreeArray } from "@/lib/checkboxTree";
+import {
+  type TreeNodeType,
+  createTreeArray,
+  findNodeById,
+} from "@/lib/checkboxTree";
 import { useMemo } from "react";
 
 export function CategorySelect({
@@ -34,16 +38,34 @@ export function CategorySelect({
   );
   const selectedCategory = categories?.find((c) => c.id === value);
 
+  const isOpen = (node: TreeNodeType<Category>) => {
+    return (
+      !!value &&
+      !!findNodeById(node, value, {
+        getId: (value) => value.id,
+        getParentId: (value) => value.parentId,
+      })
+    );
+  };
+
   return (
-    <Select value={value} onValueChange={onValueChange}>
+    <Select
+      value={value}
+      onValueChange={(value) => value && onValueChange(value)}
+    >
       <SelectTrigger>
         <SelectValue placeholder="Choose category">
           <p className="p-2 text-start">{selectedCategory?.title}</p>
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="p-4 min-w-80">
+      <SelectContent className="p-4 min-w-96">
         {treeRoots.map((root) => (
-          <SelectItemRecursive root={root} index={0} key={root.value.id} />
+          <SelectItemRecursive
+            isOpen={isOpen}
+            root={root}
+            index={0}
+            key={root.value.id}
+          />
         ))}
       </SelectContent>
     </Select>
@@ -58,15 +80,21 @@ function getOffset(index: number) {
 function SelectItemRecursive({
   root,
   index,
+  isOpen,
 }: {
   root: TreeNodeType<Category>;
   index: number;
+  isOpen: (node: TreeNodeType<Category>) => boolean;
 }) {
   return root.nodes.length > 0 ? (
-    <Accordion type="single" collapsible>
+    <Accordion
+      type="single"
+      defaultValue={isOpen(root) ? "item-1" : undefined}
+      collapsible
+    >
       <AccordionItem value="item-1" className="border-none">
         <div
-          className="flex hover:bg-muted has-[:focus]:bg-muted"
+          className="flex hover:bg-muted has-[:focus]:bg-muted has-[[data-state=checked]]:bg-muted"
           style={{ paddingLeft: `${getOffset(index)}px` }}
         >
           <SelectItem
@@ -83,6 +111,7 @@ function SelectItemRecursive({
           {root.nodes.map((node) => (
             <SelectItemRecursive
               root={node}
+              isOpen={isOpen}
               index={index + 1}
               key={node.value.id}
             />
@@ -93,7 +122,7 @@ function SelectItemRecursive({
   ) : (
     <SelectItem
       value={root.value.id}
-      className="p-4"
+      className="p-4 data-[state=checked]:bg-muted"
       style={{ paddingLeft: `${getOffset(index + 1)}px` }}
       checkAlign="right"
       checkOffset={4}

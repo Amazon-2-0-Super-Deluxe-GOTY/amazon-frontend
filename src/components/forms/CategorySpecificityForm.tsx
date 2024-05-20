@@ -20,7 +20,7 @@ import { ArrowUpDownIcon, FilePenLineIcon, PlusIcon } from "lucide-react";
 import type { CategorySpecificity } from "../Admin/Category/types";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { AlertDialog } from "../Admin/AlertDialog";
-import { useModal } from "../Admin/Modal";
+import { useModal } from "../Shared/Modal";
 
 interface Props {
   specificities: CategorySpecificity[];

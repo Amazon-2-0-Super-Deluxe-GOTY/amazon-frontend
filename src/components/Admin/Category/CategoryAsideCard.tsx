@@ -10,7 +10,7 @@ import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { CategorySpecificityForm } from "@/components/forms/CategorySpecificityForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog } from "../AlertDialog";
-import { useModal } from "../Modal";
+import { useModal } from "../../Shared/Modal";
 import type { Category } from "@/api/categories";
 
 interface Props {

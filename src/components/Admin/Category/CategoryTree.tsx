@@ -9,7 +9,7 @@ import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
 import { Button } from "@/components/ui/button";
 import { AlertDialog } from "../AlertDialog";
 import clsx from "clsx";
-import { useModal } from "../Modal";
+import { useModal } from "../../Shared/Modal";
 
 export const CategoryTree = ({
   root,

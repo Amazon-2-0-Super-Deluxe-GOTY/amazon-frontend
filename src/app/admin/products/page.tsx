@@ -2,7 +2,13 @@
 import { getProductsShort, type ProductShort } from "@/api/products";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCallback, useMemo, useState } from "react";
+import {
+  useCallback,
+  useMemo,
+  useOptimistic,
+  useState,
+  useTransition,
+} from "react";
 import { getCategories, type Category } from "@/api/categories";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -19,6 +25,9 @@ import { useSearchParamsTools } from "@/lib/router";
 import { Pagination } from "@/components/Shared/Pagination";
 import { useDebounce } from "use-debounce";
 import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
+import Link from "next/link";
+import { useModal } from "@/components/Shared/Modal";
+import { AlertDialog } from "@/components/Admin/AlertDialog";
 
 export default function Page() {
   const searchParams = useSearchParamsTools();
@@ -35,6 +44,8 @@ export default function Page() {
     ProductShort | undefined
   >();
   const [defferedSearch] = useDebounce(searchQuery, 300);
+  const { showModal } = useModal();
+  const [isTransiton, startTransition] = useTransition();
 
   const fetchProducts = useCallback(async () => {
     if (!selectedCategory) return { data: [], count: { pageCount: 0 } };
@@ -55,6 +66,10 @@ export default function Page() {
     queryFn: fetchProducts,
   });
 
+  const [dataOptimistic, setDataOptimistic] = useOptimistic(
+    productsQuery.data?.data
+  );
+
   function onSelectCategory(id: string) {
     const value = categoriesQuery.data?.data.find((c) => c.id === id);
     value && setSelectedCategory(value);
@@ -68,6 +83,28 @@ export default function Page() {
   const changePage = (value: number) => {
     setPage(value);
     searchParams.set("page", value.toString());
+  };
+
+  const handleDelete = (...ids: string[]) => {
+    showModal({
+      component: AlertDialog,
+      props: {
+        title: "Are you sure?",
+        text:
+          ids.length > 1
+            ? "By removing the selected products you will not be able to restore them."
+            : "By removing this product, you will not be able to restore it.",
+      },
+    }).then(({ action }) => {
+      if (action === "CONFIRM") {
+        startTransition(async () => {
+          setDataOptimistic((current) =>
+            current?.filter((v) => !ids.includes(v.id))
+          );
+          // TODO: send api request
+        });
+      }
+    });
   };
 
   const tableHeader = (
@@ -195,15 +232,37 @@ export default function Page() {
       {
         id: "actions",
         header: ({ table }) => {
+          const isDelete =
+            table.getIsSomeRowsSelected() || table.getIsAllRowsSelected();
+
+          const onDelete = () =>
+            handleDelete(
+              ...table.getSelectedRowModel().rows.map((row) => row.original.id)
+            );
+
           return (
-            <button>
-              <PlusIcon className="h-4 w-4" />
-            </button>
+            <div className="min-w-20 flex justify-end items-center">
+              {isDelete ? (
+                <Button
+                  variant={"link"}
+                  className="text-destructive"
+                  onClick={onDelete}
+                >
+                  Delete
+                </Button>
+              ) : (
+                <Link
+                  href={`/products/create?categoryId=${selectedCategory?.id}`}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </Link>
+              )}
+            </div>
           );
         },
       },
     ],
-    []
+    [selectedCategory?.id]
   );
 
   return (
@@ -211,7 +270,7 @@ export default function Page() {
       <div className="lg:basis-2/3 flex flex-col gap-4 lg:gap-6">
         {selectedCategory ? (
           <DataTable
-            data={productsQuery.data?.data ?? []}
+            data={dataOptimistic ?? []}
             columns={columns}
             onRowClick={(row) => setSelectedProduct(row.original)}
             classNames={{
@@ -262,7 +321,7 @@ export default function Page() {
           />
         )}
       </div>
-      <ProductAsideCard product={selectedProduct} onDelete={console.log} />
+      <ProductAsideCard product={selectedProduct} onDelete={handleDelete} />
     </div>
   );
 }
