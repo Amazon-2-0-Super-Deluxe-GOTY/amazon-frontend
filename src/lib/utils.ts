@@ -36,3 +36,6 @@ export const textAvatar = (text: string, avatarMaxLenght = 2) => {
 
   return avatar;
 };
+
+export const getArrayDepth = (value: any[]): number =>
+  Array.isArray(value) ? 1 + Math.max(0, ...value.map(getArrayDepth)) : 0;
