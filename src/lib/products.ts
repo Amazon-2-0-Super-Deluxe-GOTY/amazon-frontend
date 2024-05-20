@@ -5,7 +5,7 @@ export function splitPrice(price: number) {
   return { whole, fraction };
 }
 
-export const cartesian = (...a: any): any[][] =>
+export const cartesian = (...a: any[]): any[][] =>
   a.reduce((a: any, b: any) =>
     a.flatMap((d: any) => b.map((e: any) => [d, e].flat()))
   );
