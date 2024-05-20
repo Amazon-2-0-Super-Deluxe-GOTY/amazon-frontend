@@ -5,6 +5,8 @@ import clsx from "clsx";
 import { FilePenLineIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useModal } from "../../Shared/Modal";
+import { ProductImageFullView } from "@/components/Product/ProductImageFullView";
 
 interface ProductAsideCardProps {
   product?: ProductShort;
@@ -14,12 +16,21 @@ interface ProductAsideCardProps {
 const maxImages = 4;
 
 export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
+  const { showModal } = useModal();
   const displayedImages = product ? product.images.slice(0, maxImages) : [];
   const imagesLeft = (product?.images.length ?? 0) - displayedImages.length;
   const isMoreImages = imagesLeft > 0;
 
   const handleDelete = () => {
     product && onDelete(product.id);
+  };
+
+  const handlePreview = (startIndex: number) => () => {
+    if (!product) return;
+    showModal({
+      component: ProductImageFullView,
+      props: { images: product.images, startIndex },
+    });
   };
 
   return (
@@ -37,10 +48,14 @@ export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
                   isMoreImages &&
                     "last-of-type:col-start-3 last-of-type:row-start-4"
                 )}
+                onClick={handlePreview(i)}
               />
             ))}
             {isMoreImages && (
-              <button className="col-start-3 row-start-4 w-full h-full bg-black/55 flex justify-center items-center text-white text-lg">
+              <button
+                className="col-start-3 row-start-4 w-full h-full bg-black/55 flex justify-center items-center text-white text-lg"
+                onClick={handlePreview(maxImages - 1)}
+              >
                 +{imagesLeft}
               </button>
             )}

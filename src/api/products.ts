@@ -1,10 +1,17 @@
 export interface Product {
   id: string;
   name: string;
-  images: string[];
+  code: string;
   price: number;
+  quantity: number;
   discountPrice?: number;
   rating: number;
+  images: {
+    id: string;
+    imageUrl: string;
+  }[];
+  productDetails: { name: string; text: string }[];
+  aboutProduct: { name: string; text: string }[];
 }
 
 export interface ProductShort {
@@ -53,4 +60,33 @@ export function uploadImage(
     method: "POST",
     body: data,
   }).then((r) => r.json());
+}
+
+interface ProductForm {
+  name: string;
+  code: string;
+  categoryId: string;
+  images: {
+    id: string;
+    imageUrl: string;
+  }[];
+  price: number;
+  quantity: number;
+  productDetails: {
+    name: string;
+    text: string;
+  }[];
+  aboutProduct: {
+    name: string;
+    text: string;
+  }[];
+  discount?: number | undefined;
+}
+
+export function getAdminProduct({
+  productId,
+}: {
+  productId: string;
+}): Promise<{ data: ProductForm }> {
+  return fetch(`/api/admin/products/${productId}`).then((r) => r.json());
 }

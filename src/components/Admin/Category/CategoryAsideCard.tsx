@@ -8,7 +8,7 @@ import { useState } from "react";
 import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog } from "../AlertDialog";
-import { useModal } from "../Modal";
+import { useModal } from "../../Shared/Modal";
 import type { Category } from "@/api/categories";
 
 interface Props {
