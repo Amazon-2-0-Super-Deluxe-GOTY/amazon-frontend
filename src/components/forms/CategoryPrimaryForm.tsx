@@ -53,6 +53,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface Props {
   category: Category;
+  // allCategories: Category[];
   onSubmit: (values: FormValues) => void;
   onCancel: () => void;
 }
@@ -111,7 +112,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
                   <FormDescription hidden>
                     Icon displayed for category
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="px-4" />
                 </FormItem>
               )}
             />
@@ -130,7 +131,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
                 <FormDescription hidden>
                   This is category public display name.
                 </FormDescription>
-                <FormMessage />
+                <FormMessage className="px-4" />
               </FormItem>
             )}
           />
@@ -155,7 +156,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
                   {field.value.length}/300
                 </FormDescription>
               </div>
-              <FormMessage />
+              <FormMessage className="px-4" />
             </FormItem>
           )}
         />
@@ -177,7 +178,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
                 </ToggleGroup>
               </FormControl>
               <FormDescription hidden>Active or inactive</FormDescription>
-              <FormMessage />
+              <FormMessage className="px-4" />
             </FormItem>
           )}
         />
@@ -188,8 +189,8 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
               {category.parentId ? "Child category" : "Parent category"}
             </p>
             <Popover>
-              <PopoverTrigger>
-                <InfoIcon className="w-6 h-6" />
+              <PopoverTrigger className="group">
+                <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
               </PopoverTrigger>
               <PopoverContent align="end" className="max-w-sm w-full">
                 <div className="space-y-4 text-sm">
@@ -214,7 +215,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
             </Popover>
           </div>
         </div>
-        <div className="mt-auto ml-auto space-x-3.5">
+        <div className="mt-auto ml-auto space-x-3.5 pt-14">
           <Button type="reset" variant={"secondary"} onClick={onCancel}>
             Cancel
           </Button>
