@@ -35,7 +35,10 @@ export const CategorySpecificityForm = ({
 }: Props) => {
   const [search, setSearch] = useState("");
   const [isSortDesc, setIsSortDesc] = useState(false);
-  const initialArray = useMemo(() => createCheckboxArray(specificities), []);
+  const initialArray = useMemo(
+    () => createCheckboxArray(specificities),
+    [specificities]
+  );
   const checkboxArray = useCheckboxArray(initialArray);
   const checkboxArrayRef = useRef(checkboxArray);
   const { showModal } = useModal();
