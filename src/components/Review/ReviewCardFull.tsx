@@ -68,7 +68,7 @@ export const ReviewCardFull = ({
   React.useEffect(() => {
     const browserLang = navigator.language;
     setIsInUserLanguage(review.language.startsWith(browserLang));
-  }, []);
+  }, [review.language]);
 
   const onTranslate = async (id: string) => {
     if (translatedReviews.includes(id)) {
@@ -428,7 +428,7 @@ const ReviewBody = ({
       );
     }
     return elems;
-  }, [review.rating]);
+  }, [review]);
 
   const handleTranslate = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

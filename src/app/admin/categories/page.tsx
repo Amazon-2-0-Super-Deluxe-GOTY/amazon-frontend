@@ -58,7 +58,7 @@ export default function Page() {
     return search
       ? checkboxTree.filter((n) => n.value.title.toLowerCase().includes(search))
       : checkboxTree.root;
-  }, [checkboxTree.root, search]);
+  }, [checkboxTree, search]);
 
   const onSelectRootCategory = (value: string) => {
     const node = allCategoriesTrees.find((c) => c.value.id === value);

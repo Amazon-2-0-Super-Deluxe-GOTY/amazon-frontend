@@ -218,8 +218,8 @@ export function CreateProductForm({
   // const categoryId = form.watch("categoryId");
 
   useEffect(() => {
-    form.reset(defaultValues);
-  }, [defaultValues]);
+    form.reset(memoizedDefaultValues);
+  }, [memoizedDefaultValues]);
 
   const uploadImageMutation = useMutation({
     mutationFn: uploadImage,
@@ -331,7 +331,7 @@ export function CreateProductForm({
         component: AlertDialog,
         props: {
           title: "Are you sure?",
-          text: "You will lose all your changes",
+          text: "You will lose all your changes.",
           buttonCloseText: "Back",
           buttonConfirmText: "Continue",
           variant: "default",

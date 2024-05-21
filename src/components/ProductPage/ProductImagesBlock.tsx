@@ -38,7 +38,7 @@ export const ImagesBlock = () => {
     return () => {
       mainCarouselApi.off("slidesInView", onSlidesChange);
     };
-  }, [mainCarouselApi]);
+  }, [mainCarouselApi, previewCarouselApi]);
 
   const onPreviewImageClick = (index: number) => () => {
     setCurrentImageIndex(index);

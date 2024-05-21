@@ -78,7 +78,7 @@ const FormLink = ({ elementId, children }: FormLinkProps) => {
       observer.observe(elem);
       return () => observer.unobserve(elem);
     }
-  }, []);
+  }, [elementId]);
 
   return (
     <Link href={`#${elementId}`} className="w-full flex items-center gap-3.5">

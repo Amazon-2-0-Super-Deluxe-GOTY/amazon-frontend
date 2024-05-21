@@ -11,30 +11,20 @@ import { useSearchParamsTools } from "@/lib/router";
 export const SingInUpBanner = () => {
   const searchParams = useSearchParamsTools();
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
-    const defaultValue = searchParams.get("modal");
-    if (defaultValue) return true;
-
-    return false;
-  });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const openSignUpModal = () => {
     searchParams.set("modal", "signup");
+    setIsModalOpen(true);
   };
   const openLogInModal = () => {
     searchParams.set("modal", "login");
+    setIsModalOpen(true);
   };
   const closeModal = () => {
     searchParams.set("modal", undefined);
+    setIsModalOpen(false);
   };
-
-  useEffect(() => {
-    if (searchParams.get("modal")) setIsModalOpen(true);
-  }, [openSignUpModal, openLogInModal]);
-
-  useEffect(() => {
-    if (!searchParams.get("modal")) setIsModalOpen(false);
-  }, [closeModal]);
 
   return (
     <Card className="w-full bg-gray-100 border-none">
