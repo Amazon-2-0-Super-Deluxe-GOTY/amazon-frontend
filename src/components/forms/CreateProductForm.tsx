@@ -35,7 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { InfoIcon, MoreHorizontal, PlusIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useOptimistic, useTransition } from "react";
 import {
   type UseFormReturn,
@@ -183,6 +183,7 @@ export function CreateProductForm({
   defaultCategoryId = "",
   onSubmit,
 }: CreateProductFormProps) {
+  const router = useRouter();
   const memoizedDefaultValues = useMemo(() => defaultValues, [defaultValues]);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -191,6 +192,9 @@ export function CreateProductForm({
       : {
           name: "",
           code: "",
+          price: 0,
+          discount: 0,
+          quantity: 0,
           categoryId: defaultCategoryId,
           images: [],
           // options: [],
@@ -300,6 +304,46 @@ export function CreateProductForm({
 
   const onRemoveAboutProduct = (index: number) => () => {
     aboutProductArray.remove(index);
+  };
+
+  const onCancel = () => {
+    let isDirty = form.formState.isDirty;
+
+    if (!isDirty) {
+      for (let key in form.formState.dirtyFields) {
+        if (form.formState.dirtyFields[key as keyof FormValues]) {
+          isDirty = true;
+          break;
+        }
+      }
+    }
+
+    if (
+      (!!memoizedDefaultValues &&
+        memoizedDefaultValues.images.length !== imagesArray.fields.length) ||
+      (!memoizedDefaultValues && imagesArray.fields.length > 0)
+    ) {
+      isDirty = true;
+    }
+
+    if (isDirty) {
+      showModal({
+        component: AlertDialog,
+        props: {
+          title: "Are you sure?",
+          text: "You will lose all your changes",
+          buttonCloseText: "Back",
+          buttonConfirmText: "Continue",
+          variant: "default",
+        },
+      }).then(({ action }) => {
+        if (action === "CONFIRM") {
+          router.push("/products");
+        }
+      });
+    } else {
+      router.push("/products");
+    }
   };
 
   return (
@@ -724,11 +768,9 @@ export function CreateProductForm({
 
         <div className="absolute inset-0 -bottom-6 pointer-events-none flex justify-end items-end">
           <div className="sticky bottom-0 py-6 w-full flex justify-end gap-3.5 bg-white pointer-events-auto">
-            <Link href="/products">
-              <Button type="button" variant={"secondary"}>
-                Cancel
-              </Button>
-            </Link>
+            <Button type="button" variant={"secondary"} onClick={onCancel}>
+              Cancel
+            </Button>
             <Button type="submit">
               {memoizedDefaultValues ? "Save" : "Create"}
             </Button>
