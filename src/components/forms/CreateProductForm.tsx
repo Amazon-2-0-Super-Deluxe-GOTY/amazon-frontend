@@ -70,9 +70,20 @@ const aboutProductMaxTextLength = 250;
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name cannot be empty." }),
-  code: z.string().length(barcodeLenght, {
-    message: "Barcode lenght must be 13 characters.",
-  }),
+  code: z
+    .string()
+    .length(barcodeLenght, {
+      message: "Barcode lenght must be 13 characters.",
+    })
+    .refine(
+      (val) => {
+        const num = Number(val);
+        return !isNaN(num) && num > 1;
+      },
+      {
+        message: "Barcode is invalid",
+      }
+    ),
   categoryId: z.string().min(1, {
     message: "Please, select category",
   }),
@@ -82,17 +93,24 @@ const formSchema = z.object({
     .max(maxImages, { message: `${maxImages} images maximum.` }),
   price: z
     .number({ required_error: "Price cannot be empty" })
-    .min(0, { message: "Price must be a positive number." }),
+    .min(0, { message: "Price must be a positive number." })
+    .transform((value) => Math.round(value * 100) / 100),
   discount: z
-    .number()
-    .min(0, { message: "Discount must be a positive number." })
-    .max(100, {
-      message:
-        "Enter the discount correctly. Only numbers from 0 to 100 are allowed. Letters and special characters are not allowed.",
-    })
+    .union([
+      z
+        .number()
+        .int({ message: "Discount must be an integer." })
+        .min(0, { message: "Discount must be a positive number." })
+        .max(100, {
+          message:
+            "Enter the discount correctly. Only numbers from 0 to 100 are allowed. Letters and special characters are not allowed.",
+        }),
+      z.nan(),
+    ])
     .optional(),
   quantity: z
     .number({ required_error: "Quantity cannot be empty" })
+    .int({ message: "Quantity must be an integer." })
     .min(0, { message: "Quantity must be a positive number." }),
   // options: z.array(
   //   z.object({
@@ -193,7 +211,6 @@ export function CreateProductForm({
           name: "",
           code: "",
           price: 0,
-          discount: 0,
           quantity: 0,
           categoryId: defaultCategoryId,
           images: [],
@@ -382,7 +399,7 @@ export function CreateProductForm({
               <FormItem>
                 <div className="relative">
                   <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
-                    Code
+                    Barcode
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter product code..." {...field} />
@@ -429,8 +446,8 @@ export function CreateProductForm({
                       Product display
                     </FormLabel>
                     <Popover>
-                      <PopoverTrigger>
-                        <InfoIcon className="w-6 h-6" />
+                      <PopoverTrigger className="group">
+                        <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
                       </PopoverTrigger>
                       <PopoverContent align="start" className="max-w-sm w-full">
                         <div className="space-y-2 text-sm">
@@ -476,7 +493,7 @@ export function CreateProductForm({
                         />
                         <button
                           type="button"
-                          className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100"
+                          className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100 rounded-lg"
                           onClick={onDeleteImage(i)}
                         >
                           <Trash2Icon className="w-10 h-10 stroke-white" />
