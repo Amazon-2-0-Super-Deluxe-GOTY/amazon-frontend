@@ -20,9 +20,7 @@ import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
 import { ProductDetails } from "@/components/Product/ProductDetails";
 import { AboutProduct } from "@/components/Product/AboutProduct";
-import type { DescriptionBlock } from "@/components/Product/Description/types";
 import { ProductsBlock } from "@/components/Product/ProductsBlock";
-import { ProductDescription } from "@/components/Product/ProductDescription";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
@@ -182,46 +180,6 @@ const aboutProductData = [
   },
 ];
 
-const productDescriptionBlocks: DescriptionBlock[] = [
-  {
-    id: "1",
-    type: "header",
-    data: {
-      text: "Lorem ipsum dolor sit amet",
-      level: 1,
-      align: "center",
-    },
-  },
-  {
-    id: "2",
-    type: "paragraph",
-    data: {
-      text: "Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue.",
-      align: "center",
-    },
-  },
-  {
-    id: "3",
-    type: "horizontalCard",
-    data: {
-      title: "Cum sociis natoque penatibus",
-      text: "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.",
-      image: placeholder,
-      direction: "ltr",
-    },
-  },
-  {
-    id: "4",
-    type: "horizontalCard",
-    data: {
-      title: "Nullam dictum felis eu pede",
-      text: "Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet.",
-      image: placeholder,
-      direction: "rtl",
-    },
-  },
-];
-
 const reviewsStatistic: ReviewsStatistic = {
   score: 4.3,
   reviewsCount: 228,
@@ -243,6 +201,7 @@ const reviewsStatistic: ReviewsStatistic = {
 
 const reviews: Review[] = [
   {
+    id: "1",
     user: {
       avatar: placeholder,
       fullName: "Jessica Jimenez",
@@ -270,9 +229,11 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 1,
     isRatedByUser: true,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "2",
     user: {
       avatar: placeholder,
       fullName: "Adrienne O’Brien",
@@ -303,9 +264,11 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 25,
     isRatedByUser: true,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "3",
     user: {
       avatar: placeholder,
       fullName: "Joe Gatto",
@@ -327,9 +290,11 @@ const reviews: Review[] = [
     rating: 3,
     reviewRatesCount: 1,
     isRatedByUser: false,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "4",
     user: {
       avatar: placeholder,
       fullName: "Sylvio",
@@ -350,9 +315,11 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 0,
     isRatedByUser: false,
+    language: "en",
     createdAt: new Date(),
   },
   {
+    id: "5",
     user: {
       avatar: placeholder,
       fullName: "Sylvio",
@@ -373,6 +340,7 @@ const reviews: Review[] = [
     rating: 5,
     reviewRatesCount: 0,
     isRatedByUser: false,
+    language: "es",
     createdAt: new Date(),
   },
 ];
@@ -427,7 +395,7 @@ export default function ProductPage({
   }, [params.productId]);
 
   return (
-    <main className="grow w-full max-w-[1600px] py-5 lg:py-10 mx-auto space-y-6">
+    <main className="px-4 space-y-6">
       <div className="w-full flex items-left gap-1 mb-3 lg:mb-10">
         <Breadcrumb className="text-sm lg:text-base">
           <BreadcrumbList>
@@ -523,7 +491,7 @@ export default function ProductPage({
         </div>
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
-            <ProductOrderCard isOptionsSelected={isOptionsSelected} />
+            <ProductOrderCard productId={params.productId} isOptionsSelected={isOptionsSelected} />
             <SellerInfoCard sellerInfo={sellerInfo} />
             <div className="p-4 lg:p-6 bg-gray-200 rounded-lg flex items-center gap-3">
               <TrophyIcon className="w-8 h-8 lg:w-10 lg:h-10" />
@@ -549,12 +517,6 @@ export default function ProductPage({
           <AboutProduct items={aboutProductData} />
         </section>
       )}
-      <section className="py-6 border-t-2 pt-4 space-y-6">
-        <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
-          Product Description
-        </h2>
-        <ProductDescription blocks={productDescriptionBlocks} />
-      </section>
       <section className="py-6 border-t-2 pt-4 space-y-6">
         <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
           Customer reviews

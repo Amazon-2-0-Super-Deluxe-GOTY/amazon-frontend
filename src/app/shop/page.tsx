@@ -8,7 +8,7 @@ import { ProductsBlock } from "@/components/Product/ProductsBlock";
 export default function Home() {
   return (
     <>
-      <main className="max-w-[1600px] w-full grow pt-4 mx-auto">
+      <main className="lg:px-4">
         <Banner />
         <section className="py-6">
           <CarouselCategory />

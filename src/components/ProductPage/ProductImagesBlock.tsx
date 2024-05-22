@@ -11,22 +11,18 @@ import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import clsx from "clsx";
 import { ProductImageFullView } from "../Product/ProductImageFullView";
+import { useModal } from "../Shared/Modal";
 
 export const ImagesBlock = () => {
   const [mainCarouselApi, setMainCarouselApi] = React.useState<CarouselApi>();
   const [previewCarouselApi, setPreviewCarouselApi] =
     React.useState<CarouselApi>();
   const [currentImageIndex, setCurrentImageIndex] = React.useState<number>(0);
-  const currentImageIndexRef = React.useRef<number>(currentImageIndex);
-  const [isOpen, setIsOpen] = React.useState(false);
   const images = React.useMemo(
     () => Array.from({ length: 10 }).map(() => placeholder),
     []
   );
-
-  React.useEffect(() => {
-    currentImageIndexRef.current = currentImageIndex;
-  }, [currentImageIndex]);
+  const { showModal } = useModal();
 
   React.useEffect(() => {
     if (!mainCarouselApi) return;
@@ -42,15 +38,22 @@ export const ImagesBlock = () => {
     return () => {
       mainCarouselApi.off("slidesInView", onSlidesChange);
     };
-  }, [mainCarouselApi]);
+  }, [mainCarouselApi, previewCarouselApi]);
 
   const onPreviewImageClick = (index: number) => () => {
     setCurrentImageIndex(index);
     mainCarouselApi?.scrollTo(index);
   };
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const openModal = () => {
+    showModal({
+      component: ProductImageFullView,
+      props: {
+        images,
+        startIndex: currentImageIndex,
+      },
+    });
+  };
 
   return (
     <>
@@ -115,12 +118,6 @@ export const ImagesBlock = () => {
           </CarouselContent>
         </Carousel>
       </div>
-      <ProductImageFullView
-        images={images}
-        isOpen={isOpen}
-        closeModal={closeModal}
-        startIndex={currentImageIndex}
-      />
     </>
   );
 };

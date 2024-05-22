@@ -12,7 +12,6 @@ import { XIcon } from "lucide-react";
 interface Props {
   images: string[];
   startIndex?: number;
-  isOpen: boolean;
   closeModal: () => void;
 }
 
@@ -24,7 +23,7 @@ export const ProductImageFullView = (props: Props) => {
   };
 
   return (
-    <Dialog open={props.isOpen} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-screen w-screen h-[68vh] lg:w-[83vw] lg:h-[95vh] p-0"
         hideClose

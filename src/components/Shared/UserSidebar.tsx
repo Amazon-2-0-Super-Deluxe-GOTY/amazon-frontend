@@ -72,7 +72,12 @@ export const UserSidebar = ({
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-3 lg:gap-4">
               {categories.map((item) => (
-                <Link className="w-full" href={item.url} key={item.title} onClick={closeSidebar}>
+                <Link
+                  className="w-full"
+                  href={item.url}
+                  key={item.title}
+                  onClick={closeSidebar}
+                >
                   <SidebarItem icon={item.icon} text={item.title} />
                 </Link>
               ))}
