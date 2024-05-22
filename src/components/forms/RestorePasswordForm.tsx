@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const FormSchema = z.object({
-  email: z.string().min(6, {
+  email: z.string().refine((value) => emailRegex.test(value), {
     message: "This field is necessary to proceed!",
-  })
-})
+  }),
+});
 
 export function RestorePasswordForm({
   changeModal,
@@ -54,7 +56,7 @@ export function RestorePasswordForm({
               <div>
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
+                  <Input placeholder="Enter your email" type="text" autoComplete="email" {...field} />
                 </FormControl>
               </div>
               <FormMessage className="max-md:text-xs" />

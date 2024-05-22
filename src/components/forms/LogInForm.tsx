@@ -17,8 +17,10 @@ import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
 import { Checkbox } from "../ui/checkbox"
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const FormSchema = z.object({
-  email: z.string().min(6, {
+  email: z.string().refine((value) => emailRegex.test(value), {
     message: "Wrong or Invalid email address",
   }),
   password: z.string().min(8, {
@@ -63,7 +65,7 @@ export function LogInForm({
               <div>
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
+                  <Input placeholder="Enter your email" type="text" autoComplete="email" {...field} />
                 </FormControl>
               </div>
               <FormMessage className="max-md:text-xs" />
