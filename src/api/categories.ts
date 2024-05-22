@@ -9,6 +9,7 @@ export interface Category {
 }
 
 export interface CategoryOption {
+  id: string;
   name: string;
   appearance: "tiles" | "rows";
 }

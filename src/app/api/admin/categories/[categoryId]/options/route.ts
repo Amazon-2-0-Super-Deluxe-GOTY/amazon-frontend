@@ -1,9 +1,13 @@
-const data: { name: string; appearance: "tiles" | "rows" }[] = [
+import type { CategoryOption } from "@/api/categories";
+
+const data: CategoryOption[] = [
   {
+    id: "1",
     name: "Color",
     appearance: "tiles",
   },
   {
+    id: "2",
     name: "Size",
     appearance: "rows",
   },
