@@ -9,12 +9,14 @@ import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog } from "../AlertDialog";
 import { useModal } from "../../Shared/Modal";
-import type { Category } from "@/api/categories";
+import { getCategories, type Category } from "@/api/categories";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   category?: Category;
   parentCategory?: Category;
   mainCategory?: Category;
+  allCategories?: Category[];
   onViewMain?: () => void;
   onDelete: (id: string) => void;
 }
@@ -25,6 +27,7 @@ export const CategoryAsideCard = ({
   category,
   parentCategory,
   mainCategory,
+  allCategories,
   onViewMain,
   onDelete,
 }: Props) => {
@@ -113,6 +116,7 @@ export const CategoryAsideCard = ({
             isOpen={isModalOpen}
             closeModal={closeModal}
             category={category}
+            allCategories={allCategories ?? []}
           />
         </div>
       ) : (
@@ -139,12 +143,14 @@ interface EditCategoryModalProps {
   isOpen: boolean;
   closeModal: () => void;
   category: Category;
+  allCategories: Category[];
 }
 
 const EditCategoryModal = ({
   isOpen,
   closeModal,
   category,
+  allCategories,
 }: EditCategoryModalProps) => {
   const onOpenChange = (open: boolean) => {
     if (!open) {
@@ -169,6 +175,7 @@ const EditCategoryModal = ({
 
             <CategoryPrimaryForm
               category={category}
+              allCategories={allCategories}
               onSubmit={console.log}
               onCancel={closeModal}
             />

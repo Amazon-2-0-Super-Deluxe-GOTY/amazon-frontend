@@ -39,6 +39,7 @@ export function CategorySelect({
   const selectedCategory = categories?.find((c) => c.id === value);
 
   const isOpen = (node: TreeNodeType<Category>) => {
+    if (node.value.id === value) return false;
     return (
       !!value &&
       !!findNodeById(node, value, {

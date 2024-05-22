@@ -50,9 +50,9 @@ export default function Page() {
   const [search, setSearch] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const createModalParams = useRef<{
-    defaultIsRoot?: boolean;
+    isRoot: boolean;
     defaultRootId?: string;
-  }>({});
+  }>({ isRoot: true });
 
   const displayedTreeRoot = React.useMemo(() => {
     return search
@@ -111,11 +111,11 @@ export default function Page() {
   const closeCreateModal = () => setIsCreateModalOpen(false);
 
   const openCreateModalAsRoot = () => {
-    createModalParams.current = { defaultIsRoot: true };
+    createModalParams.current = { isRoot: true };
     openCreateModal();
   };
   const openCreateModalAsChild = (rootId: string) => {
-    createModalParams.current = { defaultIsRoot: false, defaultRootId: rootId };
+    createModalParams.current = { isRoot: false, defaultRootId: rootId };
     openCreateModal();
   };
 
@@ -210,6 +210,7 @@ export default function Page() {
           (c) => c.id === selectedCategory?.parentId
         )}
         mainCategory={checkboxTree.root?.value}
+        allCategories={data?.data ?? []}
         onViewMain={() =>
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
@@ -219,7 +220,7 @@ export default function Page() {
       <CreateCategoryModal
         isOpen={isCreateModalOpen}
         closeModal={closeCreateModal}
-        categoriesTrees={allCategoriesTrees}
+        allCategories={data?.data ?? []}
         {...createModalParams.current}
       />
     </div>

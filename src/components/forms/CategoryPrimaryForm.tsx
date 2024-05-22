@@ -32,6 +32,7 @@ import { Textarea } from "../ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { InfoIcon } from "lucide-react";
 import type { Category } from "@/api/categories";
+import { CategorySelect } from "../Admin/Category/CategorySelect";
 
 const formSchema = z.object({
   iconId: z.string().optional(),
@@ -46,6 +47,7 @@ const formSchema = z.object({
     .max(300, {
       message: "Description must be less than 300 characters.",
     }),
+  parentId: z.string().optional(),
   status: z.enum(["active", "inactive"]),
 });
 
@@ -53,18 +55,24 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface Props {
   category: Category;
-  // allCategories: Category[];
+  allCategories: Category[];
   onSubmit: (values: FormValues) => void;
   onCancel: () => void;
 }
 
-export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
+export function CategoryPrimaryForm({
+  category,
+  allCategories,
+  onSubmit,
+  onCancel,
+}: Props) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       iconId: category.iconId,
       name: category.title,
       description: category.description,
+      parentId: category.parentId,
       status: category.isDeleted ? "inactive" : "active",
     },
   });
@@ -160,6 +168,30 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
             </FormItem>
           )}
         />
+        {!!category.parentId && (
+          <FormField
+            control={form.control}
+            name="parentId"
+            render={({ field }) => (
+              <FormItem className="w-full relative">
+                <FormLabel className="absolute left-3 -top-0.5 font-light bg-white p-0.5">
+                  Parent category
+                </FormLabel>
+                <FormControl>
+                  <CategorySelect
+                    categories={allCategories}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
+                </FormControl>
+                <FormDescription hidden>
+                  This is parent category of subcategory.
+                </FormDescription>
+                <FormMessage className="px-4" />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="status"
@@ -215,7 +247,7 @@ export function CategoryPrimaryForm({ category, onSubmit, onCancel }: Props) {
             </Popover>
           </div>
         </div>
-        <div className="mt-auto ml-auto space-x-3.5 pt-14">
+        <div className="mt-auto ml-auto space-x-3.5 pt-12">
           <Button type="reset" variant={"secondary"} onClick={onCancel}>
             Cancel
           </Button>

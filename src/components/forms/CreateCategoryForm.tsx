@@ -32,31 +32,50 @@ import { MinusIcon } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import clsx from "clsx";
 import type { Category } from "@/api/categories";
+import { CategorySelect } from "../Admin/Category/CategorySelect";
 
-const formSchema = z.object({
-  iconId: z.string().optional(),
-  parentId: z.string().optional(),
-  name: z.string().min(1, {
-    message: "Category name must not be empty.",
-  }),
-  description: z
-    .string()
-    .min(1, {
-      message: "Category description must not be empty.",
-    })
-    .max(300, {
-      message: "Category description must not be more than 300 characters.",
+const formSchema = z
+  .object({
+    // just helper field
+    isRoot: z.boolean().optional(),
+    iconId: z.string().optional(),
+    parentId: z.string().optional(),
+    name: z.string().min(1, {
+      message: "Category name must not be empty.",
     }),
-  status: z.enum(["active", "inactive"]),
-  options: z.array(
-    z.object({
-      title: z.string().min(1, {
-        message: "Option must not be empty.",
+    description: z
+      .string()
+      .min(1, {
+        message: "Category description must not be empty.",
+      })
+      .max(300, {
+        message: "Category description must not be more than 300 characters.",
       }),
-      appearance: z.enum(["tiles", "rows"]),
-    })
-  ),
-});
+    status: z.enum(["active", "inactive"]),
+    options: z.array(
+      z.object({
+        title: z.string().min(1, {
+          message: "Option must not be empty.",
+        }),
+        appearance: z.enum(["tiles", "rows"]),
+      })
+    ),
+  })
+  .superRefine((values, ctx) => {
+    if (values.isRoot && !values.iconId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please, select icon",
+        path: ["iconId"],
+      });
+    } else if (!values.isRoot && !values.parentId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please, select parentCategory",
+        path: ["parentId"],
+      });
+    }
+  });
 
 const optionFormSchema = z.object({
   title: z.string().min(1, {
@@ -70,7 +89,7 @@ type FormValues = z.infer<typeof formSchema>;
 interface Props {
   isRoot: boolean;
   defaultRootId?: string;
-  categoriesTrees: TreeNodeType<Category>[];
+  allCategories: Category[];
   onSubmit: (values: FormValues) => void;
   onCancel: () => void;
 }
@@ -80,13 +99,15 @@ export const CreateCategoryForm = ({
   onCancel,
   isRoot,
   defaultRootId,
-  categoriesTrees,
+  allCategories,
 }: Props) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      isRoot,
       name: "",
       description: "",
+      parentId: defaultRootId,
       status: "active",
       iconId: "shirt",
     },
@@ -108,13 +129,6 @@ export const CreateCategoryForm = ({
   useEffect(() => {
     setSelectedRootId(defaultRootId);
   }, [defaultRootId]);
-
-  const rootCategories = categoriesTrees;
-  const childCategories = useMemo(() => {
-    if (!selectedRootId) return [];
-    const root = categoriesTrees.find((n) => n.value.id === selectedRootId);
-    return root ? treeToArray(root) : [];
-  }, [selectedRootId, categoriesTrees]);
 
   const handleSubmit = (values: FormValues) => {
     // for some reason form methods doesn't reset fields, so just form the object manually
@@ -163,7 +177,9 @@ export const CreateCategoryForm = ({
       >
         <div className="space-y-6" id="info">
           <div className="space-y-3.5">
-            <h2 className="text-3xl font-semibold">Category info</h2>
+            <h2 className="text-3xl font-semibold">
+              {isRoot ? "Create category" : "Create subcategory"}
+            </h2>
             <Separator />
           </div>
           <fieldset className="flex items-center gap-6">
@@ -203,7 +219,7 @@ export const CreateCategoryForm = ({
                     <FormDescription hidden>
                       Icon displayed for category
                     </FormDescription>
-                    <FormMessage />
+                    <FormMessage className="px-4" />
                   </FormItem>
                 )}
               />
@@ -222,7 +238,7 @@ export const CreateCategoryForm = ({
                   <FormDescription hidden>
                     This is category public display name.
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="px-4" />
                 </FormItem>
               )}
             />
@@ -247,62 +263,33 @@ export const CreateCategoryForm = ({
                     {field.value.length}/300
                   </FormDescription>
                 </div>
-                <FormMessage />
+                <FormMessage className="px-4" />
               </FormItem>
             )}
           />
           {!isRoot && (
-            <>
-              <Select value={selectedRootId} onValueChange={setSelectedRootId}>
-                <SelectTrigger className="w-full relative">
-                  <label className="absolute left-3 -top-3.5 font-light bg-white p-0.5">
-                    Main category
-                  </label>
-                  <SelectValue placeholder="Choose main category..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {rootCategories.map((c) => (
-                    <SelectItem value={c.value.id} key={c.value.id}>
-                      {c.value.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormField
-                control={form.control}
-                name="parentId"
-                disabled={!selectedRootId}
-                render={({ field }) => (
-                  <FormItem className="relative">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5 z-10">
-                      Parent category
-                    </FormLabel>
-                    <Select
+            <FormField
+              control={form.control}
+              name="parentId"
+              render={({ field }) => (
+                <FormItem className="w-full relative">
+                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                    Parent category
+                  </FormLabel>
+                  <FormControl>
+                    <CategorySelect
+                      categories={allCategories}
+                      value={field.value}
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={field.disabled}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose parent category..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {childCategories.map((c) => (
-                          <SelectItem value={c.value.id} key={c.value.id}>
-                            {c.value.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription hidden>
-                      Parent category for new category
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
+                    />
+                  </FormControl>
+                  <FormDescription hidden>
+                    This is parent category of subcategory.
+                  </FormDescription>
+                  <FormMessage className="px-4" />
+                </FormItem>
+              )}
+            />
           )}
           <FormField
             control={form.control}
@@ -324,16 +311,16 @@ export const CreateCategoryForm = ({
                   </ToggleGroup>
                 </FormControl>
                 <FormDescription hidden>Active or inactive</FormDescription>
-                <FormMessage />
+                <FormMessage className="px-4" />
               </FormItem>
             )}
           />
-          <div className="pt-2">
+          {/* <div className="pt-2">
             <Separator />
-          </div>
+          </div> */}
         </div>
 
-        <div className="space-y-6" id="options">
+        {/* <div className="space-y-6" id="options">
           <div className="space-y-3.5">
             <h2 className="text-3xl font-semibold">Option configuration</h2>
             <Separator />
@@ -353,7 +340,7 @@ export const CreateCategoryForm = ({
                   <FormDescription hidden>
                     This is option display name.
                   </FormDescription>
-                  <FormMessage>{fieldState.error?.message}</FormMessage>
+                  <FormMessage className="px-4">{fieldState.error?.message}</FormMessage>
                 </FormItem>
               )}
             />
@@ -418,7 +405,7 @@ export const CreateCategoryForm = ({
                     </ToggleGroup>
                   </FormControl>
                   <FormDescription hidden>Active or inactive</FormDescription>
-                  <FormMessage>{fieldState.error?.message}</FormMessage>
+                  <FormMessage className="px-4">{fieldState.error?.message}</FormMessage>
                 </FormItem>
               )}
             />
@@ -468,8 +455,8 @@ export const CreateCategoryForm = ({
               </div>
             </ScrollArea>
           </div>
-        </div>
-        <div className="flex items-center gap-3 ml-auto">
+        </div> */}
+        <div className="flex items-center gap-3 ml-auto pt-12">
           <Button type="reset" variant={"secondary"} onClick={onCancel}>
             Cancel
           </Button>
