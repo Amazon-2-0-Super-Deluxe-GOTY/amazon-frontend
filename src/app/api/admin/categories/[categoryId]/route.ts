@@ -5,7 +5,14 @@ const data: Category = {
   parentId: "13",
   name: "Blouses and Shirts",
   description: "Test description",
-  categoryPropertyKeys: [],
+  categoryPropertyKeys: [
+    {
+      name: "Size",
+    },
+    {
+      name: "Fabric type",
+    },
+  ],
   isDeleted: false,
 };
 

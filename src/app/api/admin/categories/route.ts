@@ -7,7 +7,7 @@ const data: Category[] = [
     iconId: "shirt",
     description:
       "Explore a diverse collection of clothing, footwear, accessories, and more to elevate your style and keep up with the latest fashion trends. From timeless classics to bold statements, find everything you need to express your individuality and stay fashionable.",
-    categoryPropertyKeys: [{ name: "Fashion" }, { name: "Clothes" }],
+    categoryPropertyKeys: [],
     isDeleted: false,
   },
   {
@@ -47,7 +47,11 @@ const data: Category[] = [
     parentId: "1",
     name: "Women's Fashion",
     description: "Test description",
-    categoryPropertyKeys: [],
+    categoryPropertyKeys: [
+      { name: "Size" },
+      { name: "Fabric type" },
+      { name: "Color" },
+    ],
     isDeleted: false,
   },
   {
@@ -55,7 +59,14 @@ const data: Category[] = [
     parentId: "11",
     name: "Casual Women's Clothing",
     description: "Test description",
-    categoryPropertyKeys: [],
+    categoryPropertyKeys: [
+      {
+        name: "Size",
+      },
+      {
+        name: "Brand",
+      },
+    ],
     isDeleted: false,
   },
   {

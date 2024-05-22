@@ -28,7 +28,7 @@ import { useEffect, useMemo, useState } from "react";
 import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
 import { getAllIcons } from "@/lib/categories";
 import { Separator } from "../ui/separator";
-import { InfoIcon, MinusIcon } from "lucide-react";
+import { InfoIcon, MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import clsx from "clsx";
 import type { Category } from "@/api/categories";
@@ -141,7 +141,7 @@ export const CreateCategoryForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-6 h-full pb-16 relative"
       >
         <fieldset className="space-y-6" id="info">
           <div className="space-y-3.5">
@@ -294,9 +294,7 @@ export const CreateCategoryForm = ({
               <p className="text-xl font-semibold">Role</p>
               <div className="flex items-center gap-3.5">
                 <p className="text-lg">
-                  {defaultValues.parentId
-                    ? "Child category"
-                    : "Parent category"}
+                  {!isRoot ? "Child category" : "Parent category"}
                 </p>
                 <Popover>
                   <PopoverTrigger className="group">
@@ -326,15 +324,62 @@ export const CreateCategoryForm = ({
               </div>
             </div>
           )}
-          {/* <div className="pt-2">
-            <Separator />
-          </div> */}
         </fieldset>
-        <div className="flex items-center gap-3 ml-auto pt-12">
-          <Button type="reset" variant={"secondary"} onClick={onCancel}>
+        <fieldset className="space-y-6 pt-2">
+          <div className="space-y-3.5">
+            <h3 className="text-xl font-semibold">Property keys</h3>
+            <Separator />
+          </div>
+          {propertyKeysArray.fields.map((value, i) => (
+            <div className="flex items-center gap-3.5" key={value.id}>
+              <FormField
+                control={form.control}
+                name={`categoryPropertyKeys.${i}.name`}
+                render={({ field }) => (
+                  <FormItem className="relative w-full space-y-0">
+                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                      Property key
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Enter property key name..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="px-4" />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="button"
+                variant={"ghost"}
+                className="h-max p-3"
+                onClick={onRemovePropertyKey(i)}
+              >
+                <Trash2Icon className="w-6 h-6" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            className="h-max w-full p-4 justify-start gap-3.5"
+            variant={"secondary"}
+            onClick={onAddPropertyKey}
+          >
+            <PlusIcon className="w-4 h-4" />
+            Add property key
+          </Button>
+          <FormMessage className="px-4">
+            {form.formState.errors.categoryPropertyKeys?.message}
+          </FormMessage>
+        </fieldset>
+
+        <div className="fixed bottom-0 left-0 right-0 p-6 flex justify-end gap-3.5 bg-white z-10">
+          <Button type="button" variant={"secondary"} onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">{isEdit ? "Save" : "Create"}</Button>
         </div>
       </form>
     </Form>

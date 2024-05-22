@@ -26,7 +26,10 @@ export const CreateCategoryModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[75vw] lg:w-[50vw] p-6 max-w-full" hideClose>
+      <DialogContent
+        className="w-[75vw] lg:w-[50vw] h-[70vh] p-6 max-w-full"
+        hideClose
+      >
         <ScrollArea
           className="h-full"
           viewportClassName="[&>div]:h-full scroll-smooth p-2"

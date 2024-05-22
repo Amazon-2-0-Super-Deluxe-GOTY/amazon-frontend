@@ -1,10 +1,14 @@
+export interface CategoryPropertyKey {
+  name: string;
+}
+
 export interface Category {
   id: string;
   parentId?: string;
   iconId?: string;
   name: string;
   description: string;
-  categoryPropertyKeys: { name: string }[];
+  categoryPropertyKeys: CategoryPropertyKey[];
   isDeleted: boolean;
 }
 

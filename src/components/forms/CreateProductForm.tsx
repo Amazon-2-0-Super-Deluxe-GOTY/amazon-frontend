@@ -19,7 +19,13 @@ import { useMutation } from "@tanstack/react-query";
 import { InfoIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useOptimistic, useTransition } from "react";
+import {
+  useEffect,
+  useMemo,
+  useOptimistic,
+  useState,
+  useTransition,
+} from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useModal } from "@/components/Shared/Modal";
@@ -62,7 +68,10 @@ const formSchema = z.object({
     .min(1, { message: "Add at least one photo" })
     .max(maxImages, { message: `${maxImages} images maximum.` }),
   price: z
-    .number({ required_error: "Price cannot be empty" })
+    .number({
+      required_error: "Price cannot be empty",
+      invalid_type_error: "Price cannot be empty",
+    })
     .min(0, { message: "Price must be a positive number." })
     .transform((value) => Math.round(value * 100) / 100),
   discount: z
@@ -79,7 +88,10 @@ const formSchema = z.object({
     ])
     .optional(),
   quantity: z
-    .number({ required_error: "Quantity cannot be empty" })
+    .number({
+      required_error: "Quantity cannot be empty",
+      invalid_type_error: "Quantity cannot be empty",
+    })
     .int({ message: "Quantity must be an integer." })
     .min(0, { message: "Quantity must be a positive number." }),
   productDetails: z
@@ -141,6 +153,7 @@ export function CreateProductForm({
           name: "",
           code: "",
           price: 0,
+          discount: 0,
           quantity: 0,
           categoryId: defaultCategoryId,
           images: [],
@@ -161,9 +174,35 @@ export function CreateProductForm({
     name: "aboutProduct",
   });
 
+  const [
+    selectedCategoryPropertyKeyNames,
+    setSelectedCategoryPropertyKeyNames,
+  ] = useState<string[]>([]);
+  const categoryId = form.watch("categoryId");
+
   useEffect(() => {
     form.reset(memoizedDefaultValues);
   }, [memoizedDefaultValues]);
+
+  useEffect(() => {
+    if (!categoryId) return;
+
+    const category = categories.find((c) => c.id === categoryId);
+    if (!category) return;
+
+    const currentPropertyKeysNames = productDetailsArray.fields.map(
+      (c) => c.name
+    );
+    const newPropertyKeysNames = category.categoryPropertyKeys.map(
+      (c) => c.name
+    );
+    const newPropertyKeys = category.categoryPropertyKeys
+      .filter((c) => !currentPropertyKeysNames.includes(c.name))
+      .map((pk) => ({ name: pk.name, text: "" }));
+
+    productDetailsArray.prepend(newPropertyKeys);
+    setSelectedCategoryPropertyKeyNames(newPropertyKeysNames);
+  }, [categoryId, categories]);
 
   const uploadImageMutation = useMutation({
     mutationFn: uploadImage,
@@ -343,6 +382,7 @@ export function CreateProductForm({
                     categories={categories}
                     value={field.value}
                     onValueChange={field.onChange}
+                    disallowRoots
                   />
                 </FormControl>
                 <FormDescription hidden>
@@ -528,17 +568,21 @@ export function CreateProductForm({
                 name={`productDetails.${i}.name`}
                 render={({ field }) => (
                   <FormItem className="relative basis-1/3 space-y-0">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
-                      Name
-                    </FormLabel>
                     <FormControl>
                       <Input
+                        className="peer"
                         type="text"
                         placeholder="Enter detail name..."
+                        disabled={selectedCategoryPropertyKeyNames.includes(
+                          field.value
+                        )}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="px-4" />
+                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5 peer-disabled:text-gray-500">
+                      Name
+                    </FormLabel>
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
@@ -562,18 +606,20 @@ export function CreateProductForm({
                         {field.value.length}/{productDetailsMaxTextLength}
                       </FormDescription>
                     </div>
-                    <FormMessage className="px-4" />
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
-              <Button
-                type="button"
-                variant={"ghost"}
-                className="h-max p-3"
-                onClick={onRemoveProductDetail(i)}
-              >
-                <Trash2Icon className="w-6 h-6" />
-              </Button>
+              {!selectedCategoryPropertyKeyNames.includes(value.name) && (
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  className="h-max p-3"
+                  onClick={onRemoveProductDetail(i)}
+                >
+                  <Trash2Icon className="w-6 h-6" />
+                </Button>
+              )}
             </fieldset>
           ))}
           <Button
@@ -613,7 +659,7 @@ export function CreateProductForm({
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="px-4" />
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
@@ -637,7 +683,7 @@ export function CreateProductForm({
                         {field.value.length}/{aboutProductMaxTextLength}
                       </FormDescription>
                     </div>
-                    <FormMessage className="px-4" />
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
