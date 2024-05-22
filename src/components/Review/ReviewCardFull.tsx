@@ -28,9 +28,13 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import Image from "next/image";
+import { SheetHeader } from "../Shared/SteetParts";
+import { ScrollArea } from "../ui/scroll-area";
+import { useQuery } from "@tanstack/react-query";
+import { getReviewTranslation } from "@/api/review";
 
 interface ReviewCardProps {
-  review?: Review;
+  review: Review;
   isOpen: boolean;
   startImageIndex: number;
   hasPrev: boolean;
@@ -52,6 +56,30 @@ export const ReviewCardFull = ({
 }: ReviewCardProps) => {
   const isDesktop = useScreenSize({ minSize: "lg" });
   const [isImageExpanded, setIsImageExpanded] = useState(false);
+  const [isInUserLanguage, setIsInUserLanguage] = useState(true);
+  const [translatedReviews, setTrenslatedReviews] = useState<string[]>([]);
+
+  const translation = useQuery<{ title: string; text: string }>({
+    queryKey: ["translation", review.id],
+    queryFn: () => getReviewTranslation(review.id, navigator.language),
+    enabled: false,
+  });
+
+  React.useEffect(() => {
+    const browserLang = navigator.language;
+    setIsInUserLanguage(review.language.startsWith(browserLang));
+  }, [review.language]);
+
+  const onTranslate = async (id: string) => {
+    if (translatedReviews.includes(id)) {
+      setTrenslatedReviews(translatedReviews.filter((i) => i !== id));
+    } else {
+      if (!translation.isFetched) {
+        await translation.refetch();
+      }
+      setTrenslatedReviews([...translatedReviews, id]);
+    }
+  };
 
   const onImageExpandToggle = () => setIsImageExpanded((v) => !v);
 
@@ -62,8 +90,6 @@ export const ReviewCardFull = ({
     }
   };
 
-  if (!review) return null;
-
   const withImages = !!review.images?.length;
 
   if (isDesktop) {
@@ -71,23 +97,29 @@ export const ReviewCardFull = ({
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent
           className={clsx(
-            "sm:max-w-full w-[40vw] flex flex-col transition-transform",
+            "sm:max-w-full w-[40vw] flex flex-col gap-6 transition-transform",
             isImageExpanded && "translate-x-full"
           )}
           hideClose={true}
         >
-          <div className="flex flex-col gap-6 grow">
-            <ReviewHeaderDesktop
+          <ReviewHeaderDesktop
+            review={review}
+            hasPrev={hasPrev}
+            hasNext={hasNext}
+            onPrev={onPrev}
+            onNext={onNext}
+          />
+          <ScrollArea className="grow">
+            <ReviewBody
               review={review}
-              hasPrev={hasPrev}
-              hasNext={hasNext}
-              onPrev={onPrev}
-              onNext={onNext}
+              isInUserLanguage={isInUserLanguage}
+              isTranslated={translatedReviews.includes(review.id)}
+              isLoading={translation.isLoading}
+              translation={translation.data}
+              onTranslate={onTranslate}
             />
-            <Separator orientation="horizontal" />
-            <ReviewBody review={review} />
-            <ReviewFooter review={review} />
-          </div>
+          </ScrollArea>
+          <ReviewFooter review={review} />
           {withImages && (
             <ReviewImageCarouselDesktop
               images={review.images!}
@@ -119,7 +151,14 @@ export const ReviewCardFull = ({
               onPrev={onPrev}
               onNext={onNext}
             />
-            <ReviewBody review={review} />
+            <ReviewBody
+              review={review}
+              isInUserLanguage={isInUserLanguage}
+              isTranslated={translatedReviews.includes(review.id)}
+              isLoading={translation.isLoading}
+              translation={translation.data}
+              onTranslate={onTranslate}
+            />
             <ReviewFooter review={review} />
           </div>
           {withImages && (
@@ -155,6 +194,14 @@ interface ReviewImageCarouselProps {
 }
 
 interface ReviewHeaderProps extends BasePartProps, HeaderControlsProps {}
+
+interface ReviewBodyProps extends BasePartProps {
+  isInUserLanguage: boolean;
+  isTranslated: boolean;
+  isLoading: boolean;
+  translation?: { title: string; text: string };
+  onTranslate: (id: string) => void;
+}
 
 const HeaderControls = ({
   hasPrev,
@@ -299,32 +346,25 @@ const ReviewHeaderDesktop = ({
   onNext,
 }: ReviewHeaderProps) => {
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2 mr-auto">
-        <Avatar>
-          <AvatarImage src={review.user.avatar} />
-          <AvatarFallback>{textAvatar(review.user.fullName)}</AvatarFallback>
-        </Avatar>
-        <div className="text-sm xl:text-base">
-          <span>{review.user.fullName}</span>
-          <div className="flex items-center gap-2 h-5">
-            <span>{review.user.location}</span>
-            <Separator orientation="vertical" />
-            <span>{formatReviewDate(review.createdAt)}</span>
+    <SheetHeader
+      element={
+        <div className="flex items-center gap-2 mr-auto">
+          <Avatar>
+            <AvatarImage src={review.user.avatar} />
+            <AvatarFallback>{textAvatar(review.user.fullName)}</AvatarFallback>
+          </Avatar>
+          <div className="text-sm xl:text-base">
+            <span>{review.user.fullName}</span>
+            <div className="flex items-center gap-2 h-5">
+              <span>{review.user.location}</span>
+              <Separator orientation="vertical" />
+              <span>{formatReviewDate(review.createdAt)}</span>
+            </div>
           </div>
         </div>
-      </div>
-      <HeaderControls
-        hasPrev={hasPrev}
-        hasNext={hasNext}
-        onPrev={onPrev}
-        onNext={onNext}
-      />
-      <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary ml-[10%]">
-        <X className="h-5 w-5" />
-        <span className="sr-only">Close</span>
-      </SheetClose>
-    </div>
+      }
+      pageControls={{ hasPrev, hasNext, onPrev, onNext }}
+    />
   );
 };
 
@@ -367,7 +407,14 @@ const ReviewHeaderMobile = ({
   );
 };
 
-const ReviewBody = ({ review }: BasePartProps) => {
+const ReviewBody = ({
+  review,
+  isInUserLanguage,
+  isLoading,
+  isTranslated,
+  translation,
+  onTranslate,
+}: ReviewBodyProps) => {
   const starsElements = React.useMemo(() => {
     if (!review) return [];
     const maxRating = 5;
@@ -381,11 +428,16 @@ const ReviewBody = ({ review }: BasePartProps) => {
       );
     }
     return elems;
-  }, [review.rating]);
+  }, [review]);
+
+  const handleTranslate = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onTranslate(review.id);
+  };
 
   return (
-    <div className="grow">
-      <div className="mb-3 -mt-0.5 lg:mt-0 lg:mb-4">
+    <div className="grow space-y-3 lg:space-y-4">
+      <div className="-mt-0.5 lg:mt-0">
         <div className="flex items-center gap-2 lg:gap-4 h-5 text-xs lg:text-base">
           <div className="flex items-center gap-1 h-full">{starsElements}</div>
           {review.options.map((opt, i) => (
@@ -398,10 +450,32 @@ const ReviewBody = ({ review }: BasePartProps) => {
           ))}
         </div>
       </div>
-      <div className="mb-6 space-y-2">
+      <div className="space-y-2">
         <p className="font-semibold">{review.title}</p>
         <p className="whitespace-pre-line">{review.text}</p>
       </div>
+      {isTranslated && !!translation && (
+        <>
+          <Separator orientation="horizontal" />
+          <div className="space-y-2">
+            <p className="font-semibold">{translation.title}</p>
+            <p className="whitespace-pre-line">{translation.text}</p>
+          </div>
+        </>
+      )}
+      {!isInUserLanguage && (
+        <Button
+          variant={"outline"}
+          onClick={handleTranslate}
+          disabled={isLoading}
+        >
+          {isTranslated
+            ? "Hide translation"
+            : isLoading
+            ? "Translating..."
+            : "Translate"}
+        </Button>
+      )}
       {!!review.tags?.length && <ReviewTags tags={review.tags} />}
     </div>
   );

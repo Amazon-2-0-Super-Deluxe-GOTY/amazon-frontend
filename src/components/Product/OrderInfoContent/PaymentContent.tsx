@@ -49,7 +49,6 @@ const paymentMethodsData: {
 export const PaymentContent = () => {
   return (
     <div className="grow space-y-4 lg:space-y-6">
-      <Separator orientation="horizontal" />
       <p className="text-sm sm:text-base">
         On [Marketplace’s name] you can pay for your purchases in various ways.
         At checkout you will see a list of methods available for your purchase.

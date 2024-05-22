@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { useScreenSize } from "@/lib/media";
 import { UserSidebar } from "./UserSidebar";
+import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
 
 const sidebarData = {
   // user: { fullName: "Marsha Shields", avatar: "" },
@@ -51,7 +52,7 @@ const sidebarData = {
 };
 
 export function Header() {
-  const isMobile = useScreenSize({ maxSize: "sm" });
+  const isDesktop = useScreenSize({ minSize: "lg" });
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   const openSidebar = () => setIsSidebarOpen(true);
@@ -72,7 +73,7 @@ export function Header() {
           <Input placeholder="Search..." />
           <Button
             className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto"
-            variant={isMobile ? "ghost" : "default"}
+            variant={isDesktop ? "default" : "ghost"}
           >
             <SearchIcon />
           </Button>
@@ -81,7 +82,7 @@ export function Header() {
           <HeartIcon className="text-gray-700 hidden md:block" />
           <BellIcon className="text-gray-700 hidden md:block" />
           <UserIcon className="text-gray-700 hidden md:block" />
-          <ShoppingCartIcon className="text-gray-700" />
+          <ShoppingCart />
         </div>
       </div>
       <UserSidebar

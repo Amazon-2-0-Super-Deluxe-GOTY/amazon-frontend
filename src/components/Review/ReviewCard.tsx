@@ -10,6 +10,8 @@ import { textAvatar } from "@/lib/utils";
 import Image from "next/image";
 import { ReviewTags } from "./ReviewTags";
 import { getRatesCountString } from "@/lib/review";
+import { useQuery } from "@tanstack/react-query";
+import { getReviewTranslation } from "@/api/review";
 
 export const ReviewCard = ({
   review,
@@ -20,6 +22,15 @@ export const ReviewCard = ({
   onClick?: () => void;
   onImageClick?: (imageIndex: number) => void;
 }) => {
+  const [isInUserLanguage, setIsInUserLanguage] = useState(true);
+  const [isTranslated, setIsTrenslated] = useState(false);
+
+  const translation = useQuery<{ title: string; text: string }>({
+    queryKey: ["translation", review.id],
+    queryFn: () => getReviewTranslation(review.id, navigator.language),
+    enabled: false,
+  });
+
   const maxImages = 5;
   const starsElements = React.useMemo(() => {
     const maxRating = 5;
@@ -33,7 +44,25 @@ export const ReviewCard = ({
       );
     }
     return elems;
-  }, []);
+  }, [review.rating]);
+
+  React.useEffect(() => {
+    const browserLang = navigator.language;
+    setIsInUserLanguage(review.language.startsWith(browserLang));
+  }, [review.language]);
+
+  const onTranslate = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
+    if (isTranslated) {
+      setIsTrenslated(false);
+    } else {
+      if (!translation.isFetched) {
+        await translation.refetch();
+      }
+      setIsTrenslated(true);
+    }
+  };
 
   return (
     <div className="pt-3 lg:pt-10 border-t-2 cursor-pointer" onClick={onClick}>
@@ -70,6 +99,15 @@ export const ReviewCard = ({
         <p className="font-semibold">{review.title}</p>
         <p className="whitespace-pre-line">{review.text}</p>
       </div>
+      {isTranslated && !!translation.data && (
+        <>
+          <Separator orientation="horizontal" />
+          <div className="my-4">
+            <p className="font-semibold">{translation.data.title}</p>
+            <p className="whitespace-pre-line">{translation.data.text}</p>
+          </div>
+        </>
+      )}
       {!!review.tags?.length && (
         <div className="mb-6">
           <ReviewTags tags={review.tags} />
@@ -83,11 +121,27 @@ export const ReviewCard = ({
         />
       )}
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-2">
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center h-10">
           <Button variant={review.isRatedByUser ? "default" : "outline"}>
             Helpful
           </Button>
           <Button variant={"outline"}>Report</Button>
+          {!isInUserLanguage && (
+            <>
+              <Separator orientation="vertical" />
+              <Button
+                variant={"outline"}
+                onClick={onTranslate}
+                disabled={translation.isLoading}
+              >
+                {isTranslated
+                  ? "Hide translation"
+                  : translation.isLoading
+                  ? "Translating..."
+                  : "Translate"}
+              </Button>
+            </>
+          )}
         </div>
         <span className="text-sm lg:text-base">
           {getRatesCountString(review)}

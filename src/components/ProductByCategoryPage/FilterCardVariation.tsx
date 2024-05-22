@@ -385,7 +385,7 @@ const FilterPrice = ({
 
   useEffect(() => {
     if (!checkedItems) setPriceValue(data.values);
-  }, [checkedItems]);
+  }, [checkedItems, data.values]);
 
   return (
     <div className="h-full overflow-hidden mt-3">
