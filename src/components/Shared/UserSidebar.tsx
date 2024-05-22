@@ -22,9 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useSearchParamsTools } from "@/lib/router";
-import { useEffect, useState } from "react";
-import { ModalSignInUpVariation } from "../SignInUpModal/ModalSignInUpVariation";
+import { SignInUpModals } from "../SignInUpModal/SignInUpModals";
 
 export const UserSidebar = ({
   isOpen,
@@ -37,26 +35,7 @@ export const UserSidebar = ({
   user?: { fullName: string; avatar: string };
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
-  const searchParams = useSearchParamsTools();
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
   const isLoggedIn = !!user;
-
-  const openLogInModal = () => {
-    closeSidebar();
-    searchParams.set("modal", "login");
-    setIsModalOpen(true);
-  };
-  const openSignUpModal = () => {
-    closeSidebar();
-    searchParams.set("modal", "signup");
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    searchParams.set("modal", undefined);
-    setIsModalOpen(false);
-  };
 
   const headerData = {
     avatarImage: isLoggedIn ? user.avatar : "",
@@ -81,10 +60,7 @@ export const UserSidebar = ({
           </div>
           {!isLoggedIn && (
             <div className="flex flex-col gap-2 pt-2 lg:pt-4">
-              <Button onClick={openSignUpModal}>Sign up</Button>
-              <Button onClick={openLogInModal} variant={"secondary"}>
-                Log in
-              </Button>
+              <SignInUpModals variant="sidebar" />
             </div>
           )}
         </SidebarHeader>
@@ -129,9 +105,6 @@ export const UserSidebar = ({
           </>
         )}
       </Sidebar>
-      {!isLoggedIn && isModalOpen && (
-        <ModalSignInUpVariation onClose={closeModal} />
-      )}
     </div>
   );
 };

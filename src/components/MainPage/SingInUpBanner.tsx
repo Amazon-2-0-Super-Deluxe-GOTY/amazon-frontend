@@ -1,30 +1,11 @@
 "use client";
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
-import { ModalSignInUpVariation } from "@/components/SignInUpModal/ModalSignInUpVariation";
-import { useSearchParamsTools } from "@/lib/router";
+import { SignInUpModals } from "@/components/SignInUpModal/SignInUpModals";
 
 export const SingInUpBanner = () => {
-  const searchParams = useSearchParamsTools();
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  const openSignUpModal = () => {
-    searchParams.set("modal", "signup");
-    setIsModalOpen(true);
-  };
-  const openLogInModal = () => {
-    searchParams.set("modal", "login");
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    searchParams.set("modal", undefined);
-    setIsModalOpen(false);
-  };
 
   return (
     <Card className="w-full bg-gray-100 border-none">
@@ -44,21 +25,7 @@ export const SingInUpBanner = () => {
             </p>
           </div>
           <div className="flex justify-center items-center gap-6">
-            <Button
-              size={"lg"}
-              className="text-base lg:text-xl"
-              onClick={openSignUpModal}
-            >
-              Sing up
-            </Button>
-            <Button
-              size={"lg"}
-              className="text-base lg:text-xl"
-              variant={"outline"}
-              onClick={openLogInModal}
-            >
-              Log in
-            </Button>
+            <SignInUpModals variant="banner" />
           </div>
         </div>
         <Image
@@ -67,7 +34,6 @@ export const SingInUpBanner = () => {
           className="w-full sm:max-w-40 xl:max-w-md object-cover max-h-[260px]"
         />
       </CardContent>
-      {isModalOpen && <ModalSignInUpVariation onClose={closeModal} />}
     </Card>
   );
 };

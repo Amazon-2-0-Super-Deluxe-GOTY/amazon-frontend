@@ -18,7 +18,7 @@ import { useState } from "react"
 import { Checkbox } from "../ui/checkbox"
 
 const FormSchema = z.object({
-  email: z.string().min(6, {
+  email: z.string().email({
     message: "Wrong or Invalid email address",
   }),
   password: z.string().min(8, {
@@ -27,7 +27,11 @@ const FormSchema = z.object({
   staySignedIn: z.boolean()
 })
 
-export function LogInForm() {
+export function LogInForm({
+  changeModal,
+}: {
+  changeModal: (modal: string) => void;
+}) {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -49,7 +53,8 @@ export function LogInForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full h-full flex flex-col justify-between">
+      <div className="space-y-6 flex flex-col justify-center h-full">
         <FormField
           control={form.control}
           name="email"
@@ -58,10 +63,10 @@ export function LogInForm() {
               <div>
                 <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" type="email" autoComplete="email" {...field} />
+                  <Input placeholder="Enter your email" type="text" autoComplete="email" {...field} />
                 </FormControl>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -81,7 +86,7 @@ export function LogInForm() {
                   </Button>
                 </div>
               </div>
-              <FormMessage />
+              <FormMessage className="max-md:text-xs" />
             </FormItem>
           )}
         />
@@ -102,15 +107,16 @@ export function LogInForm() {
                       }}
                     />
                   </FormControl>
-                  <FormLabel htmlFor="idStaySignIn" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" >Stay signed in</FormLabel>
+                  <FormLabel htmlFor="idStaySignIn" className="text-sm max-md:text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" >Stay signed in</FormLabel>
                 </div>
                 <div>
-                  <Button variant={"link"} type="button" className="text-xs p-0">Forgot password?</Button>
+                  <Button variant={"link"} type="button" className="text-xs p-0" onClick={() => changeModal("restore-password")}>Forgot password?</Button>
                 </div>
               </div>
             </FormItem>
           )}
         />
+        </div>
         <Button type="submit" className="w-full">Log in</Button>
       </form>
     </Form>
