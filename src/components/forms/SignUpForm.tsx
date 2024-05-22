@@ -17,10 +17,9 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const FormSchema = z.object({
-  email: z.string().refine((value) => emailRegex.test(value), {
+  email: z.string().email({
     message: "Wrong or Invalid email address",
   }),
   password: z.string().refine((value) => passwordRegex.test(value), {

@@ -14,11 +14,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 const FormSchema = z.object({
-  email: z.string().refine((value) => emailRegex.test(value), {
-    message: "This field is necessary to proceed!",
+  email: z.string().email({
+    message: "Wrong or Invalid email address",
   }),
 });
 

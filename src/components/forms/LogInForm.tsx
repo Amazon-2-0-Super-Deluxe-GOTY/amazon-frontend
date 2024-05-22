@@ -17,10 +17,8 @@ import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
 import { Checkbox } from "../ui/checkbox"
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 const FormSchema = z.object({
-  email: z.string().refine((value) => emailRegex.test(value), {
+  email: z.string().email({
     message: "Wrong or Invalid email address",
   }),
   password: z.string().min(8, {
