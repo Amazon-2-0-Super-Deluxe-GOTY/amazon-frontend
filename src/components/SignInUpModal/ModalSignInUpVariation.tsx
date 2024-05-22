@@ -25,7 +25,7 @@ export const ModalSignInUpVariation = ({
   const searchParams = useSearchParamsTools();
 
   const [modal, setModal] = useState<string>(() => {
-    const defaultValue = searchParams.get(modalParamName);
+    const defaultValue = searchParams.get?.(modalParamName);
     if (defaultValue) return defaultValue;
 
     return "";
@@ -37,7 +37,7 @@ export const ModalSignInUpVariation = ({
   };
 
   React.useEffect(() => {
-    const value = searchParams.get(modalParamName);
+    const value = searchParams.get?.(modalParamName);
     if (value && modalStates.includes(value) && modal !== value) {
       handleChangeModal(value);
     }
@@ -49,7 +49,7 @@ export const ModalSignInUpVariation = ({
       document.body.style.overflow = "auto";
     };
   }, [modal]);
-  
+
   return (
     <div className="fixed flex inset-0 justify-center items-center z-50">
       <div

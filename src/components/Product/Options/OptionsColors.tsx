@@ -10,7 +10,7 @@ export const OptionColors = ({ data }: { data: ColorsData }) => {
   const searchParams = useSearchParamsTools();
 
   const [index, setIndex] = useState<number | undefined>(() => {
-    const defaultValue = searchParams.get(type);
+    const defaultValue = searchParams.get?.(type);
 
     if (defaultValue) {
       const index = data.findIndex((s) => s.title === defaultValue);

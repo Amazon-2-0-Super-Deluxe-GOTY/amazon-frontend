@@ -56,7 +56,7 @@ export function CategorySelect({
     >
       <SelectTrigger>
         <SelectValue placeholder="Choose category">
-          <p className="p-2 text-start">{selectedCategory?.title}</p>
+          <p className="p-2 text-start">{selectedCategory?.name}</p>
         </SelectValue>
       </SelectTrigger>
       <SelectContent className="p-4 min-w-96">
@@ -104,7 +104,7 @@ function SelectItemRecursive({
             checkAlign="right"
             checkOffset={2}
           >
-            <p>{root.value.title}</p>
+            <p>{root.value.name}</p>
           </SelectItem>
           <AccordionTrigger className="p-4" />
         </div>
@@ -128,7 +128,7 @@ function SelectItemRecursive({
       checkAlign="right"
       checkOffset={4}
     >
-      <p>{root.value.title}</p>
+      <p>{root.value.name}</p>
     </SelectItem>
   );
 }

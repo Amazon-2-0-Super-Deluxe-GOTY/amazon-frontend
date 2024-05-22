@@ -1,16 +1,14 @@
 import { getIcon } from "@/lib/categories";
-import type { CategorySpecificity } from "./types";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { FilePenLineIcon, Trash2Icon } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
-import { CategoryPrimaryForm } from "@/components/forms/CategoryPrimaryForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog } from "../AlertDialog";
 import { useModal } from "../../Shared/Modal";
 import { getCategories, type Category } from "@/api/categories";
-import { useQuery } from "@tanstack/react-query";
+import { CreateCategoryModal } from "./CreateCategoryModal";
 
 interface Props {
   category?: Category;
@@ -58,7 +56,7 @@ export const CategoryAsideCard = ({
           <div className="space-y-3.5">
             <div className="flex items-center gap-4">
               {category.iconId && getIcon(category.iconId, iconClassLarge)}
-              <h1 className="text-2xl font-semibold">{category.title}</h1>
+              <h1 className="text-2xl font-semibold">{category.name}</h1>
             </div>
             <Separator className="bg-black" />
           </div>
@@ -76,11 +74,11 @@ export const CategoryAsideCard = ({
             {hasParent && (
               <InfoElement
                 title="Parent category"
-                value={parentCategory.title}
+                value={parentCategory.name}
               />
             )}
             {hasMain && (
-              <InfoElement title="Main category" value={mainCategory.title} />
+              <InfoElement title="Main category" value={mainCategory.name} />
             )}
           </div>
           {hasMain && (
@@ -112,7 +110,8 @@ export const CategoryAsideCard = ({
               Delete
             </Button>
           </div>
-          <EditCategoryModal
+          <CreateCategoryModal
+            isRoot={!!category.iconId}
             isOpen={isModalOpen}
             closeModal={closeModal}
             category={category}
@@ -136,52 +135,5 @@ const InfoElement = ({ title, value }: { title: string; value: string }) => {
       <span className="font-semibold">{title}</span>
       <span>{value}</span>
     </p>
-  );
-};
-
-interface EditCategoryModalProps {
-  isOpen: boolean;
-  closeModal: () => void;
-  category: Category;
-  allCategories: Category[];
-}
-
-const EditCategoryModal = ({
-  isOpen,
-  closeModal,
-  category,
-  allCategories,
-}: EditCategoryModalProps) => {
-  const onOpenChange = (open: boolean) => {
-    if (!open) {
-      closeModal();
-    }
-  };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[75vw] lg:w-[50vw] p-6 max-w-full" hideClose>
-        <ScrollArea
-          className="h-full relative"
-          viewportClassName="[&>div]:h-full"
-        >
-          <div className="flex flex-col gap-6 mt-0 h-full data-[state=inactive]:hidden p-1">
-            <div className="space-y-3.5">
-              <h2 className="text-3xl font-semibold">
-                {category.parentId ? "Edit subcategory" : "Edit category"}
-              </h2>
-              <Separator />
-            </div>
-
-            <CategoryPrimaryForm
-              category={category}
-              allCategories={allCategories}
-              onSubmit={console.log}
-              onCancel={closeModal}
-            />
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
   );
 };

@@ -28,16 +28,15 @@ import { useEffect, useMemo, useState } from "react";
 import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
 import { getAllIcons } from "@/lib/categories";
 import { Separator } from "../ui/separator";
-import { MinusIcon } from "lucide-react";
+import { InfoIcon, MinusIcon } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import clsx from "clsx";
 import type { Category } from "@/api/categories";
 import { CategorySelect } from "../Admin/Category/CategorySelect";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const formSchema = z
   .object({
-    // just helper field
-    isRoot: z.boolean().optional(),
     iconId: z.string().optional(),
     parentId: z.string().optional(),
     name: z.string().min(1, {
@@ -51,44 +50,30 @@ const formSchema = z
       .max(300, {
         message: "Category description must not be more than 300 characters.",
       }),
-    status: z.enum(["active", "inactive"]),
-    options: z.array(
+    isDeleted: z.boolean(),
+    categoryPropertyKeys: z.array(
       z.object({
-        title: z.string().min(1, {
-          message: "Option must not be empty.",
+        name: z.string().min(1, {
+          message: "Property key must not be empty.",
         }),
-        appearance: z.enum(["tiles", "rows"]),
       })
     ),
   })
   .superRefine((values, ctx) => {
-    if (values.isRoot && !values.iconId) {
+    if (!values.iconId && !values.parentId) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Please, select icon",
-        path: ["iconId"],
-      });
-    } else if (!values.isRoot && !values.parentId) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Please, select parentCategory",
+        message: "Please, select parent category",
         path: ["parentId"],
       });
     }
   });
 
-const optionFormSchema = z.object({
-  title: z.string().min(1, {
-    message: "Option name must not be empty.",
-  }),
-  appearance: z.enum(["tiles", "rows"]),
-});
-
 type FormValues = z.infer<typeof formSchema>;
 
 interface Props {
   isRoot: boolean;
-  defaultRootId?: string;
+  defaultValues?: FormValues;
   allCategories: Category[];
   onSubmit: (values: FormValues) => void;
   onCancel: () => void;
@@ -98,75 +83,58 @@ export const CreateCategoryForm = ({
   onSubmit,
   onCancel,
   isRoot,
-  defaultRootId,
+  defaultValues,
   allCategories,
 }: Props) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      isRoot,
-      name: "",
-      description: "",
-      parentId: defaultRootId,
-      status: "active",
-      iconId: "shirt",
-    },
+    defaultValues: defaultValues
+      ? defaultValues
+      : {
+          name: "",
+          description: "",
+          isDeleted: false,
+          iconId: isRoot ? "shirt" : undefined,
+          categoryPropertyKeys: [],
+        },
   });
-  const optionForm = useForm<z.infer<typeof optionFormSchema>>({
-    resolver: zodResolver(optionFormSchema),
-    defaultValues: {
-      title: "",
-      appearance: "tiles",
-    },
-  });
-  const optionsArray = useFieldArray({
-    name: "options",
+  const propertyKeysArray = useFieldArray({
+    name: "categoryPropertyKeys",
     control: form.control,
   });
 
-  const [selectedRootId, setSelectedRootId] = useState(defaultRootId);
-
   useEffect(() => {
-    setSelectedRootId(defaultRootId);
-  }, [defaultRootId]);
+    form.reset(defaultValues);
+  }, [defaultValues]);
 
+  const isEdit = !!defaultValues;
+
+  // console.log(form.formState);
   const handleSubmit = (values: FormValues) => {
     // for some reason form methods doesn't reset fields, so just form the object manually
     const cleanValues = isRoot
       ? {
           name: values.name,
           description: values.description,
-          status: values.status,
-          options: values.options,
+          isDeleted: values.isDeleted,
+          categoryPropertyKeys: values.categoryPropertyKeys,
           iconId: values.iconId,
         }
       : {
           name: values.name,
           description: values.description,
-          status: values.status,
-          options: values.options,
+          isDeleted: values.isDeleted,
+          categoryPropertyKeys: values.categoryPropertyKeys,
           parentId: values.parentId,
         };
     onSubmit(cleanValues);
   };
 
-  const onCreateOption = (value: z.infer<typeof optionFormSchema>) => {
-    if (optionsArray.fields.some((v) => v.title === value.title)) {
-      return optionForm.setError(
-        "title",
-        {
-          type: "duplicate",
-          message: "Option with this name already exist",
-        },
-        { shouldFocus: true }
-      );
-    }
-    optionsArray.append(value);
-    optionForm.reset({ title: "", appearance: "tiles" });
+  const onAddPropertyKey = () => {
+    propertyKeysArray.append({ name: "" });
   };
-
-  const onDeleteOption = (index: number) => () => {
-    optionsArray.remove(index);
+  const onRemovePropertyKey = (index: number) => () => {
+    propertyKeysArray.remove(index);
   };
 
   return (
@@ -175,10 +143,16 @@ export const CreateCategoryForm = ({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-6"
       >
-        <div className="space-y-6" id="info">
+        <fieldset className="space-y-6" id="info">
           <div className="space-y-3.5">
             <h2 className="text-3xl font-semibold">
-              {isRoot ? "Create category" : "Create subcategory"}
+              {isRoot
+                ? isEdit
+                  ? "Edit category"
+                  : "Create category"
+                : isEdit
+                ? "Edit subcategory"
+                : "Create subcategory"}
             </h2>
             <Separator />
           </div>
@@ -293,7 +267,7 @@ export const CreateCategoryForm = ({
           )}
           <FormField
             control={form.control}
-            name="status"
+            name="isDeleted"
             render={({ field }) => (
               <FormItem className="relative flex items-center justify-between">
                 <FormLabel className="text-xl font-semibold">Status</FormLabel>
@@ -301,13 +275,13 @@ export const CreateCategoryForm = ({
                   <ToggleGroup
                     type="single"
                     className="gap-3.5"
-                    onValueChange={(value) => value && field.onChange(value)}
-                    {...field}
+                    value={field.value ? "true" : "false"}
+                    onValueChange={(value) =>
+                      value && field.onChange(value === "true")
+                    }
                   >
-                    <ToggleGroupItem value="active">Active</ToggleGroupItem>
-                    <ToggleGroupItem value="inactive">
-                      Not active
-                    </ToggleGroupItem>
+                    <ToggleGroupItem value="false">Active</ToggleGroupItem>
+                    <ToggleGroupItem value="true">Not active</ToggleGroupItem>
                   </ToggleGroup>
                 </FormControl>
                 <FormDescription hidden>Active or inactive</FormDescription>
@@ -315,147 +289,47 @@ export const CreateCategoryForm = ({
               </FormItem>
             )}
           />
+          {isEdit && (
+            <div className="flex items-center justify-between">
+              <p className="text-xl font-semibold">Role</p>
+              <div className="flex items-center gap-3.5">
+                <p className="text-lg">
+                  {defaultValues.parentId
+                    ? "Child category"
+                    : "Parent category"}
+                </p>
+                <Popover>
+                  <PopoverTrigger className="group">
+                    <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="max-w-sm w-full">
+                    <div className="space-y-4 text-sm">
+                      <div>
+                        <p className="font-semibold">Parent category</p>
+                        <p>
+                          This is the main section of goods or services on the
+                          marketplace, for example, &quot;Electronics&quot;,
+                          &quot;Clothing&quot;.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Subcategory</p>
+                        <p>
+                          This is a more specific part of the parent category,
+                          for example, &quot;Smartphones&quot; in the category
+                          &quot;Electronics&quot;.
+                        </p>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+          )}
           {/* <div className="pt-2">
             <Separator />
           </div> */}
-        </div>
-
-        {/* <div className="space-y-6" id="options">
-          <div className="space-y-3.5">
-            <h2 className="text-3xl font-semibold">Option configuration</h2>
-            <Separator />
-          </div>
-          <div className="flex flex-col gap-4 px-1">
-            <FormField
-              control={optionForm.control}
-              name="title"
-              render={({ field, fieldState }) => (
-                <FormItem className="w-full relative">
-                  <FormLabel className="absolute left-3 -top-0.5 font-light bg-white p-0.5">
-                    Name
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter option name" {...field} />
-                  </FormControl>
-                  <FormDescription hidden>
-                    This is option display name.
-                  </FormDescription>
-                  <FormMessage className="px-4">{fieldState.error?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={optionForm.control}
-              name="appearance"
-              render={({ field, fieldState }) => (
-                <FormItem className="relative space-y-3.5">
-                  <FormLabel className="text-xl font-semibold">
-                    Display appearance
-                  </FormLabel>
-                  <FormControl>
-                    <ToggleGroup
-                      type="single"
-                      className="grid grid-cols-2 gap-3.5"
-                      onValueChange={(value) => value && field.onChange(value)}
-                      {...field}
-                    >
-                      <ToggleGroupItem className="h-full p-6" value="tiles">
-                        <div className="space-y-3.5 text-start">
-                          <p className="text-xl space-x-3">
-                            <span className="font-normal">Option</span>
-                            <span className="font-semibold">Name</span>
-                          </p>
-                          <div className="flex gap-3">
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 ring-1 ring-black rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                          </div>
-                        </div>
-                      </ToggleGroupItem>
-                      <ToggleGroupItem className="h-full p-6" value="rows">
-                        <div className="space-y-3.5 text-start w-[70%]">
-                          <p className="text-xl space-x-3">
-                            <span className="font-normal">Option</span>
-                            <span className="font-semibold">Name</span>
-                          </p>
-                          <div className="flex flex-col gap-3">
-                            <div className="p-2 rounded-sm flex items-center gap-2">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                              <span>Name</span>
-                            </div>
-                            <div className="p-2 rounded-sm flex items-center gap-2 ring-1 ring-black">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                              <span>Name</span>
-                            </div>
-                          </div>
-                        </div>
-                      </ToggleGroupItem>
-                    </ToggleGroup>
-                  </FormControl>
-                  <FormDescription hidden>Active or inactive</FormDescription>
-                  <FormMessage className="px-4">{fieldState.error?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-            <Button
-              type="button"
-              className="ml-auto"
-              onClick={optionForm.handleSubmit(onCreateOption)}
-            >
-              Create option
-            </Button>
-          </div>
-          <div className="space-y-5">
-            <div className="space-y-4">
-              <Separator />
-              <p className="px-4 text-xl">Name</p>
-              <Separator />
-            </div>
-            <ScrollArea>
-              <div
-                className={clsx(
-                  "flex flex-col gap-4 px-4 h-32",
-                  optionsArray.fields.length === 0 &&
-                    "justify-center items-center"
-                )}
-              >
-                {optionsArray.fields.length > 0 ? (
-                  optionsArray.fields.map((option, i) => (
-                    <div
-                      key={option.id}
-                      className="flex justify-between items-center"
-                    >
-                      <p className="text-xl">{option.title}</p>
-                      <button
-                        type="button"
-                        className="w-4 h-4"
-                        onClick={onDeleteOption(i)}
-                      >
-                        <MinusIcon />
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-xl">
-                    There are no specifics in this category
-                  </p>
-                )}
-              </div>
-            </ScrollArea>
-          </div>
-        </div> */}
+        </fieldset>
         <div className="flex items-center gap-3 ml-auto pt-12">
           <Button type="reset" variant={"secondary"} onClick={onCancel}>
             Cancel

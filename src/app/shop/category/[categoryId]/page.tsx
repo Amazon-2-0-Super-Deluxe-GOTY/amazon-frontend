@@ -186,7 +186,7 @@ export default function CategoryPage({
     let result: FilterCheckedType = [];
 
     FiltersData.forEach((filter, index) => {
-      const defaultValue = searchParams.get(filter.title);
+      const defaultValue = searchParams.get?.(filter.title);
       if (defaultValue) {
         const itemNamesArray = defaultValue
           .split(",")

@@ -56,7 +56,7 @@ export default function Page() {
 
   const displayedTreeRoot = React.useMemo(() => {
     return search
-      ? checkboxTree.filter((n) => n.value.title.toLowerCase().includes(search))
+      ? checkboxTree.filter((n) => n.value.name.toLowerCase().includes(search))
       : checkboxTree.root;
   }, [checkboxTree, search]);
 
@@ -140,7 +140,7 @@ export default function Page() {
                 {allCategoriesTrees.map(({ value: category }) => (
                   <SelectItem
                     value={category.id}
-                    key={category.title}
+                    key={category.name}
                     className="p-4"
                     checkAlign="right"
                     checkOffset={4}
@@ -148,7 +148,7 @@ export default function Page() {
                     <div className="flex items-center gap-3">
                       {category.iconId &&
                         getIcon(category.iconId, iconClassSmall)}
-                      <span>{category.title}</span>
+                      <span>{category.name}</span>
                     </div>
                   </SelectItem>
                 ))}
