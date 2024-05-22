@@ -18,8 +18,6 @@ import {
 import {
   ArrowUpDown,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   MoreHorizontal,
   MoreVertical,
 } from "lucide-react";
@@ -42,7 +40,7 @@ import { formatUserRegistrationDate } from "@/lib/date";
 import { User, UserRoles, getUsers } from "@/api/users";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
-import { useModal } from "@/components/Admin/Modal";
+import { useModal } from "@/components/Shared/Modal";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { textAvatar } from "@/lib/utils";
@@ -415,7 +413,7 @@ const TableHeader = ({
           onValueChange={(v) => onSelectRole(v as UserRoles)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Choose category" />
+            <SelectValue placeholder="Choose role" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem

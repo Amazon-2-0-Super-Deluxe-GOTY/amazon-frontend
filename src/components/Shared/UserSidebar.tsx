@@ -38,35 +38,25 @@ export const UserSidebar = ({
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
   const searchParams = useSearchParamsTools();
-  
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
-    const defaultValue = searchParams.get("modal");
-    if (defaultValue) return true;
 
-    return false;
-  });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const isLoggedIn = !!user;
 
   const openLogInModal = () => {
     closeSidebar();
     searchParams.set("modal", "login");
+    setIsModalOpen(true);
   };
   const openSignUpModal = () => {
     closeSidebar();
     searchParams.set("modal", "signup");
+    setIsModalOpen(true);
   };
   const closeModal = () => {
     searchParams.set("modal", undefined);
+    setIsModalOpen(false);
   };
-  
-  useEffect(() => {
-    if (searchParams.get("modal")) setIsModalOpen(true);
-  }, [openLogInModal, openSignUpModal]);
-
-  useEffect(() => {
-    if (!searchParams.get("modal")) setIsModalOpen(false);
-  }, [closeModal]);
 
   const headerData = {
     avatarImage: isLoggedIn ? user.avatar : "",
@@ -106,7 +96,12 @@ export const UserSidebar = ({
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-3 lg:gap-4">
               {categories.map((item) => (
-                <Link className="w-full" href={item.url} key={item.title} onClick={closeSidebar}>
+                <Link
+                  className="w-full"
+                  href={item.url}
+                  key={item.title}
+                  onClick={closeSidebar}
+                >
                   <SidebarItem icon={item.icon} text={item.title} />
                 </Link>
               ))}
@@ -134,7 +129,9 @@ export const UserSidebar = ({
           </>
         )}
       </Sidebar>
-      {!isLoggedIn && isModalOpen && <ModalSignInUpVariation onClose={closeModal} />}
+      {!isLoggedIn && isModalOpen && (
+        <ModalSignInUpVariation onClose={closeModal} />
+      )}
     </div>
   );
 };

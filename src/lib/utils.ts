@@ -17,7 +17,7 @@ export const useExpandableList = <T>(params: {
   const items = React.useMemo(() => {
     if (!isExpandable || isExpanded) return params.items;
     return params.items.slice(0, params.maxItems);
-  }, [isExpandable, isExpanded, params.maxItems, params.items.length]);
+  }, [isExpandable, isExpanded, params.maxItems, params.items]);
 
   const onExpand = () => setIsExpanded(true);
   const onHide = () => setIsExpanded(false);
@@ -36,3 +36,6 @@ export const textAvatar = (text: string, avatarMaxLenght = 2) => {
 
   return avatar;
 };
+
+export const getArrayDepth = (value: any[]): number =>
+  Array.isArray(value) ? 1 + Math.max(0, ...value.map(getArrayDepth)) : 0;

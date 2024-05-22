@@ -20,7 +20,7 @@ import { ArrowUpDownIcon, FilePenLineIcon, PlusIcon } from "lucide-react";
 import type { CategorySpecificity } from "../Admin/Category/types";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { AlertDialog } from "../Admin/AlertDialog";
-import { useModal } from "../Admin/Modal";
+import { useModal } from "../Shared/Modal";
 
 interface Props {
   specificities: CategorySpecificity[];
@@ -35,7 +35,10 @@ export const CategorySpecificityForm = ({
 }: Props) => {
   const [search, setSearch] = useState("");
   const [isSortDesc, setIsSortDesc] = useState(false);
-  const initialArray = useMemo(() => createCheckboxArray(specificities), []);
+  const initialArray = useMemo(
+    () => createCheckboxArray(specificities),
+    [specificities]
+  );
   const checkboxArray = useCheckboxArray(initialArray);
   const checkboxArrayRef = useRef(checkboxArray);
   const { showModal } = useModal();
@@ -103,11 +106,14 @@ export const CategorySpecificityForm = ({
   return (
     <div className="grow flex flex-col gap-6 overflow-y-auto p-1">
       {isForm ? (
-        <SpecificityForm
-          specificity={editedSpecificity}
-          onSubmit={console.log}
-          onCancel={closeForm}
-        />
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Create category specificity</h2>
+          <SpecificityForm
+            specificity={editedSpecificity}
+            onSubmit={console.log}
+            onCancel={closeForm}
+          />
+        </div>
       ) : (
         <div className="grow flex flex-col gap-6">
           <div className="space-y-3.5">
@@ -214,7 +220,7 @@ interface SpecificityFormProps {
   onCancel: () => void;
 }
 
-const SpecificityForm = ({
+export const SpecificityForm = ({
   specificity,
   onSubmit,
   onCancel,
@@ -237,7 +243,6 @@ const SpecificityForm = ({
         onSubmit={form.handleSubmit(onSubmit)}
         className="grow flex flex-col gap-4 px-1"
       >
-        <h2 className="text-xl font-semibold">Create category specificity</h2>
         <FormField
           control={form.control}
           name="name"
@@ -271,49 +276,58 @@ const SpecificityForm = ({
                   onValueChange={(value) => value && field.onChange(value)}
                   {...field}
                 >
-                  <ToggleGroupItem className="h-full p-6" value="tiles">
-                    <div className="space-y-3.5 text-start">
-                      <p className="text-xl space-x-3">
-                        <span className="font-normal">Option</span>
-                        <span className="font-semibold">Name</span>
-                      </p>
-                      <div className="flex gap-3">
-                        <div className="p-2 rounded-sm">
-                          <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                        </div>
-                        <div className="p-2 rounded-sm">
-                          <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                        </div>
-                        <div className="p-2 ring-1 ring-black rounded-sm">
-                          <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                        </div>
-                        <div className="p-2 rounded-sm">
-                          <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                        </div>
-                        <div className="p-2 rounded-sm">
-                          <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                        </div>
-                      </div>
-                    </div>
-                  </ToggleGroupItem>
-                  <ToggleGroupItem className="h-full p-6" value="rows">
-                    <div className="space-y-3.5 text-start w-[70%]">
-                      <p className="text-xl space-x-3">
-                        <span className="font-normal">Option</span>
-                        <span className="font-semibold">Name</span>
-                      </p>
-                      <div className="flex flex-col gap-3">
-                        <div className="p-2 rounded-sm flex items-center gap-2">
-                          <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                          <span>Name</span>
-                        </div>
-                        <div className="p-2 rounded-sm flex items-center gap-2 ring-1 ring-black">
-                          <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                          <span>Name</span>
+                  <div className="space-y-2 w-full h-full">
+                    <ToggleGroupItem
+                      className="w-full h-full p-6"
+                      value="tiles"
+                    >
+                      <div className="space-y-3.5 text-start">
+                        <p className="text-xl space-x-3">
+                          <span className="font-normal">Option</span>
+                          <span className="font-semibold">Name</span>
+                        </p>
+                        <div className="flex gap-3">
+                          <div className="p-2 rounded-sm">
+                            <div className="w-6 h-6 bg-gray-300 rounded-sm" />
+                          </div>
+                          <div className="p-2 rounded-sm">
+                            <div className="w-6 h-6 bg-gray-300 rounded-sm" />
+                          </div>
+                          <div className="p-2 ring-1 ring-black rounded-sm">
+                            <div className="w-6 h-6 bg-gray-300 rounded-sm" />
+                          </div>
+                          <div className="p-2 rounded-sm">
+                            <div className="w-6 h-6 bg-gray-300 rounded-sm" />
+                          </div>
+                          <div className="p-2 rounded-sm">
+                            <div className="w-6 h-6 bg-gray-300 rounded-sm" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </ToggleGroupItem>
+                    </ToggleGroupItem>
+                    <p className="font-semibold">First variant</p>
+                  </div>
+                  <div className="space-y-2 w-full h-full">
+                    <ToggleGroupItem className="w-full h-full p-6" value="rows">
+                      <div className="space-y-3.5 text-start w-[70%]">
+                        <p className="text-xl space-x-3">
+                          <span className="font-normal">Option</span>
+                          <span className="font-semibold">Name</span>
+                        </p>
+                        <div className="flex flex-col gap-3">
+                          <div className="p-2 rounded-sm flex items-center gap-2">
+                            <div className="w-6 h-6 bg-gray-300 rounded-sm" />
+                            <span>Name</span>
+                          </div>
+                          <div className="p-2 rounded-sm flex items-center gap-2 ring-1 ring-black">
+                            <div className="w-6 h-6 bg-gray-300 rounded-sm" />
+                            <span>Name</span>
+                          </div>
+                        </div>
+                      </div>
+                    </ToggleGroupItem>
+                    <p className="font-semibold">Second variant</p>
+                  </div>
                 </ToggleGroup>
               </FormControl>
               <FormDescription hidden>Active or inactive</FormDescription>

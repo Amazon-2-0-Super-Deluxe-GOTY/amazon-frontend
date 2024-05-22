@@ -29,6 +29,7 @@ export function useCheckboxArray<TValue>(
 
   return {
     array,
+    setArray,
     changeChecked(
       elemToChange: CheckboxArrayElement<TValue>,
       checked: boolean
@@ -62,9 +63,28 @@ export function useCheckboxArray<TValue>(
         )
       );
     },
+    getCheckedElements() {
+      return array.filter((v) => v.checked).map((v) => v.value);
+    },
     isAllChecked,
     changeAllChecked(checked: boolean) {
       setArray((current) => current.map((elem) => ({ ...elem, checked })));
+    },
+    toggleChecked(elemToChange: CheckboxArrayElement<TValue>) {
+      setArray((current) =>
+        current.map((elem) =>
+          compare(elem.value, elemToChange.value)
+            ? { ...elemToChange, checked: !elem.checked }
+            : { ...elem }
+        )
+      );
+    },
+    toggleAllChecked() {
+      const newChecked =
+        isAllChecked === "indeterminate" ? true : !isAllChecked;
+      setArray((current) =>
+        current.map((elem) => ({ ...elem, checked: newChecked }))
+      );
     },
   };
 }

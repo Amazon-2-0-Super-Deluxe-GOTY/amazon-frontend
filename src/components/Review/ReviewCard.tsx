@@ -44,12 +44,12 @@ export const ReviewCard = ({
       );
     }
     return elems;
-  }, []);
+  }, [review.rating]);
 
   React.useEffect(() => {
     const browserLang = navigator.language;
     setIsInUserLanguage(review.language.startsWith(browserLang));
-  }, []);
+  }, [review.language]);
 
   const onTranslate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
