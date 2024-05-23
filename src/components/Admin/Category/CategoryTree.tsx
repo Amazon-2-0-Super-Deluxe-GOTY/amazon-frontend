@@ -65,7 +65,7 @@ export const CategoryTree = ({
               className="text-xl font-medium basis-full cursor-pointer"
               onClick={() => onSelect(root)}
             >
-              {root.value.title}
+              {root.value.name}
             </h2>
           </div>
           {checkedNodes.length > 0 ? (

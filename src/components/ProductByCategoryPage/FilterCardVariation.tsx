@@ -315,7 +315,7 @@ const FilterPrice = ({
 
   const [priceValue, setPriceValue] = useState<{ min: number; max: number }>(
     () => {
-      const defaultValue = searchParams.get("Price");
+      const defaultValue = searchParams.get?.("Price");
 
       if (defaultValue) {
         const filteredValues = defaultValue
@@ -372,7 +372,7 @@ const FilterPrice = ({
   }
 
   const setSearchParams = () => {
-    const params = searchParams.get(data.title);
+    const params = searchParams.get?.(data.title);
     if (params) {
       if (priceValue.min && priceValue.max)
         searchParams.set(data.title, priceValue.min + "-" + priceValue.max);

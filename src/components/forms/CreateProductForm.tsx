@@ -1,21 +1,8 @@
 "use client";
-import {
-  Category,
-  CategoryOption,
-  getCategories,
-  getCategoryOptions,
-} from "@/api/categories";
+import { Category } from "@/api/categories";
 import { uploadImage } from "@/api/products";
 import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
-import { SpecificityForm } from "@/components/forms/CategorySpecificityForm";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -25,34 +12,24 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { InfoIcon, MoreHorizontal, PlusIcon, Trash2Icon } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { InfoIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useOptimistic, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
-  type UseFormReturn,
-  useFieldArray,
-  useForm,
-  Control,
-} from "react-hook-form";
+  useEffect,
+  useMemo,
+  useOptimistic,
+  useState,
+  useTransition,
+} from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useModal } from "@/components/Shared/Modal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cartesian, isImageValid } from "@/lib/products";
-import { getArrayDepth } from "@/lib/utils";
+import { isImageValid } from "@/lib/products";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
@@ -61,7 +38,6 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
-import Link from "next/link";
 
 const barcodeLenght = 13;
 const maxImages = 10;
@@ -92,7 +68,10 @@ const formSchema = z.object({
     .min(1, { message: "Add at least one photo" })
     .max(maxImages, { message: `${maxImages} images maximum.` }),
   price: z
-    .number({ required_error: "Price cannot be empty" })
+    .number({
+      required_error: "Price cannot be empty",
+      invalid_type_error: "Price cannot be empty",
+    })
     .min(0, { message: "Price must be a positive number." })
     .transform((value) => Math.round(value * 100) / 100),
   discount: z
@@ -109,49 +88,12 @@ const formSchema = z.object({
     ])
     .optional(),
   quantity: z
-    .number({ required_error: "Quantity cannot be empty" })
+    .number({
+      required_error: "Quantity cannot be empty",
+      invalid_type_error: "Quantity cannot be empty",
+    })
     .int({ message: "Quantity must be an integer." })
     .min(0, { message: "Quantity must be a positive number." }),
-  // options: z.array(
-  //   z.object({
-  //     id: z.string(),
-  //     name: z.string().min(1, { message: "Name must not be empty." }),
-  //     appearance: z.enum(["tiles", "rows"]),
-  //     isSelected: z.boolean(),
-  //     isProduct: z.boolean(),
-  //     attributes: z.array(
-  //       z.object({
-  //         id: z.string(),
-  //         type: z.enum(["color", "text"]),
-  //         key: z.string().min(1, { message: "Key must not be empty." }),
-  //         value: z.string().min(1, { message: "Value must not be empty." }),
-  //         isSelected: z.boolean(),
-  //       })
-  //     ),
-  //   })
-  // ),
-  // subproducts: z.array(
-  //   z.object({
-  //     attributes: z.array(
-  //       z.object({
-  //         optionId: z.string(),
-  //         attributeId: z.string(),
-  //       })
-  //     ),
-  //     quantity: z
-  //       .number()
-  //       .min(0, { message: "Quantity must be a positive number." }),
-  //     price: z.number().min(0, { message: "Price must be a positive number." }),
-  //     discount: z
-  //       .number()
-  //       .min(0, { message: "Discount must be a positive number." })
-  //       .max(100, {
-  //         message:
-  //           "Enter the discount correctly. Only numbers from 0 to 100 are allowed. Letters and special characters are not allowed.",
-  //       })
-  //       .optional(),
-  //   })
-  // ),
   productDetails: z
     .array(
       z.object({
@@ -211,11 +153,10 @@ export function CreateProductForm({
           name: "",
           code: "",
           price: 0,
+          discount: 0,
           quantity: 0,
           categoryId: defaultCategoryId,
           images: [],
-          // options: [],
-          // subproducts: [],
           productDetails: [],
           aboutProduct: [],
         },
@@ -232,22 +173,40 @@ export function CreateProductForm({
     control: form.control,
     name: "aboutProduct",
   });
-  // const categoryId = form.watch("categoryId");
+
+  const [
+    selectedCategoryPropertyKeyNames,
+    setSelectedCategoryPropertyKeyNames,
+  ] = useState<string[]>([]);
+  const categoryId = form.watch("categoryId");
 
   useEffect(() => {
     form.reset(memoizedDefaultValues);
   }, [memoizedDefaultValues]);
 
+  useEffect(() => {
+    if (!categoryId) return;
+
+    const category = categories.find((c) => c.id === categoryId);
+    if (!category) return;
+
+    const currentPropertyKeysNames = productDetailsArray.fields.map(
+      (c) => c.name
+    );
+    const newPropertyKeysNames = category.categoryPropertyKeys.map(
+      (c) => c.name
+    );
+    const newPropertyKeys = category.categoryPropertyKeys
+      .filter((c) => !currentPropertyKeysNames.includes(c.name))
+      .map((pk) => ({ name: pk.name, text: "" }));
+
+    productDetailsArray.prepend(newPropertyKeys);
+    setSelectedCategoryPropertyKeyNames(newPropertyKeysNames);
+  }, [categoryId, categories]);
+
   const uploadImageMutation = useMutation({
     mutationFn: uploadImage,
   });
-  // const categoryOptionsQuery = useQuery({
-  //   queryKey: ["categoryOptions", categoryId],
-  //   queryFn: () => {
-  //     if (!categoryId) return { data: [] };
-  //     return getCategoryOptions(categoryId);
-  //   },
-  // });
 
   const { showModal } = useModal();
 
@@ -294,8 +253,6 @@ export function CreateProductForm({
       imagesArray.append(data);
     });
   }
-
-  // TODO: добавить якорные ссылки
 
   const onDeleteImage = (index: number) => () => {
     imagesArray.remove(index);
@@ -425,6 +382,7 @@ export function CreateProductForm({
                     categories={categories}
                     value={field.value}
                     onValueChange={field.onChange}
+                    disallowRoots
                   />
                 </FormControl>
                 <FormDescription hidden>
@@ -597,42 +555,6 @@ export function CreateProductForm({
           />
         </fieldset>
 
-        {/* <fieldset className="space-y-6" id="form-options">
-            <div className="space-y-3">
-              <h2 className="font-semibold text-3xl">Product specificity</h2>
-              <Separator />
-            </div>
-  
-            <OptionsFormBlock
-              form={form}
-              categoryOptions={categoryOptionsQuery.data?.data ?? []}
-            />
-  
-            <FormField
-              control={form.control}
-              name="quantity"
-              render={({ field }) => (
-                <FormItem className="relative">
-                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
-                    Quantity
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter the quantity of your product..."
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                    />
-                  </FormControl>
-                  <FormDescription hidden>
-                    Product discount in percents.
-                  </FormDescription>
-                  <FormMessage className="px-4" />
-                </FormItem>
-              )}
-            />
-          </fieldset> */}
-
         <fieldset className="space-y-6" id="form-details">
           <div className="space-y-3">
             <Separator />
@@ -646,17 +568,21 @@ export function CreateProductForm({
                 name={`productDetails.${i}.name`}
                 render={({ field }) => (
                   <FormItem className="relative basis-1/3 space-y-0">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
-                      Name
-                    </FormLabel>
                     <FormControl>
                       <Input
+                        className="peer"
                         type="text"
                         placeholder="Enter detail name..."
+                        disabled={selectedCategoryPropertyKeyNames.includes(
+                          field.value
+                        )}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="px-4" />
+                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5 peer-disabled:text-gray-500">
+                      Name
+                    </FormLabel>
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
@@ -680,18 +606,20 @@ export function CreateProductForm({
                         {field.value.length}/{productDetailsMaxTextLength}
                       </FormDescription>
                     </div>
-                    <FormMessage className="px-4" />
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
-              <Button
-                type="button"
-                variant={"ghost"}
-                className="h-max p-3"
-                onClick={onRemoveProductDetail(i)}
-              >
-                <Trash2Icon className="w-6 h-6" />
-              </Button>
+              {!selectedCategoryPropertyKeyNames.includes(value.name) && (
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  className="h-max p-3"
+                  onClick={onRemoveProductDetail(i)}
+                >
+                  <Trash2Icon className="w-6 h-6" />
+                </Button>
+              )}
             </fieldset>
           ))}
           <Button
@@ -731,7 +659,7 @@ export function CreateProductForm({
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="px-4" />
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
@@ -755,7 +683,7 @@ export function CreateProductForm({
                         {field.value.length}/{aboutProductMaxTextLength}
                       </FormDescription>
                     </div>
-                    <FormMessage className="px-4" />
+                    <FormMessage className="px-4 pt-2" />
                   </FormItem>
                 )}
               />
@@ -797,344 +725,3 @@ export function CreateProductForm({
     </Form>
   );
 }
-
-// function OptionsFormBlock({
-//   categoryOptions,
-//   form,
-// }: {
-//   categoryOptions: CategoryOption[];
-//   form: UseFormReturn<FormValues>;
-// }) {
-//   const { showModal } = useModal();
-
-//   const optionsArray = useFieldArray({
-//     control: form.control,
-//     name: "options",
-//   });
-//   const subproductsArray = useFieldArray({
-//     control: form.control,
-//     name: "subproducts",
-//   });
-
-//   function onCreateOption() {
-//     showModal({
-//       component: CreateOptionModal,
-//     }).then((res) => {
-//       if (res.action === "CONFIRM") {
-//         optionsArray.append({
-//           ...res.option,
-//           isSelected: false,
-//           isProduct: true,
-//           attributes: [],
-//         });
-//       }
-//     });
-//   }
-
-//   const optionsAll = form.watch("options");
-
-//   useEffect(() => {
-//     if (categoryOptions.length > 0) {
-//       const existingIds = form.getValues().options.map((elem) => elem.id);
-//       optionsArray.append(
-//         categoryOptions
-//           .filter((opt) => !existingIds.includes(opt.id))
-//           .map((opt) => ({
-//             ...opt,
-//             isSelected: false,
-//             isProduct: false,
-//             attributes: [
-//               {
-//                 id: (Math.random() * 10000).toFixed(0),
-//                 type: "text",
-//                 key: "GB",
-//                 value: "128GB SSD",
-//                 isSelected: false,
-//               },
-//               {
-//                 id: (Math.random() * 10000).toFixed(0),
-//                 type: "color",
-//                 key: "#000",
-//                 value: "Black",
-//                 isSelected: false,
-//               },
-//             ],
-//           }))
-//       );
-//     }
-//   }, [categoryOptions]);
-
-//   const categoryFields = optionsAll.filter((f) => !f.isProduct);
-//   const productFields = optionsAll.filter((f) => f.isProduct);
-
-//   const selectedOptions = optionsAll.filter((f) => f.isSelected);
-
-//   const attributesToMultiply = useMemo(
-//     () =>
-//       optionsAll
-//         .filter((opt) => opt.isSelected)
-//         .map((opt) =>
-//           opt.attributes
-//             .filter((attr) => attr.isSelected)
-//             .map((attr) => ({ optionId: opt.id, attributeId: attr.id }))
-//         )
-//         .filter((arr) => arr.length > 0),
-//     [optionsAll]
-//   );
-
-//   const multDepth = getArrayDepth(attributesToMultiply);
-//   const subproductsCartesian = useMemo(
-//     () =>
-//       multDepth > 1
-//         ? (cartesian(...attributesToMultiply) as {
-//             optionId: string;
-//             attributeId: string;
-//           }[][])
-//         : [[]],
-//     [multDepth, attributesToMultiply]
-//   );
-//   console.log(subproductsCartesian);
-
-//   function getOptionIndex(id: string) {
-//     return optionsAll.findIndex((f) => f.id === id);
-//   }
-
-//   return (
-//     <Accordion type="single" collapsible>
-//       <AccordionItem value="item-1" className="border">
-//         <AccordionTrigger className="p-4 justify-between">
-//           <div className="flex items-center gap-3.5">
-//             <PlusIcon className="w-6 h-6" />
-//             <span className="font-medium text-xl">Create option(s)</span>
-//           </div>
-//         </AccordionTrigger>
-//         <AccordionContent className="p-4 pt-0 space-y-4">
-//           <div className="h-[570px] grid grid-cols-[1fr_auto_1fr] gap-3.5">
-//             <div className="grow flex flex-col gap-5">
-//               <div className="border-y-2 p-4 flex items-center gap-4">
-//                 <label
-//                   className="font-medium text-xl"
-//                   htmlFor="category-option-all"
-//                 >
-//                   Category options list
-//                 </label>
-//               </div>
-//               <ScrollArea className="only:h-full">
-//                 <div className="space-y-6 px-4">
-//                   {categoryFields.map((elem) => {
-//                     return (
-//                       <FormField
-//                         key={elem.id}
-//                         control={form.control}
-//                         name={`options.${getOptionIndex(elem.id)}.isSelected`}
-//                         render={({ field }) => {
-//                           return (
-//                             <FormItem className="flex items-center gap-4 space-y-0">
-//                               <FormControl>
-//                                 <Checkbox
-//                                   size="lg"
-//                                   checked={field.value}
-//                                   onCheckedChange={field.onChange}
-//                                 />
-//                               </FormControl>
-//                               <FormLabel className="font-medium text-xl">
-//                                 {elem.name}
-//                               </FormLabel>
-//                               <FormMessage className="px-4" />
-//                             </FormItem>
-//                           );
-//                         }}
-//                       />
-//                     );
-//                   })}
-//                 </div>
-//               </ScrollArea>
-//               {categoryOptions.length === 0 && (
-//                 <div className="w-full h-full flex justify-center items-center px-6">
-//                   <div className="w-full p-3 text-lg text-center bg-gray-200 rounded-md">
-//                     Select category to show options list
-//                   </div>
-//                 </div>
-//               )}
-//             </div>
-//             <Separator orientation="vertical" />
-//             <div className="grow flex flex-col gap-5">
-//               <div className="border-y-2 p-4 flex justify-between items-center">
-//                 <div className="flex items-center gap-4">
-//                   <label
-//                     className="font-medium text-xl"
-//                     htmlFor="product-option-all"
-//                   >
-//                     Your options list
-//                   </label>
-//                 </div>
-//                 <button type="button" onClick={onCreateOption}>
-//                   <PlusIcon className="w-6 h-6" />
-//                 </button>
-//               </div>
-//               <ScrollArea className="only:h-full">
-//                 <div className="space-y-6 px-4">
-//                   {productFields.map((elem, i) => {
-//                     return (
-//                       <FormField
-//                         key={elem.id}
-//                         control={form.control}
-//                         name={`options.${getOptionIndex(elem.id)}.isSelected`}
-//                         render={({ field }) => {
-//                           return (
-//                             <FormItem className="flex items-center gap-4 space-y-0">
-//                               <FormControl>
-//                                 <Checkbox
-//                                   size="lg"
-//                                   checked={field.value}
-//                                   onCheckedChange={field.onChange}
-//                                 />
-//                               </FormControl>
-//                               <FormLabel className="font-medium text-xl">
-//                                 {elem.name}
-//                               </FormLabel>
-//                               <FormMessage className="px-4" />
-//                             </FormItem>
-//                           );
-//                         }}
-//                       />
-//                     );
-//                   })}
-//                 </div>
-//               </ScrollArea>
-//               {productFields.length === 0 && (
-//                 <div className="w-full h-full flex justify-center items-center px-6">
-//                   <div className="text-lg">
-//                     There are no options in your list
-//                   </div>
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-
-//           {selectedOptions.length === 0 ? (
-//             <div className="space-y-5">
-//               <div className="border-y-2 p-4 flex justify-between items-center">
-//                 <p className="font-medium text-xl">Select option(s) in list</p>
-//                 <button type="button" disabled>
-//                   <PlusIcon className="w-6 h-6" />
-//                 </button>
-//               </div>
-//               <div className="h-96 flex justify-center items-center">
-//                 <p className="text-xl">
-//                   There are no attributes in this option
-//                 </p>
-//               </div>
-//             </div>
-//           ) : (
-//             <Tabs defaultValue={selectedOptions[0]?.id} className="space-y-3.5">
-//               <TabsList className="bg-transparent flex justify-start gap-3.5 overflow-y-auto h-max">
-//                 {selectedOptions.map((opt) => (
-//                   <TabsTrigger
-//                     key={opt.id}
-//                     value={opt.id}
-//                     className="px-6 py-2 ring-2 ring-border rounded-lg text-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:ring-0"
-//                   >
-//                     {opt.name}
-//                   </TabsTrigger>
-//                 ))}
-//               </TabsList>
-//               <div className="h-96">
-//                 {selectedOptions.map((opt) => (
-//                   <TabsContent value={opt.id} key={opt.id}>
-//                     <div className="space-y-5">
-//                       <div className="border-y-2 p-4 flex justify-between items-center">
-//                         <div className="flex items-center gap-4">
-//                           <label
-//                             className="font-medium text-xl"
-//                             htmlFor="product-option-all"
-//                           >
-//                             {opt.name}
-//                           </label>
-//                         </div>
-//                         <button type="button">
-//                           <PlusIcon className="w-6 h-6" />
-//                         </button>
-//                       </div>
-//                       <ScrollArea>
-//                         <div className="space-y-6 px-4">
-//                           {opt.attributes.map((attr, i) => (
-//                             <FormField
-//                               key={attr.id}
-//                               control={form.control}
-//                               name={`options.${getOptionIndex(
-//                                 opt.id
-//                               )}.attributes.${i}.isSelected`}
-//                               render={({ field }) => {
-//                                 return (
-//                                   <FormItem className="flex items-center gap-4 space-y-0">
-//                                     <FormControl>
-//                                       <Checkbox
-//                                         size="lg"
-//                                         checked={field.value}
-//                                         onCheckedChange={field.onChange}
-//                                       />
-//                                     </FormControl>
-//                                     <FormLabel className="font-medium text-xl">
-//                                       <div className="flex items-center gap-3.5 text-xl">
-//                                         {attr.type === "text" ? (
-//                                           <p>{attr.key}</p>
-//                                         ) : (
-//                                           <div
-//                                             className="w-6 h-6 rounded-sm"
-//                                             style={{
-//                                               backgroundColor: attr.key,
-//                                             }}
-//                                           />
-//                                         )}
-//                                         <p>{attr.value}</p>
-//                                       </div>
-//                                     </FormLabel>
-//                                     <FormMessage className="px-4" />
-//                                   </FormItem>
-//                                 );
-//                               }}
-//                             />
-//                           ))}
-//                         </div>
-//                       </ScrollArea>
-//                     </div>
-//                   </TabsContent>
-//                 ))}
-//               </div>
-//             </Tabs>
-//           )}
-//         </AccordionContent>
-//       </AccordionItem>
-//     </Accordion>
-//   );
-// }
-
-// function CreateOptionModal({
-//   closeModal,
-// }: {
-//   closeModal: (
-//     param?: { action: "CLOSE" } | { action: "CONFIRM"; option: CategoryOption }
-//   ) => void;
-// }) {
-//   const onSubmit = (values: Omit<CategoryOption, "id">) => {
-//     closeModal({
-//       action: "CONFIRM",
-//       option: { id: crypto.randomUUID(), ...values },
-//     });
-//   };
-
-//   const onCancel = () => closeModal({ action: "CLOSE" });
-
-//   return (
-//     <Dialog open>
-//       <DialogContent className="p-6 w-[55vw] max-w-full gap-6" hideClose>
-//         <div className="space-y-3">
-//           <h2 className="font-semibold text-3xl">Create option</h2>
-//           <Separator />
-//         </div>
-//         <SpecificityForm onSubmit={onSubmit} onCancel={onCancel} />
-//       </DialogContent>
-//     </Dialog>
-//   );
-// }

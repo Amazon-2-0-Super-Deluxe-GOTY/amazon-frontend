@@ -62,14 +62,14 @@ const roles = ["all", "user", "admin"] as const;
 export default function Page() {
   const searchParams = useSearchParamsTools();
   const [selectedRole, setSelectedRole] = useState<UserRoles>(() => {
-    const roleFromUrl = searchParams.get("role") as UserRoles | undefined;
+    const roleFromUrl = searchParams.get?.("role") as UserRoles | undefined;
     return !roleFromUrl || !roles.includes(roleFromUrl) ? "all" : roleFromUrl;
   });
   const [searchQuery, setSearchQuery] = useState(
-    () => searchParams.get("searchQuery") ?? ""
+    () => searchParams.get?.("searchQuery") ?? ""
   );
   const [page, setPage] = useState(() => {
-    const pageFromUrl = searchParams.get("page");
+    const pageFromUrl = searchParams.get?.("page");
     const pageNum = parseInt(pageFromUrl ?? "1");
     return isNaN(pageNum) ? 1 : pageNum;
   });

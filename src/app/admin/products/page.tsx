@@ -32,10 +32,10 @@ import { AlertDialog } from "@/components/Admin/AlertDialog";
 export default function Page() {
   const searchParams = useSearchParamsTools();
   const [searchQuery, setSearchQuery] = useState(
-    () => searchParams.get("searchQuery") ?? ""
+    () => searchParams.get?.("searchQuery") ?? ""
   );
   const [page, setPage] = useState(() => {
-    const pageFromUrl = searchParams.get("page");
+    const pageFromUrl = searchParams.get?.("page");
     const pageNum = parseInt(pageFromUrl ?? "1");
     return isNaN(pageNum) ? 1 : pageNum;
   });
