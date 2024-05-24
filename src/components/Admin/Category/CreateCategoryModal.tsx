@@ -9,6 +9,7 @@ interface Props {
   isRoot: boolean;
   category?: Category;
   allCategories: Category[];
+  onSubmit: (values: Omit<Category, "id">) => void;
 }
 
 export const CreateCategoryModal = ({
@@ -17,6 +18,7 @@ export const CreateCategoryModal = ({
   category,
   closeModal,
   allCategories,
+  onSubmit,
 }: Props) => {
   const onOpenChange = (open: boolean) => {
     if (!open) {
@@ -32,10 +34,10 @@ export const CreateCategoryModal = ({
       >
         <ScrollArea
           className="h-full"
-          viewportClassName="[&>div]:h-full scroll-smooth p-2"
+          viewportClassName="[&>div]:h-full scroll-smooth p-2 pr-3"
         >
           <CreateCategoryForm
-            onSubmit={console.log}
+            onSubmit={onSubmit}
             onCancel={closeModal}
             isRoot={isRoot}
             defaultValues={category}

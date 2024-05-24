@@ -35,13 +35,16 @@ const treeOptions = {
 };
 
 export default function Page() {
-  const { data } = useQuery({
+  const categoriesQuery = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
   });
   const allCategoriesTrees = React.useMemo(
-    () => (data?.data ? createTreeArray(data.data, treeOptions) : []),
-    [data?.data]
+    () =>
+      categoriesQuery.data?.data
+        ? createTreeArray(categoriesQuery.data.data, treeOptions)
+        : [],
+    [categoriesQuery.data?.data]
   );
   const [selectedCategory, setSelectedCategory] = useState<Category>();
   const checkboxTree = useCheckboxTree<Category, string>({
@@ -102,6 +105,10 @@ export default function Page() {
   const onDeleteCategories = (nodes: TreeNodeType<Category>[]) => {
     const newTree = checkboxTree.removeMany(nodes);
     checkboxTree.set(newTree);
+  };
+
+  const onCreateCategory = (categoryValue: Omit<Category, "id">) => {
+    console.log(categoryValue);
   };
 
   const isSelected = (categoryId: string) =>
@@ -206,11 +213,11 @@ export default function Page() {
 
       <CategoryAsideCard
         category={selectedCategory}
-        parentCategory={data?.data.find(
+        parentCategory={categoriesQuery.data?.data.find(
           (c) => c.id === selectedCategory?.parentId
         )}
         mainCategory={checkboxTree.root?.value}
-        allCategories={data?.data ?? []}
+        allCategories={categoriesQuery.data?.data ?? []}
         onViewMain={() =>
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
@@ -220,7 +227,8 @@ export default function Page() {
       <CreateCategoryModal
         isOpen={isCreateModalOpen}
         closeModal={closeCreateModal}
-        allCategories={data?.data ?? []}
+        allCategories={categoriesQuery.data?.data ?? []}
+        onSubmit={onCreateCategory}
         {...createModalParams.current}
       />
     </div>

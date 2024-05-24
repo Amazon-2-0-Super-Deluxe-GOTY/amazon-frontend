@@ -325,55 +325,57 @@ export const CreateCategoryForm = ({
             </div>
           )}
         </fieldset>
-        <fieldset className="space-y-6 pt-2">
-          <div className="space-y-3.5">
-            <h3 className="text-xl font-semibold">Property keys</h3>
-            <Separator />
-          </div>
-          {propertyKeysArray.fields.map((value, i) => (
-            <div className="flex items-center gap-3.5" key={value.id}>
-              <FormField
-                control={form.control}
-                name={`categoryPropertyKeys.${i}.name`}
-                render={({ field }) => (
-                  <FormItem className="relative w-full space-y-0">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
-                      Property key
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Enter property key name..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="px-4" />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="button"
-                variant={"ghost"}
-                className="h-max p-3"
-                onClick={onRemovePropertyKey(i)}
-              >
-                <Trash2Icon className="w-6 h-6" />
-              </Button>
+        {!isRoot && (
+          <fieldset className="space-y-6 pt-2">
+            <div className="space-y-3.5">
+              <h3 className="text-xl font-semibold">Property keys</h3>
+              <Separator />
             </div>
-          ))}
-          <Button
-            type="button"
-            className="h-max w-full p-4 justify-start gap-3.5"
-            variant={"secondary"}
-            onClick={onAddPropertyKey}
-          >
-            <PlusIcon className="w-4 h-4" />
-            Add property key
-          </Button>
-          <FormMessage className="px-4">
-            {form.formState.errors.categoryPropertyKeys?.message}
-          </FormMessage>
-        </fieldset>
+            {propertyKeysArray.fields.map((value, i) => (
+              <div className="flex items-center gap-3.5" key={value.id}>
+                <FormField
+                  control={form.control}
+                  name={`categoryPropertyKeys.${i}.name`}
+                  render={({ field }) => (
+                    <FormItem className="relative w-full space-y-0">
+                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                        Property key
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter property key name..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="px-4" />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  className="h-max p-3"
+                  onClick={onRemovePropertyKey(i)}
+                >
+                  <Trash2Icon className="w-6 h-6" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              className="h-max w-full p-4 justify-start gap-3.5"
+              variant={"secondary"}
+              onClick={onAddPropertyKey}
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add property key
+            </Button>
+            <FormMessage className="px-4">
+              {form.formState.errors.categoryPropertyKeys?.message}
+            </FormMessage>
+          </fieldset>
+        )}
 
         <div className="fixed bottom-0 left-0 right-0 p-6 flex justify-end gap-3.5 bg-white z-10">
           <Button type="button" variant={"secondary"} onClick={onCancel}>
