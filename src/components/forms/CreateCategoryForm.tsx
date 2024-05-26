@@ -24,13 +24,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "../ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { useEffect, useMemo, useState } from "react";
-import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
+import { useEffect } from "react";
 import { getAllIcons } from "@/lib/categories";
 import { Separator } from "../ui/separator";
-import { InfoIcon, MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { ScrollArea } from "../ui/scroll-area";
-import clsx from "clsx";
+import { InfoIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import type { Category } from "@/api/categories";
 import { CategorySelect } from "../Admin/Category/CategorySelect";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -51,6 +48,13 @@ const formSchema = z
         message: "Category description must not be more than 300 characters.",
       }),
     isDeleted: z.boolean(),
+    image: z.object(
+      {
+        id: z.string(),
+        imageUrl: z.string(),
+      },
+      { required_error: "Please, select image" }
+    ),
     categoryPropertyKeys: z.array(
       z.object({
         name: z.string().min(1, {
@@ -118,6 +122,7 @@ export const CreateCategoryForm = ({
           description: values.description,
           isDeleted: values.isDeleted,
           categoryPropertyKeys: values.categoryPropertyKeys,
+          image: values.image,
           iconId: values.iconId,
         }
       : {
@@ -125,6 +130,7 @@ export const CreateCategoryForm = ({
           description: values.description,
           isDeleted: values.isDeleted,
           categoryPropertyKeys: values.categoryPropertyKeys,
+          image: values.image,
           parentId: values.parentId,
         };
     onSubmit(cleanValues);
