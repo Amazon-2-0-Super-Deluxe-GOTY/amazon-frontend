@@ -6,16 +6,10 @@ import Image from "next/image";
 import { SignInUpModals } from "@/components/SignInUpModal/SignInUpModals";
 
 export const SingInUpBanner = () => {
-
   return (
-    <Card className="w-full bg-gray-100 border-none">
-      <CardContent className="p-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <Image
-          src={placeholder}
-          alt="Placeholder"
-          className="w-full sm:max-w-40 xl:max-w-md object-cover max-h-[260px]"
-        />
-        <div className="flex-1">
+    <Card className="w-full bg-background border-gradient gradient-gray">
+      <CardContent className="px-6 py-16 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="basis-1/2">
           <div className="mb-6 text-center">
             <h2 className="text-2xl lg:text-3xl xl:text-4xl whitespace-nowrap font-semibold mb-3">
               Be aware of the variety
@@ -28,11 +22,14 @@ export const SingInUpBanner = () => {
             <SignInUpModals variant="banner" />
           </div>
         </div>
-        <Image
-          src={placeholder}
-          alt="Placeholder"
-          className="w-full sm:max-w-40 xl:max-w-md object-cover max-h-[260px]"
-        />
+        <div className="basis-1/2 relative">
+          <Image
+            src={placeholder}
+            alt="Placeholder"
+            fill
+            // className="w-full xl:max-w-md object-cover max-h-[260px]"
+          />
+        </div>
       </CardContent>
     </Card>
   );

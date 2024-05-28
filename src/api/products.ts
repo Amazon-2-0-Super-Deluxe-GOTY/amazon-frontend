@@ -1,3 +1,8 @@
+export interface ProductImage {
+  id: string;
+  imageUrl: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -6,10 +11,7 @@ export interface Product {
   quantity: number;
   discountPrice?: number;
   rating: number;
-  images: {
-    id: string;
-    imageUrl: string;
-  }[];
+  images: [];
   productDetails: { name: string; text: string }[];
   aboutProduct: { name: string; text: string }[];
 }

@@ -52,6 +52,9 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        light: {
+          DEFAULT: "hsl(var(--light))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -72,11 +75,58 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      gradient: {
+        gray: "linear-gradient(to right bottom, #EEF3FEBF, transparent), linear-gradient(to right bottom, transparent, #91A7D7BF)",
+        "green-light": "linear-gradient(to right bottom, #9ACC2A, #D6FF66)",
+        "green-dark": "linear-gradient(to right bottom, #7CAE0C, #B8EA48)",
+      },
+      borderGradientWidth: {
+        sm: "2px",
+        base: "2.5px",
+      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/container-queries"),
+    {
+      handler: ({ addComponents, matchUtilities, theme }) => {
+        addComponents({
+          ".border-gradient": {
+            "--gradient-border-width": "2.5px",
+            position: "relative",
+            border: "var(--gradient-border-width) solid transparent",
+            backgroundClip: "padding-box",
+            "&::before": {
+              content: "''",
+              position: "absolute",
+              inset: "calc(var(--gradient-border-width) * -1)",
+              backgroundImage: "var(--gradient)",
+              zIndex: "-1",
+              borderRadius: "inherit",
+            },
+          },
+        });
+
+        matchUtilities(
+          {
+            "border-gradient-width": (value) => ({
+              "--gradient-border-width": value,
+            }),
+          },
+          { values: theme("borderGradientWidth") }
+        );
+
+        matchUtilities(
+          {
+            gradient: (value) => ({
+              "--gradient": value,
+            }),
+          },
+          { values: theme("gradient") }
+        );
+      },
+    },
   ],
 } satisfies Config;
 
