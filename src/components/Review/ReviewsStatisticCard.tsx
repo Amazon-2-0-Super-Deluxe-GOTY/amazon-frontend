@@ -4,6 +4,7 @@ import type { ReviewsStatistic } from "./types";
 import { CheckCircleIcon } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { ReviewTags } from "./ReviewTags";
+import { StarFullIcon } from "../Shared/Icons";
 
 export const ReviewsStatisticCard = ({ data }: { data: ReviewsStatistic }) => {
   const starsDataReversed = useMemo(
@@ -31,10 +32,12 @@ export const ReviewsStatisticCard = ({ data }: { data: ReviewsStatistic }) => {
                     className="text-sm lg:text-base whitespace-nowrap"
                   >
                     <td>
-                      <span className="mr-3">{s.stars} stars</span>
+                      <p className="flex items-center gap-1">
+                        {s.stars} <StarFullIcon />
+                      </p>
                     </td>
                     <td className="w-full">
-                      <div className="grid w-full h-4 bg-gray-400 rounded-sm overflow-hidden">
+                      <div className="grid w-full h-4 bg-gray-400 rounded-full overflow-hidden">
                         <div
                           className="bg-black"
                           style={{ width: `${s.percentage}%` }}

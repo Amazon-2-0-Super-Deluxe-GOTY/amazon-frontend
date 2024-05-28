@@ -81,8 +81,7 @@ const config = {
         "green-dark": "linear-gradient(to right bottom, #7CAE0C, #B8EA48)",
       },
       borderGradientWidth: {
-        sm: "2px",
-        base: "2.5px",
+        base: "2px",
       },
     },
   },
@@ -93,7 +92,7 @@ const config = {
       handler: ({ addComponents, matchUtilities, theme }) => {
         addComponents({
           ".border-gradient": {
-            "--gradient-border-width": "2.5px",
+            "--gradient-border-width": "2px",
             position: "relative",
             border: "var(--gradient-border-width) solid transparent",
             backgroundClip: "padding-box",

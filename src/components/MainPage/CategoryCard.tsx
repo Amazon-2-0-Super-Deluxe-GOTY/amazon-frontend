@@ -54,7 +54,7 @@ export function CategoryCard({ title, link, images }: CategoryCardProps) {
   const imagesCount = images.length.toString();
 
   return (
-    <Card className="min-w-44 max-w-44 lg:max-w-xs w-full border-2 border-gradient gradient-gray rounded-lg shadow-none p-2 bg-muted group">
+    <Card className="min-w-44 max-w-44 lg:max-w-xs w-full border-2 border-gradient gradient-gray rounded-lg shadow-none p-4 bg-muted group">
       <div className="h-32 w-full grid grid-cols-2 grid-rows-2 gap-1">
         {images.map((img, i) => (
           <div
@@ -62,7 +62,8 @@ export function CategoryCard({ title, link, images }: CategoryCardProps) {
               imagesCount,
               index: i.toString(),
             })}
-            key={img.id}
+            key={i}
+            data-index={i}
           >
             <Image
               src={img.imageUrl}
@@ -78,7 +79,7 @@ export function CategoryCard({ title, link, images }: CategoryCardProps) {
         <div className="text-end">
           <Link
             href={link}
-            className="flex justify-end items-center gap-2 pr-4"
+            className="flex justify-end items-center gap-2 pr-2"
           >
             See all{" "}
             <ArrowRightIcon className="ml-2 w-4 h-4 relative transition-[right] right-0 group-hover:-right-2" />

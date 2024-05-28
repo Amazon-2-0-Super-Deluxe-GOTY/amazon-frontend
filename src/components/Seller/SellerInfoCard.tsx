@@ -80,25 +80,15 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
               </div>
 
               <div className="flex gap-4">
-                <p className="flex flex-col basis-2/4 xl:basis-1/3">
+                <p className="flex flex-col basis-1/2">
                   <span className="text-lg lg:text-2xl font-semibold">
                     {sellerInfo.byersRatingPercent.toFixed(1)}%
                   </span>
-                  <span className="text-sm xl:text-base">
+                  <p className="text-sm max-w-56 xl:text-base">
                     buyers recommended this seller in the last 12 months{" "}
-                  </span>
-                </p>
-                <div className="flex flex-col basis-1/4 xl:basis-1/3">
-                  <p className="flex items-center gap-3">
-                    <span className="text-lg lg:text-2xl font-semibold">
-                      {sellerInfo.descriptionRating.toFixed(1)}/
-                      <span className="text-lg">5</span>
-                    </span>
-                    <StarIcon className="fill-black" />
                   </p>
-                  <p className="text-sm xl:text-base">matching description</p>
-                </div>
-                <div className="flex flex-col basis-1/4 xl:basis-1/3">
+                </p>
+                <div className="flex flex-col basis-1/2">
                   <p className="flex items-center gap-3">
                     <span className="text-lg lg:text-2xl font-semibold">
                       {sellerInfo.serviceRating.toFixed(1)}/
@@ -140,41 +130,6 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
               <div className="flex justify-between items-center lg:text-lg">
                 <h3 className="font-semibold">Complaints in orders</h3>
                 <span>{sellerInfo.complaintsPercent.toFixed(1)}%</span>
-              </div>
-
-              <Separator orientation="horizontal" />
-
-              <div className="space-y-3 lg:space-y-3.5">
-                <div>
-                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold">
-                    {sellerInfo.ratingsRemoved.marketplace +
-                      sellerInfo.ratingsRemoved.byers}{" "}
-                    grades removed
-                  </h3>
-                  <p className="text-xs sm:text-sm">
-                    ({sellerInfo.ratingsRemoved.marketplace} by Perry,{" "}
-                    {sellerInfo.ratingsRemoved.byers} by byers)
-                  </p>
-                </div>
-                <p className="text-sm sm:text-base">
-                  Perry removes ratings that do not conform to the{" "}
-                  <span className="font-semibold">regulation</span> or at the
-                  buyer’s request. The buyer may modify or withdraw the
-                  assessment on its own initiative, at the seller’s request,
-                  after clarifying the matter with the seller or obtaining
-                  compensation.
-                </p>
-              </div>
-
-              <div className="space-y-3 lg:space-y-4">
-                <h3 className="text-base sm:text-lg lg:text-xl font-semibold">
-                  {sellerInfo.ratingsExcluded} excluded ratings
-                </h3>
-                <p className="text-sm sm:text-base">
-                  Ratings that are not included in the calculation of the
-                  average sales quality. Reasons for exclusion are given for
-                  each excluded rating.
-                </p>
               </div>
             </div>
           </ScrollArea>
