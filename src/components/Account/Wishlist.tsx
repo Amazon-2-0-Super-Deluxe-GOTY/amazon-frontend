@@ -4,15 +4,16 @@ import { Separator } from "../ui/separator";
 import { WishlistCard } from "./Cards/WishlistCard";
 import { useState } from "react";
 
-const wishlistProducts = Array.from({ length: 9 }).map((_, index) => ({
-  code: index.toString(),
-  title: `Product ${index + 1}`,
-  price: 39.99,
-}));
-
 export const Wishlist = () => {
+
+  const [wishlistProducts, setWishlistProducts] = useState<{code:string, title:string, price:number}[]>(Array.from({ length: 9 }).map((_, index) => ({
+    code: index.toString(),
+    title: `Product ${index + 1}`,
+    price: 39.99,
+  })));
+
   const removeWishlistItem = (code:string) => {
-    wishlistProducts
+    setWishlistProducts(wishlistProducts.filter((item) => item.code !== code));
   };
 
   const [searchText, setSearchText] = useState<string>("");
@@ -34,7 +35,7 @@ export const Wishlist = () => {
         </div>
       </div>
       <Separator />
-      <div className="w-full grid grid-cols-5 py-6">
+      <div className="w-full grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 py-6">
         {wishlistProducts.filter((v) => v.title.toLowerCase().includes(searchText)).map((product, index) => (
           <WishlistCard key={index} code={product.code} title={product.title} price={product.price} removeWishlistItem={removeWishlistItem} />
         ))}

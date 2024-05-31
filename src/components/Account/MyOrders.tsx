@@ -18,7 +18,7 @@ export const MyOrders = () => {
       <Separator />
       <div className="w-full py-6">
         {orderItems.map((order, index) => (
-          <MyOrderCard key={index} code={order.code} status={order.status} cost={order.cost} count={order.count} dateOfArrived={order.date} />
+          <MyOrderCard key={index} code={order.code} status={order.status} cost={order.cost} count={order.count} dateOfArrived={order.date}  />
         ))}
       </div>
     </div>

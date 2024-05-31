@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
-import { Checkbox } from "../ui/checkbox"
+import { Checkbox } from "../../../ui/checkbox"
 
 const FormSchema = z.object({
   email: z.string().email({

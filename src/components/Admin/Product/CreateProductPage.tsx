@@ -1,7 +1,7 @@
 "use client";
 import { getCategories } from "@/api/categories";
 import { getAdminProduct } from "@/api/products";
-import { CreateProductForm } from "@/components/forms/CreateProductForm";
+import { CreateProductForm } from "@/components/forms/admin/CreateProductForm";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";

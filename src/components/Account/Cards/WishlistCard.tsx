@@ -5,6 +5,7 @@ import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { RemoveFromWishListModal } from "../Popups/WishlistModals";
 
 export const WishlistCard = ({
   code,
@@ -34,11 +35,9 @@ export const WishlistCard = ({
           <div className="absolute top-6 left-0 rounded-e-xl bg-gray-100 px-2 pl-4 pr-6">
             -24%
           </div>
-          <Button 
-            variant={"outline"} 
-            className="absolute right-[-6px] top-[-6px] py-0 px-[16px] font-semibold"
-            onClick={() => removeWishlistItem(code)}
-          >Remove</Button>
+          <div className="absolute right-[-6px] top-[-6px] md:right-[-6px] md:top-[-6px]">
+            <RemoveFromWishListModal onRemoveItem={() => removeWishlistItem(code)} />
+          </div>
         </div>
       </CardHeader>
       <CardContent>

@@ -28,8 +28,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getAllIcons } from "@/lib/categories";
-import { Textarea } from "../ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Textarea } from "../../ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
 import { InfoIcon } from "lucide-react";
 import type { Category } from "@/api/categories";
 

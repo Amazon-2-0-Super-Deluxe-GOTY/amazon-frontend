@@ -1,0 +1,113 @@
+import { ChangeEmailForm } from "@/components/forms/shop/account/ChangeEmailForm";
+import { ChangeFirstLastNameForm } from "@/components/forms/shop/account/ChangeFirstLastNameForm";
+import { ChangePasswordForm } from "@/components/forms/shop/account/ChangePasswordForm";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { XIcon } from "lucide-react";
+import { useState } from "react";
+import { OrderDetailsProductCard } from "../Cards/OrderDetailsProductCard";
+  
+export const OrderDetailsModal = ({
+  code,
+  status,
+  products,
+  additionalInfo,
+} : {
+  code: string;
+  status: string;
+  products: { name:string, quantity:number, price:number }[];
+  additionalInfo: { name:string, adress:string, paymentType:string, dateDelivered:string }
+}) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const onClose = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose} >
+      <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 font-semibold">
+        Details
+      </DialogTrigger>
+      <DialogContent hideClose className="max-w-7xl max-h-[750px] w-full h-full p-6 pr-3 flex flex-col justify-between">
+        <div className="pr-3">
+        <DialogTitle>
+          <div className="flex justify-between items-center pb-6">
+            <div className="flex justify-center items-center gap-4 text-2xl">
+              <span>Order #{code}</span>
+              <span className={cn(status === "Recived" && "text-green-500",
+                                  status === "Ready for pickup" && "text-blue-600", 
+                                  status === "Shipped" && "text-cyan-500", 
+                                  status === "Ordered" && "text-gray-300", 
+                                  status === "Cancelled" && "text-red-500", 
+                                  "font-medium text-base")} >{status}</span>
+            </div>
+            <DialogClose className="w-4 h-4 flex justify-center items-center" >
+              <XIcon />
+            </DialogClose>
+          </div>
+        </DialogTitle>
+        <Separator />
+        </div>
+        <ScrollArea>
+          <div className="flex flex-col justify-between gap-6">
+            <div className="flex justify-center items-center w-full">
+              <div className="w-full h-full">
+                <div className="mt-2 mb-4">
+                  <div>
+                    {products.map((item, i) => {
+                      return(
+                        <OrderDetailsProductCard key={i} name={item.name} quantity={item.quantity} price={item.price} />
+                      );
+                    })}
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex justify-between py-6">
+                  <Button variant={"secondary"} className="text-xl">How to cancel order?</Button>
+                  <div className="flex justify-center items-center gap-4">
+                    <span className="text-2xl font-medium">Total:</span>
+                    <span className="text-2xl font-medium">$ 999</span>
+                    <sup className="text-xl font-bold mt-3 -ml-3">00</sup>
+                  </div>
+                </div>
+                <Separator />
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center w-full gap-3 px-6 py-3 bg-slate-50 rounded">
+              <span className="text-xl font-semibold">Additional information</span>
+              <div className="w-full h-full">
+                <div className="w-full flex justify-between items-center">
+                  <span className="text-xl font-medium">Recipient&apos;s name</span>
+                  <span className="text-xl font-light">{additionalInfo.name}</span>
+                </div>
+                <div className="w-full flex justify-between items-center">
+                  <span className="text-xl font-medium">Adress</span>
+                  <span className="text-xl font-light">{additionalInfo.adress}</span>
+                </div>
+                <div className="w-full flex justify-between items-center">
+                  <span className="text-xl font-medium">Payment type</span>
+                  <span className="text-xl font-light">{additionalInfo.paymentType}</span>
+                </div>
+                <div className="w-full flex justify-between items-center">
+                  <span className="text-xl font-medium">Delivered on</span>
+                  <span className="text-xl font-light">{additionalInfo.dateDelivered}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
+};

@@ -7,7 +7,7 @@ import { useSearchParamsTools } from "@/lib/router";
 
 import Image from "next/image";
 import Link from "next/link";
-import { Slash, XIcon } from "lucide-react";
+import { ChevronLeft, Slash, XIcon } from "lucide-react";
 
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 
@@ -36,9 +36,10 @@ import { Separator } from "@/components/ui/separator";
 import { AccountSettings } from "@/components/Account/AccountSettings";
 import { Wishlist } from "@/components/Account/Wishlist";
 import { MyOrders } from "@/components/Account/MyOrders";
+import { useScreenSize } from "@/lib/media";
 
 export default function AccountPage(
-  // { user, }: { user?: { fullName: string; avatar: string }; }
+  // { user, }: { user?: { fullName: string; avatar: string }; }*
 ) {
   const user = { avatar: "user", fullName: "Qwert Aswdesh", email: "qwerty11@gmail.com", };
   // const isLoggedIn = !!user;
@@ -52,14 +53,39 @@ export default function AccountPage(
       : "Log in to enjoy a more pleasant experience",
   };
 
-  const [accountTab, setAccountTab] = useState<string>("settings");
+  const isDesktop = useScreenSize({minSize: "md"});
+  const [isOpenTab, setIsOpenTab] = useState<boolean>(false);
+
+  const [accountTab, setAccountTab] = useState<string>("");
   const onChangeAccountTab = (name:string) => {
     setAccountTab(name);
   };
 
+  const onBack = () => {
+    setAccountTab("");
+  }
+
+  useEffect(() => {
+    if(!isDesktop && accountTab.length !== 0)
+      setIsOpenTab(true);
+    else if(!isDesktop)
+      setIsOpenTab(false);
+  }, [accountTab]);
+
+  useEffect(() => {
+    if(isDesktop) {
+      setIsOpenTab(false);
+      setAccountTab("");
+    } 
+  }, [isDesktop]);
+
+
+  console.log(isDesktop);
+  console.log(accountTab);
+
   return (
     <main className="flex flex-col items-center w-full px-4">
-      <section className="w-full flex items-left gap-1">
+      <section className={cn("w-full flex items-left gap-1", isOpenTab && "hidden")}>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -81,8 +107,8 @@ export default function AccountPage(
         </Breadcrumb>
       </section>
       <section className="w-full pt-6">
-        <div className="grid xl:grid-cols-[0.5fr_min-content_1fr_1fr] gap-6 w-full p-1 h-full">
-          <aside className="max-xl:col-span-2 flex xl:flex-col gap-6 sticky h-max py-6 px-4">
+        <div className="grid md:grid-cols-[0.5fr_min-content_1fr_1fr] gap-6 w-full p-1 h-full">
+          <aside className={cn("flex flex-col gap-6 sticky h-max py-6 px-4", isOpenTab && "hidden")}>
             <div className="flex gap-4">
               <AvatarNameBlock
                 image={headerData.avatarImage}
@@ -109,10 +135,16 @@ export default function AccountPage(
               className="flex justify-start font-normal text-base"
             >Account settings</Button>
           </aside>
-          <Separator orientation="vertical" className="hidden xl:block" />
-          <div className="col-span-2 relative">
+          <Separator orientation="vertical" className="hidden md:block" />
+          <div className={cn("col-span-2 relative md:block", !isOpenTab && "hidden")}>
+            <div>
+            {!isDesktop && <Button variant={"ghost"} className="pl-2" onClick={onBack} >
+              <ChevronLeft />
+              <span className="text-base">Back</span>
+            </Button>}
             {(() => {
               switch (accountTab) {
+                default:
                 case "settings":
                   return <AccountSettings user={user} />;
                 case "wishlist":
@@ -120,10 +152,9 @@ export default function AccountPage(
                 case "orders":
                   return <MyOrders />;
 
-                default:
-                  return null;
               }
             })()}
+            </div>
           </div>
         </div>
       </section>

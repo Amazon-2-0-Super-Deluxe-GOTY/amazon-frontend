@@ -1,12 +1,12 @@
 import { ChevronLeft } from "lucide-react";
-import { SignUpCodeForm } from "../forms/SignUpCodeForm";
+import { SignUpCodeForm } from "../forms/shop/signinup/SignUpCodeForm";
 import { Button } from "../ui/button";
-import { SignUpForm } from "../forms/SignUpForm";
-import { LogInForm } from "../forms/LogInForm";
+import { SignUpForm } from "../forms/shop/signinup/SignUpForm";
+import { LogInForm } from "../forms/shop/signinup/LogInForm";
 import Link from "next/link";
-import { RestorePasswordForm } from "../forms/RestorePasswordForm";
-import { ResetPasswordForm } from "../forms/ResetPasswordForm";
-import { SignUpFirstLastNameForm } from "../forms/SignUpFirstLastNameForm";
+import { RestorePasswordForm } from "../forms/shop/signinup/RestorePasswordForm";
+import { ResetPasswordForm } from "../forms/shop/signinup/ResetPasswordForm";
+import { SignUpFirstLastNameForm } from "../forms/shop/signinup/SignUpFirstLastNameForm";
 
 const titleStyle = "text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl font-semibold";
 const textStyle = "text-center lg:text-2xl sm:text-xl text-md mt-1";
