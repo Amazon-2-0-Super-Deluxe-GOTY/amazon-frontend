@@ -9,6 +9,7 @@ import { ResetPasswordForm } from "../forms/ResetPasswordForm";
 import { SignUpFirstLastNameForm } from "../forms/SignUpFirstLastNameForm";
 import { useAuthStore } from "@/lib/storage";
 import type { SignInUpModalVariants } from "./types";
+import { useUser } from "@/api/users";
 
 const titleStyle =
   "text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl font-semibold";
@@ -184,6 +185,14 @@ export const ModalSignUpCode = ({
 }: {
   changeModal: (modal: SignInUpModalVariants) => void;
 }) => {
+  const onSignUp = () => {
+    changeModal("signup");
+  };
+
+  const onSubmit = () => {
+    changeModal("finishing-touches");
+  };
+
   return (
     <div className="w-full h-full flex flex-col justify-between items-center py-14">
       <div className="w-full h-full flex flex-col justify-between items-center">
@@ -192,15 +201,13 @@ export const ModalSignUpCode = ({
           <h2 className={textStyle}>Enter the code to confirm your email</h2>
         </div>
         <div className="max-w-md w-full h-full">
-          <SignUpCodeForm onChangeModal={changeModal} />
+          <SignUpCodeForm onSubmit={onSubmit} />
         </div>
       </div>
       <div className="absolute flex left-6 top-6 max-md:left-4 max-md:top-4">
         <Button
           variant={"ghost"}
-          onClick={() => {
-            changeModal("signup");
-          }}
+          onClick={onSignUp}
           className="absolute p-3 pl-1"
         >
           <ChevronLeft />
@@ -216,6 +223,13 @@ export const ModalFirstLastName = ({
 }: {
   changeModal: (modal: SignInUpModalVariants) => void;
 }) => {
+  const userData = useUser();
+
+  const onSubmit = () => {
+    userData.refetch();
+    changeModal("successful-registration");
+  };
+
   return (
     <div className="w-full h-full flex flex-col justify-between items-center py-14">
       <div className="w-full h-full flex flex-col justify-between items-center gap-3">
@@ -224,7 +238,7 @@ export const ModalFirstLastName = ({
           <h2 className={textStyle}>Enter your first and last name</h2>
         </div>
         <div className="max-w-md w-full h-full">
-          <SignUpFirstLastNameForm onChangeModal={changeModal} />
+          <SignUpFirstLastNameForm onSubmit={onSubmit} />
         </div>
       </div>
     </div>

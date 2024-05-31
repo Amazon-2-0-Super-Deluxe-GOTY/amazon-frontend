@@ -24,20 +24,19 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { SignInUpButtons } from "../SignInUpModal/SignInUpModals";
 import type { User } from "@/api/types";
-import { logOut } from "@/api/users";
+import { logOut, useUser } from "@/api/users";
 import { useAuthStore } from "@/lib/storage";
 
 export const UserSidebar = ({
   isOpen,
   closeSidebar,
-  user,
   categories,
 }: {
   isOpen: boolean;
   closeSidebar: () => void;
-  user?: User;
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
+  const { user, refetch } = useUser();
   const isLoggedIn = !!user;
   const fullName = `${user?.firstName} ${user?.lastName}`;
   const clearToken = useAuthStore((state) => state.clearToken);

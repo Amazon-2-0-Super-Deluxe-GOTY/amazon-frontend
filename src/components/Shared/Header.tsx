@@ -19,7 +19,6 @@ import { Button } from "../ui/button";
 import { useScreenSize } from "@/lib/media";
 import { UserSidebar } from "./UserSidebar";
 import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
-import { useUser } from "@/api/users";
 
 const sidebarData = {
   // user: { fullName: "Marsha Shields", avatar: "" },
@@ -55,7 +54,6 @@ const sidebarData = {
 export function Header() {
   const isDesktop = useScreenSize({ minSize: "lg" });
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const user = useUser();
 
   const openSidebar = () => setIsSidebarOpen(true);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -90,7 +88,6 @@ export function Header() {
       <UserSidebar
         isOpen={isSidebarOpen}
         closeSidebar={closeSidebar}
-        user={user}
         {...sidebarData}
       />
     </header>

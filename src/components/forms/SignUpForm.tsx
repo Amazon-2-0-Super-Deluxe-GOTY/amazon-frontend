@@ -56,12 +56,12 @@ export function SignUpForm({
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
 
-  const createUserMutations = useMutation({
+  const createUserMutation = useMutation({
     mutationFn: registerUser,
   });
 
   const handleSubmit = (values: z.infer<typeof FormSchema>) => {
-    createUserMutations.mutateAsync(values).then((res) => {
+    createUserMutation.mutateAsync(values).then((res) => {
       if (res.status === 201) {
         onSubmit(res.data.token);
       } else if (res.status === 400) {
@@ -170,7 +170,11 @@ export function SignUpForm({
             )}
           />
         </div>
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={createUserMutation.isPending}
+        >
           Sign up
         </Button>
       </form>

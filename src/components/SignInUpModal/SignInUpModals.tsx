@@ -105,7 +105,11 @@ export const AuthModal = ({
             }
           })()}
           <div className="w-full h-full max-w-[530px] max-md:hidden">
-            <Image src={placeholder} alt="Placeholder" className="h-full" />
+            <Image
+              src={placeholder}
+              alt="Placeholder"
+              className="h-full object-cover"
+            />
           </div>
         </div>
       </DialogContent>

@@ -20,6 +20,9 @@ import {
 } from "@/components/ui/input-otp";
 import { useState } from "react";
 import type { SignInUpModalVariants } from "../SignInUpModal/types";
+import { useMutation } from "@tanstack/react-query";
+import { confirmEmail, resendConfirmationEmail } from "@/api/users";
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 
 const FormSchema = z.object({
   code: z.string().min(1, {
@@ -27,44 +30,38 @@ const FormSchema = z.object({
   }),
 });
 
-export function SignUpCodeForm({
-  onChangeModal,
-}: {
-  onChangeModal: (modal: SignInUpModalVariants) => void;
-}) {
+export function SignUpCodeForm({ onSubmit }: { onSubmit: () => void }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       code: "",
     },
   });
+  const resendCodeMutation = useMutation({
+    mutationFn: resendConfirmationEmail,
+  });
+  const confirmEmailMutation = useMutation({
+    mutationFn: confirmEmail,
+  });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // Checking data for validity
-
-    console.log("SignUpCode :: You submitted the following values:");
-    console.log(JSON.stringify(data, null, 2));
-
-    if (data.code === code) {
-      onChangeModal("finishing-touches");
-    } else {
-      form.setError("code", { message: "Incorrect code, try again" });
-    }
+  function handleSubmit(data: z.infer<typeof FormSchema>) {
+    confirmEmailMutation.mutateAsync(data.code).then((res) => {
+      if (res.status === 200) {
+        onSubmit();
+      } else {
+        form.setError("code", { message: res.message });
+      }
+    });
   }
 
   const [buttonText, setButtonText] = useState<string>("Send code");
-  const [code, setCode] = useState<string | undefined>(undefined);
   const [timer, setTimer] = useState<number>(60);
   const [isCodeActive, setIsCodeActive] = useState<boolean>(false);
 
   function sendCode() {
-    const getCode = Math.floor(Math.random() * 999999)
-      .toString()
-      .padStart(6, "0");
-    setCode(getCode);
     setIsCodeActive(true);
     timerStart();
-    console.log("CODE: " + getCode);
+    resendCodeMutation.mutate();
   }
 
   function timerStart() {
@@ -73,7 +70,6 @@ export function SignUpCodeForm({
         if (prevTimer === 0) {
           clearInterval(interval as NodeJS.Timeout);
           setButtonText("Resend code");
-          setCode(undefined);
           setIsCodeActive(false);
           return 60;
         } else {
@@ -86,7 +82,7 @@ export function SignUpCodeForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="w-full h-full flex flex-col justify-between"
       >
         <div className="space-y-6 flex flex-col justify-center h-full">
@@ -98,7 +94,11 @@ export function SignUpCodeForm({
                 <div className="w-full h-full py-16">
                   <div className="flex justify-center items-center">
                     <FormControl>
-                      <InputOTP maxLength={6} {...field}>
+                      <InputOTP
+                        maxLength={6}
+                        pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                        {...field}
+                      >
                         <InputOTPGroup>
                           <InputOTPSlot index={0} />
                         </InputOTPGroup>
@@ -130,6 +130,7 @@ export function SignUpCodeForm({
                         type="button"
                         className="m-auto"
                         onClick={sendCode}
+                        disabled={resendCodeMutation.isPending}
                       >
                         {buttonText}
                       </Button>
@@ -145,7 +146,11 @@ export function SignUpCodeForm({
             )}
           />
         </div>
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={confirmEmailMutation.isPending}
+        >
           Continue
         </Button>
       </form>

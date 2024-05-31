@@ -1,6 +1,7 @@
 import { authStore, useAuthStore } from "@/lib/storage";
 import type { ApiResponse, ApiValidationErrors, User } from "./types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export type UserRoles = "all" | "user" | "admin";
 
@@ -86,9 +87,33 @@ export function updateUser(body: {
   }).then((r) => r.json());
 }
 
-// export function resendConfirmationEmail() {
-//   return fetch('/api/users/someEmailConfirmationEndpointName')
-// }
+export function resendConfirmationEmail(): Promise<
+  ApiResponse<[[200, null], [403, null]]>
+> {
+  const token = authStore.getState().token;
+  return fetch("/api/users/sendNewEmailCode", {
+    method: "POST",
+    body: JSON.stringify({}),
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function confirmEmail(
+  emailCode: string
+): Promise<ApiResponse<[[200, string], [400, string]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/users/confirmEmail", {
+    method: "POST",
+    body: JSON.stringify({ emailCode }),
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
 
 export function getUserProfile(): Promise<
   ApiResponse<[[200, User], [401, null]]>
@@ -100,25 +125,17 @@ export function getUserProfile(): Promise<
 }
 
 export function useUser() {
-  const [user, setUser] = useState<User>();
   const authStore = useAuthStore((state) => state);
+  const userQuery = useQuery({
+    queryKey: ["user", authStore.token ?? "unauthorized"],
+    queryFn: getUserProfile,
+    retry: false,
+    select(data) {
+      return data.status === 200 ? data.data : null;
+    },
+  });
 
-  useEffect(() => {
-    if (authStore.token) {
-      getUserProfile().then((res) => {
-        if (res.status === 200) {
-          setUser(res.data);
-        } else if (res.status === 401) {
-          authStore.clearToken();
-          setUser(undefined);
-        }
-      });
-    } else {
-      user && setUser(undefined);
-    }
-  }, [authStore.token]);
-
-  return user;
+  return { user: userQuery.data, refetch: () => userQuery.refetch() };
 }
 
 export function logOut(): Promise<ApiResponse<[[200, null], [401, null]]>> {

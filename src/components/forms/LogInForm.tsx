@@ -170,7 +170,11 @@ export function LogInForm({
             )}
           />
         </div>
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={logInMutations.isPending}
+        >
           Log in
         </Button>
       </form>
