@@ -16,6 +16,7 @@ import { useScreenSize } from "@/lib/media";
 import { Button } from "../ui/button";
 import { useModal } from "../Shared/Modal";
 import type { SignInUpModalVariants } from "./types";
+import { AlertDialog } from "../Admin/AlertDialog";
 
 export const SignInUpButtons = ({
   variant,
@@ -57,6 +58,13 @@ export const SignInUpButtons = ({
   );
 };
 
+const instantExitModals: SignInUpModalVariants[] = [
+  "login",
+  "signup",
+  "restore-password",
+  "successful-registration",
+];
+
 export const AuthModal = ({
   variant,
   closeModal,
@@ -65,14 +73,32 @@ export const AuthModal = ({
   closeModal: () => void;
 }) => {
   const isDesktop = useScreenSize({ minSize: "md" });
+  const { showModal } = useModal();
 
   const [modal, setModal] = useState<SignInUpModalVariants>(variant);
   const handleChangeModal = (newModal: SignInUpModalVariants) => {
     setModal(newModal);
   };
 
+  const onOpenChange = (open: boolean) => {
+    if (open) return;
+
+    if (instantExitModals.includes(modal)) return closeModal();
+
+    showModal({
+      component: AlertDialog,
+      props: {
+        title: "Are you sure?",
+        text: "If you close the dialog now, your changes will not be saved",
+        buttonCloseText: "Back",
+        buttonConfirmText: "Close",
+        variant: "default",
+      },
+    }).then((value) => value.action === "CONFIRM" && closeModal());
+  };
+
   return (
-    <Dialog open onOpenChange={(value) => !value && closeModal()}>
+    <Dialog open onOpenChange={onOpenChange}>
       <DialogContent
         className="w-full h-full flex max-w-screen-xl max-h-[680px]"
         hideClose={isDesktop}
