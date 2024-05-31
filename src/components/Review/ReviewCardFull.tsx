@@ -30,8 +30,8 @@ import {
 import Image from "next/image";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
-import { useQuery } from "@tanstack/react-query";
 import { getReviewTranslation } from "@/api/review";
+import { useQuery } from "@tanstack/react-query";
 
 interface ReviewCardProps {
   review: Review;

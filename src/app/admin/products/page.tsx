@@ -9,7 +9,7 @@ import {
   useState,
   useTransition,
 } from "react";
-import { getCategories, type Category } from "@/api/categories";
+import { getCategories, useCategories, type Category } from "@/api/categories";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, PlusIcon, StarIcon } from "lucide-react";
@@ -57,10 +57,7 @@ export default function Page() {
     });
   }, [selectedCategory, page, defferedSearch]);
 
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-  });
+  const categoriesQuery = useCategories();
   const productsQuery = useQuery({
     queryKey: ["productsShort", selectedCategory?.id, page, defferedSearch],
     queryFn: fetchProducts,

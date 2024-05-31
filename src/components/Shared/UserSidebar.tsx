@@ -22,7 +22,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { SignInUpModals } from "../SignInUpModal/SignInUpModals";
+import { SignInUpButtons } from "../SignInUpModal/SignInUpModals";
+import type { User } from "@/api/types";
+import { logOut } from "@/api/users";
+import { useAuthStore } from "@/lib/storage";
 
 export const UserSidebar = ({
   isOpen,
@@ -32,18 +35,24 @@ export const UserSidebar = ({
 }: {
   isOpen: boolean;
   closeSidebar: () => void;
-  user?: { fullName: string; avatar: string };
+  user?: User;
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
   const isLoggedIn = !!user;
+  const fullName = `${user?.firstName} ${user?.lastName}`;
+  const clearToken = useAuthStore((state) => state.clearToken);
 
   const headerData = {
-    avatarImage: isLoggedIn ? user.avatar : "",
-    avatarFallback: isLoggedIn ? textAvatar(user.fullName) : "?",
-    title: isLoggedIn ? user.fullName : "Not signed in",
+    avatarImage: user?.avatarUrl ?? "",
+    avatarFallback: isLoggedIn ? textAvatar(fullName) : "?",
+    title: isLoggedIn ? fullName : "Not signed in",
     description: isLoggedIn
       ? "Customer"
       : "Log in to enjoy a more pleasant experience",
+  };
+
+  const onLogOut = () => {
+    logOut().then(clearToken);
   };
 
   return (
@@ -60,7 +69,7 @@ export const UserSidebar = ({
           </div>
           {!isLoggedIn && (
             <div className="flex flex-col gap-2 pt-2 lg:pt-4">
-              <SignInUpModals variant="sidebar" />
+              <SignInUpButtons variant="sidebar" />
             </div>
           )}
         </SidebarHeader>
@@ -99,7 +108,7 @@ export const UserSidebar = ({
         {isLoggedIn && (
           <>
             <Separator />
-            <button>
+            <button onClick={onLogOut}>
               <SidebarItem icon={<LogOutIcon />} text="Log out" />
             </button>
           </>

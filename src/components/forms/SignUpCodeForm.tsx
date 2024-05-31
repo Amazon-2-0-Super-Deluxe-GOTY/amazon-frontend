@@ -1,8 +1,8 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,14 +11,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp"
-import { useState } from "react"
+} from "@/components/ui/input-otp";
+import { useState } from "react";
+import type { SignInUpModalVariants } from "../SignInUpModal/types";
 
 const FormSchema = z.object({
   code: z.string().min(1, {
@@ -26,9 +27,11 @@ const FormSchema = z.object({
   }),
 });
 
-
-export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:string) => void }) {
-
+export function SignUpCodeForm({
+  onChangeModal,
+}: {
+  onChangeModal: (modal: SignInUpModalVariants) => void;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -42,12 +45,9 @@ export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:strin
     console.log("SignUpCode :: You submitted the following values:");
     console.log(JSON.stringify(data, null, 2));
 
-    if(data.code === code)
-    {
+    if (data.code === code) {
       onChangeModal("finishing-touches");
-    }
-    else
-    {
+    } else {
       form.setError("code", { message: "Incorrect code, try again" });
     }
   }
@@ -58,7 +58,9 @@ export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:strin
   const [isCodeActive, setIsCodeActive] = useState<boolean>(false);
 
   function sendCode() {
-    const getCode = Math.floor(Math.random() * 999999).toString().padStart(6, '0');
+    const getCode = Math.floor(Math.random() * 999999)
+      .toString()
+      .padStart(6, "0");
     setCode(getCode);
     setIsCodeActive(true);
     timerStart();
@@ -80,54 +82,73 @@ export function SignUpCodeForm({ onChangeModal } : { onChangeModal: (modal:strin
       });
     }, 1000);
   }
-  
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full h-full flex flex-col justify-between">
-      <div className="space-y-6 flex flex-col justify-center h-full">
-        <FormField
-          control={form.control}
-          name="code"
-          render={({ field }) => (
-            <FormItem>
-              <div className="w-full h-full py-16">
-                <div className="flex justify-center items-center">
-                  <FormControl>
-                    <InputOTP maxLength={6} {...field}>
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                      </InputOTPGroup>
-                      <InputOTPGroup>
-                        <InputOTPSlot index={1} />
-                      </InputOTPGroup>
-                      <InputOTPGroup>
-                        <InputOTPSlot index={2} />
-                      </InputOTPGroup>
-                      <InputOTPGroup>
-                        <InputOTPSlot index={3} />
-                      </InputOTPGroup>
-                      <InputOTPGroup>
-                        <InputOTPSlot index={4} />
-                      </InputOTPGroup>
-                      <InputOTPGroup>
-                        <InputOTPSlot index={5} />
-                      </InputOTPGroup>
-                    </InputOTP>
-                  </FormControl>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full h-full flex flex-col justify-between"
+      >
+        <div className="space-y-6 flex flex-col justify-center h-full">
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem>
+                <div className="w-full h-full py-16">
+                  <div className="flex justify-center items-center">
+                    <FormControl>
+                      <InputOTP maxLength={6} {...field}>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={1} />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={2} />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={3} />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={4} />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </FormControl>
+                  </div>
+                  <h1 className="text-center mt-2">
+                    <FormMessage className="max-md:text-xs" />
+                  </h1>
+                  <div className="flex justify-center items-center">
+                    {!isCodeActive ? (
+                      <Button
+                        variant={"link"}
+                        type="button"
+                        className="m-auto"
+                        onClick={sendCode}
+                      >
+                        {buttonText}
+                      </Button>
+                    ) : (
+                      <Button variant={"link"} type="button" className="m-auto">
+                        Resend code {parseInt((timer / 60).toString())}:
+                        {(timer % 60).toString().padStart(2, "0")}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <h1 className="text-center mt-2"><FormMessage className="max-md:text-xs" /></h1>
-                <div className="flex justify-center items-center">
-                  {!isCodeActive ? <Button variant={"link"} type="button" className="m-auto" onClick={sendCode}>{buttonText}</Button> :
-                  <Button variant={"link"} type="button" className="m-auto">Resend code {parseInt((timer/60).toString())}:{(timer%60).toString().padStart(2, '0')}</Button>}
-                </div>
-              </div>
-            </FormItem>
-          )}
-        />
+              </FormItem>
+            )}
+          />
         </div>
-        <Button type="submit" className="w-full">Continue</Button>
+        <Button type="submit" className="w-full">
+          Continue
+        </Button>
       </form>
     </Form>
-  )
+  );
 }
