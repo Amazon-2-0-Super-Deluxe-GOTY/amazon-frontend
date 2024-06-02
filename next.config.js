@@ -5,7 +5,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.BASE_PATH}/:path*`, // Matched parameters can be used in the destination
+        destination: `${process.env.BASE_PATH}/api/:path*`, // Matched parameters can be used in the destination
       },
     ];
   },

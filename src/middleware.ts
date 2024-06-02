@@ -1,4 +1,4 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "./middlewares/withAuth";
 // import subdomains from './subdomains.json';
 
@@ -40,6 +40,12 @@ export default async function middleware(req: NextRequest) {
   const subdomainData = subdomains.find((d) => d.subdomain === subdomain);
 
   if (subdomainData) {
+    const authResponse = await withAuth(subdomain, req);
+
+    if (authResponse instanceof NextResponse) {
+      return authResponse;
+    }
+
     // Rewrite the URL in the dynamic route based in the subdomain
     return NextResponse.rewrite(
       new URL(`/${subdomain}${url.pathname}${req.nextUrl.search}`, req.url)
