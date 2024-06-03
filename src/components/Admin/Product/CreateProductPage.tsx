@@ -1,5 +1,5 @@
 "use client";
-import { getCategories } from "@/api/categories";
+import { getCategories, useCategories } from "@/api/categories";
 import { getAdminProduct } from "@/api/products";
 import { CreateProductForm } from "@/components/forms/CreateProductForm";
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,7 @@ export function CreateProductPage({
   productId?: string;
   categoryId?: string;
 }) {
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-  });
+  const categoriesQuery = useCategories();
   const productQuery = useQuery({
     queryKey: ["product", productId],
     queryFn: () => (productId ? getAdminProduct({ productId }) : null),

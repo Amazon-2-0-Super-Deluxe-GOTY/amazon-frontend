@@ -24,8 +24,7 @@ import {
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
-import { getCategories, type Category } from "@/api/categories";
-import { useQuery } from "@tanstack/react-query";
+import { useCategories, type Category } from "@/api/categories";
 
 const iconClassSmall = "w-5 h-5";
 
@@ -35,16 +34,10 @@ const treeOptions = {
 };
 
 export default function Page() {
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-  });
+  const { data } = useCategories();
   const allCategoriesTrees = React.useMemo(
-    () =>
-      categoriesQuery.data?.data
-        ? createTreeArray(categoriesQuery.data.data, treeOptions)
-        : [],
-    [categoriesQuery.data?.data]
+    () => (data?.data ? createTreeArray(data.data, treeOptions) : []),
+    [data?.data]
   );
   const [selectedCategory, setSelectedCategory] = useState<Category>();
   const checkboxTree = useCheckboxTree<Category, string>({
@@ -213,11 +206,11 @@ export default function Page() {
 
       <CategoryAsideCard
         category={selectedCategory}
-        parentCategory={categoriesQuery.data?.data.find(
+        parentCategory={data?.data.find(
           (c) => c.id === selectedCategory?.parentId
         )}
         mainCategory={checkboxTree.root?.value}
-        allCategories={categoriesQuery.data?.data ?? []}
+        allCategories={data?.data ?? []}
         onViewMain={() =>
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
@@ -227,7 +220,7 @@ export default function Page() {
       <CreateCategoryModal
         isOpen={isCreateModalOpen}
         closeModal={closeCreateModal}
-        allCategories={categoriesQuery.data?.data ?? []}
+        allCategories={data?.data ?? []}
         onSubmit={onCreateCategory}
         {...createModalParams.current}
       />

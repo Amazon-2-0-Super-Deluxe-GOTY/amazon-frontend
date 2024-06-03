@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import "../globals.css";
 import { Header } from "@/components/Admin/Header";
-import { ModalProvider } from "@/components/Shared/Modal";
 
 export const metadata: Metadata = {
   title: "Create Next App",
