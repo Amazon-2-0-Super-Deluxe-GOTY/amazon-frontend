@@ -14,9 +14,9 @@ export const MyOrders = () => {
   
   return (
     <div className="flex flex-col gap-3">
-      <h1 className="text-3xl">My orders</h1>
+      <h1 className="text-2xl md:text-3xl">My orders</h1>
       <Separator />
-      <div className="w-full py-6">
+      <div className="w-full md:py-6">
         {orderItems.map((order, index) => (
           <MyOrderCard key={index} code={order.code} status={order.status} cost={order.cost} count={order.count} dateOfArrived={order.date}  />
         ))}

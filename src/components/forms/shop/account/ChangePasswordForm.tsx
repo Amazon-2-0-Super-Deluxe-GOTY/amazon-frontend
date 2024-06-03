@@ -66,9 +66,9 @@ export function ChangePasswordForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full h-full flex flex-col justify-between gap-6">
         <div className="flex flex-col justify-center h-full gap-5">
           <div className="flex flex-col justify-center gap-3">
-            <span className="text-2xl font-medium mb-3">Enter password</span>
+            <span className="text-xl md:text-2xl font-medium mb-3">Enter password</span>
             <Separator />
-            <span>Firstly, enter your current password to confirm this is you.</span>
+            <span className="text-sm md:text-base">Firstly, enter your current password to confirm this is you.</span>
           </div>
           <FormField
             control={form.control}
@@ -93,9 +93,9 @@ export function ChangePasswordForm({
         </div>
         <div className="flex flex-col justify-center h-full gap-5">
           <div className="flex flex-col justify-center gap-3">
-            <span className="text-2xl font-medium mb-3">Change password</span>
+            <span className="text-xl md:text-2xl font-medium mb-3">Change password</span>
             <Separator />
-            <span>Enter new password for your account.</span>
+            <span className="text-sm md:text-base">Enter new password for your account.</span>
           </div>
           <FormField
             control={form.control}

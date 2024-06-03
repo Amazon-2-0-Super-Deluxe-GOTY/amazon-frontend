@@ -118,27 +118,27 @@ export function ChangeEmailForm({
           name="code"
           render={({ field }) => (
             <FormItem>
-              <div className="w-full h-full p-6">
+              <div className="w-full h-full md:py-6 py-5">
                 <div className="flex justify-center items-center">
                   <FormControl>
                     <InputOTP maxLength={6} {...field}>
                       <InputOTPGroup>
-                        <InputOTPSlot index={0} />
+                        <InputOTPSlot className="max-md:max-w-9" index={0} />
                       </InputOTPGroup>
                       <InputOTPGroup>
-                        <InputOTPSlot index={1} />
+                        <InputOTPSlot className="max-md:max-w-9" index={1} />
                       </InputOTPGroup>
                       <InputOTPGroup>
-                        <InputOTPSlot index={2} />
+                        <InputOTPSlot className="max-md:max-w-9" index={2} />
                       </InputOTPGroup>
                       <InputOTPGroup>
-                        <InputOTPSlot index={3} />
+                        <InputOTPSlot className="max-md:max-w-9" index={3} />
                       </InputOTPGroup>
                       <InputOTPGroup>
-                        <InputOTPSlot index={4} />
+                        <InputOTPSlot className="max-md:max-w-9" index={4} />
                       </InputOTPGroup>
                       <InputOTPGroup>
-                        <InputOTPSlot index={5} />
+                        <InputOTPSlot className="max-md:max-w-9" index={5} />
                       </InputOTPGroup>
                     </InputOTP>
                   </FormControl>
@@ -153,7 +153,7 @@ export function ChangeEmailForm({
           )}
         />
         </div>
-        <div className="flex justify-between items-center gap-3 mt-6">
+        <div className="flex justify-between items-center gap-3 md:mt-6">
           <Button type="reset" variant={"outline"} className="w-full" onClick={onCancel}>
             Cancel
           </Button>

@@ -38,9 +38,7 @@ import { Wishlist } from "@/components/Account/Wishlist";
 import { MyOrders } from "@/components/Account/MyOrders";
 import { useScreenSize } from "@/lib/media";
 
-export default function AccountPage(
-  // { user, }: { user?: { fullName: string; avatar: string }; }*
-) {
+export default function AccountPage() {
   const user = { avatar: "user", fullName: "Qwert Aswdesh", email: "qwerty11@gmail.com", };
   // const isLoggedIn = !!user;
   const isLoggedIn = true;
@@ -53,12 +51,21 @@ export default function AccountPage(
       : "Log in to enjoy a more pleasant experience",
   };
 
+  const param = useSearchParamsTools();
+
   const isDesktop = useScreenSize({minSize: "md"});
   const [isOpenTab, setIsOpenTab] = useState<boolean>(false);
 
-  const [accountTab, setAccountTab] = useState<string>("");
+  const [accountTab, setAccountTab] = useState<string>(() => {
+    const defaultValue = param.get("tab");
+    if(defaultValue && isDesktop) {
+      return defaultValue;
+    }
+    return "";
+  });
   const onChangeAccountTab = (name:string) => {
     setAccountTab(name);
+    param.set("tab", name);
   };
 
   const onBack = () => {
@@ -75,13 +82,12 @@ export default function AccountPage(
   useEffect(() => {
     if(isDesktop) {
       setIsOpenTab(false);
-      setAccountTab("");
-    } 
+      const defaultValue = param.get("tab");
+      if(defaultValue) {
+        setAccountTab(defaultValue);
+      }
+    }
   }, [isDesktop]);
-
-
-  console.log(isDesktop);
-  console.log(accountTab);
 
   return (
     <main className="flex flex-col items-center w-full px-4">
@@ -108,7 +114,7 @@ export default function AccountPage(
       </section>
       <section className="w-full pt-6">
         <div className="grid md:grid-cols-[0.5fr_min-content_1fr_1fr] gap-6 w-full p-1 h-full">
-          <aside className={cn("flex flex-col gap-6 sticky h-max py-6 px-4", isOpenTab && "hidden")}>
+          <aside className={cn("flex flex-col gap-6 sticky h-max py-6 px-4 min-h-[582px]", isOpenTab && "hidden")}>
             <div className="flex gap-4">
               <AvatarNameBlock
                 image={headerData.avatarImage}
@@ -119,17 +125,18 @@ export default function AccountPage(
                 <span className="text-sm sm:text-base font-light">{headerData.description}</span>
               </div>
             </div>
-            <Button 
+            <Button
               variant={"ghost"} 
               onClick={() => onChangeAccountTab("orders")}
-              className="flex justify-start font-normal text-base"
+              className="flex justify-start font-normal text-base 
+                          "
             >My orders</Button>
-            <Button 
+            <Button
               variant={"ghost"} 
               onClick={() => onChangeAccountTab("wishlist")}
               className="flex justify-start font-normal text-base"
             >Wishlist</Button>
-            <Button 
+            <Button
               variant={"ghost"} 
               onClick={() => onChangeAccountTab("settings")}
               className="flex justify-start font-normal text-base"
@@ -138,20 +145,20 @@ export default function AccountPage(
           <Separator orientation="vertical" className="hidden md:block" />
           <div className={cn("col-span-2 relative md:block", !isOpenTab && "hidden")}>
             <div>
-            {!isDesktop && <Button variant={"ghost"} className="pl-2" onClick={onBack} >
+            <Button variant={"ghost"} className="pl-2 md:hidden" onClick={onBack} >
               <ChevronLeft />
               <span className="text-base">Back</span>
-            </Button>}
+            </Button>
             {(() => {
               switch (accountTab) {
-                default:
                 case "settings":
                   return <AccountSettings user={user} />;
                 case "wishlist":
                   return <Wishlist />;
                 case "orders":
                   return <MyOrders />;
-
+                default:
+                  return null;
               }
             })()}
             </div>

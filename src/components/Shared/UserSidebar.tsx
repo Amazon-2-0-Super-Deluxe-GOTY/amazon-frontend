@@ -87,8 +87,8 @@ export const UserSidebar = ({
         </Accordion>
         <Separator />
         <div className="flex flex-col gap-3 lg;gap-4">
-          {isLoggedIn && (
-            <Link href={"/profile/settings"}>
+          {!isLoggedIn && (
+            <Link href={"/account?tab=settings"} >
               <SidebarItem icon={<SettingsIcon />} text="Settings" />
             </Link>
           )}

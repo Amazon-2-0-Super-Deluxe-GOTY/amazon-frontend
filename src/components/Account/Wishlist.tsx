@@ -23,15 +23,15 @@ export const Wishlist = () => {
   
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl">Wishlist</h1>
+      <div className="flex justify-between items-center gap-3">
+        <h1 className="text-2xl md:text-3xl">Wishlist</h1>
         <div className="flex w-full max-w-80">
           <Input placeholder="Search..."
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleSearchTextChange(e.target.value)
             }
           />
-          <SearchIcon className="absolute top-2 right-2" />
+          <SearchIcon className="absolute md:top-2 top-12 right-2" />
         </div>
       </div>
       <Separator />
