@@ -67,7 +67,7 @@ export function RestorePasswordForm({
                     />
                   </FormControl>
                 </div>
-                <FormMessage className="max-md:text-xs" />
+                <FormMessage className="max-md:text-xs px-4" />
               </FormItem>
             )}
           />

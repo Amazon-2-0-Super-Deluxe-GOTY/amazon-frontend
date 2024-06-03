@@ -121,7 +121,7 @@ export function SignUpCodeForm({ onSubmit }: { onSubmit: () => void }) {
                     </FormControl>
                   </div>
                   <h1 className="text-center mt-2">
-                    <FormMessage className="max-md:text-xs" />
+                    <FormMessage className="max-md:text-xs px-4" />
                   </h1>
                   <div className="flex justify-center items-center">
                     {!isCodeActive ? (

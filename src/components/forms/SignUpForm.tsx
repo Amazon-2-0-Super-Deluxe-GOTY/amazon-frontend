@@ -99,7 +99,7 @@ export function SignUpForm({
                     />
                   </FormControl>
                 </div>
-                <FormMessage className="max-md:text-xs" />
+                <FormMessage className="max-md:text-xs px-4" />
               </FormItem>
             )}
           />
@@ -131,7 +131,7 @@ export function SignUpForm({
                     </Button>
                   </div>
                 </div>
-                <FormMessage className="max-md:text-xs" />
+                <FormMessage className="max-md:text-xs px-4" />
               </FormItem>
             )}
           />
@@ -165,7 +165,7 @@ export function SignUpForm({
                     </Button>
                   </div>
                 </div>
-                <FormMessage className="max-md:text-xs" />
+                <FormMessage className="max-md:text-xs px-4" />
               </FormItem>
             )}
           />
