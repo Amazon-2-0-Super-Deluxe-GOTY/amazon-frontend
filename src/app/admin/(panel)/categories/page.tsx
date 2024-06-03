@@ -24,8 +24,7 @@ import {
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
-import { getCategories, type Category } from "@/api/categories";
-import { useQuery } from "@tanstack/react-query";
+import { useCategories, type Category } from "@/api/categories";
 
 const iconClassSmall = "w-5 h-5";
 
@@ -35,10 +34,7 @@ const treeOptions = {
 };
 
 export default function Page() {
-  const { data } = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-  });
+  const { data } = useCategories();
   const allCategoriesTrees = React.useMemo(
     () => (data?.data ? createTreeArray(data.data, treeOptions) : []),
     [data?.data]

@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+
 export interface CategoryPropertyKey {
   name: string;
 }
@@ -28,4 +30,11 @@ export function getCategory({
   categoryId: string;
 }): Promise<{ data: Category }> {
   return fetch(`/api/admin/category/${categoryId}`).then((r) => r.json());
+}
+
+export function useCategories() {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
 }
