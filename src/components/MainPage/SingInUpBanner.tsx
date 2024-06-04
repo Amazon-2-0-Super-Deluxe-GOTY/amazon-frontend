@@ -7,7 +7,7 @@ import { SignInUpButtons } from "@/components/SignInUpModal/SignInUpModals";
 
 export const SingInUpBanner = () => {
   return (
-    <Card className="w-full bg-background border-gradient gradient-gray">
+    <Card className="w-full bg-background">
       <CardContent className="px-6 py-16 flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="basis-1/2">
           <div className="mb-6 text-center">

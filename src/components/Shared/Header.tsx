@@ -64,7 +64,7 @@ export function Header() {
             <span className="font-bold text-xl">Logo</span>
           </Link>
         </div>
-        <div className="flex-1 flex relative mx-8 z-0 rounded-lg border-gradient-width-base border-gradient gradient-gray before:opacity-0 has-[:focus-visible]:before:opacity-100 before:transition-opacity">
+        <div className="flex-1 flex relative mx-8 z-0 rounded-lg">
           <Input
             placeholder="Search..."
             className="focus-visible:ring-0 focus-visible:ring-offset-0"

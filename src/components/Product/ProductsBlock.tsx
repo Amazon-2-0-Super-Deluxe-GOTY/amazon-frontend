@@ -18,7 +18,7 @@ export const ProductsBlock = ({ title, maxSizeMobile }: Props) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl">{title}</h2>
+        <h2 className="text-heading-3">{title}</h2>
         <Button variant="ghost">
           See all <ChevronRight size={16} className="ml-2" />
         </Button>

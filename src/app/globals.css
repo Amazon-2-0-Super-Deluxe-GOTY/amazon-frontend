@@ -15,9 +15,13 @@
 
     --primary: 79, 79%, 60%;
     --primary-foreground: 219, 65%, 16%;
+    --primary-hover: 79, 94%, 70%;
+    --primary-press: 86, 64%, 52%;
 
     --secondary: 219, 65%, 57%;
     --secondary-foreground: 219, 65%, 16%;
+    --secondary-hover-foreground: 220, 69%, 40%;
+    --secondary-press-foreground: 220, 69%, 40%;
 
     --light: 220, 30%, 96%;
 
@@ -75,48 +79,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-.___TEST_REMOVE_BEFORE_COMMIT {
-  /* Frame 835 */
-
-  /* Frame 835 */
-
-  box-sizing: border-box;
-
-  /* Auto layout */
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 32px;
-  gap: 10px;
-
-  position: relative;
-  width: 126px;
-  height: 48px;
-
-  /* Secondary */
-  background: #b8ea48;
-  border-radius: 4px;
-
-  /* Button */
-
-  width: 62px;
-  height: 32px;
-
-  font-family: "Mulish";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 32px;
-  /* identical to box height, or 160% */
-  text-align: center;
-
-  color: #0e2042;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 0;
 }

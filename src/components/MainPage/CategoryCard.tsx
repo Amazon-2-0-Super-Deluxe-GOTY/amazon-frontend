@@ -54,7 +54,7 @@ export function CategoryCard({ title, link, images }: CategoryCardProps) {
   const imagesCount = images.length.toString();
 
   return (
-    <Card className="min-w-44 max-w-44 lg:max-w-xs w-full border-2 border-gradient gradient-gray rounded-lg shadow-none p-4 bg-muted group">
+    <Card className="min-w-44 max-w-44 lg:max-w-xs w-full rounded-lg shadow-none p-4 bg-muted group">
       <div className="h-32 w-full grid grid-cols-2 grid-rows-2 gap-1">
         {images.map((img, i) => (
           <div

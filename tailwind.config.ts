@@ -75,55 +75,45 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
-      gradient: {
-        gray: "linear-gradient(to right bottom, #EEF3FEBF, transparent), linear-gradient(to right bottom, transparent, #91A7D7BF)",
-        "green-light": "linear-gradient(to right bottom, #9ACC2A, #D6FF66)",
-        "green-dark": "linear-gradient(to right bottom, #7CAE0C, #B8EA48)",
-      },
-      borderGradientWidth: {
-        base: "2px",
-      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/container-queries"),
     {
-      handler: ({ addComponents, matchUtilities, theme }) => {
+      handler: ({ addComponents }) => {
         addComponents({
-          ".border-gradient": {
-            "--gradient-border-width": "2px",
-            position: "relative",
-            border: "var(--gradient-border-width) solid transparent",
-            backgroundClip: "padding-box",
-            "&::before": {
-              content: "''",
-              position: "absolute",
-              inset: "calc(var(--gradient-border-width) * -1)",
-              backgroundImage: "var(--gradient)",
-              zIndex: "-1",
-              borderRadius: "inherit",
+          ".text-heading-1": {
+            fontSize: "2.25rem",
+            lineHeight: "2.75rem",
+            letterSpacing: "-0.02rem",
+            fontWeight: "600",
+            "@media (min-width: 1280px)": {
+              fontSize: "2.5rem",
+              lineHeight: "3rem",
+            },
+          },
+          ".text-heading-2": {
+            fontSize: "1.75rem",
+            lineHeight: "2rem",
+            letterSpacing: "-0.015rem",
+            fontWeight: "600",
+            "@media (min-width: 1280px)": {
+              fontSize: "2rem",
+              lineHeight: "2.25rem",
+            },
+          },
+          ".text-heading-3": {
+            fontSize: "1.25rem",
+            lineHeight: "1.5rem",
+            letterSpacing: "-0.015rem",
+            fontWeight: "500",
+            "@media (min-width: 1280px)": {
+              fontSize: "1.5rem",
+              lineHeight: "1.75rem",
             },
           },
         });
-
-        matchUtilities(
-          {
-            "border-gradient-width": (value) => ({
-              "--gradient-border-width": value,
-            }),
-          },
-          { values: theme("borderGradientWidth") }
-        );
-
-        matchUtilities(
-          {
-            gradient: (value) => ({
-              "--gradient": value,
-            }),
-          },
-          { values: theme("gradient") }
-        );
       },
     },
   ],

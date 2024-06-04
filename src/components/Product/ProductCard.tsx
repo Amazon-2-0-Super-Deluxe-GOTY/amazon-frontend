@@ -20,7 +20,7 @@ export const ProductCard = ({
   const isOutOfStock = quantity === 0;
 
   return (
-    <Card className="max-w-sm w-full border-2 border-gradient gradient-gray rounded-lg shadow-none before:transition-opacity before:opacity-0 hover:before:opacity-100">
+    <Card className="max-w-sm w-full rounded-lg shadow-none before:transition-opacity before:opacity-0 hover:before:opacity-100">
       <CardHeader className="pb-0">
         <div className="relative aspect-square">
           <Image
