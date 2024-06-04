@@ -1,6 +1,6 @@
 "use client";
 import { Category } from "@/api/categories";
-import { uploadImage } from "@/api/products";
+import { uploadProductImage } from "@/api/products";
 import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
 import { Button } from "@/components/ui/button";
 import {
@@ -205,7 +205,7 @@ export function CreateProductForm({
   }, [categoryId, categories]);
 
   const uploadImageMutation = useMutation({
-    mutationFn: uploadImage,
+    mutationFn: uploadProductImage,
   });
 
   const { showModal } = useModal();
@@ -250,7 +250,9 @@ export function CreateProductForm({
     startUploadTransition(async () => {
       setUploadLoadingElements(Array.from({ length: filesToUpload.length }));
       const data = await uploadImageMutation.mutateAsync(filesToUpload);
-      imagesArray.append(data);
+      if (data.status === 200) {
+        imagesArray.append(data.data);
+      }
     });
   }
 

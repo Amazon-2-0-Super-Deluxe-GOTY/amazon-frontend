@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   });
   const data = await Promise.all(images);
 
-  return Response.json(data, { status: 200 });
+  return Response.json({ status: 200, data }, { status: 200 });
 }
 
 function imageToURL(image: File) {
