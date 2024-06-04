@@ -3,7 +3,7 @@ import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
-import { SignInUpModals } from "@/components/SignInUpModal/SignInUpModals";
+import { SignInUpButtons } from "@/components/SignInUpModal/SignInUpModals";
 
 export const SingInUpBanner = () => {
   return (
@@ -19,7 +19,7 @@ export const SingInUpBanner = () => {
             </p>
           </div>
           <div className="flex justify-center items-center gap-6">
-            <SignInUpModals variant="banner" />
+            <SignInUpButtons variant="banner" />
           </div>
         </div>
         <div className="basis-1/2 relative">
