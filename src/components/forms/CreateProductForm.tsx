@@ -7,7 +7,7 @@ import {
 } from "@/api/categories";
 import { uploadImage } from "@/api/products";
 import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
-import { SpecificityForm } from "@/components/forms/admin/CategorySpecificityForm";
+import { SpecificityForm } from "@/components/forms/CategorySpecificityForm";
 import {
   Accordion,
   AccordionContent,

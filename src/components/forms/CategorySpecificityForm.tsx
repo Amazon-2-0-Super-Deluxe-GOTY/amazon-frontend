@@ -10,17 +10,17 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
-import { Separator } from "../../ui/separator";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Checkbox } from "../../ui/checkbox";
+import { Checkbox } from "../ui/checkbox";
 import { createCheckboxArray, useCheckboxArray } from "@/lib/checkboxArray";
 import { ArrowUpDownIcon, FilePenLineIcon, PlusIcon } from "lucide-react";
-import type { CategorySpecificity } from "../../Admin/Category/types";
-import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
-import { AlertDialog } from "../../Admin/AlertDialog";
-import { useModal } from "../../Shared/Modal";
+import type { CategorySpecificity } from "../Admin/Category/types";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { AlertDialog } from "../Admin/AlertDialog";
+import { useModal } from "../Shared/Modal";
 
 interface Props {
   specificities: CategorySpecificity[];

@@ -22,14 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "../../ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
+import { Textarea } from "../ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { useEffect, useMemo, useState } from "react";
 import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
 import { getAllIcons } from "@/lib/categories";
-import { Separator } from "../../ui/separator";
+import { Separator } from "../ui/separator";
 import { MinusIcon } from "lucide-react";
-import { ScrollArea } from "../../ui/scroll-area";
+import { ScrollArea } from "../ui/scroll-area";
 import clsx from "clsx";
 import type { Category } from "@/api/categories";
 
