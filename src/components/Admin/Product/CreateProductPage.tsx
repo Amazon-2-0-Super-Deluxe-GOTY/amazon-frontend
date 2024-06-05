@@ -18,7 +18,7 @@ export function CreateProductPage({
   const categoriesQuery = useCategories();
   const productQuery = useQuery({
     queryKey: ["product", productId],
-    queryFn: () => (productId ? getAdminProduct({ productId }) : undefined),
+    queryFn: () => (productId ? getAdminProduct({ productId }) : null),
   });
 
   const isEdit = !!productQuery.data;
