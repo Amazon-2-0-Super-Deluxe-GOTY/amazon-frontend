@@ -1,15 +1,9 @@
-import { ChangeEmailForm } from "@/components/forms/shop/account/ChangeEmailForm";
-import { ChangeFirstLastNameForm } from "@/components/forms/shop/account/ChangeFirstLastNameForm";
-import { ChangePasswordForm } from "@/components/forms/shop/account/ChangePasswordForm";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger,
-  } from "@/components/ui/dialog"
+  } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
   
@@ -32,8 +26,8 @@ export const RemoveFromWishListModal = ({
       <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 font-semibold max-md:px-2 max-md:h-8 max-md:text-xs">
         Remove
       </DialogTrigger>
-      <DialogContent className="max-w-[464px] md:gap-6 gap-5" hideClose>
-        <div className="flex flex-col justify-center items-center md:gap-4 gap-3">
+      <DialogContent className="max-w-[464px] gap-5 md:gap-6" hideClose>
+        <div className="flex flex-col justify-center items-center gap-3 md:gap-4">
             <span className="text-xl md:text-3xl font-semibold">Are you sure?</span>
           <Separator />
           <span className="text-base md:text-xl text-center max-md:pt-2">This action will remove this item from your wishlist.</span>

@@ -31,11 +31,11 @@ export const Wishlist = () => {
               handleSearchTextChange(e.target.value)
             }
           />
-          <SearchIcon className="absolute md:top-2 top-12 right-2" />
+          <SearchIcon className="absolute top-[60px] md:top-2 right-2" />
         </div>
       </div>
       <Separator />
-      <div className="w-full grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 py-6">
+      <div className="w-full grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 grid-cols-2 py-6">
         {wishlistProducts.filter((v) => v.title.toLowerCase().includes(searchText)).map((product, index) => (
           <WishlistCard key={index} code={product.code} title={product.title} price={product.price} removeWishlistItem={removeWishlistItem} />
         ))}

@@ -1,3 +1,4 @@
+"use client";
 import { Separator } from "../ui/separator";
 import { useState } from "react";
 import { MyOrderCard } from "./Cards/MyOrderCard";
@@ -5,8 +6,10 @@ import { MyOrderCard } from "./Cards/MyOrderCard";
 const orderItems = Array.from({ length: 9 }).map((_, index) => ({
   code: index.toString(),
   status: index%2===0 ? "Recived" : index%3===0 ? "Ready for pickup" : index%5===0 ? "Shipped" : index%7===0 ? "Cancelled" : "Ordered",
-  cost: Math.floor(Math.random() * 200 + 1),
-  count: Math.floor(Math.random() * 20 + 1),
+  // cost: Math.floor(Math.random() * 200 + 1),
+  // count: Math.floor(Math.random() * 20 + 1),
+  cost: index+100,
+  count: index+1,
   date: "24.05.2024",
 }));
 

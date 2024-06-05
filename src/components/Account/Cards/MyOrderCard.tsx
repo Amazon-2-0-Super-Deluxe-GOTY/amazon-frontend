@@ -31,7 +31,7 @@ export const MyOrderCard = ({
     <Card className="w-full even:bg-gray-100 border-0 relative shadow-none before:ring-1 before:ring-gray-300 before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
       <CardContent className="w-full p-0">
         <div className="flex max-md:flex-col w-full md:justify-between md:items-center py-5 px-4 max-md:gap-4">
-          <div className="flex flex-col justify-center items-start md:gap-2 gap-1">
+          <div className="flex flex-col justify-center items-start gap-1 md:gap-2">
             <div className="flex justify-start items-center gap-4">
               <span className="text-base md:text-xl">Order #{code}</span>
               <span className={cn(status === "Recived" && "text-green-500",
@@ -43,9 +43,9 @@ export const MyOrderCard = ({
             </div>
             <span className="text-sm md:text-base text-gray-400 font-medium">Arrived on {dateOfArrived}</span>
           </div>
-          <div className="md:absolute md:right-4 flex flex-col justify-start items-end md:gap-2 gap-[6px] max-md:h-[66px]">
+          <div className="md:absolute md:right-4 flex flex-col justify-start items-end gap-[6px] md:gap-2 max-md:h-[66px]">
             <span className="text-sm md:text-base text-gray-600">Ordered {count} {count === 1 ? "item" : "items"}</span>
-            <div className="max-md:absolute max-md:bottom-5 flex justify-center items-center md:gap-6 gap-4">
+            <div className="max-md:absolute max-md:bottom-5 flex justify-center items-center gap-4 md:gap-6">
               <div>
                 <span className="text-[18px] md:text-2xl font-medium">${whole}</span>
                 <sup className="text-[10px] md:text-sm font-medium">{fraction}</sup>

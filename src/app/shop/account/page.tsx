@@ -12,7 +12,6 @@ import { ChevronLeft, Slash, XIcon } from "lucide-react";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,22 +20,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import clsx from "clsx";
 import { Separator } from "@/components/ui/separator";
 import { AccountSettings } from "@/components/Account/AccountSettings";
 import { Wishlist } from "@/components/Account/Wishlist";
 import { MyOrders } from "@/components/Account/MyOrders";
-import { useScreenSize } from "@/lib/media";
 
 export default function AccountPage() {
   const user = { avatar: "user", fullName: "Qwert Aswdesh", email: "qwerty11@gmail.com", };
@@ -53,45 +41,62 @@ export default function AccountPage() {
 
   const param = useSearchParamsTools();
 
-  const isDesktop = useScreenSize({minSize: "md"});
-  const [isOpenTab, setIsOpenTab] = useState<boolean>(false);
+  const [isOpenTab, setIsOpenTab] = useState<boolean>(() => {
+    const defaultValue = param.get("tab");
+    if(defaultValue) {
+      const value = defaultValue.split("-")[1];
+      if(value && value === "open")
+        return true;
+    }
+    return false;
+  });
 
   const [accountTab, setAccountTab] = useState<string>(() => {
     const defaultValue = param.get("tab");
-    if(defaultValue && isDesktop) {
-      return defaultValue;
+    if(defaultValue) {
+      const value = defaultValue.split("-")[0];
+      if(value)
+        return value;
     }
     return "";
   });
+  
   const onChangeAccountTab = (name:string) => {
     setAccountTab(name);
-    param.set("tab", name);
+    setIsOpenTab(true);
   };
 
   const onBack = () => {
-    setAccountTab("");
+    setIsOpenTab(false);
   }
 
   useEffect(() => {
-    if(!isDesktop && accountTab.length !== 0)
-      setIsOpenTab(true);
-    else if(!isDesktop)
-      setIsOpenTab(false);
-  }, [accountTab]);
+    param.set("tab", accountTab + "-" + (isOpenTab ? "open" : "switch"));
+  }, [onChangeAccountTab, onBack]);
+  //   param.set("state", isOpenTab ? "open" : undefined);
+  // }, [isOpenTab]);
 
-  useEffect(() => {
-    if(isDesktop) {
-      setIsOpenTab(false);
-      const defaultValue = param.get("tab");
-      if(defaultValue) {
-        setAccountTab(defaultValue);
-      }
-    }
-  }, [isDesktop]);
+  // useEffect(() => {
+  //   param.set("tab", accountTab+"-"+isOpenTab);
+  // }, [accountTab]);
+
+  // useEffect(() => {
+  //   param.set("state", isOpenTab ? "open" : undefined);
+  // }, [isOpenTab]);
+
+  // useEffect(() => {
+  //   if(isDesktop) {
+  //     setIsOpenTab(false);
+  //     const defaultValue = param.get("tab");
+  //     if(defaultValue) {
+  //       setAccountTab(defaultValue);
+  //     }
+  //   }
+  // }, [isDesktop]);
 
   return (
     <main className="flex flex-col items-center w-full px-4">
-      <section className={cn("w-full flex items-left gap-1", isOpenTab && "hidden")}>
+      <section className={cn("w-full flex items-left gap-1", isOpenTab && "max-md:hidden")}>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -112,9 +117,9 @@ export default function AccountPage() {
           </BreadcrumbList>
         </Breadcrumb>
       </section>
-      <section className="w-full pt-6">
+      <section className="w-full md:pt-5">
         <div className="grid md:grid-cols-[0.5fr_min-content_1fr_1fr] gap-6 w-full p-1 h-full">
-          <aside className={cn("flex flex-col gap-6 sticky h-max py-6 px-4 min-h-[582px]", isOpenTab && "hidden")}>
+          <aside className={cn("flex flex-col gap-6 sticky h-max py-6 px-4 min-h-[582px]", isOpenTab && "max-md:hidden")}>
             <div className="flex gap-4">
               <AvatarNameBlock
                 image={headerData.avatarImage}
@@ -128,8 +133,7 @@ export default function AccountPage() {
             <Button
               variant={"ghost"} 
               onClick={() => onChangeAccountTab("orders")}
-              className="flex justify-start font-normal text-base 
-                          "
+              className="flex justify-start font-normal text-base"
             >My orders</Button>
             <Button
               variant={"ghost"} 
@@ -143,9 +147,9 @@ export default function AccountPage() {
             >Account settings</Button>
           </aside>
           <Separator orientation="vertical" className="hidden md:block" />
-          <div className={cn("col-span-2 relative md:block", !isOpenTab && "hidden")}>
+          <div className={cn("col-span-2 relative md:block", !isOpenTab && "max-md:hidden")}>
             <div>
-            <Button variant={"ghost"} className="pl-2 md:hidden" onClick={onBack} >
+            <Button variant={"ghost"} className="pl-2 mb-3 md:hidden" onClick={onBack} >
               <ChevronLeft />
               <span className="text-base">Back</span>
             </Button>
