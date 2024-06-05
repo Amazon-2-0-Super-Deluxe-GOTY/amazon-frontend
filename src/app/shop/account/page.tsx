@@ -1,16 +1,12 @@
 "use client"
 import React from "react";
 import { useState, useEffect } from "react";
-
 import { cn, textAvatar } from "@/lib/utils";
 import { useSearchParamsTools } from "@/lib/router";
-
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, Slash, XIcon } from "lucide-react";
-
+import { ChevronLeft, Slash } from "lucide-react";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
-
 import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
@@ -28,8 +24,7 @@ import { MyOrders } from "@/components/Account/MyOrders";
 
 export default function AccountPage() {
   const user = { avatar: "user", fullName: "Qwert Aswdesh", email: "qwerty11@gmail.com", };
-  // const isLoggedIn = !!user;
-  const isLoggedIn = true;
+  const isLoggedIn = !!user;
   const headerData = {
     avatarImage: isLoggedIn ? user.avatar : "",
     avatarFallback: isLoggedIn ? textAvatar(user.fullName) : "?",
@@ -73,26 +68,6 @@ export default function AccountPage() {
   useEffect(() => {
     param.set("tab", accountTab + "-" + (isOpenTab ? "open" : "switch"));
   }, [onChangeAccountTab, onBack]);
-  //   param.set("state", isOpenTab ? "open" : undefined);
-  // }, [isOpenTab]);
-
-  // useEffect(() => {
-  //   param.set("tab", accountTab+"-"+isOpenTab);
-  // }, [accountTab]);
-
-  // useEffect(() => {
-  //   param.set("state", isOpenTab ? "open" : undefined);
-  // }, [isOpenTab]);
-
-  // useEffect(() => {
-  //   if(isDesktop) {
-  //     setIsOpenTab(false);
-  //     const defaultValue = param.get("tab");
-  //     if(defaultValue) {
-  //       setAccountTab(defaultValue);
-  //     }
-  //   }
-  // }, [isDesktop]);
 
   return (
     <main className="flex flex-col items-center w-full px-4">
