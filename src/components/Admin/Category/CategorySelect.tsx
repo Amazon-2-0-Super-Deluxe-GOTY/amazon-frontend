@@ -23,10 +23,12 @@ export function CategorySelect({
   categories,
   value,
   onValueChange,
+  disallowRoots,
 }: {
   categories?: Category[];
   value?: string;
   onValueChange: (value: string) => void;
+  disallowRoots?: boolean;
 }) {
   const treeRoots = useMemo(
     () =>
@@ -39,6 +41,7 @@ export function CategorySelect({
   const selectedCategory = categories?.find((c) => c.id === value);
 
   const isOpen = (node: TreeNodeType<Category>) => {
+    if (node.value.id === value) return false;
     return (
       !!value &&
       !!findNodeById(node, value, {
@@ -48,6 +51,9 @@ export function CategorySelect({
     );
   };
 
+  const isDisabled = (node: TreeNodeType<Category>) =>
+    disallowRoots ? node.isRoot : false;
+
   return (
     <Select
       value={value}
@@ -55,13 +61,14 @@ export function CategorySelect({
     >
       <SelectTrigger>
         <SelectValue placeholder="Choose category">
-          <p className="p-2 text-start">{selectedCategory?.title}</p>
+          <p className="p-2 text-start">{selectedCategory?.name}</p>
         </SelectValue>
       </SelectTrigger>
       <SelectContent className="p-4 min-w-96">
         {treeRoots.map((root) => (
           <SelectItemRecursive
             isOpen={isOpen}
+            isDisabled={isDisabled}
             root={root}
             index={0}
             key={root.value.id}
@@ -81,10 +88,12 @@ function SelectItemRecursive({
   root,
   index,
   isOpen,
+  isDisabled,
 }: {
   root: TreeNodeType<Category>;
   index: number;
   isOpen: (node: TreeNodeType<Category>) => boolean;
+  isDisabled: (node: TreeNodeType<Category>) => boolean;
 }) {
   return root.nodes.length > 0 ? (
     <Accordion
@@ -102,8 +111,9 @@ function SelectItemRecursive({
             className="p-4"
             checkAlign="right"
             checkOffset={2}
+            disabled={isDisabled(root)}
           >
-            <p>{root.value.title}</p>
+            <p>{root.value.name}</p>
           </SelectItem>
           <AccordionTrigger className="p-4" />
         </div>
@@ -112,6 +122,7 @@ function SelectItemRecursive({
             <SelectItemRecursive
               root={node}
               isOpen={isOpen}
+              isDisabled={isDisabled}
               index={index + 1}
               key={node.value.id}
             />
@@ -126,8 +137,9 @@ function SelectItemRecursive({
       style={{ paddingLeft: `${getOffset(index + 1)}px` }}
       checkAlign="right"
       checkOffset={4}
+      disabled={isDisabled(root)}
     >
-      <p>{root.value.title}</p>
+      <p>{root.value.name}</p>
     </SelectItem>
   );
 }

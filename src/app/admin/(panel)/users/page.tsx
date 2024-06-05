@@ -37,7 +37,7 @@ import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import clsx from "clsx";
 import { formatUserRegistrationDate } from "@/lib/date";
-import { User, UserRoles, getUsers } from "@/api/users";
+import { UserRoles, getUsers } from "@/api/users";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import { useModal } from "@/components/Shared/Modal";
@@ -46,6 +46,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { textAvatar } from "@/lib/utils";
 import { Pagination } from "@/components/Shared/Pagination";
 import { useSearchParamsTools } from "@/lib/router";
+import type { User } from "@/api/types";
 
 export type Payment = {
   id: string;
@@ -62,14 +63,14 @@ const roles = ["all", "user", "admin"] as const;
 export default function Page() {
   const searchParams = useSearchParamsTools();
   const [selectedRole, setSelectedRole] = useState<UserRoles>(() => {
-    const roleFromUrl = searchParams.get("role") as UserRoles | undefined;
+    const roleFromUrl = searchParams.get?.("role") as UserRoles | undefined;
     return !roleFromUrl || !roles.includes(roleFromUrl) ? "all" : roleFromUrl;
   });
   const [searchQuery, setSearchQuery] = useState(
-    () => searchParams.get("searchQuery") ?? ""
+    () => searchParams.get?.("searchQuery") ?? ""
   );
   const [page, setPage] = useState(() => {
-    const pageFromUrl = searchParams.get("page");
+    const pageFromUrl = searchParams.get?.("page");
     const pageNum = parseInt(pageFromUrl ?? "1");
     return isNaN(pageNum) ? 1 : pageNum;
   });
@@ -197,14 +198,15 @@ export default function Page() {
         header: "User",
         cell: ({ row }) => {
           const user = row.original;
+          const fullName = `${user.firstName} ${user.lastName}`;
           return (
             <div className="flex items-center gap-3">
               <Avatar className="w-12 h-12">
                 {/* <AvatarImage src={placeholder} /> */}
-                <AvatarFallback>{textAvatar(user.fullName)}</AvatarFallback>
+                <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-base">{user.fullName}</p>
+                <p className="text-base">{fullName}</p>
                 <p className="text-sm">
                   {user.isAdmin ? "Administrator" : "Customer"}
                 </p>
@@ -235,7 +237,7 @@ export default function Page() {
         header: "Registration date",
         cell: ({ row }) => (
           <div className="text-base">
-            {formatUserRegistrationDate(new Date(row.original.registerAt))}
+            {formatUserRegistrationDate(new Date(row.original.createdAt))}
           </div>
         ),
       },

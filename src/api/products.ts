@@ -1,3 +1,5 @@
+import type { ApiResponse } from "./types";
+
 export interface Product {
   id: string;
   name: string;
@@ -47,9 +49,11 @@ export function getProductsShort({
   );
 }
 
-export function uploadImage(
+export function uploadProductImage(
   files: File[]
-): Promise<{ id: string; imageUrl: string }[]> {
+): Promise<
+  ApiResponse<[[200, { id: string; imageUrl: string }[]], [400, null]]>
+> {
   const data = new FormData();
 
   for (const file of files) {

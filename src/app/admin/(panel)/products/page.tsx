@@ -9,7 +9,7 @@ import {
   useState,
   useTransition,
 } from "react";
-import { getCategories, type Category } from "@/api/categories";
+import { getCategories, useCategories, type Category } from "@/api/categories";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, PlusIcon, StarIcon } from "lucide-react";
@@ -32,10 +32,10 @@ import { AlertDialog } from "@/components/Admin/AlertDialog";
 export default function Page() {
   const searchParams = useSearchParamsTools();
   const [searchQuery, setSearchQuery] = useState(
-    () => searchParams.get("searchQuery") ?? ""
+    () => searchParams.get?.("searchQuery") ?? ""
   );
   const [page, setPage] = useState(() => {
-    const pageFromUrl = searchParams.get("page");
+    const pageFromUrl = searchParams.get?.("page");
     const pageNum = parseInt(pageFromUrl ?? "1");
     return isNaN(pageNum) ? 1 : pageNum;
   });
@@ -57,10 +57,7 @@ export default function Page() {
     });
   }, [selectedCategory, page, defferedSearch]);
 
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-  });
+  const categoriesQuery = useCategories();
   const productsQuery = useQuery({
     queryKey: ["productsShort", selectedCategory?.id, page, defferedSearch],
     queryFn: fetchProducts,

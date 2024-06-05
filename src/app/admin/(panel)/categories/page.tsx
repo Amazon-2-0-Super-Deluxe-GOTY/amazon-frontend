@@ -24,8 +24,7 @@ import {
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
-import { getCategories, type Category } from "@/api/categories";
-import { useQuery } from "@tanstack/react-query";
+import { useCategories, type Category } from "@/api/categories";
 
 const iconClassSmall = "w-5 h-5";
 
@@ -35,10 +34,7 @@ const treeOptions = {
 };
 
 export default function Page() {
-  const { data } = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-  });
+  const { data } = useCategories();
   const allCategoriesTrees = React.useMemo(
     () => (data?.data ? createTreeArray(data.data, treeOptions) : []),
     [data?.data]
@@ -50,13 +46,13 @@ export default function Page() {
   const [search, setSearch] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const createModalParams = useRef<{
-    defaultIsRoot?: boolean;
+    isRoot: boolean;
     defaultRootId?: string;
-  }>({});
+  }>({ isRoot: true });
 
   const displayedTreeRoot = React.useMemo(() => {
     return search
-      ? checkboxTree.filter((n) => n.value.title.toLowerCase().includes(search))
+      ? checkboxTree.filter((n) => n.value.name.toLowerCase().includes(search))
       : checkboxTree.root;
   }, [checkboxTree, search]);
 
@@ -104,6 +100,10 @@ export default function Page() {
     checkboxTree.set(newTree);
   };
 
+  const onCreateCategory = (categoryValue: Omit<Category, "id">) => {
+    console.log(categoryValue);
+  };
+
   const isSelected = (categoryId: string) =>
     selectedCategory?.id === categoryId;
 
@@ -111,11 +111,11 @@ export default function Page() {
   const closeCreateModal = () => setIsCreateModalOpen(false);
 
   const openCreateModalAsRoot = () => {
-    createModalParams.current = { defaultIsRoot: true };
+    createModalParams.current = { isRoot: true };
     openCreateModal();
   };
   const openCreateModalAsChild = (rootId: string) => {
-    createModalParams.current = { defaultIsRoot: false, defaultRootId: rootId };
+    createModalParams.current = { isRoot: false, defaultRootId: rootId };
     openCreateModal();
   };
 
@@ -140,7 +140,7 @@ export default function Page() {
                 {allCategoriesTrees.map(({ value: category }) => (
                   <SelectItem
                     value={category.id}
-                    key={category.title}
+                    key={category.name}
                     className="p-4"
                     checkAlign="right"
                     checkOffset={4}
@@ -148,7 +148,7 @@ export default function Page() {
                     <div className="flex items-center gap-3">
                       {category.iconId &&
                         getIcon(category.iconId, iconClassSmall)}
-                      <span>{category.title}</span>
+                      <span>{category.name}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -210,6 +210,7 @@ export default function Page() {
           (c) => c.id === selectedCategory?.parentId
         )}
         mainCategory={checkboxTree.root?.value}
+        allCategories={data?.data ?? []}
         onViewMain={() =>
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
@@ -219,7 +220,8 @@ export default function Page() {
       <CreateCategoryModal
         isOpen={isCreateModalOpen}
         closeModal={closeCreateModal}
-        categoriesTrees={allCategoriesTrees}
+        allCategories={data?.data ?? []}
+        onSubmit={onCreateCategory}
         {...createModalParams.current}
       />
     </div>

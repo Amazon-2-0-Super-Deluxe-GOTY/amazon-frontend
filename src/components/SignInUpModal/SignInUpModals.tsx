@@ -2,88 +2,117 @@ import * as React from "react";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ModalRestorePassword, ModalLogIn, ModalSignUp, ModalSignUpCode, ModalSignUpSuccessful, ModalResetPassword, ModalFirstLastName } from "./ModalsContent";
-import { cn } from "@/lib/utils";
+  ModalRestorePassword,
+  ModalLogIn,
+  ModalSignUp,
+  ModalSignUpCode,
+  ModalSignUpSuccessful,
+  ModalResetPassword,
+  ModalFirstLastName,
+} from "./ModalsContent";
 import { useScreenSize } from "@/lib/media";
+import { Button } from "../ui/button";
+import { useModal } from "../Shared/Modal";
+import type { SignInUpModalVariants } from "./types";
+import { AlertDialog } from "../Admin/AlertDialog";
 
-export const SignInUpModals = ({
+export const SignInUpButtons = ({
   variant,
 }: {
   variant: "banner" | "sidebar";
 }) => {
-  
+  const { showModal } = useModal();
+
+  function onOpenSignUpModal() {
+    showModal({
+      component: AuthModal,
+      props: { variant: "signup" },
+    });
+  }
+  function onOpenLogInModal() {
+    showModal({
+      component: AuthModal,
+      props: { variant: "login" },
+    });
+  }
+
   return (
-    <div className="flex gap-3">
-      <SignInUpModal variant={variant === "banner" ? "outline" : "secondary"} />
-    </div>
+    <>
+      <Button
+        variant={"default"}
+        className="h-11 px-8 text-base lg:text-xl"
+        onClick={onOpenSignUpModal}
+      >
+        Sign up
+      </Button>
+      <Button
+        variant={variant === "banner" ? "outline" : "secondary"}
+        className="h-11 px-8 text-base lg:text-xl"
+        onClick={onOpenLogInModal}
+      >
+        Log in
+      </Button>
+    </>
   );
 };
 
-const SignInUpModal = ({
-  variant,
-} : {
-  variant: "default" | "outline" | "secondary";
-}) => {
-  const isDesktop = useScreenSize({minSize:"md"});
+const instantExitModals: SignInUpModalVariants[] = [
+  "login",
+  "signup",
+  "restore-password",
+  "successful-registration",
+];
 
-  const [modal, setModal] = useState<string>("");
-  const handleChangeModal = (newModal: string) => {
+export const AuthModal = ({
+  variant,
+  closeModal,
+}: {
+  variant: SignInUpModalVariants;
+  closeModal: () => void;
+}) => {
+  const isDesktop = useScreenSize({ minSize: "md" });
+  const { showModal } = useModal();
+
+  const [modal, setModal] = useState<SignInUpModalVariants>(variant);
+  const handleChangeModal = (newModal: SignInUpModalVariants) => {
     setModal(newModal);
   };
-  const onOpenSignUpModal = () => {
-    setModal("signup");
-  };
-  const onOpenLogInModal = () => {
-    setModal("login");
-  };
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const onOpenModalChange = (value:boolean) => {
-    setIsOpen(value);
-  };
-  const onClodeModal = () => {
-    setIsOpen(false);
+  const onOpenChange = (open: boolean) => {
+    if (open) return;
+
+    if (instantExitModals.includes(modal)) return closeModal();
+
+    showModal({
+      component: AlertDialog,
+      props: {
+        title: "Are you sure?",
+        text: "If you close the dialog now, your changes will not be saved",
+        buttonCloseText: "Back",
+        buttonConfirmText: "Close",
+        variant: "default",
+      },
+    }).then((value) => value.action === "CONFIRM" && closeModal());
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => onOpenModalChange(!isOpen)} >
-      <DialogTrigger onClick={onOpenSignUpModal}>
-        <span
-          className={cn("h-11 px-8 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-base lg:text-xl", 
-            "bg-primary text-primary-foreground hover:bg-primary/90",
-          )}
-        >
-          Sign up
-        </span>
-      </DialogTrigger>
-      <DialogTrigger onClick={onOpenLogInModal}>
-        <span
-          className={cn("h-11 px-8 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-base lg:text-xl", 
-            variant === "outline" && "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-            variant === "secondary" && "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-            variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
-          )}
-        >
-          Log in
-        </span>
-      </DialogTrigger>
-      <DialogContent className="w-full h-full flex max-w-screen-xl max-h-[680px]" hideClose={isDesktop ? true : false} >
+    <Dialog open onOpenChange={onOpenChange}>
+      <DialogContent
+        className="w-full h-full flex max-w-screen-xl max-h-[680px]"
+        hideClose={isDesktop}
+      >
         <div className="flex justify-between items-center w-full h-full gap-6">
           {(() => {
             switch (modal) {
               case "login":
-                return <ModalLogIn changeModal={handleChangeModal} />;
+                return (
+                  <ModalLogIn
+                    changeModal={handleChangeModal}
+                    closeModal={closeModal}
+                  />
+                );
               case "restore-password":
                 return <ModalRestorePassword changeModal={handleChangeModal} />;
               case "reset-password":
@@ -95,14 +124,18 @@ const SignInUpModal = ({
               case "finishing-touches":
                 return <ModalFirstLastName changeModal={handleChangeModal} />;
               case "successful-registration":
-                return <ModalSignUpSuccessful onClose={onClodeModal} />;
+                return <ModalSignUpSuccessful onClose={closeModal} />;
 
               default:
                 return null;
             }
           })()}
           <div className="w-full h-full max-w-[530px] max-md:hidden">
-            <Image src={placeholder} alt="Placeholder" className="h-full" />
+            <Image
+              src={placeholder}
+              alt="Placeholder"
+              className="h-full object-cover"
+            />
           </div>
         </div>
       </DialogContent>

@@ -9,7 +9,7 @@ const type: ProductOptionsTypes = "size";
 export const OptionSizes = ({ data }: { data: SizesData }) => {
   const searchParams = useSearchParamsTools();
   const [index, setIndex] = useState<number | undefined>(() => {
-    const defaultValue = searchParams.get(type);
+    const defaultValue = searchParams.get?.(type);
 
     if (defaultValue) {
       const index = data.findIndex((s) => s.short === defaultValue);

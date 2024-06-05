@@ -380,12 +380,14 @@ export default function ProductPage({
 
   const searchParams = useSearchParams();
   const [isOptionsSelected, setIsOptionsSelected] = React.useState(() =>
-    checkOptionsSelected(searchParams)
+    checkOptionsSelected(searchParams ?? new URLSearchParams())
   );
   const hasOptions = productOptions.length > 0;
 
   React.useEffect(() => {
-    setIsOptionsSelected(checkOptionsSelected(searchParams));
+    setIsOptionsSelected(
+      checkOptionsSelected(searchParams ?? new URLSearchParams())
+    );
   }, [searchParams]);
 
   React.useEffect(() => {
@@ -491,7 +493,10 @@ export default function ProductPage({
         </div>
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
-            <ProductOrderCard productId={params.productId} isOptionsSelected={isOptionsSelected} />
+            <ProductOrderCard
+              productId={params.productId}
+              isOptionsSelected={isOptionsSelected}
+            />
             <SellerInfoCard sellerInfo={sellerInfo} />
             <div className="p-4 lg:p-6 bg-gray-200 rounded-lg flex items-center gap-3">
               <TrophyIcon className="w-8 h-8 lg:w-10 lg:h-10" />
