@@ -38,7 +38,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 const formSchema = z
   .object({
     iconId: z.string().optional(),
-    parentId: z.string().optional(),
+    parentId: z.number().optional(),
     name: z.string().min(1, {
       message: "Category name must not be empty.",
     }),

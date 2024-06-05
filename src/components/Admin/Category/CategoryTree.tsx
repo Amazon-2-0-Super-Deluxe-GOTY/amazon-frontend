@@ -26,8 +26,8 @@ export const CategoryTree = ({
   ) => void;
   onSelect: (node: CategoryTreeNodeType) => void;
   onDelete: (nodes: TreeNodeType<Category>[]) => void;
-  onCreateClick: (rootId: string) => void;
-  isSelected: (categoryId: string) => boolean;
+  onCreateClick: (rootId: number) => void;
+  isSelected: (categoryId: number) => boolean;
 }) => {
   const { showModal } = useModal();
 

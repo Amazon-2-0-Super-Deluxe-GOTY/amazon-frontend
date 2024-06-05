@@ -1,5 +1,5 @@
 "use client";
-import { getProductsShort, type ProductShort } from "@/api/products";
+import { getProducts, type ProductShort } from "@/api/products";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -48,13 +48,20 @@ export default function Page() {
   const [isTransiton, startTransition] = useTransition();
 
   const fetchProducts = useCallback(async () => {
-    if (!selectedCategory) return { data: [], count: { pageCount: 0 } };
-    return getProductsShort({
+    if (!selectedCategory)
+      return { data: [] as ProductShort[], count: { pagesCount: 0 } };
+    const res = await getProducts({
       categoryId: selectedCategory.id,
       page,
       searchQuery: defferedSearch,
       pageSize: 7,
     });
+
+    if (res.status === 200) {
+      return { data: res.data, count: res.count };
+    }
+
+    return { data: [] as ProductShort[], count: { pagesCount: 0 } };
   }, [selectedCategory, page, defferedSearch]);
 
   const categoriesQuery = useCategories();
@@ -67,7 +74,7 @@ export default function Page() {
     productsQuery.data?.data
   );
 
-  function onSelectCategory(id: string) {
+  function onSelectCategory(id: number) {
     const value = categoriesQuery.data?.data.find((c) => c.id === id);
     value && setSelectedCategory(value);
   }
@@ -188,12 +195,12 @@ export default function Page() {
       },
       {
         header: "Rating",
-        accessorKey: "rating",
+        accessorKey: "generalRate",
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <StarIcon className="fill-black w-6 h-6" />
             <span className="text-xl">
-              {parseFloat(row.getValue("rating")).toFixed(1)}
+              {parseFloat(row.getValue("generalRate")).toFixed(1)}
             </span>
           </div>
         ),
@@ -313,7 +320,7 @@ export default function Page() {
         {!!productsQuery.data && productsQuery.data.data.length > 0 && (
           <Pagination
             page={page}
-            pagesCount={productsQuery.data.count.pageCount}
+            pagesCount={productsQuery.data.count.pagesCount}
             setPage={changePage}
           />
         )}

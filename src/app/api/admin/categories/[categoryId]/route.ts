@@ -1,8 +1,8 @@
 import type { Category } from "@/api/categories";
 
 const data: Category = {
-  id: "15",
-  parentId: "13",
+  id: 15,
+  parentId: 13,
   name: "Blouses and Shirts",
   description: "Test description",
   categoryPropertyKeys: [

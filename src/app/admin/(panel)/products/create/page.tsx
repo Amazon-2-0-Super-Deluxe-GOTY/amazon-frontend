@@ -1,6 +1,6 @@
 "use server";
 import { getCategories } from "@/api/categories";
-import { getAdminProduct } from "@/api/products";
+import { getProduct } from "@/api/products";
 import { CreateProductPage } from "@/components/Admin/Product/CreateProductPage";
 import {
   HydrationBoundary,
@@ -25,13 +25,16 @@ export default async function Page({
     }),
     queryClient.prefetchQuery({
       queryKey: ["product", productId],
-      queryFn: () => (productId ? getAdminProduct({ productId }) : undefined),
+      queryFn: () => (productId ? getProduct({ productId }) : null),
     }),
   ]);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <CreateProductPage productId={productId} categoryId={categoryId} />
+      <CreateProductPage
+        productId={productId}
+        categoryId={categoryId ? Number(categoryId) : undefined}
+      />
     </HydrationBoundary>
   );
 }

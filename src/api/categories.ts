@@ -5,8 +5,8 @@ export interface CategoryPropertyKey {
 }
 
 export interface Category {
-  id: string;
-  parentId?: string;
+  id: number;
+  parentId?: number;
   iconId?: string;
   name: string;
   description: string;
