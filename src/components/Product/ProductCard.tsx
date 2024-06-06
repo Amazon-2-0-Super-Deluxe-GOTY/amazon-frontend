@@ -1,6 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import placeholder from "@/../public/Icons/placeholder2.svg";
+import discountShape from "@/../public/Icons/discount-shape.svg";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { CustomerReviewsIcon, StarEmptyIcon } from "../Shared/Icons";
@@ -20,34 +21,35 @@ export const ProductCard = ({
   const isOutOfStock = quantity === 0;
 
   return (
-    <Card className="max-w-sm w-full rounded-lg shadow-none before:transition-opacity before:opacity-0 hover:before:opacity-100">
-      <CardHeader className="pb-0">
+    <Card className="max-w-sm w-full rounded-lg border-hover-card">
+      <CardHeader className="p-4 pb-0">
         <div className="relative aspect-square">
           <Image
             src={placeholder}
-            fill={true}
+            fill
             alt="Placeholder"
             className="object-cover rounded-sm"
           />
-          {/* <div className="absolute top-6 left-0 rounded-e-xl bg-gray-100 px-2 pl-4 pr-6">
-            -24%
-          </div> */}
+          <div className="absolute top-1.5 right-1.5">
+            <Image src={discountShape} alt="Discount" />
+            <span className="absolute left-4 top-2 font-bold">-24%</span>
+          </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="mt-3 flex flex-col justify-center items-center">
-          <span className="text-lg line-clamp-2">{title}</span>
+      <CardContent className="p-4 pt-3">
+        <div className="flex flex-col justify-center items-center">
+          <p className="text-lg line-clamp-2">{title}</p>
           <div className="pb-3 flex gap-3.5 items-center">
             <div className="flex items-center gap-1.5">
-              <StarEmptyIcon className="w-6 h-6" />
-              <span className="text-sm">4.7</span>
+              <StarEmptyIcon className="w-5 h-5" />
+              <span className="text-sm font-medium">4.7</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <CustomerReviewsIcon className="w-6 h-6" />
-              <span className="text-sm">228</span>
+              <CustomerReviewsIcon className="w-5 h-5" />
+              <span className="text-sm font-medium">228</span>
             </div>
           </div>
-          <div className="text-xl">
+          <div className="text-xl font-medium">
             <span>${whole}</span>
             <sup>{fraction}</sup>
             <sub className="ml-2 line-through text-gray-400">$39.99</sub>

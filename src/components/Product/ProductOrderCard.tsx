@@ -141,8 +141,10 @@ export const ProductOrderCard = ({ productId }: { productId: string }) => {
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
         <Button onClick={onAddToCartClick}>Add to cart</Button>
-        <Button onClick={onBuyNowClick}>Buy now</Button>
-        <Button variant={"outline"} className="col-span-2 lg:col-span-1">
+        <Button onClick={onBuyNowClick} variant={"secondary"}>
+          Buy now
+        </Button>
+        <Button variant={"secondary"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
       </CardContent>
@@ -239,7 +241,7 @@ const MobileQuickActions = ({
                 <button>
                   <HeartIcon />
                 </button>
-                <Button variant={"outline"} onClick={onAddToCartClick}>
+                <Button variant={"secondary"} onClick={onAddToCartClick}>
                   To cart
                 </Button>
                 <Button onClick={onBuyNowClick}>Buy</Button>

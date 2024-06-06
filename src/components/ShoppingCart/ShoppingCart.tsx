@@ -137,10 +137,7 @@ const ShoppingCartMobile = ({
                             >
                               Continue shopping
                             </Button>
-                            <Button
-                              variant={"default"}
-                              className="text-base max-sm:text-sm max-sm:px-3"
-                            >
+                            <Button className="text-base max1-sm:text-sm max-sm:px-3">
                               Checkout
                             </Button>
                           </div>
@@ -272,9 +269,7 @@ const ShoppingCartDesktop = ({
                             <sup className="text-xl font-bold mt-3 -ml-3">
                               00
                             </sup>
-                            <Button variant={"default"} className="text-xl">
-                              Checkout
-                            </Button>
+                            <Button className="text-xl">Checkout</Button>
                           </div>
                         </div>
                         <Separator />

@@ -41,14 +41,14 @@ export const SignInUpButtons = ({
   return (
     <>
       <Button
-        variant={"default"}
+        variant={"primary"}
         className="h-11 px-8 text-base lg:text-xl"
         onClick={onOpenSignUpModal}
       >
         Sign up
       </Button>
       <Button
-        variant={variant === "banner" ? "outline" : "secondary"}
+        variant={variant === "banner" ? "secondary" : "secondary"}
         className="h-11 px-8 text-base lg:text-xl"
         onClick={onOpenLogInModal}
       >
@@ -92,7 +92,7 @@ export const AuthModal = ({
         text: "If you close the dialog now, your changes will not be saved",
         buttonCloseText: "Back",
         buttonConfirmText: "Close",
-        variant: "default",
+        variant: "primary",
       },
     }).then((value) => value.action === "CONFIRM" && closeModal());
   };

@@ -27,14 +27,25 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "hsl(var(--primary-hover))",
+          press: "hsl(var(--primary-press))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          press: "hsl(var(--secondary-press))",
+        },
+        tertiary: {
+          DEFAULT: "hsl(var(--tertiary))",
+          foreground: "hsl(var(--tertiary-foreground))",
+          hover: "hsl(var(--tertiary-hover))",
+          press: "hsl(var(--tertiary-press))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          shadow: "hsl(var(--destructive-shadow))",
+          press: "hsl(var(--destructive-press))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -55,6 +66,17 @@ const config = {
         light: {
           DEFAULT: "hsl(var(--light))",
         },
+      },
+      boxShadow: {
+        button: "0px 1px 7px -5px",
+        lg: "0px 4px 11.5px -5px",
+      },
+      boxShadowColor: {
+        "color-card": "hsla(var(--shadow-color-card))",
+        "color-card-hover": "hsl(var(--shadow-color-card-hover))",
+      },
+      borderWidth: {
+        "2.5": "2.5px",
       },
       borderRadius: {
         lg: "var(--radius)",

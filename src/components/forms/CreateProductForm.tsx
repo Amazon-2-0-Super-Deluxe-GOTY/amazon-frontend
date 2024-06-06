@@ -241,7 +241,7 @@ export function CreateProductForm({
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "default",
+          variant: "primary",
         },
       });
       return;
@@ -310,7 +310,7 @@ export function CreateProductForm({
           text: "You will lose all your changes.",
           buttonCloseText: "Back",
           buttonConfirmText: "Continue",
-          variant: "default",
+          variant: "primary",
         },
       }).then(({ action }) => {
         if (action === "CONFIRM") {
@@ -618,7 +618,7 @@ export function CreateProductForm({
               {!selectedCategoryPropertyKeyNames.includes(value.name) && (
                 <Button
                   type="button"
-                  variant={"ghost"}
+                  variant={"tertiary"}
                   className="h-max p-3"
                   onClick={onRemoveProductDetail(i)}
                 >
@@ -694,7 +694,7 @@ export function CreateProductForm({
               />
               <Button
                 type="button"
-                variant={"ghost"}
+                variant={"tertiary"}
                 className="h-max p-3"
                 onClick={onRemoveAboutProduct(i)}
               >

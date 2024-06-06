@@ -11,7 +11,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import placeholderImage from "../../../public/Icons/placeholder.svg";
+// import bannerImage1 from "../../../public/images/banner-main-1.png";
+// import bannerImage1 from "../../../public/images/banner-main-1.avif";
 
 export function Banner() {
   return (
@@ -34,7 +35,8 @@ export function Banner() {
               <Card className="w-full h-full">
                 <CardContent className="flex items-center justify-center">
                   <Image
-                    src={placeholderImage}
+                    // src={bannerImage1}
+                    src={"/banner-main-1.avif"}
                     alt="placeholder"
                     fill={true}
                     className="object-cover"

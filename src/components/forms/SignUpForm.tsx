@@ -122,7 +122,7 @@ export function SignUpForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() => setShowPassword(!showPassword)}
@@ -154,7 +154,7 @@ export function SignUpForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() =>

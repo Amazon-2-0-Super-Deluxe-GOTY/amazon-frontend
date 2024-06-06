@@ -7,9 +7,9 @@ import { SignInUpButtons } from "@/components/SignInUpModal/SignInUpModals";
 
 export const SingInUpBanner = () => {
   return (
-    <Card className="w-full bg-background">
-      <CardContent className="px-6 py-16 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="basis-1/2">
+    <Card className="w-full bg-background overflow-hidden">
+      <CardContent className="p-0 flex flex-col md:flex-row justify-between items-center gap-4 w-full">
+        <div className="basis-1/2 py-16">
           <div className="mb-6 text-center">
             <h2 className="text-2xl lg:text-3xl xl:text-4xl whitespace-nowrap font-semibold mb-3">
               Be aware of the variety
@@ -26,7 +26,8 @@ export const SingInUpBanner = () => {
           <Image
             src={placeholder}
             alt="Placeholder"
-            fill
+            // fill
+            className="object-cover max-h-80"
             // className="w-full xl:max-w-md object-cover max-h-[260px]"
           />
         </div>

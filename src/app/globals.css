@@ -4,10 +4,10 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 209, 100%, 98%;
     --foreground: 219, 65%, 16%;
 
-    --card: 0 0% 100%;
+    --card: 207, 100%, 98%;
     --card-foreground: 219, 65%, 16%;
 
     --popover: 0 0% 100%;
@@ -20,8 +20,15 @@
 
     --secondary: 219, 65%, 57%;
     --secondary-foreground: 219, 65%, 16%;
-    --secondary-hover-foreground: 220, 69%, 40%;
-    --secondary-press-foreground: 220, 69%, 40%;
+    --secondary-press: 219, 100%, 90%;
+
+    --tertiary: 0, 0%, 0%, 0;
+    --tertiary-foreground: 219, 65%, 16%;
+    --tertiary-hover: 220, 100%, 94%;
+    --tertiary-press: 220, 100%, 90%;
+
+    --shadow-color-card: 220, 69%, 40%, 0.25;
+    --shadow-color-card-hover: 220, 100%, 90%;
 
     --light: 220, 30%, 96%;
 
@@ -31,14 +38,18 @@
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0, 79%, 60%;
+    --destructive-foreground: 219, 65%, 16%;
+    --destructive-shadow: 0, 72%, 44%, 0.5;
+    --destructive-press: 0, 100%, 90%;
 
     --border: 221, 47%, 71%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    --footer: 220, 69%, 40%;
   }
 
   .dark {
@@ -78,5 +89,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .border-hover-card {
+    @apply border-2 border-transparent transition-[box-shadow,border-color] hover:border-tertiary-press;
   }
 }

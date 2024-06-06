@@ -19,7 +19,7 @@ export function ProductCarousel({
         className="w-full mx-auto max-w-[1430px] static"
         opts={{ align: "end" }}
       >
-        <CarouselContent>
+        <CarouselContent className="p-1">
           {products.map((product, index) => (
             <CarouselItem
               className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"

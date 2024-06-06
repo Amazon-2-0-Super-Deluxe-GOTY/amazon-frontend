@@ -11,10 +11,10 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { useScreenSize } from "@/lib/media";
 import { UserSidebar } from "./UserSidebar";
 import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
-import { BellIcon, HamburgerMenuIcon, UserIcon } from "./Icons";
+import { BellIcon, MenuIcon, UserIcon } from "./Icons";
+import { Logo } from "./Logo";
 
 const sidebarData = {
   // user: { fullName: "Marsha Shields", avatar: "" },
@@ -58,18 +58,18 @@ export function Header() {
       <div className="max-w-[1600px] flex items-center justify-between w-full mx-auto">
         <div className="flex items-center gap-8">
           <button onClick={openSidebar}>
-            <HamburgerMenuIcon />
+            <MenuIcon className="stroke-[3]" />
           </button>
           <Link href={"/"}>
-            <span className="font-bold text-xl">Logo</span>
+            <Logo />
           </Link>
         </div>
-        <div className="flex-1 flex relative mx-8 z-0 rounded-lg">
+        <div className="flex-1 flex relative mx-8 z-0 rounded-lg border-2 border-transparent has-[:focus]:border-foreground overflow-hidden">
           <Input
             placeholder="Search..."
             className="focus-visible:ring-0 focus-visible:ring-offset-0"
           />
-          <Button className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto max-lg:bg-none">
+          <Button className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto max-lg:bg-transparent max-lg:border-transparent">
             <SearchIcon />
           </Button>
         </div>

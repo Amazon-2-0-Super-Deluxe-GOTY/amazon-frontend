@@ -122,15 +122,15 @@ export const ReviewCard = ({
       )}
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-2">
         <div className="flex gap-4 items-center h-10">
-          <Button variant={review.isRatedByUser ? "default" : "outline"}>
+          <Button variant={review.isRatedByUser ? "primary" : "secondary"}>
             Helpful
           </Button>
-          <Button variant={"outline"}>Report</Button>
+          <Button variant={"secondary"}>Report</Button>
           {!isInUserLanguage && (
             <>
               <Separator orientation="vertical" />
               <Button
-                variant={"outline"}
+                variant={"secondary"}
                 onClick={onTranslate}
                 disabled={translation.isLoading}
               >

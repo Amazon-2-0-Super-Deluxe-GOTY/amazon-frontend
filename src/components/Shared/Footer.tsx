@@ -6,6 +6,7 @@ import {
   TelegramIcon,
   TwitterIcon,
 } from "./Icons";
+import { Logo } from "./Logo";
 
 export function Footer() {
   return (
@@ -40,8 +41,8 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="flex justify-between lg:justify-center items-center mt-8 gap-6 p-4 bg-primary text-secondary-foreground">
-        <span className="font-bold text-xl">Logo</span>
+      <div className="flex justify-between lg:justify-center items-center mt-8 gap-8 p-4 bg-[hsl(var(--footer))] text-light">
+        <Logo />
         <span>© 2024 Do Sell. All rights reserved.</span>
       </div>
     </footer>

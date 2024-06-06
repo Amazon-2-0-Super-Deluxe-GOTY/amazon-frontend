@@ -357,7 +357,7 @@ export default function CategoryPage({
                                   >
                                     <Button
                                       key={valueIndex}
-                                      variant="ghost"
+                                      variant="tertiary"
                                       className="bg-gray-300 justify-between flex gap-2"
                                       onClick={() => {
                                         uncheckFilter(item.title, value);
@@ -373,7 +373,7 @@ export default function CategoryPage({
                         </ul>
                       </ScrollArea>
                       <hr className="my-4 border-gray-400 border-y"></hr>
-                      <Button variant={"ghost"} onClick={clearAllFilters}>
+                      <Button variant={"tertiary"} onClick={clearAllFilters}>
                         <Link href={`/category/${params.categoryId}`}>
                           Clear all
                         </Link>
@@ -403,7 +403,7 @@ export default function CategoryPage({
               </div>
               <div className="flex max-md:hidden">
                 <Button
-                  variant={"ghost"}
+                  variant={"tertiary"}
                   className={cn(
                     "rounded-r-none min-w-[40px] px-4 max-lg:px-2",
                     isDefaultTemplateDisplayCardOn
@@ -415,7 +415,7 @@ export default function CategoryPage({
                   <Image src={SwitchCard33} alt="switchcards33" />
                 </Button>
                 <Button
-                  variant={"ghost"}
+                  variant={"tertiary"}
                   className={cn(
                     "rounded-l-none min-w-[40px] px-4 max-lg:px-2",
                     !isDefaultTemplateDisplayCardOn

@@ -84,7 +84,7 @@ export function ResetPasswordForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() => setShowPassword(!showPassword)}
@@ -116,7 +116,7 @@ export function ResetPasswordForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() =>

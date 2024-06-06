@@ -1,5 +1,5 @@
 "use client";
-import { uploadImage } from "@/api/products";
+import { uploadProductImage as uploadImage } from "@/api/products";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,10 +12,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useOptimistic, useTransition } from "react";
-import { 
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useModal } from "@/components/Shared/Modal";
 import { isImageValid } from "@/lib/products";
@@ -36,14 +33,13 @@ export function ChangePhotoForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-        images: [],
-      },
+      images: [],
+    },
   });
   const imagesArray = useFieldArray({
     control: form.control,
     name: "images",
   });
-
 
   const uploadImageMutation = useMutation({
     mutationFn: uploadImage,
@@ -71,7 +67,7 @@ export function ChangePhotoForm() {
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "default",
+          variant: "primary",
         },
       });
       return;
@@ -80,7 +76,9 @@ export function ChangePhotoForm() {
     startUploadTransition(async () => {
       setUploadLoadingElements(Array.from({ length: filesToUpload.length }));
       const data = await uploadImageMutation.mutateAsync(filesToUpload);
-      imagesArray.append(data);
+      if (data.status === 200) {
+        imagesArray.append(data.data);
+      }
     });
   }
 
@@ -93,10 +91,7 @@ export function ChangePhotoForm() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="relative"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="relative">
         <fieldset id="form-general">
           <FormField
             control={form.control}
@@ -106,7 +101,12 @@ export function ChangePhotoForm() {
                 <FormControl>
                   <div className="flex flex-wrap gap-4">
                     <div className="flex justify-center items-center relative">
-                      <Button variant={"outline"} className="text-sm md:text-base">Change photo</Button>
+                      <Button
+                        variant={"secondary"}
+                        className="text-sm md:text-base"
+                      >
+                        Change photo
+                      </Button>
                       <Input
                         className="absolute p-0 h-full inset-0 opacity-0 z-10 cursor-pointer"
                         type="file"

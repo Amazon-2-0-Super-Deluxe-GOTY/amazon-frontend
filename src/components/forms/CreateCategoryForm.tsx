@@ -156,7 +156,7 @@ export const CreateCategoryForm = ({
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "default",
+          variant: "primary",
         },
       });
       return;
@@ -431,7 +431,7 @@ export const CreateCategoryForm = ({
                 />
                 <Button
                   type="button"
-                  variant={"ghost"}
+                  variant={"tertiary"}
                   className="h-max p-3"
                   onClick={onRemovePropertyKey(i)}
                 >

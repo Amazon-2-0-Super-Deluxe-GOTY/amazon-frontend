@@ -65,11 +65,11 @@ export const AboutProduct = ({
       {isExpandable && (
         <div className="flex justify-center mt-4">
           {isExpanded ? (
-            <Button variant={"outline"} onClick={onHide}>
+            <Button variant={"secondary"} onClick={onHide}>
               Hide
             </Button>
           ) : (
-            <Button variant={"outline"} onClick={onExpand}>
+            <Button variant={"secondary"} onClick={onExpand}>
               View more
             </Button>
           )}

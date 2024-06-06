@@ -113,23 +113,29 @@ export const FilterCardVariationMobile = ({
             <div className="flex w-full justify-between items-center mb-2">
               <DrawerTitle className="font-bold">Filters</DrawerTitle>
 
-              <DrawerClose className={buttonVariants({ variant: "ghost" })}>
+              <DrawerClose className={buttonVariants({ variant: "tertiary" })}>
                 <XIcon className="font-bold" />
               </DrawerClose>
             </div>
             <div className="flex justify-between items-center gap-2 max-h-8 h-full">
               <div className="flex-1 flex max-w-[950px] relative">
-                <Input placeholder="Search..." value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchTextChange(e.target.value)}/>
+                <Input
+                  placeholder="Search..."
+                  value={searchText}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleSearchTextChange(e.target.value)
+                  }
+                />
                 <Button
                   className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto"
-                  variant={"ghost"}
+                  variant={"tertiary"}
                 >
                   <SearchIcon />
                 </Button>
               </div>
               <div>
                 <Button
-                  variant={"ghost"}
+                  variant={"tertiary"}
                   className="border-2 border-gray-400"
                   onClick={clearAllFilters}
                 >
@@ -142,19 +148,21 @@ export const FilterCardVariationMobile = ({
                 <div className="flex flex-wrap w-full gap-1">
                   {checkedItems &&
                     checkedItems.map((item, index) =>
-                      item.values.filter((v) => v.toLowerCase().includes(searchText)).map((value, valueIndex) => (
-                        <Button
-                          key={index + "_" + valueIndex}
-                          variant="ghost"
-                          className="bg-gray-300 justify-between m-[2px]"
-                          onClick={() => {
-                            uncheckFilter(item.title, value);
-                          }}
-                        >
-                          <span className="mr-2">{value}</span>
-                          <XIcon className="w-4 h-4" />
-                        </Button>
-                      ))
+                      item.values
+                        .filter((v) => v.toLowerCase().includes(searchText))
+                        .map((value, valueIndex) => (
+                          <Button
+                            key={index + "_" + valueIndex}
+                            variant="tertiary"
+                            className="bg-gray-300 justify-between m-[2px]"
+                            onClick={() => {
+                              uncheckFilter(item.title, value);
+                            }}
+                          >
+                            <span className="mr-2">{value}</span>
+                            <XIcon className="w-4 h-4" />
+                          </Button>
+                        ))
                     )}
                 </div>
               </ScrollArea>

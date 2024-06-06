@@ -117,7 +117,7 @@ export function LogInForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() => setShowPassword(!showPassword)}

@@ -24,11 +24,11 @@ export const ProductDetails = (props: { items: Item[] }) => {
       {isExpandable && (
         <div className="flex justify-center mt-4 col-span-2 lg:col-span-3">
           {isExpanded ? (
-            <Button variant={"outline"} onClick={onHide}>
+            <Button variant={"secondary"} onClick={onHide}>
               Hide
             </Button>
           ) : (
-            <Button variant={"outline"} onClick={onExpand}>
+            <Button variant={"secondary"} onClick={onExpand}>
               View more
             </Button>
           )}

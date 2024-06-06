@@ -405,7 +405,7 @@ const FilterPrice = ({
         </div>
         <div>
           <Button
-            variant={"ghost"}
+            variant={"tertiary"}
             className="bg-gray-300"
             onClick={savePriceChange}
           >

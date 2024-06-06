@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useScreenSize } from "@/lib/media";
-import { ChevronUpIcon } from "lucide-react";
+import { ArrowUpIcon } from "./Icons";
 
 const ScrollToTopButton = () => {
   //#region isMobile
@@ -36,15 +35,16 @@ const ScrollToTopButton = () => {
   return (
     <div>
       <Button
-        variant="outline"
+        variant="primary"
+        size={"icon"}
         className={cn(
-          "fixed flex justify-center items-center right-4 bottom-4 border-border lg:right-10 lg:bottom-10 w-12 h-12 rounded-lg transition-all duration-200 ease-in-out opacity-0 pointer-events-none",
+          "fixed flex justify-center items-center right-4 bottom-4 lg:right-10 lg:bottom-10 w-12 h-12 rounded-lg transition-all duration-200 ease-in-out opacity-0 pointer-events-none",
           isVisible && "opacity-1 pointer-events-auto",
           isMobile && "right-[-2px] rounded-r-none lg:right-[-2px]"
         )}
         onClick={scrollToTop}
       >
-        <ChevronUpIcon aria-label="Scroll to top" />
+        <ArrowUpIcon aria-label="Scroll to top" />
       </Button>
     </div>
   );

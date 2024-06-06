@@ -25,7 +25,7 @@ const FormSchema = z.object({
 
 export function ChangeFirstLastNameForm({
   onCancel,
-} : {
+}: {
   onCancel: () => void;
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -39,52 +39,71 @@ export function ChangeFirstLastNameForm({
   function onSubmit(data: z.infer<typeof FormSchema>) {
     // Checking data for validity
 
-    console.log("ChangeFirstLastNameForm :: You submitted the following values:");
+    console.log(
+      "ChangeFirstLastNameForm :: You submitted the following values:"
+    );
     console.log(JSON.stringify(data, null, 2));
-
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full h-full flex flex-col justify-between">
-      <div className="space-y-6 flex flex-col justify-center h-full">
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <div>
-                <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
-                  First name
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter new first name" type="text" autoComplete="name" {...field} />
-                </FormControl>
-              </div>
-              <FormMessage className="max-md:text-xs" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <div>
-                <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
-                  Last name
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter new last name" type="text" autoComplete="name" {...field} />
-                </FormControl>
-              </div>
-              <FormMessage className="max-md:text-xs" />
-            </FormItem>
-          )}
-        />
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full h-full flex flex-col justify-between"
+      >
+        <div className="space-y-6 flex flex-col justify-center h-full">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <div>
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                    First name
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter new first name"
+                      type="text"
+                      autoComplete="name"
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
+                <FormMessage className="max-md:text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <div>
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                    Last name
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter new last name"
+                      type="text"
+                      autoComplete="name"
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
+                <FormMessage className="max-md:text-xs" />
+              </FormItem>
+            )}
+          />
         </div>
         <div className="flex justify-between items-center gap-3 mt-6">
-          <Button type="reset" variant={"outline"} className="w-full" onClick={onCancel}>
+          <Button
+            type="reset"
+            variant={"secondary"}
+            className="w-full"
+            onClick={onCancel}
+          >
             Cancel
           </Button>
           <Button type="submit" className="w-full">
