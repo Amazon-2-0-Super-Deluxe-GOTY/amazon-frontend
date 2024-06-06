@@ -1,9 +1,4 @@
-import {
-  ChevronRightIcon,
-  HeartIcon,
-  MinusIcon,
-  PlusIcon,
-} from "lucide-react";
+import { ChevronRightIcon, HeartIcon, MinusIcon, PlusIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -48,13 +43,7 @@ const infoElements = [
   },
 ];
 
-export const ProductOrderCard = ({
-  productId,
-  isOptionsSelected,
-}: {
-  productId: string;
-  isOptionsSelected: boolean;
-}) => {
+export const ProductOrderCard = ({ productId }: { productId: string }) => {
   const [count, setCount] = useState(1);
   const [openedTabIndex, setOpenedTabIndex] = useState<number>();
 
@@ -95,11 +84,21 @@ export const ProductOrderCard = ({
   //#region AddProductToCart
   const { addToCart, buyNow } = useStorageCart();
   const onAddToCartClick = () => {
-    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
+    const newCartItem = {
+      id: productId,
+      title: "Product_" + productId,
+      price: 39.99,
+      quantity: count,
+    };
     addToCart(newCartItem);
   };
   const onBuyNowClick = () => {
-    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
+    const newCartItem = {
+      id: productId,
+      title: "Product_" + productId,
+      price: 39.99,
+      quantity: count,
+    };
     buyNow(newCartItem);
   };
   //#endregion
@@ -141,8 +140,8 @@ export const ProductOrderCard = ({
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
-        <Button disabled={!isOptionsSelected} onClick={onAddToCartClick}>Add to cart</Button>
-        <Button disabled={!isOptionsSelected} onClick={onBuyNowClick}>Buy now</Button>
+        <Button onClick={onAddToCartClick}>Add to cart</Button>
+        <Button onClick={onBuyNowClick}>Buy now</Button>
         <Button variant={"outline"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
@@ -167,7 +166,6 @@ export const ProductOrderCard = ({
         increment={increment}
         decrement={decrement}
         productId={productId}
-        isOptionsSelected={isOptionsSelected}
       />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -200,19 +198,21 @@ const MobileQuickActions = ({
   increment,
   decrement,
   productId,
-  isOptionsSelected,
 }: {
   count: number;
   increment: () => void;
   decrement: () => void;
   productId: string;
-  isOptionsSelected: boolean;
 }) => {
-
   //#region AddProductToCart
   const { addToCart, setIsOpenCartModal } = useStorageCart();
   const onAddToCartClick = () => {
-    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
+    const newCartItem = {
+      id: productId,
+      title: "Product_" + productId,
+      price: 39.99,
+      quantity: count,
+    };
     addToCart(newCartItem);
   };
   const onBuyNowClick = () => {
@@ -239,8 +239,10 @@ const MobileQuickActions = ({
                 <button>
                   <HeartIcon />
                 </button>
-                <Button variant={"outline"} disabled={!isOptionsSelected} onClick={onAddToCartClick}>To cart</Button>
-                <Button disabled={!isOptionsSelected} onClick={onBuyNowClick}>Buy</Button>
+                <Button variant={"outline"} onClick={onAddToCartClick}>
+                  To cart
+                </Button>
+                <Button onClick={onBuyNowClick}>Buy</Button>
               </div>
             </div>
             <hr className="border-black" />

@@ -92,5 +92,5 @@ export function getAdminProduct({
 }: {
   productId: string;
 }): Promise<{ data: ProductForm }> {
-  return fetch(`/api/admin/products/${productId}`).then((r) => r.json());
+  return fetch(`/api/admin/products`).then((r) => r.json());
 }
