@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useMutation } from "@tanstack/react-query";
 import { logIn } from "@/api/users";
 
