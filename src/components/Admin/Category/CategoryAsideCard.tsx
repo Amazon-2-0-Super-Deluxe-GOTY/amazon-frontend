@@ -111,10 +111,11 @@ export const CategoryAsideCard = ({
             </Button>
           </div>
           <CreateCategoryModal
-            isRoot={!!category.iconId}
+            isRoot={!category.parentId}
             isOpen={isModalOpen}
             closeModal={closeModal}
             category={category}
+            onSubmit={console.log}
             allCategories={allCategories ?? []}
           />
         </div>

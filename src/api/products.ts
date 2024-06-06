@@ -1,7 +1,4 @@
-export interface ProductImage {
-  id: string;
-  imageUrl: string;
-}
+import type { ApiResponse } from "./types";
 
 export interface Product {
   id: string;
@@ -49,9 +46,11 @@ export function getProductsShort({
   );
 }
 
-export function uploadImage(
+export function uploadProductImage(
   files: File[]
-): Promise<{ id: string; imageUrl: string }[]> {
+): Promise<
+  ApiResponse<[[200, { id: string; imageUrl: string }[]], [400, null]]>
+> {
   const data = new FormData();
 
   for (const file of files) {
@@ -90,5 +89,5 @@ export function getAdminProduct({
 }: {
   productId: string;
 }): Promise<{ data: ProductForm }> {
-  return fetch(`/api/admin/products/${productId}`).then((r) => r.json());
+  return fetch(`/api/admin/products`).then((r) => r.json());
 }

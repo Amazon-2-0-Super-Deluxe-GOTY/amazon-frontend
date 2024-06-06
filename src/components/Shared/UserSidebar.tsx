@@ -96,7 +96,7 @@ export const UserSidebar = ({
         <Separator />
         <div className="flex flex-col gap-3 lg;gap-4">
           {isLoggedIn && (
-            <Link href={"/profile/settings"}>
+            <Link href={"/account?tab=settings-open"} >
               <SidebarItem icon={<SettingsIcon />} text="Settings" />
             </Link>
           )}

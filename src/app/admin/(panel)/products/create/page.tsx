@@ -25,7 +25,7 @@ export default async function Page({
     }),
     queryClient.prefetchQuery({
       queryKey: ["product", productId],
-      queryFn: () => (productId ? getAdminProduct({ productId }) : undefined),
+      queryFn: () => (productId ? getAdminProduct({ productId }) : null),
     }),
   ]);
 

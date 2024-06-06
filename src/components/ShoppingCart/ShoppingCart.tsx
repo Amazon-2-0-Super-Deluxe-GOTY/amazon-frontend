@@ -22,6 +22,7 @@ import { useScreenSize } from "@/lib/media";
 import { useStorageCart } from "@/lib/storage";
 import { Separator } from "../ui/separator";
 import { ShoppingCartIcon, XIcon } from "../Shared/Icons";
+import { useMemo } from "react";
 
 export const ShoppingCart = () => {
   const isDesktop = useScreenSize({ minSize: "md" });
@@ -48,12 +49,16 @@ const ShoppingCartMobile = ({
   suggestionsProducts: { title: string; price: number }[];
 }) => {
   const { products, isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const productsCount = useMemo(
+    () => products.reduce((prev, current) => prev + current.quantity, 0),
+    [products]
+  );
   const isAuthorized = false;
 
   return (
     <Drawer open={isOpenCartModal} onOpenChange={setIsOpenCartModal}>
       <DrawerTrigger>
-        <ShoppingCartIcon />
+        <ShoppingCartIconWithBadge productsCount={productsCount} />
       </DrawerTrigger>
       <DrawerContent className="h-full max-h-[95%]">
         <DrawerHeader className="pt-2">
@@ -181,12 +186,16 @@ const ShoppingCartDesktop = ({
   suggestionsProducts: { title: string; price: number }[];
 }) => {
   const { products, isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const productsCount = useMemo(
+    () => products.reduce((prev, current) => prev + current.quantity, 0),
+    [products]
+  );
   const isAuthorized = false;
 
   return (
     <Dialog open={isOpenCartModal} onOpenChange={setIsOpenCartModal}>
       <DialogTrigger>
-        <ShoppingCartIcon />
+        <ShoppingCartIconWithBadge productsCount={productsCount} />
       </DialogTrigger>
       <DialogContent
         hideClose
@@ -296,5 +305,22 @@ const ShoppingCartDesktop = ({
         </ScrollArea>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const ShoppingCartIconWithBadge = ({
+  productsCount,
+}: {
+  productsCount: number;
+}) => {
+  return (
+    <div className="relative">
+      <ShoppingCartIcon className="w-6 h-6" />
+      {productsCount > 0 && (
+        <span className="bg-primary text-primary-foreground text-xs w-5 h-5 inline-flex justify-center items-center rounded-full absolute -top-2.5 -right-2.5">
+          {productsCount}
+        </span>
+      )}
+    </div>
   );
 };

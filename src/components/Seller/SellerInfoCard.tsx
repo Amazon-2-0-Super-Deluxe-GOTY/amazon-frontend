@@ -64,9 +64,7 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
         >
           <SheetHeader title="About seller" />
           <ScrollArea>
-            <div className="space-y-4 lg:space-y-6">
-              <Separator orientation="horizontal" />
-
+            <div className="space-y-4 lg:space-y-6 pt-2">
               <div className="flex items-center gap-3">
                 <UserRoundIcon className="w-10 h-10 lg:w-14 lg:h-14" />
                 <div>
@@ -126,10 +124,6 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
               <div className="flex justify-between items-center lg:text-lg">
                 <h3 className="font-semibold">On Perry</h3>
                 <span>from {formatAboutSellerDate(sellerInfo.registerAt)}</span>
-              </div>
-              <div className="flex justify-between items-center lg:text-lg">
-                <h3 className="font-semibold">Complaints in orders</h3>
-                <span>{sellerInfo.complaintsPercent.toFixed(1)}%</span>
               </div>
             </div>
           </ScrollArea>
