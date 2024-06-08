@@ -101,6 +101,10 @@ export default function Page() {
     checkboxTree.set(newTree);
   };
 
+  const onCreateCategory = (categoryValue: Omit<Category, "id">) => {
+    console.log(categoryValue);
+  };
+
   const isSelected = (categoryId: number) =>
     selectedCategory?.id === categoryId;
 
@@ -218,6 +222,7 @@ export default function Page() {
         isOpen={isCreateModalOpen}
         closeModal={closeCreateModal}
         allCategories={data?.data ?? []}
+        onSubmit={onCreateCategory}
         {...createModalParams.current}
       />
     </div>

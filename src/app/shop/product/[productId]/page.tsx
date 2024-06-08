@@ -13,8 +13,6 @@ import React from "react";
 import { Slash, Star, StarHalf, TrophyIcon } from "lucide-react";
 import HouseLine from "@/../public/Icons/HouseLine.svg";
 import placeholder from "@/../public/Icons/placeholder.svg";
-import type { OptionsComponent } from "@/components/Product/Options/types";
-import { ProductOptionsMapper } from "@/components/Product/Options/ProductOptionsMapper";
 import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
 import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
@@ -24,111 +22,7 @@ import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { SellerInfo } from "@/components/Seller/types";
-import { useSearchParams } from "next/navigation";
 import { ImagesBlock } from "@/components/ProductPage/ProductImagesBlock";
-
-const productOptions: OptionsComponent[] = [
-  {
-    type: "size",
-    data: [
-      {
-        title: "Extra Small",
-        short: "XS",
-        isAvailable: true,
-      },
-      {
-        title: "Small",
-        short: "S",
-        isAvailable: true,
-      },
-      {
-        title: "Medium",
-        short: "M",
-        isAvailable: true,
-      },
-      {
-        title: "Large",
-        short: "L",
-        isAvailable: true,
-      },
-      {
-        title: "Extra Large",
-        short: "XL",
-        isAvailable: true,
-      },
-      {
-        title: "2X Large",
-        short: "2XL",
-        isAvailable: true,
-      },
-      {
-        title: "3X Large",
-        short: "3XL",
-        isAvailable: false,
-      },
-    ],
-  },
-  {
-    type: "color",
-    data: [
-      {
-        title: "Red",
-        hex: "#FF0000",
-        isAvailable: true,
-      },
-      {
-        title: "Orange",
-        hex: "#FF8A00",
-        isAvailable: true,
-      },
-      {
-        title: "Yellow",
-        hex: "#FFE500",
-        isAvailable: true,
-      },
-      {
-        title: "Chartreuse",
-        hex: "#80FF00",
-        isAvailable: true,
-      },
-      {
-        title: "Green",
-        hex: "#00FF47",
-        isAvailable: true,
-      },
-      {
-        title: "Aqua",
-        hex: "#00FFD1",
-        isAvailable: false,
-      },
-      {
-        title: "Light Blue",
-        hex: "#00D1FF",
-        isAvailable: true,
-      },
-      {
-        title: "Azure",
-        hex: "#0094FF",
-        isAvailable: true,
-      },
-      {
-        title: "Blue",
-        hex: "#0047FF",
-        isAvailable: true,
-      },
-      {
-        title: "Purple",
-        hex: "#8000FF",
-        isAvailable: true,
-      },
-      {
-        title: "Magenta",
-        hex: "#FA00FF",
-        isAvailable: true,
-      },
-    ],
-  },
-];
 
 const productDetails = [
   {
@@ -365,31 +259,6 @@ export default function ProductPage({
 }: {
   params: { productId: string };
 }) {
-  const checkOptionsSelected = (searchParams: URLSearchParams) => {
-    let isAllOptionsSelected = true;
-    productOptions.forEach((opt) => {
-      if (!isAllOptionsSelected) return;
-
-      const value = searchParams.get(opt.type);
-      if (!value) {
-        isAllOptionsSelected = false;
-      }
-    });
-    return isAllOptionsSelected;
-  };
-
-  const searchParams = useSearchParams();
-  const [isOptionsSelected, setIsOptionsSelected] = React.useState(() =>
-    checkOptionsSelected(searchParams ?? new URLSearchParams())
-  );
-  const hasOptions = productOptions.length > 0;
-
-  React.useEffect(() => {
-    setIsOptionsSelected(
-      checkOptionsSelected(searchParams ?? new URLSearchParams())
-    );
-  }, [searchParams]);
-
   React.useEffect(() => {
     if (params.productId) {
       console.log(`Loading page for product ${params.productId}`);
@@ -457,7 +326,7 @@ export default function ProductPage({
             <ImagesBlock />
           </div>
         </div>
-        <div className="max-w-xl w-full">
+        <div className="xl:max-w-xl w-full">
           <div className="hidden lg:block">
             <h1 className="text-3xl">
               PUMIEY Women&apos;s Long Sleeve T-Shirts Crew Neck Slim Fit Tops
@@ -477,26 +346,15 @@ export default function ProductPage({
             </div>
           </div>
           <div className="mt-3 mb-6 lg:mt-8 lg:mb-0">
-            {hasOptions ? (
-              <div className="flex flex-col gap-3 lg:gap-8">
-                <ProductOptionsMapper options={productOptions} />
-              </div>
-            ) : (
-              <div>
-                <h2 className="text-xl lg:text-xl font-semibold text-center lg:text-start mb-4">
-                  About product
-                </h2>
-                <AboutProduct items={aboutProductData} variant="list" />
-              </div>
-            )}
+            <h2 className="text-xl lg:text-xl font-semibold text-center lg:text-start mb-4">
+              About product
+            </h2>
+            <AboutProduct items={aboutProductData} variant="list" />
           </div>
         </div>
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
-            <ProductOrderCard
-              productId={params.productId}
-              isOptionsSelected={isOptionsSelected}
-            />
+            <ProductOrderCard productId={params.productId} />
             <SellerInfoCard sellerInfo={sellerInfo} />
             <div className="p-4 lg:p-6 bg-gray-200 rounded-lg flex items-center gap-3">
               <TrophyIcon className="w-8 h-8 lg:w-10 lg:h-10" />
@@ -514,14 +372,6 @@ export default function ProductPage({
         </h2>
         <ProductDetails items={productDetails} />
       </section>
-      {hasOptions && (
-        <section className="py-6 border-t-2 pt-4 space-y-6">
-          <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
-            About product
-          </h2>
-          <AboutProduct items={aboutProductData} />
-        </section>
-      )}
       <section className="py-6 border-t-2 pt-4 space-y-6">
         <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
           Customer reviews

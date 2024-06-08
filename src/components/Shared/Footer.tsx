@@ -5,6 +5,7 @@ import {
   TwitterIcon,
   YoutubeIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -22,9 +23,9 @@ export function Footer() {
         <div>
           <h3 className="font-bold mb-2">Legal notice</h3>
           <ul>
-            <li className="mb-1">Terms and Conditions</li>
-            <li className="mb-1">License agreement</li>
-            <li className="mb-1">Privacy Policy</li>
+            <li className="mb-1"><Link href="/legal-notice?tab=terms-open">Terms and Conditions</Link></li>
+            <li className="mb-1"><Link href="/legal-notice?tab=license-open">License agreement</Link></li>
+            <li className="mb-1"><Link href="/legal-notice?tab=privacy-open">Privacy Policy</Link></li>
             <li className="mb-1">Cookie Settings</li>
           </ul>
         </div>

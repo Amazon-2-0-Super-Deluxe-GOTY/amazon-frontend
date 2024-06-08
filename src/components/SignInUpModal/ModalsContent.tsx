@@ -139,7 +139,7 @@ export const ModalSignUp = ({
   return (
     <div className="w-full h-full flex flex-col justify-between items-center py-14">
       <div className="w-full h-full flex flex-col justify-between items-center">
-        <div className="w-full h-full flex flex-col justify-between gap-3">
+        <div className="w-full h-full flex flex-col justify-between items-center gap-3">
           <div>
             <h1 className={titleStyle}>Create account</h1>
             <h2 className={textStyle}>

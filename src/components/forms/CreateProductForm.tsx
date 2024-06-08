@@ -496,7 +496,7 @@ export function CreateProductForm({
                           alt={`Image ${i + 1}`}
                           width={112}
                           height={112}
-                          className="object-cover"
+                          className="object-cover rounded-lg"
                           unoptimized
                         />
                         <button
@@ -512,10 +512,13 @@ export function CreateProductForm({
                       <Skeleton className="w-28 h-28 rounded-lg" key={i} />
                     ))}
                     {field.value.length < maxImages && (
-                      <div className="w-28 h-28 flex justify-center items-center bg-gray-200 rounded-lg relative">
+                      <label
+                        className="w-28 h-28 flex justify-center items-center bg-gray-200 rounded-lg relative cursor-pointer data-[disabled=true]:opacity-40 data-[disabled=true]:cursor-not-allowed"
+                        data-disabled={isUploading}
+                      >
                         <PlusIcon className="w-16 h-16" />
                         <Input
-                          className="absolute p-0 h-full inset-0 opacity-0 z-10 cursor-pointer"
+                          className="absolute p-0 h-full inset-0 opacity-0 z-10 cursor-pointer invisible"
                           type="file"
                           accept="image/jpg,image/jpeg,image/png"
                           multiple
@@ -523,7 +526,7 @@ export function CreateProductForm({
                           onChange={onUploadImage}
                           disabled={isUploading}
                         />
-                      </div>
+                      </label>
                     )}
                   </div>
                 </FormControl>
