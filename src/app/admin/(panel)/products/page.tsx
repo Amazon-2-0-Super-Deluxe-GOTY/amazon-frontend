@@ -1,5 +1,5 @@
 "use client";
-import { getProducts, type ProductShort } from "@/api/products";
+import { deleteProducts, getProducts, type ProductShort } from "@/api/products";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -68,6 +68,7 @@ export default function Page() {
   const productsQuery = useQuery({
     queryKey: ["productsShort", selectedCategory?.id, page, defferedSearch],
     queryFn: fetchProducts,
+    staleTime: 10 * 1000,
   });
 
   const [dataOptimistic, setDataOptimistic] = useOptimistic(
@@ -105,7 +106,15 @@ export default function Page() {
           setDataOptimistic((current) =>
             current?.filter((v) => !ids.includes(v.id))
           );
-          // TODO: send api request
+          const data = await deleteProducts(ids);
+
+          if (
+            data.status === 200 &&
+            selectedProduct?.id &&
+            ids.includes(selectedProduct.id)
+          ) {
+            setSelectedProduct(undefined);
+          }
         });
       }
     });
@@ -181,13 +190,14 @@ export default function Page() {
           const product = row.original;
           return (
             <div className="flex items-center gap-3">
-              <Image
-                src={product.productImages[0].imageUrl}
-                alt="Product image"
-                width={80}
-                height={80}
-                className="object-cover"
-              />
+              <div className="w-20 h-20 relative">
+                <Image
+                  src={product.productImages[0].imageUrl}
+                  alt="Product image"
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <p className="max-w-xs line-clamp-2 text-xl">{product.name}</p>
             </div>
           );
@@ -325,7 +335,11 @@ export default function Page() {
           />
         )}
       </div>
-      <ProductAsideCard product={selectedProduct} onDelete={handleDelete} />
+      <ProductAsideCard
+        product={selectedProduct}
+        onDelete={handleDelete}
+        isButtonsDisabled={isTransition}
+      />
     </div>
   );
 }

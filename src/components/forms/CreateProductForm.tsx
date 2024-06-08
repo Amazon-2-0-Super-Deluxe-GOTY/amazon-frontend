@@ -167,6 +167,7 @@ export function CreateProductForm({
           aboutProduct: [],
         },
   });
+
   const imagesArray = useFieldArray({
     control: form.control,
     name: "images",
@@ -494,10 +495,8 @@ export function CreateProductForm({
                         <Image
                           src={img.imageUrl}
                           alt={`Image ${i + 1}`}
-                          width={112}
-                          height={112}
+                          fill
                           className="object-cover rounded-lg"
-                          unoptimized
                         />
                         <button
                           type="button"
@@ -686,7 +685,7 @@ export function CreateProductForm({
             Add product detail
           </Button>
           <FormMessage className="px-4">
-            {form.formState.errors.productDetails?.message}
+            {form.formState.errors.productDetails?.root?.message}
           </FormMessage>
         </fieldset>
 
@@ -761,7 +760,7 @@ export function CreateProductForm({
             Add product feature
           </Button>
           <FormMessage className="px-4">
-            {form.formState.errors.aboutProduct?.message}
+            {form.formState.errors.aboutProduct?.root?.message}
           </FormMessage>
         </fieldset>
 

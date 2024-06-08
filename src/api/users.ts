@@ -147,3 +147,46 @@ export function logOut(): Promise<ApiResponse<[[200, null], [401, null]]>> {
     },
   }).then((r) => r.json());
 }
+
+export function updateUserAvatar(
+  userAvatar: File
+): Promise<ApiResponse<[[200, null], [401, null]]>> {
+  const formData = new FormData();
+
+  formData.set("userAvatar", userAvatar);
+
+  const token = authStore.getState().token;
+  return fetch("/api/users/avatar", {
+    method: "PUT",
+    body: formData,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function updateUserEmail(
+  newEmail: string
+): Promise<ApiResponse<[[200, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/users/changeEmailRequest", {
+    method: "PUT",
+    body: JSON.stringify({ newEmail }),
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function deleteCurrentUser(): Promise<
+  ApiResponse<[[200, null], [403, null]]>
+> {
+  const token = authStore.getState().token;
+  return fetch("/api/users", {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}

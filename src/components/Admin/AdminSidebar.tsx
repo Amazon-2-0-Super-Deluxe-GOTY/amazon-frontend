@@ -17,6 +17,7 @@ import {
   UsersRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { User } from "@/api/types";
 
 const links = [
   {
@@ -53,18 +54,20 @@ export const AdminSidebar = ({
 }: {
   isOpen: boolean;
   closeSidebar: () => void;
-  user: { fullName: string; avatar: string };
+  user?: User;
 }) => {
+  const fullName = `${user?.firstName} ${user?.lastName}`;
+
   return (
     <div>
       <Sidebar isOpen={isOpen} closeModal={closeSidebar}>
         <SidebarHeader>
           <SidebarAvatar
-            image={user.avatar}
-            fallback={textAvatar(user.fullName)}
+            image={user?.avatarUrl}
+            fallback={textAvatar(fullName)}
           />
           <div>
-            <SidebarTitle>{user.fullName}</SidebarTitle>
+            <SidebarTitle>{fullName}</SidebarTitle>
             <SidebarDescription>Administrator</SidebarDescription>
           </div>
         </SidebarHeader>

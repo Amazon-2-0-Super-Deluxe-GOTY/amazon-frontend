@@ -3,8 +3,10 @@ import * as React from "react";
 import Link from "next/link";
 import { MenuIcon, UserIcon } from "lucide-react";
 import { AdminSidebar } from "./AdminSidebar";
+import { useUser } from "@/api/users";
 
 export function Header() {
+  const { user } = useUser();
   const [isSidebarOpen, setIsSedebarOpen] = React.useState(false);
 
   const openSidebar = () => setIsSedebarOpen(true);
@@ -28,7 +30,7 @@ export function Header() {
       <AdminSidebar
         isOpen={isSidebarOpen}
         closeSidebar={closeSidebar}
-        user={{ avatar: "", fullName: "Randolph Charles" }}
+        user={user}
       />
     </header>
   );

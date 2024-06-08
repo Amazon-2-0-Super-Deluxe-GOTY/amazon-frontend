@@ -10,12 +10,17 @@ import { ProductImageFullView } from "@/components/Product/ProductImageFullView"
 
 interface ProductAsideCardProps {
   product?: ProductShort;
+  isButtonsDisabled?: boolean;
   onDelete: (id: string) => void;
 }
 
 const maxImages = 4;
 
-export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
+export function ProductAsideCard({
+  product,
+  isButtonsDisabled,
+  onDelete,
+}: ProductAsideCardProps) {
   const { showModal } = useModal();
   const displayedImages = product
     ? product.productImages.slice(0, maxImages)
@@ -57,7 +62,7 @@ export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
                   src={img.imageUrl}
                   alt={`Product image ${i + 1}`}
                   fill
-                  className={"object-contain"}
+                  className={"object-cover"}
                   onClick={handlePreview(i)}
                 />
               </div>
@@ -84,7 +89,10 @@ export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
               href={`/products/create?productId=${product.id}`}
               className="w-full"
             >
-              <Button className="w-full flex items-center gap-2 text-base">
+              <Button
+                className="w-full flex items-center gap-2 text-base"
+                disabled={isButtonsDisabled}
+              >
                 <FilePenLineIcon className={"w-5 h-5"} />
                 Edit
               </Button>
@@ -92,6 +100,7 @@ export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
             <Button
               className="w-full flex items-center gap-2 text-base"
               onClick={handleDelete}
+              disabled={isButtonsDisabled}
             >
               <Trash2Icon className={"w-5 h-5"} />
               Delete

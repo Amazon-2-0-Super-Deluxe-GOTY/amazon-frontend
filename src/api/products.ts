@@ -176,3 +176,17 @@ export function updateProduct(
     },
   }).then((r) => r.json());
 }
+
+export function deleteProducts(
+  productIds: string[]
+): Promise<ApiResponse<[[200, null], [404, null], [500, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/products", {
+    method: "DELETE",
+    body: JSON.stringify({ productIds }),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}

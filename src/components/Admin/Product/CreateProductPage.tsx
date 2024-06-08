@@ -1,14 +1,14 @@
 "use client";
-import { getCategories, useCategories } from "@/api/categories";
+import { useCategories } from "@/api/categories";
 import { getProductById } from "@/api/products";
 import { CreateProductForm } from "@/components/forms/CreateProductForm";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { PlusIcon, SquarePenIcon } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+import Link from "next/link";
 
 export function CreateProductPage({
   productId,
