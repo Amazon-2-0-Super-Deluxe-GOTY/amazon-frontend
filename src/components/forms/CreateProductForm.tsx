@@ -1,6 +1,12 @@
 "use client";
 import { Category } from "@/api/categories";
-import { Product, createProduct, uploadProductImage } from "@/api/products";
+import {
+  Product,
+  createProduct,
+  deleteProductImage,
+  updateProduct,
+  uploadProductImage,
+} from "@/api/products";
 import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
 import { Button } from "@/components/ui/button";
 import {
@@ -87,7 +93,8 @@ const formSchema = z.object({
         }),
       z.nan(),
     ])
-    .optional(),
+    .optional()
+    .nullable(),
   quantity: z
     .number({
       required_error: "Quantity cannot be empty",
@@ -133,7 +140,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface CreateProductFormProps {
   categories: Category[];
-  defaultValues?: FormValues;
+  defaultValues?: FormValues & { productId?: string };
   defaultCategoryId?: number;
   onSubmit: (product: Product) => void;
 }
@@ -153,7 +160,6 @@ export function CreateProductForm({
           name: "",
           code: "",
           price: 0,
-          discount: 0,
           quantity: 0,
           categoryId: defaultCategoryId,
           images: [],
@@ -164,6 +170,7 @@ export function CreateProductForm({
   const imagesArray = useFieldArray({
     control: form.control,
     name: "images",
+    keyName: "key",
   });
   const productDetailsArray = useFieldArray({
     control: form.control,
@@ -209,6 +216,9 @@ export function CreateProductForm({
   const createProductMutation = useMutation({
     mutationFn: createProduct,
   });
+  const updateProductMutation = useMutation({
+    mutationFn: updateProduct,
+  });
 
   const [uploadLoadingElements, setUploadLoadingElements] = useOptimistic<
     undefined[]
@@ -250,11 +260,15 @@ export function CreateProductForm({
     startUploadTransition(async () => {
       setUploadLoadingElements(Array.from({ length: filesToUpload.length }));
       const data = await uploadProductImage(filesToUpload);
-      imagesArray.append(data);
+      if (data.status === 201) {
+        imagesArray.append(data.data);
+      }
     });
   }
 
   const onDeleteImage = (index: number) => () => {
+    const image = imagesArray.fields[index];
+    deleteProductImage(image.id);
     imagesArray.remove(index);
   };
 
@@ -321,17 +335,39 @@ export function CreateProductForm({
   };
 
   const handleSubmit = (values: FormValues) => {
-    createProductMutation.mutateAsync(values).then((res) => {
-      if (res.status === 201) {
-        onSubmit(res.data);
-      } else if (res.status === 400) {
-        for (let error of res.data) {
-          form.setError(error.propertyName as keyof FormValues, {
-            message: error.errorMessage,
-          });
-        }
-      }
-    });
+    if (!!defaultValues && defaultValues.productId) {
+      updateProductMutation
+        .mutateAsync({
+          ...values,
+          images: values.images.map((img) => img.id),
+          productId: defaultValues.productId,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            onSubmit(res.data);
+          } else if (res.status === 400) {
+            for (let error of res.data) {
+              form.setError(error.propertyName as keyof FormValues, {
+                message: error.errorMessage,
+              });
+            }
+          }
+        });
+    } else {
+      createProductMutation
+        .mutateAsync({ ...values, images: values.images.map((img) => img.id) })
+        .then((res) => {
+          if (res.status === 201) {
+            onSubmit(res.data);
+          } else if (res.status === 400) {
+            for (let error of res.data) {
+              form.setError(error.propertyName as keyof FormValues, {
+                message: error.errorMessage,
+              });
+            }
+          }
+        });
+    }
   };
 
   return (
@@ -396,7 +432,7 @@ export function CreateProductForm({
                     categories={categories}
                     value={field.value}
                     onValueChange={field.onChange}
-                    disallowRoots
+                    disallowRoots={false}
                   />
                 </FormControl>
                 <FormDescription hidden>
@@ -534,6 +570,7 @@ export function CreateProductForm({
                     type="number"
                     placeholder="Enter product discount..."
                     {...field}
+                    value={field.value ?? undefined}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
                 </FormControl>

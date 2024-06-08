@@ -17,8 +17,11 @@ const maxImages = 4;
 
 export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
   const { showModal } = useModal();
-  const displayedImages = product ? product.images.slice(0, maxImages) : [];
-  const imagesLeft = (product?.images.length ?? 0) - displayedImages.length;
+  const displayedImages = product
+    ? product.productImages.slice(0, maxImages)
+    : [];
+  const imagesLeft =
+    (product?.productImages.length ?? 0) - displayedImages.length;
   const isMoreImages = imagesLeft > 0;
 
   const handleDelete = () => {
@@ -29,7 +32,10 @@ export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
     if (!product) return;
     showModal({
       component: ProductImageFullView,
-      props: { images: product.images, startIndex },
+      props: {
+        images: product.productImages.map((img) => img.imageUrl),
+        startIndex,
+      },
     });
   };
 
@@ -39,17 +45,22 @@ export function ProductAsideCard({ product, onDelete }: ProductAsideCardProps) {
         <div className="flex flex-col gap-3.5 h-full p-6">
           <div className="grid grid-cols-3 grid-rows-4 gap-2 h-1/2">
             {displayedImages.map((img, i) => (
-              <Image
-                src={img}
-                alt={`Product image ${i + 1}`}
-                key={i}
+              <div
                 className={clsx(
-                  "object-cover w-full h-full first:col-span-3 first:row-span-3",
+                  "relative w-full h-full first:col-span-3 first:row-span-3",
                   isMoreImages &&
                     "last-of-type:col-start-3 last-of-type:row-start-4"
                 )}
-                onClick={handlePreview(i)}
-              />
+                key={i}
+              >
+                <Image
+                  src={img.imageUrl}
+                  alt={`Product image ${i + 1}`}
+                  fill
+                  className={"object-contain"}
+                  onClick={handlePreview(i)}
+                />
+              </div>
             ))}
             {isMoreImages && (
               <button

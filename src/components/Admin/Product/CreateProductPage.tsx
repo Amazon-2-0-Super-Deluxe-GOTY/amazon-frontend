@@ -1,6 +1,6 @@
 "use client";
 import { getCategories, useCategories } from "@/api/categories";
-import { getProduct } from "@/api/products";
+import { getProductById } from "@/api/products";
 import { CreateProductForm } from "@/components/forms/CreateProductForm";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -9,27 +9,6 @@ import { PlusIcon, SquarePenIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-
-interface ProductForm {
-  name: string;
-  code: string;
-  categoryId: string;
-  images: {
-    id: string;
-    imageUrl: string;
-  }[];
-  price: number;
-  quantity: number;
-  productDetails: {
-    name: string;
-    text: string;
-  }[];
-  aboutProduct: {
-    name: string;
-    text: string;
-  }[];
-  discount?: number | undefined;
-}
 
 export function CreateProductPage({
   productId,
@@ -41,7 +20,11 @@ export function CreateProductPage({
   const categoriesQuery = useCategories();
   const productQuery = useQuery({
     queryKey: ["product", productId],
-    queryFn: () => (productId ? getProduct({ productId }) : undefined),
+    staleTime: 0,
+    queryFn: () => (productId ? getProductById({ productId }) : undefined),
+    select(data) {
+      return data?.status === 200 ? data.data : null;
+    },
   });
   const router = useRouter();
 
@@ -50,16 +33,17 @@ export function CreateProductPage({
   };
 
   const formDefaultValues = useMemo(() => {
-    const product = productQuery.data?.data;
+    const product = productQuery.data;
     if (!product) return;
 
     return {
+      productId: productId,
       name: product.name,
       code: product.code ?? "",
       price: product.price,
-      discount: product.discountPercent ?? 0,
+      discount: product.discountPercent,
       categoryId: product.category.id,
-      images: product.produtImages,
+      images: product.productImages,
       quantity: product.quantity,
       productDetails: product.productProperties.map((p) => ({
         name: p.key,
@@ -70,7 +54,7 @@ export function CreateProductPage({
         text: p.text,
       })),
     };
-  }, [productQuery.data?.data]);
+  }, [productQuery.data, productId]);
 
   const isEdit = !!productQuery.data;
 

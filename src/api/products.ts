@@ -17,7 +17,7 @@ export interface Product {
   generalRate: number;
   reviewsQuantity: number;
   createdAt: string;
-  produtImages: {
+  productImages: {
     id: string;
     imageUrl: string;
   }[];
@@ -31,7 +31,7 @@ export interface ProductShort {
   price: number;
   discountPercent: number | null;
   discountPrice: number;
-  images: string[];
+  productImages: { imageUrl: string }[];
   generalRate: number;
   reviewsCount: number;
 }
@@ -78,7 +78,11 @@ export function getProducts(filters: {
 
 export function uploadProductImage(
   files: File[]
-): Promise<{ id: string; imageUrl: string }[]> {
+): Promise<
+  ApiResponse<
+    [[201, { id: string; imageUrl: string }[]], [403, null], [500, null]]
+  >
+> {
   const data = new FormData();
 
   for (const file of files) {
@@ -95,22 +99,37 @@ export function uploadProductImage(
   }).then((r) => r.json());
 }
 
-export function getProduct({
+export function deleteProductImage(
+  productImageId: string
+): Promise<ApiResponse<[[200, null], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/productImages", {
+    method: "DELETE",
+    body: JSON.stringify({ productImageId }),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+export function getProductById({
   productId,
 }: {
   productId: string;
-}): Promise<{ data: Product }> {
-  return fetch(`/api/admin/products/${productId}`).then((r) => r.json());
+}): Promise<
+  ApiResponse<[[200, Product], [400, ApiValidationErrors], [404, null]]>
+> {
+  return fetch(`/api/products/byId?productId=${productId}`).then((r) =>
+    r.json()
+  );
 }
 
 interface ProductForm {
   name: string;
   code: string;
   categoryId: number;
-  images: {
-    id: string;
-    imageUrl: string;
-  }[];
+  images: string[];
   price: number;
   quantity: number;
   productDetails: {
@@ -121,7 +140,7 @@ interface ProductForm {
     name: string;
     text: string;
   }[];
-  discount?: number | undefined;
+  discount?: number | null;
 }
 
 export function createProduct(
@@ -132,6 +151,24 @@ export function createProduct(
   const token = authStore.getState().token;
   return fetch("/api/products", {
     method: "POST",
+    body: JSON.stringify(values),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+export function updateProduct(
+  values: ProductForm & { productId: string }
+): Promise<
+  ApiResponse<
+    [[200, Product], [400, ApiValidationErrors], [404, null], [500, null]]
+  >
+> {
+  const token = authStore.getState().token;
+  return fetch("/api/products", {
+    method: "PUT",
     body: JSON.stringify(values),
     headers: {
       authorization: `Bearer ${token}`,

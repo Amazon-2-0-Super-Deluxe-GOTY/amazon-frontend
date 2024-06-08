@@ -1,6 +1,6 @@
 "use server";
 import { getCategories } from "@/api/categories";
-import { getProduct } from "@/api/products";
+import { getProductById } from "@/api/products";
 import { CreateProductPage } from "@/components/Admin/Product/CreateProductPage";
 import {
   HydrationBoundary,
@@ -25,7 +25,8 @@ export default async function Page({
     }),
     queryClient.prefetchQuery({
       queryKey: ["product", productId],
-      queryFn: () => (productId ? getProduct({ productId }) : null),
+      queryFn: () => (productId ? getProductById({ productId }) : null),
+      staleTime: 0,
     }),
   ]);
 

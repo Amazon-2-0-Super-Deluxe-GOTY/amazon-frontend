@@ -45,7 +45,7 @@ export default function Page() {
   >();
   const [defferedSearch] = useDebounce(searchQuery, 300);
   const { showModal } = useModal();
-  const [isTransiton, startTransition] = useTransition();
+  const [isTransition, startTransition] = useTransition();
 
   const fetchProducts = useCallback(async () => {
     if (!selectedCategory)
@@ -182,7 +182,7 @@ export default function Page() {
           return (
             <div className="flex items-center gap-3">
               <Image
-                src={product.images[0]}
+                src={product.productImages[0].imageUrl}
                 alt="Product image"
                 width={80}
                 height={80}
