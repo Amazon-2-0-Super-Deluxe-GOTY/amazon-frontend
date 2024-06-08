@@ -60,7 +60,7 @@ export function Header() {
           <button onClick={openSidebar}>
             <MenuIcon className="stroke-[3]" />
           </button>
-          <Link href={"/"}>
+          <Link href={"/"} className="hidden lg:block">
             <Logo />
           </Link>
         </div>
@@ -69,7 +69,7 @@ export function Header() {
             placeholder="Search..."
             className="focus-visible:ring-0 focus-visible:ring-offset-0"
           />
-          <Button className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto max-lg:bg-transparent max-lg:border-transparent">
+          <Button className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-0 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto">
             <SearchIcon />
           </Button>
         </div>

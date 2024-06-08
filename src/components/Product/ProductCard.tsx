@@ -22,7 +22,7 @@ export const ProductCard = ({
 
   return (
     <Card className="max-w-sm w-full rounded-lg border-hover-card">
-      <CardHeader className="p-4 pb-0">
+      <CardHeader className="p-3 lg:p-4 pb-0">
         <div className="relative aspect-square">
           <Image
             src={placeholder}
@@ -30,26 +30,29 @@ export const ProductCard = ({
             alt="Placeholder"
             className="object-cover rounded-sm"
           />
+          {/* <div className="absolute top-1.5 right-1.5 w-16 h-10 lg:w-18 lg:h-12"> */}
           <div className="absolute top-1.5 right-1.5">
-            <Image src={discountShape} alt="Discount" />
-            <span className="absolute left-4 top-2 font-bold">-24%</span>
+            <Image src={discountShape} alt="Discount" className="" />
+            <span className="absolute left-3 top-1 lg:top-2 font-bold text-sm lg:text-sm">
+              -24%
+            </span>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-3">
+      <CardContent className="p-3 lg:p-4 pt-1.5 lg:pt-3">
         <div className="flex flex-col justify-center items-center">
-          <p className="text-lg line-clamp-2">{title}</p>
-          <div className="pb-3 flex gap-3.5 items-center">
+          <p className="text-sm lg:text-lg line-clamp-2">{title}</p>
+          <div className="flex gap-3.5 items-center">
             <div className="flex items-center gap-1.5">
-              <StarEmptyIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">4.7</span>
+              <StarEmptyIcon className="w-4 h-4 lg:w-5 lg:h-5" />
+              <span className="text-xs lg:text-sm font-medium">4.7</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <CustomerReviewsIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">228</span>
+              <CustomerReviewsIcon className="w-4 h-4 lg:w-5 lg:h-5" />
+              <span className="text-xs lg:text-sm font-medium">228</span>
             </div>
           </div>
-          <div className="text-xl font-medium">
+          <div className="text-base lg:text-xl font-medium mt-3">
             <span>${whole}</span>
             <sup>{fraction}</sup>
             <sub className="ml-2 line-through text-gray-400">$39.99</sub>

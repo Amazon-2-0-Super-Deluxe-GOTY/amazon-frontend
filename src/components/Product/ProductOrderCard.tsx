@@ -26,20 +26,12 @@ import { useStorageCart } from "@/lib/storage";
 
 const infoElements = [
   {
-    title: "Delivery",
-    render: () => <DeliveryContent />,
-  },
-  {
     title: "Payment methods",
     render: () => <PaymentContent />,
   },
   {
     title: "Security",
     render: () => <SecurityContent />,
-  },
-  {
-    title: "Returns",
-    render: () => <ReturnsContent />,
   },
 ];
 

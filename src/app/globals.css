@@ -96,4 +96,14 @@
   .border-hover-card {
     @apply border-2 border-transparent transition-[box-shadow,border-color] hover:border-tertiary-press;
   }
+
+  @media (min-width: 1024px) {
+    .banner-signup {
+      background-image: url(/banner-signup-desktop.avif),
+        url(/banner-signup-desktop-drop.avif);
+      background-position: right center, left 15px bottom 15px;
+      background-size: contain, 100px 100px;
+      background-repeat: no-repeat;
+    }
+  }
 }

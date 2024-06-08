@@ -355,14 +355,6 @@ export default function ProductPage({
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
             <ProductOrderCard productId={params.productId} />
-            <SellerInfoCard sellerInfo={sellerInfo} />
-            <div className="p-4 lg:p-6 bg-gray-200 rounded-lg flex items-center gap-3">
-              <TrophyIcon className="w-8 h-8 lg:w-10 lg:h-10" />
-              <div>
-                <p className="font-semibold">Best seller</p>
-                <p className="text-xs">Sold most frequently</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
