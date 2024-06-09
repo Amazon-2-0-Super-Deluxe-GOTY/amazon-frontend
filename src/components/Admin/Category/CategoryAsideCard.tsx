@@ -16,7 +16,7 @@ interface Props {
   mainCategory?: Category;
   allCategories?: Category[];
   onViewMain?: () => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 }
 
 const iconClassLarge = "w-8 h-8";

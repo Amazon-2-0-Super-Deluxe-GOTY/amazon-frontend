@@ -40,14 +40,14 @@ export default function Page() {
     [data?.data]
   );
   const [selectedCategory, setSelectedCategory] = useState<Category>();
-  const checkboxTree = useCheckboxTree<Category, string>({
+  const checkboxTree = useCheckboxTree<Category, number>({
     options: treeOptions,
   });
   const [search, setSearch] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const createModalParams = useRef<{
     isRoot: boolean;
-    defaultRootId?: string;
+    defaultRootId?: number;
   }>({ isRoot: true });
 
   const displayedTreeRoot = React.useMemo(() => {
@@ -57,7 +57,8 @@ export default function Page() {
   }, [checkboxTree, search]);
 
   const onSelectRootCategory = (value: string) => {
-    const node = allCategoriesTrees.find((c) => c.value.id === value);
+    const id = Number(value);
+    const node = allCategoriesTrees.find((c) => c.value.id === id);
     if (node) {
       checkboxTree.set(node);
       setSelectedCategory(node.value);
@@ -87,7 +88,7 @@ export default function Page() {
     setSelectedCategory(node.value);
   };
 
-  const onDeleteCategory = (id: string) => {
+  const onDeleteCategory = (id: number) => {
     const node = checkboxTree.findById(id);
     if (!node) return;
 
@@ -104,7 +105,7 @@ export default function Page() {
     console.log(categoryValue);
   };
 
-  const isSelected = (categoryId: string) =>
+  const isSelected = (categoryId: number) =>
     selectedCategory?.id === categoryId;
 
   const openCreateModal = () => setIsCreateModalOpen(true);
@@ -114,7 +115,7 @@ export default function Page() {
     createModalParams.current = { isRoot: true };
     openCreateModal();
   };
-  const openCreateModalAsChild = (rootId: string) => {
+  const openCreateModalAsChild = (rootId: number) => {
     createModalParams.current = { isRoot: false, defaultRootId: rootId };
     openCreateModal();
   };
@@ -139,7 +140,7 @@ export default function Page() {
                 </button>
                 {allCategoriesTrees.map(({ value: category }) => (
                   <SelectItem
-                    value={category.id}
+                    value={category.id.toString()}
                     key={category.name}
                     className="p-4"
                     checkAlign="right"

@@ -26,8 +26,8 @@ export function CategorySelect({
   disallowRoots,
 }: {
   categories?: Category[];
-  value?: string;
-  onValueChange: (value: string) => void;
+  value?: number;
+  onValueChange: (value: number) => void;
   disallowRoots?: boolean;
 }) {
   const treeRoots = useMemo(
@@ -56,8 +56,8 @@ export function CategorySelect({
 
   return (
     <Select
-      value={value}
-      onValueChange={(value) => value && onValueChange(value)}
+      value={value?.toString()}
+      onValueChange={(value) => value && onValueChange(Number(value))}
     >
       <SelectTrigger>
         <SelectValue placeholder="Choose category">
@@ -107,7 +107,7 @@ function SelectItemRecursive({
           style={{ paddingLeft: `${getOffset(index)}px` }}
         >
           <SelectItem
-            value={root.value.id}
+            value={root.value.id.toString()}
             className="p-4"
             checkAlign="right"
             checkOffset={2}
@@ -132,7 +132,7 @@ function SelectItemRecursive({
     </Accordion>
   ) : (
     <SelectItem
-      value={root.value.id}
+      value={root.value.id.toString()}
       className="p-4 data-[state=checked]:bg-muted"
       style={{ paddingLeft: `${getOffset(index + 1)}px` }}
       checkAlign="right"
