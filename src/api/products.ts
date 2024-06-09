@@ -125,6 +125,18 @@ export function getProductById({
   );
 }
 
+export function getProductBySlug({
+  productSlug,
+}: {
+  productSlug: string;
+}): Promise<
+  ApiResponse<[[200, Product], [400, ApiValidationErrors], [404, null]]>
+> {
+  return fetch(`/api/products/byId?productSlug=${productSlug}`).then((r) =>
+    r.json()
+  );
+}
+
 interface ProductForm {
   name: string;
   code: string;

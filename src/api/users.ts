@@ -1,6 +1,7 @@
 import { authStore, useAuthStore } from "@/lib/storage";
 import type { ApiResponse, ApiValidationErrors, User } from "./types";
 import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
 
 export type UserRoles = "all" | "user" | "admin";
 
@@ -127,10 +128,13 @@ export function useUser() {
   const authStore = useAuthStore((state) => state);
   const userQuery = useQuery({
     queryKey: ["user", authStore.token ?? "unauthorized"],
-    queryFn: getUserProfile,
+    queryFn: useCallback(
+      () => (authStore.token ? getUserProfile() : null),
+      [authStore.token]
+    ),
     retry: false,
     select(data) {
-      return data.status === 200 ? data.data : null;
+      return data?.status === 200 ? data.data : null;
     },
   });
 
