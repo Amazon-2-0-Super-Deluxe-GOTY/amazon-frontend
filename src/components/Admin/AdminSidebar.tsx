@@ -54,7 +54,7 @@ export const AdminSidebar = ({
 }: {
   isOpen: boolean;
   closeSidebar: () => void;
-  user?: User;
+  user?: User | null;
 }) => {
   const fullName = `${user?.firstName} ${user?.lastName}`;
 

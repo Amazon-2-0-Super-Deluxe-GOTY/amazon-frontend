@@ -13,6 +13,7 @@ const data: Category = {
       name: "Fabric type",
     },
   ],
+  image: { id: "1", imageUrl: "" },
   isDeleted: false,
 };
 
