@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useSearchParamsTools } from "@/lib/router";
+import { useState } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -14,8 +13,6 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -28,72 +25,15 @@ export const FilterCardVariationMobile = ({
   categoryId,
   filters,
   checkedItems,
-  setCheckedItems,
+  uncheckFilter,
+  appliedFiltersCount,
 }: {
   categoryId: string;
   filters: FilterItem[];
   checkedItems: FilterCheckedType;
-  setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>;
+  uncheckFilter: (param: { title: string; value: string }) => void;
+  appliedFiltersCount: number;
 }) => {
-  const searchParams = useSearchParamsTools();
-
-  //#region indicatorCheckedFilterCount
-  const [indicatorCount, setIndicatorCount] = useState<number>(() => {
-    if (checkedItems) {
-      return checkedItems?.reduce(
-        (total, item) => total + item.values.length,
-        0
-      );
-    }
-    return 0;
-  });
-
-  useEffect(() => {
-    const newCount = checkedItems?.reduce(
-      (total, item) => total + item.values.length,
-      0
-    );
-    setIndicatorCount(newCount ? newCount : 0);
-  }, [checkedItems]);
-  //#endregion
-
-  const clearAllFilters = () => {
-    setCheckedItems([]);
-  };
-
-  const uncheckFilter = (titleItem: string, checkedItem: string) => {
-    const isExists = checkedItems.find((v) => v.title === titleItem);
-    if (isExists) {
-      if (
-        isExists.values.length === 1 &&
-        isExists.values.includes(checkedItem)
-      ) {
-        searchParams.set(titleItem, undefined);
-        setCheckedItems((prevItems) => [
-          ...prevItems.filter((item) => item.title !== titleItem),
-        ]);
-      } else {
-        searchParams.set(
-          titleItem,
-          checkedItems
-            ?.find((v) => v.title === titleItem)
-            ?.values.filter((v) => v !== checkedItem)
-            .join(",")
-        );
-        setCheckedItems((prevItems) =>
-          prevItems.map((item) =>
-            item.title === titleItem
-              ? {
-                  ...item,
-                  values: item.values.filter((val) => val !== checkedItem),
-                }
-              : item
-          )
-        );
-      }
-    }
-  };
-
   const [searchText, setSearchText] = useState<string>("");
   const handleSearchTextChange = (value: string) => {
     setSearchText(value.toLowerCase());
@@ -104,7 +44,7 @@ export const FilterCardVariationMobile = ({
       <Drawer>
         <DrawerTrigger className="h-8 w-8 relative">
           <div className="absolute flex h-5 w-5 bg-gray-300 rounded-full top-[-5px] right-[-5px] justify-center items-center">
-            <span className="text-[10px]">{indicatorCount}</span>
+            <span className="text-[10px]">{appliedFiltersCount}</span>
           </div>
           <Image src={FilterIcon} alt="filters" />
         </DrawerTrigger>
@@ -137,7 +77,6 @@ export const FilterCardVariationMobile = ({
                 <Button
                   variant={"tertiary"}
                   className="border-2 border-gray-400"
-                  onClick={clearAllFilters}
                 >
                   <Link href={`/category/${categoryId}`}>Reset all</Link>
                 </Button>
@@ -156,7 +95,7 @@ export const FilterCardVariationMobile = ({
                             variant="tertiary"
                             className="bg-gray-300 justify-between m-[2px]"
                             onClick={() => {
-                              uncheckFilter(item.title, value);
+                              uncheckFilter({ title: item.title, value });
                             }}
                           >
                             <span className="mr-2">{value}</span>
@@ -172,12 +111,7 @@ export const FilterCardVariationMobile = ({
           <DrawerHeader>
             <ScrollArea>
               <div className="max-h-[400px]">
-                <FilterCardVariation
-                  filters={filters}
-                  isOpen={false}
-                  checkedItems={checkedItems}
-                  setCheckedItems={setCheckedItems}
-                />
+                <FilterCardVariation filters={filters} isOpen={false} />
               </div>
             </ScrollArea>
           </DrawerHeader>

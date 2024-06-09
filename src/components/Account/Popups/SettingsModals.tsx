@@ -1,3 +1,4 @@
+import { User } from "@/api/types";
 import { ChangeEmailForm } from "@/components/forms/shop/account/ChangeEmailForm";
 import { ChangeFirstLastNameForm } from "@/components/forms/shop/account/ChangeFirstLastNameForm";
 import { ChangePasswordForm } from "@/components/forms/shop/account/ChangePasswordForm";
@@ -11,14 +12,24 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
-export const ChangeNameModal = () => {
+export const ChangeNameModal = ({
+  user,
+  onSubmit,
+}: {
+  user: User;
+  onSubmit: () => void;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const onClose = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(false);
+  };
+  const handleSubmit = () => {
+    onClose();
+    onSubmit();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
         Change name
       </DialogTrigger>
@@ -30,21 +41,35 @@ export const ChangeNameModal = () => {
           <Separator />
         </DialogHeader>
         <div className="mt-4">
-          <ChangeFirstLastNameForm onCancel={onClose} />
+          <ChangeFirstLastNameForm
+            onCancel={onClose}
+            onSubmit={handleSubmit}
+            defaultValues={user}
+          />
         </div>
       </DialogContent>
     </Dialog>
   );
 };
 
-export const ChangeEmailModal = ({ email }: { email: string }) => {
+export const ChangeEmailModal = ({
+  email,
+  onSubmit,
+}: {
+  email: string;
+  onSubmit: () => void;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const onClose = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(false);
+  };
+  const handleSubmit = () => {
+    onClose();
+    onSubmit();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
         Change email
       </DialogTrigger>
@@ -66,34 +91,44 @@ export const ChangeEmailModal = ({ email }: { email: string }) => {
           </span>
         </div>
         <div className="mt-4">
-          <ChangeEmailForm onCancel={onClose} />
+          <ChangeEmailForm onCancel={onClose} onSubmit={handleSubmit} />
         </div>
       </DialogContent>
     </Dialog>
   );
 };
 
-export const ChangePasswordModal = () => {
+export const ChangePasswordModal = ({ onSubmit }: { onSubmit: () => void }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const onClose = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(false);
+  };
+  const handleSubmit = () => {
+    onClose();
+    onSubmit();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
         Change password
       </DialogTrigger>
       <DialogContent className="rounded-lg" hideClose>
         <div>
-          <ChangePasswordForm onCancel={onClose} />
+          <ChangePasswordForm onCancel={onClose} onSubmit={handleSubmit} />
         </div>
       </DialogContent>
     </Dialog>
   );
 };
 
-export const LogOutModal = () => {
+export const LogOutModal = ({
+  onSubmit,
+  isButtonsDisabled,
+}: {
+  onSubmit: () => void;
+  isButtonsDisabled: boolean;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const onClose = () => {
     setIsOpen(!isOpen);
@@ -101,7 +136,10 @@ export const LogOutModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+      <DialogTrigger
+        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+        disabled={isButtonsDisabled}
+      >
         Log out
       </DialogTrigger>
       <DialogContent className="max-w-[464px] rounded-lg" hideClose>
@@ -120,10 +158,16 @@ export const LogOutModal = () => {
             variant={"secondary"}
             className="w-full"
             onClick={onClose}
+            disabled={isButtonsDisabled}
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full"
+            onClick={onSubmit}
+            disabled={isButtonsDisabled}
+          >
             Log out
           </Button>
         </div>
@@ -132,7 +176,13 @@ export const LogOutModal = () => {
   );
 };
 
-export const DeleteAccountModal = () => {
+export const DeleteAccountModal = ({
+  onSubmit,
+  isButtonsDisabled,
+}: {
+  onSubmit: () => void;
+  isButtonsDisabled: boolean;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const onClose = () => {
     setIsOpen(!isOpen);
@@ -140,7 +190,10 @@ export const DeleteAccountModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90">
+      <DialogTrigger
+        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        disabled={isButtonsDisabled}
+      >
         Delete
       </DialogTrigger>
       <DialogContent className="max-w-[464px] rounded-lg" hideClose>
@@ -168,10 +221,17 @@ export const DeleteAccountModal = () => {
             variant={"secondary"}
             className="w-full"
             onClick={onClose}
+            disabled={isButtonsDisabled}
           >
             Cancel
           </Button>
-          <Button type="submit" variant={"destructive"} className="w-full">
+          <Button
+            type="submit"
+            variant={"destructive"}
+            className="w-full"
+            onClick={onSubmit}
+            disabled={isButtonsDisabled}
+          >
             Delete
           </Button>
         </div>

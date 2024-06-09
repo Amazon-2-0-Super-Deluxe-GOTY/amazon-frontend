@@ -1,6 +1,7 @@
 import { authStore, useAuthStore } from "@/lib/storage";
 import type { ApiResponse, ApiValidationErrors, User } from "./types";
 import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
 
 export type UserRoles = "all" | "user" | "admin";
 
@@ -127,10 +128,13 @@ export function useUser() {
   const authStore = useAuthStore((state) => state);
   const userQuery = useQuery({
     queryKey: ["user", authStore.token ?? "unauthorized"],
-    queryFn: getUserProfile,
+    queryFn: useCallback(
+      () => (authStore.token ? getUserProfile() : null),
+      [authStore.token]
+    ),
     retry: false,
     select(data) {
-      return data.status === 200 ? data.data : null;
+      return data?.status === 200 ? data.data : null;
     },
   });
 
@@ -142,6 +146,49 @@ export function logOut(): Promise<ApiResponse<[[200, null], [401, null]]>> {
 
   return fetch("/api/users/logout", {
     method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function updateUserAvatar(
+  userAvatar: File
+): Promise<ApiResponse<[[200, null], [401, null]]>> {
+  const formData = new FormData();
+
+  formData.set("userAvatar", userAvatar);
+
+  const token = authStore.getState().token;
+  return fetch("/api/users/avatar", {
+    method: "PUT",
+    body: formData,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function updateUserEmail(
+  newEmail: string
+): Promise<ApiResponse<[[200, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/users/changeEmailRequest", {
+    method: "PUT",
+    body: JSON.stringify({ newEmail }),
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function deleteCurrentUser(): Promise<
+  ApiResponse<[[200, null], [403, null]]>
+> {
+  const token = authStore.getState().token;
+  return fetch("/api/users", {
+    method: "DELETE",
     headers: {
       authorization: `Bearer ${token}`,
     },

@@ -20,17 +20,26 @@ import {
 } from "@/components/ui/input-otp";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { confirmEmail, updateUserEmail } from "@/api/users";
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailSchema = z.string().email({
+  message: "This field is required to be filled first",
+});
 
 const FormSchema = z.object({
-  email: z.string().email({
-    message: "This field is required to be filled first",
-  }),
+  email: emailSchema,
   code: z.string(),
 });
 
-export function ChangeEmailForm({ onCancel }: { onCancel: () => void }) {
+export function ChangeEmailForm({
+  onCancel,
+  onSubmit,
+}: {
+  onCancel: () => void;
+  onSubmit: () => void;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -39,42 +48,35 @@ export function ChangeEmailForm({ onCancel }: { onCancel: () => void }) {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // Checking data for validity
+  const updateEmailMutation = useMutation({ mutationFn: updateUserEmail });
+  const confirmEmailMutation = useMutation({ mutationFn: confirmEmail });
 
-    console.log("You submitted the following values:");
-    console.log(JSON.stringify(data, null, 2));
-
-    if (isCodeActive && data.code !== code) {
-      form.setError("code", { message: "Incorrect code, try again" });
-    } else {
-      form.setError("code", {
-        message: `Required to click “${buttonText}” and to enter it`,
-      });
-    }
+  function handleSubmit(data: z.infer<typeof FormSchema>) {
+    confirmEmailMutation.mutateAsync(data.code).then((res) => {
+      if (res.status === 200) {
+        onSubmit();
+      } else {
+        form.setError("code", { message: "Incorrect code, try again" });
+      }
+    });
   }
 
   const [buttonText, setButtonText] = useState<string>("Send code");
-  const [code, setCode] = useState<string | undefined>(undefined);
   const [timer, setTimer] = useState<number>(60);
   const [isCodeActive, setIsCodeActive] = useState<boolean>(false);
 
   function sendCode() {
-    if (!form.getValues().email.match(emailPattern)) {
+    const { email } = form.getValues();
+    if (!emailSchema.safeParse(email).success) {
       form.setError("email", {
         message: "This field is required to be filled first",
       });
       return;
-    } else {
-      form.clearErrors("email");
     }
-    const getCode = Math.floor(Math.random() * 999999)
-      .toString()
-      .padStart(6, "0");
-    setCode(getCode);
+
+    updateEmailMutation.mutate(email);
     setIsCodeActive(true);
     timerStart();
-    console.log("CODE: " + getCode);
   }
 
   function timerStart() {
@@ -83,7 +85,6 @@ export function ChangeEmailForm({ onCancel }: { onCancel: () => void }) {
         if (prevTimer === 0) {
           clearInterval(interval as NodeJS.Timeout);
           setButtonText("Resend code");
-          setCode(undefined);
           setIsCodeActive(false);
           return 60;
         } else {
@@ -96,7 +97,7 @@ export function ChangeEmailForm({ onCancel }: { onCancel: () => void }) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="w-full h-full flex flex-col justify-between"
       >
         <div className="flex flex-col justify-center h-full">
@@ -130,7 +131,11 @@ export function ChangeEmailForm({ onCancel }: { onCancel: () => void }) {
                 <div className="w-full h-full md:py-6 py-5">
                   <div className="flex justify-center items-center">
                     <FormControl>
-                      <InputOTP maxLength={6} {...field}>
+                      <InputOTP
+                        maxLength={6}
+                        pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                        {...field}
+                      >
                         <InputOTPGroup>
                           <InputOTPSlot className="max-md:max-w-9" index={0} />
                         </InputOTPGroup>
@@ -162,11 +167,17 @@ export function ChangeEmailForm({ onCancel }: { onCancel: () => void }) {
                         type="button"
                         className="m-auto"
                         onClick={sendCode}
+                        disabled={confirmEmailMutation.isPending}
                       >
                         {buttonText}
                       </Button>
                     ) : (
-                      <Button variant={"link"} type="button" className="m-auto">
+                      <Button
+                        variant={"link"}
+                        type="button"
+                        className="m-auto"
+                        disabled={confirmEmailMutation.isPending}
+                      >
                         Resend code {parseInt((timer / 60).toString())}:
                         {(timer % 60).toString().padStart(2, "0")}
                       </Button>
@@ -183,10 +194,15 @@ export function ChangeEmailForm({ onCancel }: { onCancel: () => void }) {
             variant={"secondary"}
             className="w-full"
             onClick={onCancel}
+            disabled={confirmEmailMutation.isPending}
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={confirmEmailMutation.isPending}
+          >
             Confirm
           </Button>
         </div>

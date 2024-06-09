@@ -1,6 +1,12 @@
 "use client";
 import { Category } from "@/api/categories";
-import { uploadProductImage } from "@/api/products";
+import {
+  Product,
+  createProduct,
+  deleteProductImage,
+  updateProduct,
+  uploadProductImage,
+} from "@/api/products";
 import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,8 +66,9 @@ const formSchema = z.object({
         message: "Barcode is invalid",
       }
     ),
-  categoryId: z.string().min(1, {
-    message: "Please, select category",
+  categoryId: z.number({
+    required_error: "Please, select category",
+    invalid_type_error: "Please, select category",
   }),
   images: z
     .array(z.object({ id: z.string(), imageUrl: z.string() }))
@@ -86,7 +93,8 @@ const formSchema = z.object({
         }),
       z.nan(),
     ])
-    .optional(),
+    .optional()
+    .nullable(),
   quantity: z
     .number({
       required_error: "Quantity cannot be empty",
@@ -132,28 +140,26 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface CreateProductFormProps {
   categories: Category[];
-  defaultValues?: FormValues;
-  defaultCategoryId?: string;
-  onSubmit: (formValues: FormValues) => void;
+  defaultValues?: FormValues & { productId?: string };
+  defaultCategoryId?: number;
+  onSubmit: (product: Product) => void;
 }
 
 export function CreateProductForm({
   categories,
   defaultValues,
-  defaultCategoryId = "",
+  defaultCategoryId,
   onSubmit,
 }: CreateProductFormProps) {
   const router = useRouter();
-  const memoizedDefaultValues = useMemo(() => defaultValues, [defaultValues]);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: memoizedDefaultValues
-      ? memoizedDefaultValues
+    defaultValues: defaultValues
+      ? defaultValues
       : {
           name: "",
           code: "",
           price: 0,
-          discount: 0,
           quantity: 0,
           categoryId: defaultCategoryId,
           images: [],
@@ -161,9 +167,11 @@ export function CreateProductForm({
           aboutProduct: [],
         },
   });
+
   const imagesArray = useFieldArray({
     control: form.control,
     name: "images",
+    keyName: "key",
   });
   const productDetailsArray = useFieldArray({
     control: form.control,
@@ -181,8 +189,8 @@ export function CreateProductForm({
   const categoryId = form.watch("categoryId");
 
   useEffect(() => {
-    form.reset(memoizedDefaultValues);
-  }, [memoizedDefaultValues]);
+    form.reset(defaultValues);
+  }, [defaultValues]);
 
   useEffect(() => {
     if (!categoryId) return;
@@ -204,11 +212,14 @@ export function CreateProductForm({
     setSelectedCategoryPropertyKeyNames(newPropertyKeysNames);
   }, [categoryId, categories]);
 
-  const uploadImageMutation = useMutation({
-    mutationFn: uploadProductImage,
-  });
-
   const { showModal } = useModal();
+
+  const createProductMutation = useMutation({
+    mutationFn: createProduct,
+  });
+  const updateProductMutation = useMutation({
+    mutationFn: updateProduct,
+  });
 
   const [uploadLoadingElements, setUploadLoadingElements] = useOptimistic<
     undefined[]
@@ -249,14 +260,16 @@ export function CreateProductForm({
 
     startUploadTransition(async () => {
       setUploadLoadingElements(Array.from({ length: filesToUpload.length }));
-      const data = await uploadImageMutation.mutateAsync(filesToUpload);
-      if (data.status === 200) {
+      const data = await uploadProductImage(filesToUpload);
+      if (data.status === 201) {
         imagesArray.append(data.data);
       }
     });
   }
 
   const onDeleteImage = (index: number) => () => {
+    const image = imagesArray.fields[index];
+    deleteProductImage(image.id);
     imagesArray.remove(index);
   };
 
@@ -295,9 +308,9 @@ export function CreateProductForm({
     }
 
     if (
-      (!!memoizedDefaultValues &&
-        memoizedDefaultValues.images.length !== imagesArray.fields.length) ||
-      (!memoizedDefaultValues && imagesArray.fields.length > 0)
+      (!!defaultValues &&
+        defaultValues.images.length !== imagesArray.fields.length) ||
+      (!defaultValues && imagesArray.fields.length > 0)
     ) {
       isDirty = true;
     }
@@ -322,10 +335,46 @@ export function CreateProductForm({
     }
   };
 
+  const handleSubmit = (values: FormValues) => {
+    if (!!defaultValues && defaultValues.productId) {
+      updateProductMutation
+        .mutateAsync({
+          ...values,
+          images: values.images.map((img) => img.id),
+          productId: defaultValues.productId,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            onSubmit(res.data);
+          } else if (res.status === 400) {
+            for (let error of res.data) {
+              form.setError(error.propertyName as keyof FormValues, {
+                message: error.errorMessage,
+              });
+            }
+          }
+        });
+    } else {
+      createProductMutation
+        .mutateAsync({ ...values, images: values.images.map((img) => img.id) })
+        .then((res) => {
+          if (res.status === 201) {
+            onSubmit(res.data);
+          } else if (res.status === 400) {
+            for (let error of res.data) {
+              form.setError(error.propertyName as keyof FormValues, {
+                message: error.errorMessage,
+              });
+            }
+          }
+        });
+    }
+  };
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6 relative pb-16"
       >
         <fieldset className="space-y-6" id="form-general">
@@ -384,7 +433,7 @@ export function CreateProductForm({
                     categories={categories}
                     value={field.value}
                     onValueChange={field.onChange}
-                    disallowRoots
+                    disallowRoots={false}
                   />
                 </FormControl>
                 <FormDescription hidden>
@@ -446,10 +495,8 @@ export function CreateProductForm({
                         <Image
                           src={img.imageUrl}
                           alt={`Image ${i + 1}`}
-                          width={112}
-                          height={112}
+                          fill
                           className="object-cover rounded-lg"
-                          unoptimized
                         />
                         <button
                           type="button"
@@ -476,7 +523,7 @@ export function CreateProductForm({
                           multiple
                           value={""}
                           onChange={onUploadImage}
-                          disabled={uploadImageMutation.isPending}
+                          disabled={isUploading}
                         />
                       </label>
                     )}
@@ -525,6 +572,7 @@ export function CreateProductForm({
                     type="number"
                     placeholder="Enter product discount..."
                     {...field}
+                    value={field.value ?? undefined}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
                 </FormControl>
@@ -637,7 +685,7 @@ export function CreateProductForm({
             Add product detail
           </Button>
           <FormMessage className="px-4">
-            {form.formState.errors.productDetails?.message}
+            {form.formState.errors.productDetails?.root?.message}
           </FormMessage>
         </fieldset>
 
@@ -712,17 +760,22 @@ export function CreateProductForm({
             Add product feature
           </Button>
           <FormMessage className="px-4">
-            {form.formState.errors.aboutProduct?.message}
+            {form.formState.errors.aboutProduct?.root?.message}
           </FormMessage>
         </fieldset>
 
         <div className="absolute inset-0 -bottom-6 pointer-events-none flex justify-end items-end">
           <div className="sticky bottom-0 py-6 w-full flex justify-end gap-3.5 bg-white pointer-events-auto">
-            <Button type="button" variant={"secondary"} onClick={onCancel}>
+            <Button
+              type="button"
+              variant={"secondary"}
+              onClick={onCancel}
+              disabled={createProductMutation.isPending}
+            >
               Cancel
             </Button>
-            <Button type="submit">
-              {memoizedDefaultValues ? "Save" : "Create"}
+            <Button type="submit" disabled={createProductMutation.isPending}>
+              {defaultValues ? "Save" : "Create"}
             </Button>
           </div>
         </div>

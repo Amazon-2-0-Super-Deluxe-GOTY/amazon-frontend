@@ -16,12 +16,14 @@ import { Input } from "@/components/ui/input";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { useMutation } from "@tanstack/react-query";
+import { updateUser } from "@/api/users";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 const FormSchema = z
   .object({
-    currentPassword: z.string().min(8, {
+    oldPassword: z.string().min(8, {
       message: "This field is necessary to continue!",
     }),
     newPassword: z.string().refine((value) => passwordRegex.test(value), {
@@ -37,21 +39,44 @@ const FormSchema = z
     path: ["confirmPassword"],
   });
 
-export function ChangePasswordForm({ onCancel }: { onCancel: () => void }) {
+export function ChangePasswordForm({
+  onCancel,
+  onSubmit,
+}: {
+  onCancel: () => void;
+  onSubmit: () => void;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      currentPassword: "",
+      oldPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
   });
+  const updateUserMutation = useMutation({
+    mutationFn: updateUser,
+  });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // Checking data for validity
+  function handleSubmit(data: z.infer<typeof FormSchema>) {
+    updateUserMutation.mutateAsync(data).then((res) => {
+      if (res.status === 200) {
+        onSubmit();
+      } else if (res.status === 400) {
+        // dumb case that is not validation error for some reason
+        if (res.data === null) {
+          return form.setError("oldPassword", {
+            message: (res as { message: string }).message,
+          });
+        }
 
-    console.log("You submitted the following values:");
-    console.log(JSON.stringify(data, null, 2));
+        for (let error of res.data) {
+          form.setError(error.propertyName as "oldPassword" | "newPassword", {
+            message: error.errorMessage,
+          });
+        }
+      }
+    });
   }
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -62,7 +87,7 @@ export function ChangePasswordForm({ onCancel }: { onCancel: () => void }) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="w-full h-full flex flex-col justify-between gap-6"
       >
         <div className="flex flex-col justify-center h-full gap-5">
@@ -77,7 +102,7 @@ export function ChangePasswordForm({ onCancel }: { onCancel: () => void }) {
           </div>
           <FormField
             control={form.control}
-            name="currentPassword"
+            name="oldPassword"
             render={({ field }) => (
               <FormItem>
                 <div>
@@ -191,10 +216,15 @@ export function ChangePasswordForm({ onCancel }: { onCancel: () => void }) {
             variant={"secondary"}
             className="w-full"
             onClick={onCancel}
+            disabled={updateUserMutation.isPending}
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={updateUserMutation.isPending}
+          >
             Confirm
           </Button>
         </div>

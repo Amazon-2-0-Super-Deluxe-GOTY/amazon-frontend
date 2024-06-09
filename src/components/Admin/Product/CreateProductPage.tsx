@@ -1,11 +1,13 @@
 "use client";
-import { getCategories, useCategories } from "@/api/categories";
-import { getAdminProduct } from "@/api/products";
+import { useCategories } from "@/api/categories";
+import { getProductById } from "@/api/products";
 import { CreateProductForm } from "@/components/forms/CreateProductForm";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { PlusIcon, SquarePenIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import Link from "next/link";
 
 export function CreateProductPage({
@@ -13,13 +15,46 @@ export function CreateProductPage({
   categoryId,
 }: {
   productId?: string;
-  categoryId?: string;
+  categoryId?: number;
 }) {
   const categoriesQuery = useCategories();
   const productQuery = useQuery({
     queryKey: ["product", productId],
-    queryFn: () => (productId ? getAdminProduct({ productId }) : null),
+    staleTime: 0,
+    queryFn: () => (productId ? getProductById({ productId }) : undefined),
+    select(data) {
+      return data?.status === 200 ? data.data : null;
+    },
   });
+  const router = useRouter();
+
+  const onSubmit = () => {
+    router.push("/products");
+  };
+
+  const formDefaultValues = useMemo(() => {
+    const product = productQuery.data;
+    if (!product) return;
+
+    return {
+      productId: productId,
+      name: product.name,
+      code: product.code ?? "",
+      price: product.price,
+      discount: product.discountPercent,
+      categoryId: product.category.id,
+      images: product.productImages,
+      quantity: product.quantity,
+      productDetails: product.productProperties.map((p) => ({
+        name: p.key,
+        text: p.value,
+      })),
+      aboutProduct: product.aboutProductItems.map((p) => ({
+        name: p.title,
+        text: p.text,
+      })),
+    };
+  }, [productQuery.data, productId]);
 
   const isEdit = !!productQuery.data;
 
@@ -47,9 +82,9 @@ export function CreateProductPage({
       <Separator orientation="vertical" />
       <CreateProductForm
         categories={categoriesQuery.data?.data ?? []}
-        defaultValues={productQuery.data?.data}
+        defaultValues={formDefaultValues}
         defaultCategoryId={categoryId}
-        onSubmit={console.log}
+        onSubmit={onSubmit}
       />
     </div>
   );
