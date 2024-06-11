@@ -17,7 +17,7 @@ export default function Home() {
         <section className="px-4">
           <Separator />
           <div className="py-6">
-            <ProductsBlock title="Trending deals" maxSizeMobile={8} />
+            <ProductsBlock title="Trending deals" />
           </div>
           <Separator />
         </section>
@@ -27,7 +27,7 @@ export default function Home() {
         <section className="px-4">
           <Separator />
           <div className="py-6">
-            <ProductsBlock title="Sale" maxSizeMobile={8} />
+            <ProductsBlock title="Sale" />
           </div>
           <Separator />
         </section>
@@ -35,7 +35,6 @@ export default function Home() {
           <SingInUpBanner />
         </section>
       </main>
-
       <ScrollToTopButton />
     </>
   );

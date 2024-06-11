@@ -5,7 +5,6 @@ import {
   ArmchairIcon,
   HomeIcon,
   MonitorIcon,
-  SearchIcon,
   ShirtIcon,
   WrenchIcon,
 } from "lucide-react";
@@ -13,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { UserSidebar } from "./UserSidebar";
 import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
-import { BellIcon, MenuIcon, UserIcon } from "./Icons";
+import { MenuIcon, SearchIcon, UserIcon } from "./Icons";
 import { Logo } from "./Logo";
 
 const sidebarData = {
@@ -70,12 +69,12 @@ export function Header() {
             className="focus-visible:ring-0 focus-visible:ring-offset-0"
           />
           <Button className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-0 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto">
-            <SearchIcon />
+            <SearchIcon className="stroke-3" />
           </Button>
         </div>
         <div className="flex items-center gap-8">
-          <UserIcon className="hidden md:block" />
-          <BellIcon className="hidden md:block" />
+          {/* designer moment 🤡 */}
+          <UserIcon className="hidden md:block stroke-3 [&_:nth-child(1)]:stroke-1" />
           <ShoppingCart />
         </div>
       </div>

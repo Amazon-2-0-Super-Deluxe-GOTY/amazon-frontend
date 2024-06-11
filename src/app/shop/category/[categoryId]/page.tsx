@@ -7,11 +7,7 @@ import { useSearchParamsTools } from "@/lib/router";
 
 import Image from "next/image";
 import Link from "next/link";
-import { Slash, XIcon } from "lucide-react";
-
-import HouseLine from "@/../public/Icons/HouseLine.svg";
-import SwitchCard33 from "@/../public/Icons/SwitchCard33.svg";
-import SwitchCard44 from "@/../public/Icons/SwitchCard44.svg";
+import { Slash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -23,15 +19,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -47,6 +34,15 @@ import { FilterCheckedType } from "@/components/ProductByCategoryPage/filtersDat
 import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
 import { useCategoryFilters } from "@/api/categories";
+import { Pagination } from "@/components/Shared/Pagination";
+import { Separator } from "@/components/ui/separator";
+import {
+  Grid3x3Icon,
+  Grid5x4Icon,
+  HomeIcon,
+  XIcon,
+} from "@/components/Shared/Icons";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function CategoryPage({
   params,
@@ -81,6 +77,20 @@ export default function CategoryPage({
     );
   };
 
+  const page = useMemo<number>(() => {
+    const pageFromParams = searchParams.get?.("page");
+    if (!pageFromParams) return 1;
+
+    const pageNumber = Number(pageFromParams);
+    if (isNaN(pageNumber)) return 1;
+
+    return pageNumber;
+  }, [searchParams]);
+
+  const setPage = (page: number) => {
+    searchParams.set("page", page.toString());
+  };
+
   //#region ButtonDefaultCardTemplateClick
   const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] =
     useState(true);
@@ -92,10 +102,6 @@ export default function CategoryPage({
   };
   //#endregion
 
-  const clearAllFilters = () => {
-    // setCheckedItems([]);
-  };
-
   return (
     <main className="flex flex-col items-center px-4">
       <section className="w-full flex items-left gap-1">
@@ -104,7 +110,7 @@ export default function CategoryPage({
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link href="/">
-                  <Image src={HouseLine} width={24} height={24} alt="Home" />
+                  <HomeIcon />
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -158,7 +164,7 @@ export default function CategoryPage({
             <MediaQueryCSS minSize="lg">
               <div className="w-full">
                 <Select>
-                  <SelectTrigger className="py-3 px-4 max-w-52 w-full min-w-48 bg-gray-200">
+                  <SelectTrigger className="py-3 px-4 max-w-52 w-full min-w-48">
                     <SelectValue
                       placeholder={
                         appliedFiltersCount +
@@ -168,7 +174,7 @@ export default function CategoryPage({
                       }
                     />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-200">
+                  <SelectContent>
                     <div className="p-3">
                       <ScrollArea>
                         <ul className="list-none p-0 m-0 max-h-[230px]">
@@ -199,8 +205,8 @@ export default function CategoryPage({
                           ))}
                         </ul>
                       </ScrollArea>
-                      <hr className="my-4 border-gray-400 border-y"></hr>
-                      <Button variant={"tertiary"} onClick={clearAllFilters}>
+                      <Separator className="my-4" />
+                      <Button variant={"tertiary"}>
                         <Link href={`/category/${params.categoryId}`}>
                           Clear all
                         </Link>
@@ -228,7 +234,21 @@ export default function CategoryPage({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex max-md:hidden">
+              <ToggleGroup className="flex gap-0 max-md:hidden" type="single">
+                <ToggleGroupItem
+                  value="cols-3"
+                  className="rounded-e-none border-2 border-r-0"
+                >
+                  <Grid3x3Icon className="w-6 h-6" />
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="cols-5"
+                  className="rounded-s-none border-2 border-l-0"
+                >
+                  <Grid5x4Icon className="w-6 h-6" />
+                </ToggleGroupItem>
+              </ToggleGroup>
+              {/* <div className="flex max-md:hidden">
                 <Button
                   variant={"tertiary"}
                   className={cn(
@@ -239,7 +259,7 @@ export default function CategoryPage({
                   )}
                   onClick={ButtonDefaultCardTemplateClick}
                 >
-                  <Image src={SwitchCard33} alt="switchcards33" />
+                  <Grid3x3Icon />
                 </Button>
                 <Button
                   variant={"tertiary"}
@@ -251,16 +271,16 @@ export default function CategoryPage({
                   )}
                   onClick={ButtonSecondaryCardTemplateClick}
                 >
-                  <Image src={SwitchCard44} alt="switchcards44" />
+                  <Grid5x4Icon />
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
-          <hr className="mt-6 mb-10 border-gray-300"></hr>
+          <Separator className="mt-6 mb-10" />
           <div
             className={cn(
               "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6",
-              !isDefaultTemplateDisplayCardOn && "md:grid-cols-3 lg:grid-cols-4"
+              !isDefaultTemplateDisplayCardOn && "md:grid-cols-3 lg:grid-cols-5"
             )}
           >
             {Array.from({ length: 10 }).map((_, index) => (
@@ -273,22 +293,7 @@ export default function CategoryPage({
             ))}
           </div>
           {/* Pagination here */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <Pagination page={page} setPage={setPage} pagesCount={2} />
         </div>
       </section>
       <ScrollToTopButton />

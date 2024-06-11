@@ -76,12 +76,16 @@ const config = {
         "color-card-hover": "hsl(var(--shadow-color-card-hover))",
       },
       borderWidth: {
+        "1.5": "1.5px",
         "2.5": "2.5px",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      strokeWidth: {
+        "3": "3",
       },
       keyframes: {
         "accordion-down": {
@@ -96,6 +100,10 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      containers: {
+        "md-card": "13rem",
+        "lg-card": "23rem",
       },
     },
   },

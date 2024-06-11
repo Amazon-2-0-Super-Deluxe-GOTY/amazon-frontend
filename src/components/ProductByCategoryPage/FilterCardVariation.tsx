@@ -53,7 +53,7 @@ export function FilterCardVariation({
       <div key={filter.title + i}>
         <div
           className={
-            "max-h-[414px] w-full py-6 px-5 pt-3 bg-gray-200 rounded-lg lg:shadow"
+            "max-h-[414px] w-full py-6 px-5 pt-3 bg-card rounded-lg lg:shadow"
           }
         >
           <Accordion
@@ -61,8 +61,8 @@ export function FilterCardVariation({
             defaultValue={isOpen ? i.toString() : undefined}
             collapsible
           >
-            <AccordionItem value={i.toString()}>
-              <AccordionTrigger className="font-semibold">
+            <AccordionItem value={i.toString()} className="border-none">
+              <AccordionTrigger className="font-semibold text-heading-3">
                 {filter.title}
               </AccordionTrigger>
               <AccordionContent>
@@ -70,7 +70,7 @@ export function FilterCardVariation({
                   <div className="px-1">
                     <Input
                       placeholder="Search..."
-                      className="my-3"
+                      className="my-3 bg-card"
                       value={searchQueries[i] ?? ""}
                       onChange={onSearch(i)}
                     />
@@ -112,9 +112,6 @@ export function FilterCardVariation({
             </AccordionItem>
           </Accordion>
         </div>
-        <MediaQueryCSS maxSize="lg">
-          <hr className="mt-2 border-gray-300 border-y"></hr>
-        </MediaQueryCSS>
       </div>
     );
   });

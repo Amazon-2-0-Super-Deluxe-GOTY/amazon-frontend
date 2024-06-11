@@ -67,7 +67,7 @@ export function ChangeFirstLastNameForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     First name
                   </FormLabel>
                   <FormControl>
@@ -89,7 +89,7 @@ export function ChangeFirstLastNameForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Last name
                   </FormLabel>
                   <FormControl>

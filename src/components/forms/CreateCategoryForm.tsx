@@ -273,7 +273,7 @@ export const CreateCategoryForm = ({
                   name="name"
                   render={({ field }) => (
                     <FormItem className="w-full relative">
-                      <FormLabel className="absolute left-3 -top-0.5 font-light bg-white p-0.5">
+                      <FormLabel className="absolute left-3 -top-0.5 font-light bg-background p-0.5">
                         Category name
                       </FormLabel>
                       <FormControl>
@@ -323,7 +323,7 @@ export const CreateCategoryForm = ({
             render={({ field }) => (
               <FormItem>
                 <div className="relative">
-                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                     Category description
                   </FormLabel>
                   <FormControl>
@@ -333,7 +333,7 @@ export const CreateCategoryForm = ({
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-white p-0.5">
+                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
                     {field.value.length}/300
                   </FormDescription>
                 </div>
@@ -347,7 +347,7 @@ export const CreateCategoryForm = ({
               name="parentId"
               render={({ field }) => (
                 <FormItem className="w-full relative">
-                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                     Parent category
                   </FormLabel>
                   <FormControl>
@@ -415,7 +415,7 @@ export const CreateCategoryForm = ({
                   name={`categoryPropertyKeys.${i}.name`}
                   render={({ field }) => (
                     <FormItem className="relative w-full space-y-0">
-                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                         Property key
                       </FormLabel>
                       <FormControl>
@@ -454,7 +454,7 @@ export const CreateCategoryForm = ({
           </fieldset>
         )}
 
-        {/* <div className="fixed bottom-0 left-0 right-0 p-6 flex justify-end gap-3.5 bg-white z-10 rounded-b-lg">
+        {/* <div className="fixed bottom-0 left-0 right-0 p-6 flex justify-end gap-3.5 bg-background z-10 rounded-b-lg">
           <Button type="button" variant={"secondary"} onClick={onCancel}>
             Cancel
           </Button>

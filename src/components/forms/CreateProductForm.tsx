@@ -114,9 +114,30 @@ const formSchema = z.object({
           }),
       })
     )
-    .min(3, {
+    .refine((value) => value.length >= 3, {
       message:
         "It is necessary to create at least 3 objects. Currently only 1-2 objects or none are created.",
+      path: ["root"],
+    })
+    .superRefine((items, ctx) => {
+      const uniqueValues = new Map<string, number>();
+      items.forEach((item, idx) => {
+        const firstAppearanceIndex = uniqueValues.get(item.name);
+        if (firstAppearanceIndex !== undefined) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Value must be unique`,
+            path: [idx, "name"],
+          });
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Value must be unique`,
+            path: [firstAppearanceIndex, "name"],
+          });
+          return;
+        }
+        uniqueValues.set(item.name, idx);
+      });
     }),
   aboutProduct: z
     .array(
@@ -130,9 +151,14 @@ const formSchema = z.object({
           }),
       })
     )
-    .min(3, {
+    // .min(3, {
+    //   message:
+    //     "It is necessary to create at least 3 objects. Currently only 1-2 objects or none are created.",
+    // })
+    .refine((value) => value.length >= 3, {
       message:
         "It is necessary to create at least 3 objects. Currently only 1-2 objects or none are created.",
+      path: ["root"],
     }),
 });
 
@@ -166,7 +192,9 @@ export function CreateProductForm({
           productDetails: [],
           aboutProduct: [],
         },
+    reValidateMode: "onChange",
   });
+  console.log(form.formState.errors);
 
   const imagesArray = useFieldArray({
     control: form.control,
@@ -387,7 +415,7 @@ export function CreateProductForm({
             name="name"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                   Name
                 </FormLabel>
                 <FormControl>
@@ -406,13 +434,13 @@ export function CreateProductForm({
             render={({ field }) => (
               <FormItem>
                 <div className="relative">
-                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                     Barcode
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter product code..." {...field} />
                   </FormControl>
-                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-white p-0.5">
+                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
                     {field.value.length}/{barcodeLenght}
                   </FormDescription>
                 </div>
@@ -425,7 +453,7 @@ export function CreateProductForm({
             name="categoryId"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                   Category
                 </FormLabel>
                 <FormControl>
@@ -541,7 +569,7 @@ export function CreateProductForm({
             name="price"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                   Price, $
                 </FormLabel>
                 <FormControl>
@@ -564,7 +592,7 @@ export function CreateProductForm({
             name="discount"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                   Discount, % (optional)
                 </FormLabel>
                 <FormControl>
@@ -588,7 +616,7 @@ export function CreateProductForm({
             name="quantity"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                   Quantity
                 </FormLabel>
                 <FormControl>
@@ -632,7 +660,7 @@ export function CreateProductForm({
                         {...field}
                       />
                     </FormControl>
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5 peer-disabled:text-gray-500">
+                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5 peer-disabled:text-gray-500">
                       Name
                     </FormLabel>
                     <FormMessage className="px-4 pt-2" />
@@ -645,7 +673,7 @@ export function CreateProductForm({
                 render={({ field }) => (
                   <FormItem className="relative basis-2/3 space-y-0">
                     <div className="relative">
-                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                         Attribute
                       </FormLabel>
                       <FormControl>
@@ -655,7 +683,7 @@ export function CreateProductForm({
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-white p-0.5">
+                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
                         {field.value.length}/{productDetailsMaxTextLength}
                       </FormDescription>
                     </div>
@@ -702,7 +730,7 @@ export function CreateProductForm({
                 name={`aboutProduct.${i}.name`}
                 render={({ field }) => (
                   <FormItem className="relative basis-1/3 space-y-0">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                       Name
                     </FormLabel>
                     <FormControl>
@@ -722,7 +750,7 @@ export function CreateProductForm({
                 render={({ field }) => (
                   <FormItem className="basis-2/3 space-y-0">
                     <div className="relative">
-                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                         Attribute
                       </FormLabel>
                       <FormControl>
@@ -732,7 +760,7 @@ export function CreateProductForm({
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-white p-0.5">
+                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
                         {field.value.length}/{aboutProductMaxTextLength}
                       </FormDescription>
                     </div>
@@ -765,7 +793,7 @@ export function CreateProductForm({
         </fieldset>
 
         <div className="absolute inset-0 -bottom-6 pointer-events-none flex justify-end items-end">
-          <div className="sticky bottom-0 py-6 w-full flex justify-end gap-3.5 bg-white pointer-events-auto">
+          <div className="sticky bottom-0 py-6 w-full flex justify-end gap-3.5 bg-background pointer-events-auto">
             <Button
               type="button"
               variant={"secondary"}

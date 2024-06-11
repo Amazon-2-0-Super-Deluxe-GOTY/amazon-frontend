@@ -21,7 +21,7 @@ export function CreateProductPage({
   const productQuery = useQuery({
     queryKey: ["product", productId],
     staleTime: 0,
-    queryFn: () => (productId ? getProductById({ productId }) : undefined),
+    queryFn: () => (productId ? getProductById({ productId }) : null),
     select(data) {
       return data?.status === 200 ? data.data : null;
     },

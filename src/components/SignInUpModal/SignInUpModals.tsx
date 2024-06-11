@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import { useModal } from "../Shared/Modal";
 import type { SignInUpModalVariants } from "./types";
 import { AlertDialog } from "../Admin/AlertDialog";
+import clsx from "clsx";
 
 export const SignInUpButtons = ({
   variant,
@@ -40,16 +41,16 @@ export const SignInUpButtons = ({
 
   return (
     <>
-      <Button
-        variant={"primary"}
-        className="h-11 px-8 text-base lg:text-xl"
-        onClick={onOpenSignUpModal}
-      >
+      <Button variant={"primary"} onClick={onOpenSignUpModal}>
         Sign up
       </Button>
       <Button
         variant={variant === "banner" ? "secondary" : "secondary"}
-        className="h-11 px-8 text-base lg:text-xl"
+        className={
+          variant === "banner"
+            ? "lg:border-light lg:text-light lg:active:bg-transparent"
+            : undefined
+        }
         onClick={onOpenLogInModal}
       >
         Log in

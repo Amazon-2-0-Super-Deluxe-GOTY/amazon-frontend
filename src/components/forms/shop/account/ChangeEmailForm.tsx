@@ -107,7 +107,7 @@ export function ChangeEmailForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Email
                   </FormLabel>
                   <FormControl>

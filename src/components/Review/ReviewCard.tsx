@@ -12,6 +12,7 @@ import { ReviewTags } from "./ReviewTags";
 import { getRatesCountString } from "@/lib/review";
 import { useQuery } from "@tanstack/react-query";
 import { getReviewTranslation } from "@/api/review";
+import { useScreenSize } from "@/lib/media";
 
 export const ReviewCard = ({
   review,
@@ -22,6 +23,7 @@ export const ReviewCard = ({
   onClick?: () => void;
   onImageClick?: (imageIndex: number) => void;
 }) => {
+  const isDesktop = useScreenSize({ minSize: "lg" });
   const [isInUserLanguage, setIsInUserLanguage] = useState(true);
   const [isTranslated, setIsTrenslated] = useState(false);
 
@@ -121,14 +123,14 @@ export const ReviewCard = ({
         />
       )}
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-2">
-        <div className="flex gap-4 items-center h-10">
+        <div className="flex flex-wrap gap-2 lg:gap-4 items-center lg:h-10">
           <Button variant={review.isRatedByUser ? "primary" : "secondary"}>
             Helpful
           </Button>
           <Button variant={"secondary"}>Report</Button>
           {!isInUserLanguage && (
-            <>
-              <Separator orientation="vertical" />
+            <div className="h-full w-full lg:w-max flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
+              <Separator orientation={isDesktop ? "vertical" : "horizontal"} />
               <Button
                 variant={"secondary"}
                 onClick={onTranslate}
@@ -140,7 +142,7 @@ export const ReviewCard = ({
                   ? "Translating..."
                   : "Translate"}
               </Button>
-            </>
+            </div>
           )}
         </div>
         <span className="text-sm lg:text-base">

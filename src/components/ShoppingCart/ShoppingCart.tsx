@@ -310,7 +310,7 @@ const ShoppingCartIconWithBadge = ({
 }) => {
   return (
     <div className="relative">
-      <ShoppingCartIcon className="w-6 h-6" />
+      <ShoppingCartIcon className="w-6 h-6 stroke-[3]" />
       {productsCount > 0 && (
         <span className="bg-primary text-primary-foreground text-xs w-5 h-5 inline-flex justify-center items-center rounded-full absolute -top-2.5 -right-2.5">
           {productsCount}
