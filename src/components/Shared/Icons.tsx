@@ -782,7 +782,7 @@ export const Grid3x3Icon = (props: IconProps) => {
       viewBox="0 0 40 40"
       fill="currentColor"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="0"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
@@ -807,7 +807,7 @@ export const Grid5x4Icon = (props: IconProps) => {
       viewBox="0 0 40 40"
       fill="currentColor"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="0"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
@@ -836,7 +836,7 @@ export const FilterIcon = (props: IconProps) => {
     <svg
       width="24"
       height="24"
-      viewBox="0 0 24 24"
+      viewBox="0 0 40 40"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.5"
@@ -845,8 +845,8 @@ export const FilterIcon = (props: IconProps) => {
     >
       <path
         d="M22.98 22.86V29.66C22.98 30.6 22.5 31.47 21.7 31.97L19.98 33.04C18.17 34.17 15.82 32.87 15.82 30.73V22.25C15.82 20.75 14.6 19.53 13.1 19.53H9.89C8.39 19.53 7.5 18.28 7.17 16.81L6 9.72C6 8.22 7.22 7 8.72 7H31.27C32.77 7 33.99 8.22 33.99 9.72L32.82 16.81C32.55 18.38 31.6 19.53 30.1 19.53H22.95"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

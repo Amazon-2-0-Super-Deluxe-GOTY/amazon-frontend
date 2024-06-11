@@ -19,8 +19,9 @@ import type {
 import { useSearchParamsTools } from "@/lib/router";
 import { DoubleThumbSlider } from "../ui/slider";
 import { Button } from "../ui/button";
-import { StarIcon } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { StarEmptyIcon, StarFullIcon } from "../Shared/Icons";
+import { Separator } from "../ui/separator";
 
 export function FilterCardVariation({
   filters,
@@ -112,6 +113,9 @@ export function FilterCardVariation({
             </AccordionItem>
           </Accordion>
         </div>
+        <MediaQueryCSS maxSize="lg">
+          <Separator />
+        </MediaQueryCSS>
       </div>
     );
   });
@@ -242,14 +246,44 @@ const FilterPrice = ({ filter }: FilterCardProps<FilterPriceItem>) => {
   const onInputMinValueChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const newMin = parseFloat(event.target.value);
-    if (newMin) setPriceValue((prevValue) => ({ ...prevValue, min: newMin }));
+    let newMin = parseFloat(event.target.value);
+
+    if (isNaN(newMin)) return;
+
+    if (newMin < filter.values.min) {
+      newMin = filter.values.min;
+    }
+
+    if (newMin > filter.values.max) {
+      newMin = filter.values.max;
+    }
+
+    if (newMin > priceValue.max) {
+      newMin = priceValue.max;
+    }
+
+    setPriceValue((prevValue) => ({ ...prevValue, min: newMin }));
   };
   const onInputMaxValueChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const newMax = parseFloat(event.target.value);
-    if (newMax) setPriceValue((prevValue) => ({ ...prevValue, max: newMax }));
+    let newMax = parseFloat(event.target.value);
+
+    if (isNaN(newMax)) return;
+
+    if (newMax < filter.values.min) {
+      newMax = filter.values.min;
+    }
+
+    if (newMax > filter.values.max) {
+      newMax = filter.values.max;
+    }
+
+    if (newMax < priceValue.min) {
+      newMax = priceValue.min;
+    }
+
+    setPriceValue((prevValue) => ({ ...prevValue, max: newMax }));
   };
 
   const onSliderValueChange = (value: number[]) => {
@@ -273,25 +307,25 @@ const FilterPrice = ({ filter }: FilterCardProps<FilterPriceItem>) => {
   return (
     <div className="h-full overflow-hidden mt-3">
       <div className="flex justify-between w-full p-1 pb-3">
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex justify-between items-center gap-2">
           <Input
-            className="max-w-16"
+            className="w-16 bg-card text-center"
             value={priceValue.min}
+            min={priceValue.min}
+            max={priceValue.max}
             onChange={onInputMinValueChange}
-          ></Input>
+          />
           <span className="font-bold">—</span>
           <Input
-            className="max-w-16"
+            className="w-16 bg-card text-center"
             value={priceValue.max}
+            min={priceValue.min}
+            max={priceValue.max}
             onChange={onInputMaxValueChange}
-          ></Input>
+          />
         </div>
         <div>
-          <Button
-            variant={"tertiary"}
-            className="bg-gray-300"
-            onClick={savePriceChange}
-          >
+          <Button variant={"primary"} onClick={savePriceChange}>
             Save
           </Button>
         </div>
@@ -347,10 +381,10 @@ const FilterRating = ({ filter }: FilterCardProps<FilterRatingItem>) => {
           <Checkbox checked={checkedItems.includes(item)} />
           <span className="text-base flex gap-[3.44px]">
             {Array.from({ length: item }).map((_, index) => (
-              <StarIcon key={index} className="fill-current w-6 h-6" />
+              <StarFullIcon key={index} className="fill-current w-6 h-6" />
             ))}
             {Array.from({ length: maxRating - item }).map((_, index) => (
-              <StarIcon key={index} className="w-6 h-6" />
+              <StarEmptyIcon key={index} className="w-6 h-6" />
             ))}
           </span>
         </li>

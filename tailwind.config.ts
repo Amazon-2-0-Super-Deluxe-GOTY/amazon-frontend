@@ -87,6 +87,9 @@ const config = {
       strokeWidth: {
         "3": "3",
       },
+      padding: {
+        "4.5": "1.125rem",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

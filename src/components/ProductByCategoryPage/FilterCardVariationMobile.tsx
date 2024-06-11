@@ -1,12 +1,8 @@
 import { useState } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 
-import { SearchIcon, XIcon } from "lucide-react";
-import FilterIcon from "@/../public/Icons/FilterIcon.svg";
-
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -20,6 +16,9 @@ import {
 import { FilterCardVariation } from "./FilterCardVariation";
 
 import { FilterItem, FilterCheckedType } from "./filtersDataTypes";
+import { FilterIcon, SearchIcon, XIcon } from "../Shared/Icons";
+import { Separator } from "../ui/separator";
+import { FilterItemButton } from "./FilterItemButton";
 
 export const FilterCardVariationMobile = ({
   categoryId,
@@ -30,7 +29,7 @@ export const FilterCardVariationMobile = ({
 }: {
   categoryId: string;
   filters: FilterItem[];
-  checkedItems: FilterCheckedType;
+  checkedItems: FilterCheckedType[];
   uncheckFilter: (param: { title: string; value: string }) => void;
   appliedFiltersCount: number;
 }) => {
@@ -43,24 +42,27 @@ export const FilterCardVariationMobile = ({
     <>
       <Drawer>
         <DrawerTrigger className="h-8 w-8 relative">
-          <div className="absolute flex h-5 w-5 bg-gray-300 rounded-full top-[-5px] right-[-5px] justify-center items-center">
-            <span className="text-[10px]">{appliedFiltersCount}</span>
+          <div className="absolute flex h-5 w-5 bg-primary rounded-full top-0 -right-0.5 justify-center items-center">
+            <span className="text-xs">
+              {appliedFiltersCount > 9 ? "9+" : appliedFiltersCount}
+            </span>
           </div>
-          <Image src={FilterIcon} alt="filters" />
+          <FilterIcon className="w-8 h-8" />
         </DrawerTrigger>
-        <DrawerContent className="bg-gray-200 max-h-[700px]">
+        <DrawerContent className="bg-card max-h-[700px]">
           <DrawerHeader className="pb-0">
             <div className="flex w-full justify-between items-center mb-2">
-              <DrawerTitle className="font-bold">Filters</DrawerTitle>
+              <DrawerTitle className="font-bold text-xl">Filters</DrawerTitle>
 
-              <DrawerClose className={buttonVariants({ variant: "tertiary" })}>
+              <DrawerClose>
                 <XIcon className="font-bold" />
               </DrawerClose>
             </div>
-            <div className="flex justify-between items-center gap-2 max-h-8 h-full">
+            <div className="flex justify-between items-center gap-3 max-h-8 h-full">
               <div className="flex-1 flex max-w-[950px] relative">
                 <Input
                   placeholder="Search..."
+                  className="bg-card"
                   value={searchText}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleSearchTextChange(e.target.value)
@@ -74,10 +76,7 @@ export const FilterCardVariationMobile = ({
                 </Button>
               </div>
               <div>
-                <Button
-                  variant={"tertiary"}
-                  className="border-2 border-gray-400"
-                >
+                <Button variant={"destructive"}>
                   <Link href={`/category/${categoryId}`}>Reset all</Link>
                 </Button>
               </div>
@@ -85,28 +84,27 @@ export const FilterCardVariationMobile = ({
             <div className="flex max-h-[100px] mt-2">
               <ScrollArea>
                 <div className="flex flex-wrap w-full gap-1">
-                  {checkedItems &&
-                    checkedItems.map((item, index) =>
-                      item.values
-                        .filter((v) => v.toLowerCase().includes(searchText))
-                        .map((value, valueIndex) => (
-                          <Button
-                            key={index + "_" + valueIndex}
-                            variant="tertiary"
-                            className="bg-gray-300 justify-between m-[2px]"
-                            onClick={() => {
-                              uncheckFilter({ title: item.title, value });
-                            }}
-                          >
-                            <span className="mr-2">{value}</span>
-                            <XIcon className="w-4 h-4" />
-                          </Button>
-                        ))
-                    )}
+                  {checkedItems.map((item, index) =>
+                    item.values
+                      .filter((v) => v.toLowerCase().includes(searchText))
+                      .map((value, valueIndex) => (
+                        <FilterItemButton
+                          key={`${index}${valueIndex}`}
+                          type={item.type}
+                          value={value}
+                          onClick={() =>
+                            uncheckFilter({
+                              title: item.title,
+                              value,
+                            })
+                          }
+                        />
+                      ))
+                  )}
                 </div>
               </ScrollArea>
             </div>
-            <hr className="mt-1 border-gray-400 border-y"></hr>
+            <Separator className="mt-1" />
           </DrawerHeader>
           <DrawerHeader>
             <ScrollArea>
