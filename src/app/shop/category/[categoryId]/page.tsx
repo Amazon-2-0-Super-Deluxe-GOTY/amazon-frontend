@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { useState, useEffect } from "react";
 
 import { cn } from "@/lib/utils";
@@ -43,125 +43,10 @@ import {
 import ScrollToTopButton from "@/components/Shared/ScrollToTopButton";
 import { ProductCard } from "@/components/Product/ProductCard";
 import { FilterCardVariationMobile } from "@/components/ProductByCategoryPage/FilterCardVariationMobile";
-import {
-  FilterItem,
-  FilterCheckedType,
-} from "@/components/ProductByCategoryPage/filtersDataTypes";
+import { FilterCheckedType } from "@/components/ProductByCategoryPage/filtersDataTypes";
 import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
-
-const FiltersData: FilterItem[] = [
-  {
-    title: "Brand",
-    type: "checkbox",
-    isSearch: true,
-    values: [
-      "Brand 1",
-      "Brand 2",
-      "Brand 3",
-      "Brand 4",
-      "Brand 5",
-      "Brand 6",
-      "Brand 7",
-      "Brand 8",
-      "Brand 9",
-      "Brand 10",
-      "Brand 11",
-      "Brand 12",
-      "Brand 13",
-      "Brand 14",
-      "Brand 15",
-    ],
-  },
-  {
-    title: "Fabric type",
-    type: "checkbox",
-    isSearch: true,
-    values: [
-      "Fabric type 1",
-      "Fabric type 2",
-      "Fabric type 3",
-      "Fabric type 4",
-      "Fabric type 5",
-      "Fabric type 6",
-      "Fabric type 7",
-      "Fabric type 8",
-      "Fabric type 9",
-      "Fabric type 10",
-      "Fabric type 11",
-      "Fabric type 12",
-      "Fabric type 13",
-      "Fabric type 14",
-      "Fabric type 15",
-    ],
-  },
-  {
-    title: "Size",
-    type: "tiles",
-    isSearch: true,
-    values: [
-      "2XS",
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "2XL",
-      "3XL",
-      "4XL",
-      "5XL",
-      "32",
-      "34",
-      "36",
-      "38",
-      "40",
-      "42",
-      "44",
-      "46",
-      "48",
-      "50",
-      "52",
-      "54",
-      "56",
-      "58",
-      "60",
-    ],
-  },
-  {
-    title: "Color",
-    type: "checkbox",
-    isSearch: true,
-    values: [
-      "Color 1",
-      "Color 2",
-      "Color 3",
-      "Color 4",
-      "Color 5",
-      "Color 6",
-      "Color 7",
-      "Color 8",
-      "Color 9",
-      "Color 10",
-      "Color 11",
-      "Color 12",
-      "Color 13",
-      "Color 14",
-      "Color 15",
-    ],
-  },
-  {
-    title: "Price",
-    type: "price",
-    isSearch: false,
-    values: { min: 0, max: 1000 },
-  },
-  {
-    title: "Customer reviews",
-    type: "rating",
-    isSearch: false,
-    values: [5, 4, 3, 2, 1],
-  },
-];
+import { useCategoryFilters } from "@/api/categories";
 
 export default function CategoryPage({
   params,
@@ -169,6 +54,32 @@ export default function CategoryPage({
   params: { categoryId: string };
 }) {
   const searchParams = useSearchParamsTools();
+  // FIXME: test category id for now
+  const filtersData = useCategoryFilters(1);
+
+  const checkedItems = useMemo<FilterCheckedType>(() => {
+    if (!searchParams.params) return [];
+
+    // @ts-expect-error convert search params to array
+    return [...searchParams.params.entries()].map((entry) => ({
+      title: entry[0],
+      values: entry[1].split(","),
+    }));
+  }, [searchParams]);
+
+  const appliedFiltersCount = useMemo(() => {
+    return checkedItems.reduce((count, item) => count + item.values.length, 0);
+  }, [checkedItems]);
+
+  const uncheckFilter = (param: { title: string; value: string }) => {
+    const existingParams = searchParams.get?.(param.title)?.split(",");
+    if (!existingParams) return;
+
+    searchParams.set(
+      param.title,
+      existingParams.filter((p) => p !== param.value).join(",")
+    );
+  };
 
   //#region ButtonDefaultCardTemplateClick
   const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] =
@@ -181,91 +92,8 @@ export default function CategoryPage({
   };
   //#endregion
 
-  //#region CheckedParams
-  const [checkedItems, setCheckedItems] = useState<FilterCheckedType>(() => {
-    let result: FilterCheckedType = [];
-
-    FiltersData.forEach((filter, index) => {
-      const defaultValue = searchParams.get(filter.title);
-      if (defaultValue) {
-        const itemNamesArray = defaultValue
-          .split(",")
-          .filter(
-            (v) =>
-              filter.type === "price" ||
-              (filter.type === "rating" &&
-                !isNaN(parseInt(v)) &&
-                filter.values.includes(parseInt(v))) ||
-              (filter.type !== "rating" && filter.values.includes(v))
-          );
-
-        if (itemNamesArray.length > 0) {
-          result.push({ title: filter.title, values: itemNamesArray });
-        } else {
-          searchParams.set(filter.title, undefined);
-        }
-      }
-    });
-
-    return result;
-  });
-  //#endregion
-
-  //#region indicatorCheckedFilterCount
-  const [indicatorCount, setIndicatorCount] = useState<number>(() => {
-    if (checkedItems) {
-      return checkedItems?.reduce(
-        (total, item) => total + item.values.length,
-        0
-      );
-    }
-    return 0;
-  });
-
-  useEffect(() => {
-    const newCount = checkedItems?.reduce(
-      (total, item) => total + item.values.length,
-      0
-    );
-    setIndicatorCount(newCount ? newCount : 0);
-  }, [checkedItems]);
-  //#endregion
-
   const clearAllFilters = () => {
-    setCheckedItems([]);
-  };
-
-  const uncheckFilter = (titleItem: string, checkedItem: string) => {
-    const isExists = checkedItems.find((v) => v.title === titleItem);
-    if (isExists) {
-      if (
-        isExists.values.length === 1 &&
-        isExists.values.includes(checkedItem)
-      ) {
-        searchParams.set(titleItem, undefined);
-        setCheckedItems((prevItems) => [
-          ...prevItems.filter((item) => item.title !== titleItem),
-        ]);
-      } else {
-        searchParams.set(
-          titleItem,
-          checkedItems
-            ?.find((v) => v.title === titleItem)
-            ?.values.filter((v) => v !== checkedItem)
-            .join(",")
-        );
-        setCheckedItems((prevItems) =>
-          prevItems.map((item) =>
-            item.title === titleItem
-              ? {
-                  ...item,
-                  values: item.values.filter((val) => val !== checkedItem),
-                }
-              : item
-          )
-        );
-      }
-    }
+    // setCheckedItems([]);
   };
 
   return (
@@ -313,11 +141,7 @@ export default function CategoryPage({
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <MediaQueryCSS minSize="lg">
           <div className="flex flex-col gap-2 w-80">
-            <FilterCardVariation
-              filters={FiltersData}
-              checkedItems={checkedItems}
-              setCheckedItems={setCheckedItems}
-            />
+            <FilterCardVariation filters={filtersData.data} />
           </div>
         </MediaQueryCSS>
         <div className="grow">
@@ -325,9 +149,10 @@ export default function CategoryPage({
             <MediaQueryCSS maxSize="lg">
               <FilterCardVariationMobile
                 categoryId={params.categoryId}
-                filters={FiltersData}
+                filters={filtersData.data}
                 checkedItems={checkedItems}
-                setCheckedItems={setCheckedItems}
+                uncheckFilter={uncheckFilter}
+                appliedFiltersCount={appliedFiltersCount}
               />
             </MediaQueryCSS>
             <MediaQueryCSS minSize="lg">
@@ -336,8 +161,8 @@ export default function CategoryPage({
                   <SelectTrigger className="py-3 px-4 max-w-52 w-full min-w-48 bg-gray-200">
                     <SelectValue
                       placeholder={
-                        indicatorCount +
-                        (indicatorCount === 1
+                        appliedFiltersCount +
+                        (appliedFiltersCount === 1
                           ? " filter applied"
                           : " filters applied")
                       }
@@ -347,29 +172,31 @@ export default function CategoryPage({
                     <div className="p-3">
                       <ScrollArea>
                         <ul className="list-none p-0 m-0 max-h-[230px]">
-                          {checkedItems &&
-                            checkedItems.map((item, index) => (
-                              <ul key={index}>
-                                {item.values.map((value, valueIndex) => (
-                                  <li
+                          {checkedItems.map((item, index) => (
+                            <ul key={index}>
+                              {item.values.map((value, valueIndex) => (
+                                <li
+                                  key={valueIndex}
+                                  className="flex items-center space-x-2 pb-1"
+                                >
+                                  <Button
                                     key={valueIndex}
-                                    className="flex items-center space-x-2 pb-1"
+                                    variant="ghost"
+                                    className="bg-gray-300 justify-between flex gap-2"
+                                    onClick={() => {
+                                      uncheckFilter({
+                                        title: item.title,
+                                        value,
+                                      });
+                                    }}
                                   >
-                                    <Button
-                                      key={valueIndex}
-                                      variant="ghost"
-                                      className="bg-gray-300 justify-between flex gap-2"
-                                      onClick={() => {
-                                        uncheckFilter(item.title, value);
-                                      }}
-                                    >
-                                      <span>{value}</span>
-                                      <XIcon />
-                                    </Button>
-                                  </li>
-                                ))}
-                              </ul>
-                            ))}
+                                    <span>{value}</span>
+                                    <XIcon />
+                                  </Button>
+                                </li>
+                              ))}
+                            </ul>
+                          ))}
                         </ul>
                       </ScrollArea>
                       <hr className="my-4 border-gray-400 border-y"></hr>

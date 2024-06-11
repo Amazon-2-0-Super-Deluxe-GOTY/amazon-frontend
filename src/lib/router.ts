@@ -6,6 +6,7 @@ export const useSearchParamsTools = () => {
   const searchParams = useSearchParams();
 
   const set = (name: string, value?: string) => {
+    if (!searchParams) return;
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (!value) {
@@ -21,7 +22,7 @@ export const useSearchParamsTools = () => {
   };
 
   return {
-    get: searchParams.get.bind(searchParams),
+    get: searchParams?.get.bind(searchParams),
     set,
     params: searchParams,
   };

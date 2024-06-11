@@ -28,7 +28,7 @@ export const CategoryTreeNode = ({
     updatedNodeChecked: CheckedState
   ) => void;
   onSelect: (node: CategoryTreeNodeType) => void;
-  isSelected: (categoryId: string) => boolean;
+  isSelected: (categoryId: number) => boolean;
 }) => {
   const category = node.value;
   const nodeSelected = isSelected(category.id);
@@ -66,7 +66,7 @@ export const CategoryTreeNode = ({
             className="text-xl font-medium cursor-pointer grow"
             onClick={onSelectNode}
           >
-            {category.title}
+            {category.name}
           </span>
           <AccordionTrigger
             className="pt-0 w-6 h-6 justify-center"
@@ -100,7 +100,7 @@ export const CategoryTreeNode = ({
         className="text-xl font-medium basis-full cursor-pointer"
         onClick={onSelectNode}
       >
-        {category.title}
+        {category.name}
       </label>
     </div>
   );

@@ -22,59 +22,36 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useSearchParamsTools } from "@/lib/router";
-import { useEffect, useState } from "react";
-import { ModalSignInUpVariation } from "../SignInUpModal/ModalSignInUpVariation";
+import { SignInUpButtons } from "../SignInUpModal/SignInUpModals";
+import type { User } from "@/api/types";
+import { logOut, useUser } from "@/api/users";
+import { useAuthStore } from "@/lib/storage";
 
 export const UserSidebar = ({
   isOpen,
   closeSidebar,
-  user,
   categories,
 }: {
   isOpen: boolean;
   closeSidebar: () => void;
-  user?: { fullName: string; avatar: string };
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
-  const searchParams = useSearchParamsTools();
-  
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
-    const defaultValue = searchParams.get("modal");
-    if (defaultValue) return true;
-
-    return false;
-  });
-
+  const { user, refetch } = useUser();
   const isLoggedIn = !!user;
-
-  const openLogInModal = () => {
-    closeSidebar();
-    searchParams.set("modal", "login");
-  };
-  const openSignUpModal = () => {
-    closeSidebar();
-    searchParams.set("modal", "signup");
-  };
-  const closeModal = () => {
-    searchParams.set("modal", undefined);
-  };
-  
-  useEffect(() => {
-    if (searchParams.get("modal")) setIsModalOpen(true);
-  }, [openLogInModal, openSignUpModal]);
-
-  useEffect(() => {
-    if (!searchParams.get("modal")) setIsModalOpen(false);
-  }, [closeModal]);
+  const fullName = `${user?.firstName} ${user?.lastName}`;
+  const clearToken = useAuthStore((state) => state.clearToken);
 
   const headerData = {
-    avatarImage: isLoggedIn ? user.avatar : "",
-    avatarFallback: isLoggedIn ? textAvatar(user.fullName) : "?",
-    title: isLoggedIn ? user.fullName : "Not signed in",
+    avatarImage: user?.avatarUrl ?? "",
+    avatarFallback: isLoggedIn ? textAvatar(fullName) : "?",
+    title: isLoggedIn ? fullName : "Not signed in",
     description: isLoggedIn
       ? "Customer"
       : "Log in to enjoy a more pleasant experience",
+  };
+
+  const onLogOut = () => {
+    logOut().then(clearToken);
   };
 
   return (
@@ -91,10 +68,7 @@ export const UserSidebar = ({
           </div>
           {!isLoggedIn && (
             <div className="flex flex-col gap-2 pt-2 lg:pt-4">
-              <Button onClick={openSignUpModal}>Sign up</Button>
-              <Button onClick={openLogInModal} variant={"secondary"}>
-                Log in
-              </Button>
+              <SignInUpButtons variant="sidebar" />
             </div>
           )}
         </SidebarHeader>
@@ -106,7 +80,12 @@ export const UserSidebar = ({
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-3 lg:gap-4">
               {categories.map((item) => (
-                <Link className="w-full" href={item.url} key={item.title} onClick={closeSidebar}>
+                <Link
+                  className="w-full"
+                  href={item.url}
+                  key={item.title}
+                  onClick={closeSidebar}
+                >
                   <SidebarItem icon={item.icon} text={item.title} />
                 </Link>
               ))}
@@ -117,7 +96,7 @@ export const UserSidebar = ({
         <Separator />
         <div className="flex flex-col gap-3 lg;gap-4">
           {isLoggedIn && (
-            <Link href={"/profile/settings"}>
+            <Link href={"/account?tab=settings-open"} >
               <SidebarItem icon={<SettingsIcon />} text="Settings" />
             </Link>
           )}
@@ -128,13 +107,12 @@ export const UserSidebar = ({
         {isLoggedIn && (
           <>
             <Separator />
-            <button>
+            <button onClick={onLogOut}>
               <SidebarItem icon={<LogOutIcon />} text="Log out" />
             </button>
           </>
         )}
       </Sidebar>
-      {!isLoggedIn && isModalOpen && <ModalSignInUpVariation onClose={closeModal} />}
     </div>
   );
 };

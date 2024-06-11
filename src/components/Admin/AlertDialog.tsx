@@ -5,10 +5,20 @@ import { Separator } from "../ui/separator";
 interface Props {
   title: string;
   text: string;
+  buttonConfirmText?: string;
+  buttonCloseText?: string;
+  variant?: "default" | "destructive";
   closeModal: (param?: { action: "CLOSE" } | { action: "CONFIRM" }) => void;
 }
 
-export const AlertDialog = ({ closeModal, title, text }: Props) => {
+export const AlertDialog = ({
+  closeModal,
+  title,
+  text,
+  buttonConfirmText = "Delete",
+  buttonCloseText = "Cancel",
+  variant = "destructive",
+}: Props) => {
   const onOpenChange = (open: boolean) => {
     if (!open) {
       closeModal();
@@ -27,14 +37,14 @@ export const AlertDialog = ({ closeModal, title, text }: Props) => {
               className="w-full"
               onClick={() => closeModal({ action: "CLOSE" })}
             >
-              Cancel
+              {buttonCloseText}
             </Button>
             <Button
-              variant={"destructive"}
+              variant={variant}
               className="w-full"
               onClick={() => closeModal({ action: "CONFIRM" })}
             >
-              Delete
+              {buttonConfirmText}
             </Button>
           </div>
         </div>

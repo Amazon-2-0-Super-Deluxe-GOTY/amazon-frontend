@@ -30,8 +30,8 @@ import {
 import Image from "next/image";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
-import { useQuery } from "@tanstack/react-query";
 import { getReviewTranslation } from "@/api/review";
+import { useQuery } from "@tanstack/react-query";
 
 interface ReviewCardProps {
   review: Review;
@@ -68,7 +68,7 @@ export const ReviewCardFull = ({
   React.useEffect(() => {
     const browserLang = navigator.language;
     setIsInUserLanguage(review.language.startsWith(browserLang));
-  }, []);
+  }, [review.language]);
 
   const onTranslate = async (id: string) => {
     if (translatedReviews.includes(id)) {
@@ -428,7 +428,7 @@ const ReviewBody = ({
       );
     }
     return elems;
-  }, [review.rating]);
+  }, [review]);
 
   const handleTranslate = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

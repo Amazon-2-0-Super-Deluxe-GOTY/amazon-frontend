@@ -1,14 +1,15 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { CategoryTreeNode } from "./CategoryTreeNode";
-import type { Category, CategoryTreeNodeType, CheckedState } from "./types";
+import type { CategoryTreeNodeType, CheckedState } from "./types";
+import type { Category } from "@/api/categories";
 import { PlusIcon } from "lucide-react";
 import { useMemo } from "react";
 import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
 import { Button } from "@/components/ui/button";
 import { AlertDialog } from "../AlertDialog";
 import clsx from "clsx";
-import { useModal } from "../Modal";
+import { useModal } from "../../Shared/Modal";
 
 export const CategoryTree = ({
   root,
@@ -25,8 +26,8 @@ export const CategoryTree = ({
   ) => void;
   onSelect: (node: CategoryTreeNodeType) => void;
   onDelete: (nodes: TreeNodeType<Category>[]) => void;
-  onCreateClick: (rootId: string) => void;
-  isSelected: (categoryId: string) => boolean;
+  onCreateClick: (rootId: number) => void;
+  isSelected: (categoryId: number) => boolean;
 }) => {
   const { showModal } = useModal();
 
@@ -64,7 +65,7 @@ export const CategoryTree = ({
               className="text-xl font-medium basis-full cursor-pointer"
               onClick={() => onSelect(root)}
             >
-              {root.value.title}
+              {root.value.name}
             </h2>
           </div>
           {checkedNodes.length > 0 ? (

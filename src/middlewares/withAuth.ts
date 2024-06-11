@@ -1,22 +1,45 @@
+import { getUserProfileServer } from "@/api/server";
+import type { User } from "@/api/types";
 import { type NextRequest, NextResponse } from "next/server";
 
-const protectedPathsShop = ["/product"];
+const protectedPathsShop = ["/account"];
 
 export const withAuth = async (
   subdomain: string,
   req: NextRequest
-): Promise<string | undefined> => {
+): Promise<NextResponse | undefined> => {
   const pathname = req.nextUrl.pathname;
+  const token = req.cookies.get("jwt");
+  let profile: User | undefined = undefined;
 
-  if (subdomain === "shop") {
-    // example of auth for user
-    // if (protectedPathsShop.some((path) => pathname.startsWith(path))) {
-    //   const userId = req.cookies.get("userId");
-    //   if (!userId) {
-    //     return "/category/1";
-    //   }
-    // }
-  } else if (subdomain === "admin") {
+  const isProtectedShopPath =
+    subdomain === "shop" &&
+    protectedPathsShop.some((path) => pathname.startsWith(path));
+  const isProtectedAdminPath = subdomain === "admin" && pathname !== "/";
+  const isProtectedPath = isProtectedShopPath || isProtectedAdminPath;
+
+  if (isProtectedPath) {
+    if (token) {
+      try {
+        const profileResponse = await getUserProfileServer(token.value);
+
+        if (profileResponse.status === 200) {
+          profile = profileResponse.data;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    if (isProtectedShopPath) {
+      if (!profile) {
+        return NextResponse.redirect(new URL("/", req.nextUrl.origin));
+      }
+    } else if (isProtectedAdminPath) {
+      if (!profile?.isAdmin) {
+        return NextResponse.redirect(new URL("/", req.nextUrl.origin));
+      }
+    }
   }
 
   return undefined;

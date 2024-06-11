@@ -24,53 +24,66 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "../ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import type { Category } from "../Admin/Category/types";
-import { useEffect, useMemo, useState } from "react";
-import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
+import { useEffect, useTransition } from "react";
 import { getAllIcons } from "@/lib/categories";
 import { Separator } from "../ui/separator";
-import { MinusIcon } from "lucide-react";
-import { ScrollArea } from "../ui/scroll-area";
-import clsx from "clsx";
+import { InfoIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { uploadCategoryImage, type Category } from "@/api/categories";
+import { CategorySelect } from "../Admin/Category/CategorySelect";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { isImageValid } from "@/lib/products";
+import { AlertDialog } from "../Admin/AlertDialog";
+import { useModal } from "../Shared/Modal";
+import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
 
-const formSchema = z.object({
-  iconId: z.string().optional(),
-  parentId: z.string().optional(),
-  name: z.string().min(1, {
-    message: "Category name must not be empty.",
-  }),
-  description: z
-    .string()
-    .min(1, {
-      message: "Category description must not be empty.",
-    })
-    .max(300, {
-      message: "Category description must not be more than 300 characters.",
+const formSchema = z
+  .object({
+    iconId: z.string().optional(),
+    parentId: z.number().optional(),
+    name: z.string().min(1, {
+      message: "Category name must not be empty.",
     }),
-  status: z.enum(["active", "inactive"]),
-  options: z.array(
-    z.object({
-      title: z.string().min(1, {
-        message: "Option must not be empty.",
+    description: z
+      .string()
+      .min(1, {
+        message: "Category description must not be empty.",
+      })
+      .max(300, {
+        message: "Category description must not be more than 300 characters.",
       }),
-      appearance: z.enum(["tiles", "rows"]),
-    })
-  ),
-});
-
-const optionFormSchema = z.object({
-  title: z.string().min(1, {
-    message: "Option name must not be empty.",
-  }),
-  appearance: z.enum(["tiles", "rows"]),
-});
+    isDeleted: z.boolean(),
+    image: z.object(
+      {
+        id: z.string(),
+        imageUrl: z.string(),
+      },
+      { required_error: "Please, select image" }
+    ),
+    categoryPropertyKeys: z.array(
+      z.object({
+        name: z.string().min(1, {
+          message: "Property key must not be empty.",
+        }),
+      })
+    ),
+  })
+  .superRefine((values, ctx) => {
+    if (!values.iconId && !values.parentId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please, select parent category",
+        path: ["parentId"],
+      });
+    }
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface Props {
   isRoot: boolean;
-  defaultRootId?: string;
-  categoriesTrees: TreeNodeType<Category>[];
+  defaultValues?: FormValues;
+  allCategories: Category[];
   onSubmit: (values: FormValues) => void;
   onCancel: () => void;
 }
@@ -79,42 +92,33 @@ export const CreateCategoryForm = ({
   onSubmit,
   onCancel,
   isRoot,
-  defaultRootId,
-  categoriesTrees,
+  defaultValues,
+  allCategories,
 }: Props) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      status: "active",
-      iconId: "shirt",
-    },
+    defaultValues: defaultValues
+      ? defaultValues
+      : {
+          name: "",
+          description: "",
+          isDeleted: false,
+          iconId: isRoot ? "shirt" : undefined,
+          categoryPropertyKeys: [],
+        },
   });
-  const optionForm = useForm<z.infer<typeof optionFormSchema>>({
-    resolver: zodResolver(optionFormSchema),
-    defaultValues: {
-      title: "",
-      appearance: "tiles",
-    },
-  });
-  const optionsArray = useFieldArray({
-    name: "options",
+  const propertyKeysArray = useFieldArray({
+    name: "categoryPropertyKeys",
     control: form.control,
   });
-
-  const [selectedRootId, setSelectedRootId] = useState(defaultRootId);
+  const [isUploading, startUploadTransition] = useTransition();
+  const { showModal } = useModal();
 
   useEffect(() => {
-    setSelectedRootId(defaultRootId);
-  }, [defaultRootId]);
+    form.reset(defaultValues);
+  }, [defaultValues]);
 
-  const rootCategories = categoriesTrees;
-  const childCategories = useMemo(() => {
-    if (!selectedRootId) return [];
-    const root = categoriesTrees.find((n) => n.value.id === selectedRootId);
-    return root ? treeToArray(root) : [];
-  }, [selectedRootId, categoriesTrees]);
+  const isEdit = !!defaultValues;
 
   const handleSubmit = (values: FormValues) => {
     // for some reason form methods doesn't reset fields, so just form the object manually
@@ -122,111 +126,197 @@ export const CreateCategoryForm = ({
       ? {
           name: values.name,
           description: values.description,
-          status: values.status,
-          options: values.options,
+          isDeleted: values.isDeleted,
+          categoryPropertyKeys: values.categoryPropertyKeys,
+          image: values.image,
           iconId: values.iconId,
         }
       : {
           name: values.name,
           description: values.description,
-          status: values.status,
-          options: values.options,
+          isDeleted: values.isDeleted,
+          categoryPropertyKeys: values.categoryPropertyKeys,
+          image: values.image,
           parentId: values.parentId,
         };
     onSubmit(cleanValues);
   };
 
-  const onCreateOption = (value: z.infer<typeof optionFormSchema>) => {
-    if (optionsArray.fields.some((v) => v.title === value.title)) {
-      return optionForm.setError(
-        "title",
-        {
-          type: "duplicate",
-          message: "Option with this name already exist",
+  const onUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const image = files[0];
+
+    if (!isImageValid(image)) {
+      showModal({
+        component: AlertDialog,
+        props: {
+          title: "Error",
+          text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
+          buttonConfirmText: "Try again",
+          buttonCloseText: "Back",
+          variant: "default",
         },
-        { shouldFocus: true }
-      );
+      });
+      return;
     }
-    optionsArray.append(value);
-    optionForm.reset({ title: "", appearance: "tiles" });
+
+    startUploadTransition(async () => {
+      const uploadedImage = await uploadCategoryImage(image);
+
+      if (uploadedImage.status === 200) {
+        form.setValue("image", uploadedImage.data[0]);
+      }
+    });
   };
 
-  const onDeleteOption = (index: number) => () => {
-    optionsArray.remove(index);
+  const onAddPropertyKey = () => {
+    propertyKeysArray.append({ name: "" });
+  };
+  const onRemovePropertyKey = (index: number) => () => {
+    propertyKeysArray.remove(index);
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-6 h-full relative p-1"
+        id="create-category-form"
       >
-        <div className="space-y-6" id="info">
-          <div className="space-y-3.5">
-            <h2 className="text-3xl font-semibold">Category info</h2>
-            <Separator />
-          </div>
-          <fieldset className="flex items-center gap-6">
-            {isRoot && (
-              <FormField
-                control={form.control}
-                name="iconId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel hidden>Icon</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="gap-3.5 p-0 border-none w-max h-max">
-                          <div className="p-3 border-2 rounded-sm">
-                            <SelectValue className="border-2" />
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent className="w-max min-w-max">
-                          <div className="grid grid-cols-9 gap-2 p-4">
-                            {getAllIcons().map((icon) => (
-                              <SelectItem
-                                value={icon.id}
-                                key={icon.id}
-                                className="w-max p-2 data-[state=checked]:ring-1 ring-black"
-                                showCheck={false}
-                              >
-                                {icon.render("w-8 h-8")}
-                              </SelectItem>
-                            ))}
-                          </div>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormDescription hidden>
-                      Icon displayed for category
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+        <fieldset className="space-y-6" id="info">
+          <div className="flex items-center gap-6 h-32">
             <FormField
               control={form.control}
-              name="name"
+              name="image"
               render={({ field }) => (
-                <FormItem className="w-full relative">
-                  <FormLabel className="absolute left-3 -top-0.5 font-light bg-white p-0.5">
-                    Category name
-                  </FormLabel>
+                <FormItem className="relative flex items-center justify-between">
                   <FormControl>
-                    <Input placeholder="Enter name" {...field} />
+                    <div className="w-32 h-32 flex justify-center items-center bg-gray-200 rounded-lg overflow-hidden relative">
+                      {isUploading ? (
+                        <Skeleton className="absolute inset-0 z-20 rounded-lg" />
+                      ) : field.value?.imageUrl ? (
+                        <Image
+                          src={field.value.imageUrl}
+                          alt={"Category image"}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <PlusIcon className="w-16 h-16" />
+                      )}
+                      {!isUploading && (
+                        <Input
+                          className="absolute p-0 h-full inset-0 opacity-0 z-10 cursor-pointer"
+                          type="file"
+                          accept="image/jpg,image/jpeg,image/png"
+                          placeholder=""
+                          multiple
+                          value={""}
+                          onChange={onUploadImage}
+                          disabled={isUploading}
+                        />
+                      )}
+                    </div>
                   </FormControl>
-                  <FormDescription hidden>
-                    This is category public display name.
-                  </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="px-4" />
                 </FormItem>
               )}
             />
-          </fieldset>
+            <div className="w-full h-full flex flex-col justify-between">
+              <div className="flex items-center gap-6">
+                {isRoot && (
+                  <FormField
+                    control={form.control}
+                    name="iconId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel hidden>Icon</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger className="gap-3.5 p-0 border-none w-max h-max">
+                              <div className="p-3 border-2 rounded-sm">
+                                <SelectValue className="border-2" />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent className="w-max min-w-max">
+                              <div className="grid grid-cols-9 gap-2 p-4">
+                                {getAllIcons().map((icon) => (
+                                  <SelectItem
+                                    value={icon.id}
+                                    key={icon.id}
+                                    className="w-max p-2 data-[state=checked]:ring-1 ring-black"
+                                    showCheck={false}
+                                  >
+                                    {icon.render("w-8 h-8")}
+                                  </SelectItem>
+                                ))}
+                              </div>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription hidden>
+                          Icon displayed for category
+                        </FormDescription>
+                        <FormMessage className="px-4" />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="w-full relative">
+                      <FormLabel className="absolute left-3 -top-0.5 font-light bg-white p-0.5">
+                        Category name
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter name" {...field} />
+                      </FormControl>
+                      <FormDescription hidden>
+                        This is category public display name.
+                      </FormDescription>
+                      <FormMessage className="px-4" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="isDeleted"
+                render={({ field }) => (
+                  <FormItem className="relative flex items-center justify-between">
+                    <FormLabel className="text-xl font-semibold">
+                      Status
+                    </FormLabel>
+                    <FormControl>
+                      <ToggleGroup
+                        type="single"
+                        className="gap-3.5"
+                        value={field.value ? "true" : "false"}
+                        onValueChange={(value) =>
+                          value && field.onChange(value === "true")
+                        }
+                      >
+                        <ToggleGroupItem value="false">Active</ToggleGroupItem>
+                        <ToggleGroupItem value="true">
+                          Not active
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                    </FormControl>
+                    <FormDescription hidden>Active or inactive</FormDescription>
+                    <FormMessage className="px-4" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
           <FormField
             control={form.control}
             name="description"
@@ -247,234 +337,129 @@ export const CreateCategoryForm = ({
                     {field.value.length}/300
                   </FormDescription>
                 </div>
-                <FormMessage />
+                <FormMessage className="px-4" />
               </FormItem>
             )}
           />
           {!isRoot && (
-            <>
-              <Select value={selectedRootId} onValueChange={setSelectedRootId}>
-                <SelectTrigger className="w-full relative">
-                  <label className="absolute left-3 -top-3.5 font-light bg-white p-0.5">
-                    Main category
-                  </label>
-                  <SelectValue placeholder="Choose main category..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {rootCategories.map((c) => (
-                    <SelectItem value={c.value.id} key={c.value.id}>
-                      {c.value.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormField
-                control={form.control}
-                name="parentId"
-                disabled={!selectedRootId}
-                render={({ field }) => (
-                  <FormItem className="relative">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5 z-10">
-                      Parent category
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={field.disabled}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose parent category..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {childCategories.map((c) => (
-                          <SelectItem value={c.value.id} key={c.value.id}>
-                            {c.value.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription hidden>
-                      Parent category for new category
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
-          )}
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem className="relative flex items-center justify-between">
-                <FormLabel className="text-xl font-semibold">Status</FormLabel>
-                <FormControl>
-                  <ToggleGroup
-                    type="single"
-                    className="gap-3.5"
-                    onValueChange={(value) => value && field.onChange(value)}
-                    {...field}
-                  >
-                    <ToggleGroupItem value="active">Active</ToggleGroupItem>
-                    <ToggleGroupItem value="inactive">
-                      Not active
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </FormControl>
-                <FormDescription hidden>Active or inactive</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="pt-2">
-            <Separator />
-          </div>
-        </div>
-
-        <div className="space-y-6" id="options">
-          <div className="space-y-3.5">
-            <h2 className="text-3xl font-semibold">Option configuration</h2>
-            <Separator />
-          </div>
-          <div className="flex flex-col gap-4 px-1">
             <FormField
-              control={optionForm.control}
-              name="title"
-              render={({ field, fieldState }) => (
+              control={form.control}
+              name="parentId"
+              render={({ field }) => (
                 <FormItem className="w-full relative">
-                  <FormLabel className="absolute left-3 -top-0.5 font-light bg-white p-0.5">
-                    Name
+                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                    Parent category
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter option name" {...field} />
+                    <CategorySelect
+                      categories={allCategories}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    />
                   </FormControl>
                   <FormDescription hidden>
-                    This is option display name.
+                    This is parent category of subcategory.
                   </FormDescription>
-                  <FormMessage>{fieldState.error?.message}</FormMessage>
+                  <FormMessage className="px-4" />
                 </FormItem>
               )}
             />
-            <FormField
-              control={optionForm.control}
-              name="appearance"
-              render={({ field, fieldState }) => (
-                <FormItem className="relative space-y-3.5">
-                  <FormLabel className="text-xl font-semibold">
-                    Display appearance
-                  </FormLabel>
-                  <FormControl>
-                    <ToggleGroup
-                      type="single"
-                      className="grid grid-cols-2 gap-3.5"
-                      onValueChange={(value) => value && field.onChange(value)}
-                      {...field}
-                    >
-                      <ToggleGroupItem className="h-full p-6" value="tiles">
-                        <div className="space-y-3.5 text-start">
-                          <p className="text-xl space-x-3">
-                            <span className="font-normal">Option</span>
-                            <span className="font-semibold">Name</span>
-                          </p>
-                          <div className="flex gap-3">
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 ring-1 ring-black rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                            <div className="p-2 rounded-sm">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                            </div>
-                          </div>
-                        </div>
-                      </ToggleGroupItem>
-                      <ToggleGroupItem className="h-full p-6" value="rows">
-                        <div className="space-y-3.5 text-start w-[70%]">
-                          <p className="text-xl space-x-3">
-                            <span className="font-normal">Option</span>
-                            <span className="font-semibold">Name</span>
-                          </p>
-                          <div className="flex flex-col gap-3">
-                            <div className="p-2 rounded-sm flex items-center gap-2">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                              <span>Name</span>
-                            </div>
-                            <div className="p-2 rounded-sm flex items-center gap-2 ring-1 ring-black">
-                              <div className="w-6 h-6 bg-gray-300 rounded-sm" />
-                              <span>Name</span>
-                            </div>
-                          </div>
-                        </div>
-                      </ToggleGroupItem>
-                    </ToggleGroup>
-                  </FormControl>
-                  <FormDescription hidden>Active or inactive</FormDescription>
-                  <FormMessage>{fieldState.error?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-            <Button
-              type="button"
-              className="ml-auto"
-              onClick={optionForm.handleSubmit(onCreateOption)}
-            >
-              Create option
-            </Button>
-          </div>
-          <div className="space-y-5">
-            <div className="space-y-4">
-              <Separator />
-              <p className="px-4 text-xl">Name</p>
+          )}
+
+          {isEdit && (
+            <div className="flex items-center justify-between">
+              <p className="text-xl font-semibold">Role</p>
+              <div className="flex items-center gap-3.5">
+                <p className="text-lg">
+                  {!isRoot ? "Child category" : "Parent category"}
+                </p>
+                <Popover>
+                  <PopoverTrigger className="group">
+                    <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="max-w-sm w-full">
+                    <div className="space-y-4 text-sm">
+                      <div>
+                        <p className="font-semibold">Parent category</p>
+                        <p>
+                          This is the main section of goods or services on the
+                          marketplace, for example, &quot;Electronics&quot;,
+                          &quot;Clothing&quot;.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Subcategory</p>
+                        <p>
+                          This is a more specific part of the parent category,
+                          for example, &quot;Smartphones&quot; in the category
+                          &quot;Electronics&quot;.
+                        </p>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+          )}
+        </fieldset>
+        {!isRoot && (
+          <fieldset className="space-y-6 pt-2">
+            <div className="space-y-3.5">
+              <h3 className="text-xl font-semibold">Property keys</h3>
               <Separator />
             </div>
-            <ScrollArea>
-              <div
-                className={clsx(
-                  "flex flex-col gap-4 px-4 h-32",
-                  optionsArray.fields.length === 0 &&
-                    "justify-center items-center"
-                )}
-              >
-                {optionsArray.fields.length > 0 ? (
-                  optionsArray.fields.map((option, i) => (
-                    <div
-                      key={option.id}
-                      className="flex justify-between items-center"
-                    >
-                      <p className="text-xl">{option.title}</p>
-                      <button
-                        type="button"
-                        className="w-4 h-4"
-                        onClick={onDeleteOption(i)}
-                      >
-                        <MinusIcon />
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-xl">
-                    There are no specifics in this category
-                  </p>
-                )}
+            {propertyKeysArray.fields.map((value, i) => (
+              <div className="flex items-center gap-3.5" key={value.id}>
+                <FormField
+                  control={form.control}
+                  name={`categoryPropertyKeys.${i}.name`}
+                  render={({ field }) => (
+                    <FormItem className="relative w-full space-y-0">
+                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                        Property key
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter property key name..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="px-4" />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  className="h-max p-3"
+                  onClick={onRemovePropertyKey(i)}
+                >
+                  <Trash2Icon className="w-6 h-6" />
+                </Button>
               </div>
-            </ScrollArea>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 ml-auto">
-          <Button type="reset" variant={"secondary"} onClick={onCancel}>
+            ))}
+            <Button
+              type="button"
+              className="h-max w-full p-4 justify-start gap-3.5"
+              variant={"secondary"}
+              onClick={onAddPropertyKey}
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add property key
+            </Button>
+            <FormMessage className="px-4">
+              {form.formState.errors.categoryPropertyKeys?.message}
+            </FormMessage>
+          </fieldset>
+        )}
+
+        {/* <div className="fixed bottom-0 left-0 right-0 p-6 flex justify-end gap-3.5 bg-white z-10 rounded-b-lg">
+          <Button type="button" variant={"secondary"} onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">Submit</Button>
-        </div>
+          <Button type="submit">{isEdit ? "Save" : "Create"}</Button>
+        </div> */}
       </form>
     </Form>
   );

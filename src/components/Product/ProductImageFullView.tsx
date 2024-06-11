@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "../ui/dialog";
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
@@ -8,31 +9,46 @@ import {
 } from "../ui/carousel";
 import Image from "next/image";
 import { XIcon } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 interface Props {
   images: string[];
   startIndex?: number;
-  isOpen: boolean;
   closeModal: () => void;
 }
 
 export const ProductImageFullView = (props: Props) => {
+  const apiRef = useRef<CarouselApi | null>(null);
   const onOpenChange = (value: boolean) => {
     if (!value) {
       props.closeModal();
     }
   };
 
+  useEffect(() => {
+    function handleKeydown(e: KeyboardEvent) {
+      if (e.key === "ArrowRight") {
+        apiRef.current?.scrollNext();
+      } else if (e.key === "ArrowLeft") {
+        apiRef.current?.scrollPrev();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
+  }, []);
+
   return (
-    <Dialog open={props.isOpen} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-screen w-screen h-[68vh] lg:w-[83vw] lg:h-[95vh] p-0"
+        className="max-w-screen w-screen h-[68vh] lg:w-[83vw] lg:h-[95vh] p-0 bg-transparent border-none"
         hideClose
       >
         <div className="w-full h-full relative">
           <Carousel
             className="w-full h-full [&>div]:h-full"
             opts={{ align: "center", startIndex: props.startIndex }}
+            setApi={(api) => void (apiRef.current = api)}
           >
             <CarouselContent className="h-full">
               {props.images.map((img, index) => (
@@ -41,7 +57,7 @@ export const ProductImageFullView = (props: Props) => {
                     <Image
                       src={img}
                       alt="Product image"
-                      className="object-cover"
+                      className="object-contain"
                       fill
                     />
                   </div>

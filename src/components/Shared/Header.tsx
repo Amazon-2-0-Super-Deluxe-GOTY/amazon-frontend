@@ -3,14 +3,12 @@ import * as React from "react";
 import Link from "next/link";
 import {
   ArmchairIcon,
-  BellIcon,
   HeartIcon,
   HomeIcon,
   MenuIcon,
   MonitorIcon,
   SearchIcon,
   ShirtIcon,
-  ShoppingCartIcon,
   UserIcon,
   WrenchIcon,
 } from "lucide-react";
@@ -80,7 +78,6 @@ export function Header() {
         </div>
         <div className="flex items-center space-x-4">
           <HeartIcon className="text-gray-700 hidden md:block" />
-          <BellIcon className="text-gray-700 hidden md:block" />
           <UserIcon className="text-gray-700 hidden md:block" />
           <ShoppingCart />
         </div>
