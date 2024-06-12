@@ -35,15 +35,14 @@ import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCa
 import { useCategoryFilters } from "@/api/categories";
 import { Pagination } from "@/components/Shared/Pagination";
 import { Separator } from "@/components/ui/separator";
-import {
-  Grid3x3Icon,
-  Grid5x4Icon,
-  HomeIcon,
-  StarFullIcon,
-  XIcon,
-} from "@/components/Shared/Icons";
+import { Grid3x3Icon, Grid5x4Icon, HomeIcon } from "@/components/Shared/Icons";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { FilterItemButton } from "@/components/ProductByCategoryPage/FilterItemButton";
+import { ProductFilters, getProducts } from "@/api/products";
+import { parsePriceParamValue } from "@/lib/products";
+import { useQuery } from "@tanstack/react-query";
+import { ProductCardSkeleton } from "@/components/Product/ProductCardSkeleton";
+import { FilterCardSkeleton } from "@/components/ProductByCategoryPage/FilterCardSkeleton";
 
 export default function CategoryPage({
   params,
@@ -57,6 +56,7 @@ export default function CategoryPage({
     return filtersData.data.map((f) => f.title);
   }, [filtersData.data]);
   const [listView, setListView] = useState("cols-3");
+  const pageSize = listView === "cols-5" ? 30 : 12;
 
   const checkedItems = useMemo<FilterCheckedType[]>(() => {
     if (!searchParams.params) return [];
@@ -81,16 +81,6 @@ export default function CategoryPage({
     return checkedItems.reduce((count, item) => count + item.values.length, 0);
   }, [checkedItems]);
 
-  const uncheckFilter = (param: { title: string; value: string }) => {
-    const existingParams = searchParams.get?.(param.title)?.split(",");
-    if (!existingParams) return;
-
-    searchParams.set(
-      param.title,
-      existingParams.filter((p) => p !== param.value).join(",")
-    );
-  };
-
   const page = useMemo<number>(() => {
     const pageFromParams = searchParams.get?.("page");
     if (!pageFromParams) return 1;
@@ -101,8 +91,8 @@ export default function CategoryPage({
     return pageNumber;
   }, [searchParams]);
 
-  const sortBy = useMemo(() => {
-    const valueFromParams = searchParams.get?.("sortBy");
+  const orderBy = useMemo(() => {
+    const valueFromParams = searchParams.get?.("orderBy");
     if (!valueFromParams) return "date";
     return valueFromParams;
   }, [searchParams]);
@@ -111,8 +101,43 @@ export default function CategoryPage({
     searchParams.set("page", page.toString());
   };
 
-  const setSortBy = (sortBy: string) => {
-    searchParams.set("sortBy", sortBy);
+  const productFilterParams = useMemo<ProductFilters>(() => {
+    return {
+      // FIXME: test category id for now
+      categoryId: 1,
+      orderBy: orderBy as ProductFilters["orderBy"],
+      page: page,
+      pageSize: pageSize,
+      price: parsePriceParamValue(searchParams.get?.("price")),
+      rating: searchParams.get?.("rating") ?? undefined,
+      additionalFilters: checkedItems
+        .filter((i) => i.type === "checkbox")
+        .map((i) => ({ name: i.title, values: i.values })),
+    };
+  }, [checkedItems, orderBy, page, searchParams, pageSize]);
+
+  const productsQuery = useQuery({
+    queryKey: ["products", productFilterParams],
+    queryFn: () => getProducts(productFilterParams),
+    select(data) {
+      return data.status === 200
+        ? { products: data.data, count: data.count }
+        : { products: [], count: { pagesCount: 0 } };
+    },
+  });
+
+  const uncheckFilter = (param: { title: string; value: string }) => {
+    const existingParams = searchParams.get?.(param.title)?.split(",");
+    if (!existingParams) return;
+
+    searchParams.set(
+      param.title,
+      existingParams.filter((p) => p !== param.value).join(",")
+    );
+  };
+
+  const setOrderBy = (sortBy: string) => {
+    searchParams.set("orderBy", sortBy);
   };
 
   return (
@@ -160,7 +185,14 @@ export default function CategoryPage({
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <MediaQueryCSS minSize="lg">
           <div className="flex flex-col gap-2 w-[370px]">
-            <FilterCardVariation filters={filtersData.data} />
+            {filtersData.isLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <FilterCardSkeleton key={i} />
+              ))
+            ) : (
+              <FilterCardVariation filters={filtersData.data} />
+            )}
+            <FilterCardSkeleton />
           </div>
         </MediaQueryCSS>
         <div className="grow">
@@ -172,6 +204,7 @@ export default function CategoryPage({
                 checkedItems={checkedItems}
                 uncheckFilter={uncheckFilter}
                 appliedFiltersCount={appliedFiltersCount}
+                isLoading={filtersData.isLoading}
               />
             </MediaQueryCSS>
             <MediaQueryCSS minSize="lg">
@@ -225,7 +258,7 @@ export default function CategoryPage({
             </MediaQueryCSS>
             <div className="flex gap-2 items-center w-full justify-end">
               <div className="max-w-[260px] w-full">
-                <Select value={sortBy} onValueChange={setSortBy}>
+                <Select value={orderBy} onValueChange={setOrderBy}>
                   <SelectTrigger>
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
@@ -261,21 +294,30 @@ export default function CategoryPage({
           <Separator className="mt-6 mb-10" />
           <div
             className={cn(
-              "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6 mb-6 lg:mb-12",
+              "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6",
               listView === "cols-5" && "md:grid-cols-3 lg:grid-cols-5"
             )}
           >
-            {Array.from({ length: 10 }).map((_, index) => (
-              <ProductCard
-                price={29}
-                title={"Product " + index}
-                quantity={index}
-                key={index}
-              />
-            ))}
+            {productsQuery.isLoading
+              ? Array.from({ length: pageSize }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))
+              : productsQuery.data?.products.map((product) => (
+                  <ProductCard product={product} key={product.id} />
+                ))}
+            <ProductCardSkeleton />
           </div>
           {/* Pagination here */}
-          <Pagination page={page} setPage={setPage} pagesCount={2} />
+          {!!productsQuery.data?.count.pagesCount &&
+            productsQuery.data.count.pagesCount > 1 && (
+              <div className="w-full mb-6 lg:mb-12">
+                <Pagination
+                  page={page}
+                  setPage={setPage}
+                  pagesCount={productsQuery.data.count.pagesCount}
+                />
+              </div>
+            )}
         </div>
       </section>
       <ScrollToTopButton />

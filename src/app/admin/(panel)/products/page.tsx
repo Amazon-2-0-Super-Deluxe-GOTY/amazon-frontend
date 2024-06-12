@@ -220,23 +220,22 @@ export default function Page() {
         accessorKey: "price",
         cell: ({ row }) => {
           const product = row.original;
-          const price = splitPrice(product.price);
-          const discountPrice = product.discountPrice
-            ? splitPrice(product.discountPrice)
-            : undefined;
-          const firstPrice = discountPrice ?? price;
-          const secondPrice = discountPrice ? price : undefined;
+          const displayedPrice = product.discountPercent
+            ? product.discountPrice
+            : product.price;
+          const displayedPriceParts = splitPrice(displayedPrice);
+          const normalPriceParts = splitPrice(product.price);
 
           return (
             <div className="flex items-center gap-3">
               <p className="text-xl">
-                ${firstPrice.whole}
-                <sup>{firstPrice.fraction}</sup>
+                ${displayedPriceParts.whole}
+                <sup>{displayedPriceParts.fraction}</sup>
               </p>
-              {!!secondPrice && (
+              {!!product.discountPercent && (
                 <p className="text-base line-through text-gray-500">
-                  ${secondPrice.whole}
-                  <sup>{secondPrice.fraction}</sup>
+                  ${normalPriceParts.whole}
+                  <sup>{normalPriceParts.fraction}</sup>
                 </p>
               )}
             </div>

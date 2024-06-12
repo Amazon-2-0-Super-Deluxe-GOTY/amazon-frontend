@@ -19,6 +19,7 @@ import { FilterItem, FilterCheckedType } from "./filtersDataTypes";
 import { FilterIcon, SearchIcon, XIcon } from "../Shared/Icons";
 import { Separator } from "../ui/separator";
 import { FilterItemButton } from "./FilterItemButton";
+import { FilterCardSkeleton } from "./FilterCardSkeleton";
 
 export const FilterCardVariationMobile = ({
   categoryId,
@@ -26,12 +27,14 @@ export const FilterCardVariationMobile = ({
   checkedItems,
   uncheckFilter,
   appliedFiltersCount,
+  isLoading,
 }: {
   categoryId: string;
   filters: FilterItem[];
   checkedItems: FilterCheckedType[];
   uncheckFilter: (param: { title: string; value: string }) => void;
   appliedFiltersCount: number;
+  isLoading: boolean;
 }) => {
   const [searchText, setSearchText] = useState<string>("");
   const handleSearchTextChange = (value: string) => {
@@ -109,7 +112,13 @@ export const FilterCardVariationMobile = ({
           <DrawerHeader>
             <ScrollArea>
               <div className="max-h-[400px]">
-                <FilterCardVariation filters={filters} isOpen={false} />
+                {isLoading ? (
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <FilterCardSkeleton key={i} />
+                  ))
+                ) : (
+                  <FilterCardVariation filters={filters} isOpen={false} />
+                )}
               </div>
             </ScrollArea>
           </DrawerHeader>

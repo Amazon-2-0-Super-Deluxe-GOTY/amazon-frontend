@@ -111,5 +111,5 @@ export function useCategoryFilters(categoryId: number) {
     return [...propertyFilters, priceFilter, ratingFilter];
   }, [filtersQuery.data]);
 
-  return { data };
+  return { data, isLoading: filtersQuery.isLoading };
 }

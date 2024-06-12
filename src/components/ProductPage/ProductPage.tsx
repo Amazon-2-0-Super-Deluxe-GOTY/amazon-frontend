@@ -7,72 +7,23 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import { Slash, Star, StarHalf, TrophyIcon } from "lucide-react";
-import HouseLine from "@/../public/Icons/HouseLine.svg";
+import React, { useMemo } from "react";
+import { Slash } from "lucide-react";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import { ProductOrderCard } from "@/components/Product/ProductOrderCard";
 import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
-import { SellerInfoCard } from "@/components/Seller/SellerInfoCard";
 import { ProductDetails } from "@/components/Product/ProductDetails";
 import { AboutProduct } from "@/components/Product/AboutProduct";
-import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import type { Review, ReviewsStatistic } from "@/components/Review/types";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
-import { SellerInfo } from "@/components/Seller/types";
 import { ImagesBlock } from "@/components/ProductPage/ProductImagesBlock";
-
-const productDetails = [
-  {
-    title: "Brand",
-    text: "PUMIEY",
-  },
-  {
-    title: "Sleeve type",
-    text: "Long sleeve",
-  },
-  {
-    title: "Fabric type",
-    text: "75% Polyamide, 25% Elastane",
-  },
-  {
-    title: "Care instructions",
-    text: "Machine Wash",
-  },
-  {
-    title: "Origin",
-    text: "Imported",
-  },
-  {
-    title: "Closure type",
-    text: "Pull On",
-  },
-];
-
-const aboutProductData = [
-  {
-    title: "Classic design",
-    text: "This long sleeve tops features a round neck design and a standard T-shirt length. Its adaptability shines as it effortlessly transitions from a tucked-in inner layer to a stylish crop top when stacked at the waist, making it a must-have piece for those seeking to channel the fall fashion trend.",
-  },
-  {
-    title: "Smoke cloud pro collection",
-    text: "New colors, new design, new fabric! Hero smoke cloud pro is coming! Different from the usual Smoke Cloud collection products made with C110TM fabric, the new drop's fabric is more smooth, and creamy. With some special tech, even the light colors won't be sheer.",
-  },
-  {
-    title: "Wardrobe essential",
-    text: "Are you still struggling to find the perfect fall fashion staple? Look no further! Our Long sleeve shirt is your ultimate choice. This monochromatic approach makes it an ideal choice for versatile pairings, effortlessly complementing various bottoms such as cargo pants, jeans, and more.",
-  },
-  {
-    title: "Occasion",
-    text: "Whether you're dressing for a casual outing or a formal event, this basic tee showcases its versatility, allowing you to confidently express your fashion sense in any setting, such as work, a party, a club, travel.",
-  },
-  {
-    title: "Occasion",
-    text: "Whether you're dressing for a casual outing or a formal event, this basic tee showcases its versatility, allowing you to confidently express your fashion sense in any setting, such as work, a party, a club, travel.",
-  },
-];
+import { Product } from "@/api/products";
+import {
+  HomeIcon,
+  StarEmptyIcon,
+  StarFullIcon,
+} from "@/components/Shared/Icons";
 
 const reviewsStatistic: ReviewsStatistic = {
   score: 4.3,
@@ -239,31 +190,18 @@ const reviews: Review[] = [
   },
 ];
 
-const sellerInfo: SellerInfo = {
-  fullName: "Hilary Mason",
-  isTopSeller: true,
-  byersRatingPercent: 99.7,
-  descriptionRating: 5,
-  serviceRating: 5,
-  registerAt: new Date(),
-  complaintsPercent: 0.4,
-  ratingsExcluded: 813,
-  ratingsRemoved: {
-    marketplace: 0,
-    byers: 4,
-  },
-};
+const maxRating = 5;
 
-export default function ProductPage({
-  params,
-}: {
-  params: { productId: string };
-}) {
-  React.useEffect(() => {
-    if (params.productId) {
-      console.log(`Loading page for product ${params.productId}`);
-    }
-  }, [params.productId]);
+export function ProductPage({ product }: { product: Product }) {
+  const starElements = useMemo(() => {
+    return Array.from({ length: maxRating }).map((_, index) =>
+      index < product.generalRate ? (
+        <StarFullIcon className="w-4 h-4" key={index} />
+      ) : (
+        <StarEmptyIcon className="w-4 h-4" key={index} />
+      )
+    );
+  }, [product.generalRate]);
 
   return (
     <main className="px-4 space-y-6">
@@ -273,7 +211,7 @@ export default function ProductPage({
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link href="/">
-                  <Image src={HouseLine} width={24} height={24} alt="Home" />
+                  <HomeIcon className="w-6 h-6" />
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -282,22 +220,10 @@ export default function ProductPage({
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/category">Clothes</Link>
+                <Link href={`/category/${product.category.id}`}>
+                  <BreadcrumbPage>{product.category.name}</BreadcrumbPage>
+                </Link>
               </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <Slash />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/category/subcategory">Tops, Tees & Blouses</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <Slash />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbPage>T-Shirts</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -305,56 +231,46 @@ export default function ProductPage({
       <section className="flex flex-col lg:flex-row gap-3 lg:gap-6 justify-between w-full">
         <div className="lg:max-w-2xl w-full">
           <MediaQueryCSS maxSize="lg">
-            <h1 className="text-2xl">
-              PUMIEY Women&apos;s Long Sleeve T-Shirts Crew Neck Slim Fit Tops
-              Sexy Basic Tee Smoke Cloud Pro Collection
-            </h1>
-            <span className="text-sm text-gray-400">Code: B0CHFLT63B</span>
+            <h1 className="text-2xl">{product.name}</h1>
+            <span className="text-sm text-gray-400">Code: {product.code}</span>
             <div className="my-3 flex items-center">
-              <div className="flex items-center gap-1 h-4">
-                <Star fill="#000" className="w-4 h-4" />
-                <Star fill="#000" className="w-4 h-4" />
-                <Star fill="#000" className="w-4 h-4" />
-                <Star fill="#000" className="w-4 h-4" />
-                <StarHalf fill="#000" className="w-4 h-4" />
-              </div>
-              <span className="text-base font-bold ml-2">4.3</span>
-              <span className="text-base ml-2">228 reviews</span>
+              <div className="flex items-center gap-1 h-4">{starElements}</div>
+              <span className="text-base font-bold ml-2">
+                {product.generalRate}
+              </span>
+              <span className="text-base ml-2">
+                {product.reviewsQuantity} reviews
+              </span>
             </div>
           </MediaQueryCSS>
           <div className="sticky top-4">
-            <ImagesBlock />
+            <ImagesBlock images={product.productImages} />
           </div>
         </div>
         <div className="xl:max-w-xl w-full">
           <div className="hidden lg:block">
-            <h1 className="text-3xl">
-              PUMIEY Women&apos;s Long Sleeve T-Shirts Crew Neck Slim Fit Tops
-              Sexy Basic Tee Smoke Cloud Pro Collection
-            </h1>
+            <h1 className="text-3xl">{product.name}</h1>
             <div className="mt-4 flex items-center">
-              <div className="flex items-center gap-1 h-4">
-                <Star fill="#000" className="w-4 h-4" />
-                <Star fill="#000" className="w-4 h-4" />
-                <Star fill="#000" className="w-4 h-4" />
-                <Star fill="#000" className="w-4 h-4" />
-                <StarHalf fill="#000" className="w-4 h-4" />
-              </div>
-              <span className="text-xl font-bold ml-2">4.3</span>
-              <span className="text-xl ml-4">228 reviews</span>
-              <span className="text-xl ml-auto">Code: B0CHFLT63B</span>
+              <div className="flex items-center gap-1 h-4">{starElements}</div>
+              <span className="text-xl font-bold ml-2">
+                {product.generalRate}
+              </span>
+              <span className="text-xl ml-4">
+                {product.reviewsQuantity} reviews
+              </span>
+              <span className="text-xl ml-auto">Code: {product.code}</span>
             </div>
           </div>
           <div className="mt-3 mb-6 lg:mt-8 lg:mb-0">
             <h2 className="text-xl lg:text-xl font-semibold text-center lg:text-start mb-4">
               About product
             </h2>
-            <AboutProduct items={aboutProductData} variant="list" />
+            <AboutProduct items={product.aboutProductItems} variant="list" />
           </div>
         </div>
         <div className="lg:max-w-72 w-full">
           <div className="sticky top-4 space-y-2 lg:space-y-4">
-            <ProductOrderCard productId={params.productId} />
+            <ProductOrderCard product={product} />
           </div>
         </div>
       </section>
@@ -362,7 +278,7 @@ export default function ProductPage({
         <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
           Product details
         </h2>
-        <ProductDetails items={productDetails} />
+        <ProductDetails items={product.productProperties} />
       </section>
       <section className="py-6 border-t-2 pt-4 space-y-6">
         <h2 className="text-2xl lg:text-3xl font-semibold text-center lg:text-start">
@@ -370,7 +286,7 @@ export default function ProductPage({
         </h2>
         <ReviewsBlock reviews={reviews} reviewsStatistic={reviewsStatistic} />
       </section>
-      <div className="py-6 border-t-2">
+      {/* <div className="py-6 border-t-2">
         <ProductsBlock title="You may also like" maxSizeMobile={6} />
       </div>
       <div className="py-6 border-t-2">
@@ -378,7 +294,7 @@ export default function ProductPage({
           title="Best sellers in women's fashion"
           maxSizeMobile={6}
         />
-      </div>
+      </div> */}
     </main>
   );
 }

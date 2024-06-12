@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 import { Button } from "../ui/button";
 
 interface Item {
-  title: string;
-  text: string;
+  key: string;
+  value: string;
 }
 const defaultItemsLimit = 6;
 
@@ -17,8 +17,8 @@ export const ProductDetails = (props: { items: Item[] }) => {
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
       {items.map((item, i) => (
         <div className="text-base lg:text-lg" key={i}>
-          <h3 className="font-semibold">{item.title}</h3>
-          <p>{item.text}</p>
+          <h3 className="font-semibold">{item.key}</h3>
+          <p>{item.value}</p>
         </div>
       ))}
       {isExpandable && (

@@ -22,6 +22,7 @@ import { Button } from "../ui/button";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { StarEmptyIcon, StarFullIcon } from "../Shared/Icons";
 import { Separator } from "../ui/separator";
+import { parsePriceParamValue } from "@/lib/products";
 
 export function FilterCardVariation({
   filters,
@@ -225,18 +226,13 @@ const FilterTiles = ({ filter, search }: FilterCardProps<FilterTilesItem>) => {
   );
 };
 
-const priceValueRegex = /\b\d+-\d+\b/;
 const FilterPrice = ({ filter }: FilterCardProps<FilterPriceItem>) => {
   const searchParams = useSearchParamsTools();
 
   function parsePriceValue() {
     const defaultValue = searchParams.get?.(filter.type);
-    if (!defaultValue || !priceValueRegex.test(defaultValue)) {
-      return filter.values;
-    }
-
-    const [min, max] = defaultValue.split("-").map(parseFloat);
-    return { min, max };
+    const value = parsePriceParamValue(defaultValue);
+    return value ? value : filter.values;
   }
 
   const [priceValue, setPriceValue] = useState<{ min: number; max: number }>(

@@ -23,6 +23,8 @@ import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { useStorageCart } from "@/lib/storage";
+import type { Product } from "@/api/products";
+import { splitPrice } from "@/lib/products";
 
 const infoElements = [
   {
@@ -35,9 +37,15 @@ const infoElements = [
   },
 ];
 
-export const ProductOrderCard = ({ productId }: { productId: string }) => {
+export const ProductOrderCard = ({ product }: { product: Product }) => {
   const [count, setCount] = useState(1);
   const [openedTabIndex, setOpenedTabIndex] = useState<number>();
+  const displayedPrice = product.discountPercent
+    ? product.discountPrice
+    : product.price;
+  const { whole, fraction } = splitPrice(displayedPrice);
+
+  const isInStock = product.quantity > 0;
 
   const isOpen = openedTabIndex !== undefined;
 
@@ -77,18 +85,18 @@ export const ProductOrderCard = ({ productId }: { productId: string }) => {
   const { addToCart, buyNow } = useStorageCart();
   const onAddToCartClick = () => {
     const newCartItem = {
-      id: productId,
-      title: "Product_" + productId,
-      price: 39.99,
+      id: product.id,
+      title: "Product_" + product.id,
+      price: product.price,
       quantity: count,
     };
     addToCart(newCartItem);
   };
   const onBuyNowClick = () => {
     const newCartItem = {
-      id: productId,
-      title: "Product_" + productId,
-      price: 39.99,
+      id: product.id,
+      title: "Product_" + product.id,
+      price: product.price,
       quantity: count,
     };
     buyNow(newCartItem);
@@ -101,14 +109,17 @@ export const ProductOrderCard = ({ productId }: { productId: string }) => {
         <div className="flex justify-between items-center">
           <div>
             <span className="text-3xl font-bold">
-              $24<sup>99</sup>
+              ${whole}
+              <sup>{fraction}</sup>
             </span>
-            <sub className="ml-2 line-through text-gray-400 text-lg">
-              $39.99
-            </sub>
+            {product.discountPercent && (
+              <sub className="ml-2 line-through text-gray-400 text-lg">
+                ${product.price}
+              </sub>
+            )}
           </div>
           <MediaQueryCSS maxSize="lg">
-            <span>In stock</span>
+            <span>{isInStock ? "In stock" : "Out of stock"}</span>
           </MediaQueryCSS>
         </div>
         <MediaQueryCSS minSize="lg">
@@ -116,7 +127,7 @@ export const ProductOrderCard = ({ productId }: { productId: string }) => {
           <ul className="space-y-1">
             <li className="flex justify-between text-base">
               <span>Status</span>
-              <span>In stock</span>
+              <span>{isInStock ? "In stock" : "Out of stock"}</span>
             </li>
             <InfoLabelsList openTab={openTab} />
           </ul>
@@ -132,8 +143,14 @@ export const ProductOrderCard = ({ productId }: { productId: string }) => {
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
-        <Button onClick={onAddToCartClick}>Add to cart</Button>
-        <Button onClick={onBuyNowClick} variant={"secondary"}>
+        <Button onClick={onAddToCartClick} disabled={!isInStock}>
+          Add to cart
+        </Button>
+        <Button
+          onClick={onBuyNowClick}
+          variant={"secondary"}
+          disabled={!isInStock}
+        >
           Buy now
         </Button>
         <Button variant={"secondary"} className="col-span-2 lg:col-span-1">
@@ -159,7 +176,7 @@ export const ProductOrderCard = ({ productId }: { productId: string }) => {
         count={count}
         increment={increment}
         decrement={decrement}
-        productId={productId}
+        productId={product.id}
       />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>

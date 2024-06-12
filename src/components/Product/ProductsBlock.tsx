@@ -3,18 +3,15 @@ import { Button } from "../ui/button";
 import { ProductCarousel } from "./ProductCarousel";
 import { ProductsListMobile } from "./ProductsListMobile";
 import { MediaQueryCSS } from "../Shared/MediaQuery";
+import type { ProductShort } from "@/api/products";
 
 interface Props {
   title: string;
   maxSizeMobile?: number;
+  products: ProductShort[];
 }
 
-export const ProductsBlock = ({ title, maxSizeMobile }: Props) => {
-  const products = Array.from({ length: 9 }).map((_, index) => ({
-    title: `Product ${index + 1}`,
-    price: 39.99,
-  }));
-
+export const ProductsBlock = ({ title, products, maxSizeMobile }: Props) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">

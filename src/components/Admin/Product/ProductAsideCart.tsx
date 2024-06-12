@@ -69,7 +69,7 @@ export function ProductAsideCard({
             ))}
             {isMoreImages && (
               <button
-                className="col-start-3 row-start-4 w-full h-full bg-black/55 flex justify-center items-center text-white text-lg"
+                className="col-start-3 row-start-4 w-full h-full bg-black/55 flex justify-center items-center text-white text-lg z-10"
                 onClick={handlePreview(maxImages - 1)}
               >
                 +{imagesLeft}

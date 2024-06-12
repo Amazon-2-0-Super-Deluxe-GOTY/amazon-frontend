@@ -7,12 +7,9 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ProductCard } from "./ProductCard";
+import type { ProductShort } from "@/api/products";
 
-export function ProductCarousel({
-  products,
-}: {
-  products: { title: string; price: number }[];
-}) {
+export function ProductCarousel({ products }: { products: ProductShort[] }) {
   return (
     <div className="relative">
       <Carousel
@@ -25,9 +22,7 @@ export function ProductCarousel({
               className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"
               key={index}
             >
-              <Link href={`/product/${index + 1}`} className="w-full">
-                <ProductCard title={product.title} price={product.price} />
-              </Link>
+              <ProductCard product={product} />
             </CarouselItem>
           ))}
         </CarouselContent>

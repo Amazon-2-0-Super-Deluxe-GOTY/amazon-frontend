@@ -3,12 +3,13 @@ import Link from "next/link";
 import { ProductCard } from "./ProductCard";
 import { useExpandableList } from "@/lib/utils";
 import { Button } from "../ui/button";
+import { ProductShort } from "@/api/products";
 
 export const ProductsListMobile = ({
   products,
   maxSize,
 }: {
-  products: { title: string; price: number }[];
+  products: ProductShort[];
   maxSize?: number;
 }) => {
   const { items, isExpandable, isExpanded, onExpand, onHide } =
@@ -20,9 +21,7 @@ export const ProductsListMobile = ({
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 auto-rows-max gap-4 place-items-center">
       {items.map((product, index) => (
-        <Link href={`/product/${index + 1}`} className="w-full" key={index}>
-          <ProductCard title={product.title} price={product.price} />
-        </Link>
+        <ProductCard product={product} key={product.id} />
       ))}
       {isExpandable && (
         <div className="flex justify-center col-span-2 sm:col-span-3">

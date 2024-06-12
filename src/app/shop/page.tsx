@@ -1,3 +1,4 @@
+"use client";
 import { Banner } from "@/components/MainPage/Banner";
 import { SingInUpBanner } from "@/components/MainPage/SingInUpBanner";
 import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
@@ -5,8 +6,25 @@ import { CarouselCategory } from "@/components/MainPage/CarouselCategory";
 import ScrollToTopButton from "@/components/Shared/ScrollToTopButton";
 import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import { Separator } from "@/components/ui/separator";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "@/api/products";
 
 export default function Home() {
+  const productsTrendingQuery = useQuery({
+    queryKey: ["products", "main", "tranding"],
+    queryFn: () => getProducts({ page: 1, pageSize: 10, orderBy: "date" }),
+    select(data) {
+      return data.status === 200 ? data.data : [];
+    },
+  });
+  const productsDiscountQuery = useQuery({
+    queryKey: ["products", "main", "discount"],
+    queryFn: () => getProducts({ page: 1, pageSize: 10, discount: true }),
+    select(data) {
+      return data.status === 200 ? data.data : [];
+    },
+  });
+
   return (
     <>
       <main className="lg:px-4 text-foreground">
@@ -17,7 +35,10 @@ export default function Home() {
         <section className="px-4">
           <Separator />
           <div className="py-6">
-            <ProductsBlock title="Trending deals" />
+            <ProductsBlock
+              products={productsTrendingQuery.data ?? []}
+              title="Trending deals"
+            />
           </div>
           <Separator />
         </section>
@@ -27,7 +48,10 @@ export default function Home() {
         <section className="px-4">
           <Separator />
           <div className="py-6">
-            <ProductsBlock title="Sale" />
+            <ProductsBlock
+              products={productsDiscountQuery.data ?? []}
+              title="Sale"
+            />
           </div>
           <Separator />
         </section>
