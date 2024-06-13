@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { User } from "@/api/types";
+import { useAuthStore } from "@/lib/storage";
+import { logOut } from "@/api/users";
+import { useRouter } from "next/navigation";
 
 const links = [
   {
@@ -56,7 +59,15 @@ export const AdminSidebar = ({
   closeSidebar: () => void;
   user?: User | null;
 }) => {
+  const router = useRouter();
+  const clearToken = useAuthStore((state) => state.clearToken);
   const fullName = `${user?.firstName} ${user?.lastName}`;
+
+  const onLogOut = () => {
+    logOut()
+      .then(clearToken)
+      .then(() => router.refresh());
+  };
 
   return (
     <div>
@@ -85,7 +96,7 @@ export const AdminSidebar = ({
           ))}
         </div>
         <Separator className="bg-black" />
-        <button>
+        <button onClick={onLogOut}>
           <SidebarItem icon={<LogOutIcon />} text="Log out" />
         </button>
       </Sidebar>

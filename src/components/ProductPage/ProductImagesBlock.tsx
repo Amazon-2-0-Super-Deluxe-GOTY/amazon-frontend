@@ -13,15 +13,15 @@ import clsx from "clsx";
 import { ProductImageFullView } from "../Product/ProductImageFullView";
 import { useModal } from "../Shared/Modal";
 
-export const ImagesBlock = () => {
+export const ImagesBlock = ({
+  images,
+}: {
+  images: { id: string; imageUrl: string }[];
+}) => {
   const [mainCarouselApi, setMainCarouselApi] = React.useState<CarouselApi>();
   const [previewCarouselApi, setPreviewCarouselApi] =
     React.useState<CarouselApi>();
   const [currentImageIndex, setCurrentImageIndex] = React.useState<number>(0);
-  const images = React.useMemo(
-    () => Array.from({ length: 10 }).map(() => placeholder),
-    []
-  );
   const { showModal } = useModal();
 
   React.useEffect(() => {
@@ -49,7 +49,7 @@ export const ImagesBlock = () => {
     showModal({
       component: ProductImageFullView,
       props: {
-        images,
+        images: images.map((i) => i.imageUrl),
         startIndex: currentImageIndex,
       },
     });
@@ -66,12 +66,16 @@ export const ImagesBlock = () => {
         setApi={setMainCarouselApi}
       >
         <CarouselContent>
-          {images.map((_, index) => {
+          {images.map((image) => {
             return (
-              <CarouselItem key={index}>
+              <CarouselItem
+                key={image.id}
+                className="w-full aspect-square relative"
+              >
                 <Image
-                  src={placeholder}
-                  alt="Placeholder"
+                  src={image.imageUrl}
+                  fill
+                  alt="Product"
                   className="object-cover rounded-lg"
                   onClick={openModal}
                 />
@@ -95,23 +99,26 @@ export const ImagesBlock = () => {
           setApi={setPreviewCarouselApi}
         >
           <CarouselContent>
-            {images.map((_, index) => {
+            {images.map((image, index) => {
               return (
                 <CarouselItem
-                  key={index}
+                  key={image.id}
                   className={
                     "basis-[unset] pl-2 first:pl-4 lg:pl-6 md:pl-4 lg:first:pl-4"
                   }
                 >
-                  <Image
-                    src={placeholder}
-                    alt="Placeholder"
-                    className={clsx(
-                      "w-14 h-14 lg:w-20 lg:h-20 object-cover rounded-lg",
-                      currentImageIndex !== index && "brightness-75"
+                  <div className="w-14 h-14 lg:w-20 lg:h-20 relative cursor-pointer z-0">
+                    <Image
+                      src={image.imageUrl}
+                      alt="Product"
+                      fill
+                      className={clsx("object-cover rounded-lg")}
+                      onClick={onPreviewImageClick(index)}
+                    />
+                    {currentImageIndex !== index && "brightness-30" && (
+                      <div className="absolute inset-0 bg-black/75 rounded-lg pointer-events-none" />
                     )}
-                    onClick={onPreviewImageClick(index)}
-                  />
+                  </div>
                 </CarouselItem>
               );
             })}

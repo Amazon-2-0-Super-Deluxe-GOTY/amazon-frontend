@@ -19,3 +19,13 @@ export const isImageValid = (file: File) => {
     imageAllowedFormats.some((ext) => file.name.endsWith(ext))
   );
 };
+
+const priceParamValueRegex = /\b\d+-\d+\b/;
+export function parsePriceParamValue(value?: string | null) {
+  if (!value || !priceParamValueRegex.test(value)) {
+    return undefined;
+  }
+
+  const [min, max] = value.split("-").map(parseFloat);
+  return { min, max };
+}

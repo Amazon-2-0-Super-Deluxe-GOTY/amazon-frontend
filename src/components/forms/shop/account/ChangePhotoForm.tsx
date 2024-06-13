@@ -26,7 +26,7 @@ export function ChangePhotoForm({ onSubmit }: { onSubmit: () => void }) {
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "default",
+          variant: "primary",
         },
       });
       return;
@@ -47,7 +47,7 @@ export function ChangePhotoForm({ onSubmit }: { onSubmit: () => void }) {
           <div className="flex flex-wrap gap-4">
             <div className="flex justify-center items-center relative">
               <Button
-                variant={"outline"}
+                variant={"secondary"}
                 className="text-sm md:text-base"
                 disabled={isUploading}
               >

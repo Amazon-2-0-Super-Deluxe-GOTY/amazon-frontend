@@ -5,13 +5,8 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useSearchParamsTools } from "@/lib/router";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Slash, XIcon } from "lucide-react";
-
-import HouseLine from "@/../public/Icons/HouseLine.svg";
-import SwitchCard33 from "@/../public/Icons/SwitchCard33.svg";
-import SwitchCard44 from "@/../public/Icons/SwitchCard44.svg";
+import { Slash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -23,15 +18,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -47,6 +33,16 @@ import { FilterCheckedType } from "@/components/ProductByCategoryPage/filtersDat
 import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
 import { useCategoryFilters } from "@/api/categories";
+import { Pagination } from "@/components/Shared/Pagination";
+import { Separator } from "@/components/ui/separator";
+import { Grid3x3Icon, Grid5x4Icon, HomeIcon } from "@/components/Shared/Icons";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { FilterItemButton } from "@/components/ProductByCategoryPage/FilterItemButton";
+import { ProductFilters, getProducts } from "@/api/products";
+import { parsePriceParamValue } from "@/lib/products";
+import { useQuery } from "@tanstack/react-query";
+import { ProductCardSkeleton } from "@/components/Product/ProductCardSkeleton";
+import { FilterCardSkeleton } from "@/components/ProductByCategoryPage/FilterCardSkeleton";
 
 export default function CategoryPage({
   params,
@@ -56,20 +52,79 @@ export default function CategoryPage({
   const searchParams = useSearchParamsTools();
   // FIXME: test category id for now
   const filtersData = useCategoryFilters(1);
+  const filterProperties = useMemo(() => {
+    return filtersData.data.map((f) => f.title);
+  }, [filtersData.data]);
+  const [listView, setListView] = useState("cols-3");
+  const pageSize = listView === "cols-5" ? 30 : 12;
 
-  const checkedItems = useMemo<FilterCheckedType>(() => {
+  const checkedItems = useMemo<FilterCheckedType[]>(() => {
     if (!searchParams.params) return [];
 
     // @ts-expect-error convert search params to array
-    return [...searchParams.params.entries()].map((entry) => ({
-      title: entry[0],
-      values: entry[1].split(","),
-    }));
+    return [...searchParams.params.entries()]
+      .filter(
+        (entry) =>
+          filterProperties.includes(entry[0]) ||
+          entry[0] === "rating" ||
+          entry[0] === "price"
+      )
+      .map((entry) => ({
+        title: entry[0],
+        values: entry[1].split(","),
+        type:
+          entry[0] === "rating" || entry[0] === "price" ? entry[0] : "checkbox",
+      }));
   }, [searchParams]);
 
   const appliedFiltersCount = useMemo(() => {
     return checkedItems.reduce((count, item) => count + item.values.length, 0);
   }, [checkedItems]);
+
+  const page = useMemo<number>(() => {
+    const pageFromParams = searchParams.get?.("page");
+    if (!pageFromParams) return 1;
+
+    const pageNumber = Number(pageFromParams);
+    if (isNaN(pageNumber)) return 1;
+
+    return pageNumber;
+  }, [searchParams]);
+
+  const orderBy = useMemo(() => {
+    const valueFromParams = searchParams.get?.("orderBy");
+    if (!valueFromParams) return "date";
+    return valueFromParams;
+  }, [searchParams]);
+
+  const setPage = (page: number) => {
+    searchParams.set("page", page.toString());
+  };
+
+  const productFilterParams = useMemo<ProductFilters>(() => {
+    return {
+      // FIXME: test category id for now
+      categoryId: 1,
+      orderBy: orderBy as ProductFilters["orderBy"],
+      page: page,
+      pageSize: pageSize,
+      price: parsePriceParamValue(searchParams.get?.("price")),
+      rating: searchParams.get?.("rating") ?? undefined,
+      additionalFilters: checkedItems
+        .filter((i) => i.type === "checkbox")
+        .map((i) => ({ name: i.title, values: i.values })),
+    };
+  }, [checkedItems, orderBy, page, searchParams, pageSize]);
+
+  const productsQuery = useQuery({
+    queryKey: ["products", productFilterParams],
+    queryFn: () => getProducts(productFilterParams),
+    select(data) {
+      return data.status === 200
+        ? { products: data.data, count: data.count }
+        : { products: [], count: { pagesCount: 0 } };
+    },
+  });
 
   const uncheckFilter = (param: { title: string; value: string }) => {
     const existingParams = searchParams.get?.(param.title)?.split(",");
@@ -81,19 +136,8 @@ export default function CategoryPage({
     );
   };
 
-  //#region ButtonDefaultCardTemplateClick
-  const [isDefaultTemplateDisplayCardOn, setIsDefaultTemplateDisplayCardOn] =
-    useState(true);
-  const ButtonDefaultCardTemplateClick = () => {
-    setIsDefaultTemplateDisplayCardOn(true);
-  };
-  const ButtonSecondaryCardTemplateClick = () => {
-    setIsDefaultTemplateDisplayCardOn(false);
-  };
-  //#endregion
-
-  const clearAllFilters = () => {
-    // setCheckedItems([]);
+  const setOrderBy = (sortBy: string) => {
+    searchParams.set("orderBy", sortBy);
   };
 
   return (
@@ -104,7 +148,7 @@ export default function CategoryPage({
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link href="/">
-                  <Image src={HouseLine} width={24} height={24} alt="Home" />
+                  <HomeIcon />
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -140,8 +184,15 @@ export default function CategoryPage({
       </section>
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <MediaQueryCSS minSize="lg">
-          <div className="flex flex-col gap-2 w-80">
-            <FilterCardVariation filters={filtersData.data} />
+          <div className="flex flex-col gap-2 w-[370px]">
+            {filtersData.isLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <FilterCardSkeleton key={i} />
+              ))
+            ) : (
+              <FilterCardVariation filters={filtersData.data} />
+            )}
+            <FilterCardSkeleton />
           </div>
         </MediaQueryCSS>
         <div className="grow">
@@ -153,12 +204,13 @@ export default function CategoryPage({
                 checkedItems={checkedItems}
                 uncheckFilter={uncheckFilter}
                 appliedFiltersCount={appliedFiltersCount}
+                isLoading={filtersData.isLoading}
               />
             </MediaQueryCSS>
             <MediaQueryCSS minSize="lg">
               <div className="w-full">
                 <Select>
-                  <SelectTrigger className="py-3 px-4 max-w-52 w-full min-w-48 bg-gray-200">
+                  <SelectTrigger className="py-3 px-4 max-w-52 w-full min-w-48">
                     <SelectValue
                       placeholder={
                         appliedFiltersCount +
@@ -168,39 +220,33 @@ export default function CategoryPage({
                       }
                     />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-200">
+                  <SelectContent className="w-80">
                     <div className="p-3">
                       <ScrollArea>
-                        <ul className="list-none p-0 m-0 max-h-[230px]">
-                          {checkedItems.map((item, index) => (
-                            <ul key={index}>
-                              {item.values.map((value, valueIndex) => (
-                                <li
-                                  key={valueIndex}
-                                  className="flex items-center space-x-2 pb-1"
-                                >
-                                  <Button
-                                    key={valueIndex}
-                                    variant="ghost"
-                                    className="bg-gray-300 justify-between flex gap-2"
-                                    onClick={() => {
-                                      uncheckFilter({
-                                        title: item.title,
-                                        value,
-                                      });
-                                    }}
-                                  >
-                                    <span>{value}</span>
-                                    <XIcon />
-                                  </Button>
-                                </li>
-                              ))}
-                            </ul>
-                          ))}
+                        <ul className="flex items-center flex-wrap gap-1">
+                          {checkedItems.map((item, index) =>
+                            item.values.map((value, valueIndex) => (
+                              <li
+                                key={`${index}${valueIndex}`}
+                                className="w-max"
+                              >
+                                <FilterItemButton
+                                  type={item.type}
+                                  value={value}
+                                  onClick={() =>
+                                    uncheckFilter({
+                                      title: item.title,
+                                      value,
+                                    })
+                                  }
+                                />
+                              </li>
+                            ))
+                          )}
                         </ul>
                       </ScrollArea>
-                      <hr className="my-4 border-gray-400 border-y"></hr>
-                      <Button variant={"ghost"} onClick={clearAllFilters}>
+                      <Separator className="my-4" />
+                      <Button variant={"tertiary"}>
                         <Link href={`/category/${params.categoryId}`}>
                           Clear all
                         </Link>
@@ -212,83 +258,66 @@ export default function CategoryPage({
             </MediaQueryCSS>
             <div className="flex gap-2 items-center w-full justify-end">
               <div className="max-w-[260px] w-full">
-                <Select>
+                <Select value={orderBy} onValueChange={setOrderBy}>
                   <SelectTrigger>
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="byrating">By rating</SelectItem>
-                    <SelectItem value="novelty">Novelty</SelectItem>
-                    <SelectItem value="toexpensive">
-                      From cheap to expensive
-                    </SelectItem>
-                    <SelectItem value="tocheap">
-                      From expensive to cheap
-                    </SelectItem>
+                    <SelectItem value="rate">By rating</SelectItem>
+                    <SelectItem value="date">Novelty</SelectItem>
+                    <SelectItem value="cheap">Cheap to expensive</SelectItem>
+                    <SelectItem value="exp">Expensive to cheap</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex max-md:hidden">
-                <Button
-                  variant={"ghost"}
-                  className={cn(
-                    "rounded-r-none min-w-[40px] px-4 max-lg:px-2",
-                    isDefaultTemplateDisplayCardOn
-                      ? "bg-gray-300"
-                      : "bg-gray-200"
-                  )}
-                  onClick={ButtonDefaultCardTemplateClick}
+              <ToggleGroup
+                className="flex gap-0 max-md:hidden"
+                type="single"
+                value={listView}
+                onValueChange={setListView}
+              >
+                <ToggleGroupItem
+                  value="cols-3"
+                  className="rounded-e-none border-2 border-r-0 py-3 px-4.5"
                 >
-                  <Image src={SwitchCard33} alt="switchcards33" />
-                </Button>
-                <Button
-                  variant={"ghost"}
-                  className={cn(
-                    "rounded-l-none min-w-[40px] px-4 max-lg:px-2",
-                    !isDefaultTemplateDisplayCardOn
-                      ? "bg-gray-300"
-                      : "bg-gray-200"
-                  )}
-                  onClick={ButtonSecondaryCardTemplateClick}
+                  <Grid3x3Icon className="w-6 h-6" />
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="cols-5"
+                  className="rounded-s-none border-2 border-l-0 py-3 px-4.5"
                 >
-                  <Image src={SwitchCard44} alt="switchcards44" />
-                </Button>
-              </div>
+                  <Grid5x4Icon className="w-6 h-6" />
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
           </div>
-          <hr className="mt-6 mb-10 border-gray-300"></hr>
+          <Separator className="mt-6 mb-10" />
           <div
             className={cn(
               "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-6",
-              !isDefaultTemplateDisplayCardOn && "md:grid-cols-3 lg:grid-cols-4"
+              listView === "cols-5" && "md:grid-cols-3 lg:grid-cols-5"
             )}
           >
-            {Array.from({ length: 10 }).map((_, index) => (
-              <ProductCard
-                price={29}
-                title={"Product " + index}
-                quantity={index}
-                key={index}
-              />
-            ))}
+            {productsQuery.isLoading
+              ? Array.from({ length: pageSize }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))
+              : productsQuery.data?.products.map((product) => (
+                  <ProductCard product={product} key={product.id} />
+                ))}
+            <ProductCardSkeleton />
           </div>
           {/* Pagination here */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          {!!productsQuery.data?.count.pagesCount &&
+            productsQuery.data.count.pagesCount > 1 && (
+              <div className="w-full mb-6 lg:mb-12">
+                <Pagination
+                  page={page}
+                  setPage={setPage}
+                  pagesCount={productsQuery.data.count.pagesCount}
+                />
+              </div>
+            )}
         </div>
       </section>
       <ScrollToTopButton />

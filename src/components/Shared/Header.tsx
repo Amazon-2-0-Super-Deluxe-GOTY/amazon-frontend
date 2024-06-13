@@ -3,20 +3,17 @@ import * as React from "react";
 import Link from "next/link";
 import {
   ArmchairIcon,
-  HeartIcon,
   HomeIcon,
-  MenuIcon,
   MonitorIcon,
-  SearchIcon,
   ShirtIcon,
-  UserIcon,
   WrenchIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { useScreenSize } from "@/lib/media";
 import { UserSidebar } from "./UserSidebar";
 import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
+import { MenuIcon, SearchIcon, UserIcon } from "./Icons";
+import { Logo } from "./Logo";
 
 const sidebarData = {
   // user: { fullName: "Marsha Shields", avatar: "" },
@@ -50,35 +47,34 @@ const sidebarData = {
 };
 
 export function Header() {
-  const isDesktop = useScreenSize({ minSize: "lg" });
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   const openSidebar = () => setIsSidebarOpen(true);
   const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
-    <header className="px-4 py-4 border-b">
+    <header className="px-4 py-4 border-b bg-secondary text-light">
       <div className="max-w-[1600px] flex items-center justify-between w-full mx-auto">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-8">
           <button onClick={openSidebar}>
-            <MenuIcon className="text-gray-700" />
+            <MenuIcon className="stroke-[3]" />
           </button>
-          <Link href={"/"}>
-            <span className="font-bold text-xl">Logo</span>
+          <Link href={"/"} className="hidden lg:block">
+            <Logo />
           </Link>
         </div>
-        <div className="flex-1 flex max-w-[950px] relative ml-5 lg:mx-auto">
-          <Input placeholder="Search..." />
-          <Button
-            className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto"
-            variant={isDesktop ? "default" : "ghost"}
-          >
-            <SearchIcon />
+        <div className="flex-1 flex relative mx-8 z-0 rounded-lg border-2 border-transparent has-[:focus]:border-foreground overflow-hidden">
+          <Input
+            placeholder="Search..."
+            className="focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+          <Button className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-0 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto">
+            <SearchIcon className="stroke-3" />
           </Button>
         </div>
-        <div className="flex items-center space-x-4">
-          <HeartIcon className="text-gray-700 hidden md:block" />
-          <UserIcon className="text-gray-700 hidden md:block" />
+        <div className="flex items-center gap-8">
+          {/* designer moment 🤡 */}
+          <UserIcon className="hidden md:block stroke-3 [&_:nth-child(1)]:stroke-1" />
           <ShoppingCart />
         </div>
       </div>

@@ -71,7 +71,7 @@ export function ResetPasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     New password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -84,7 +84,7 @@ export function ResetPasswordForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() => setShowPassword(!showPassword)}
@@ -103,7 +103,7 @@ export function ResetPasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Confirm password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -116,7 +116,7 @@ export function ResetPasswordForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() =>

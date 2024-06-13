@@ -106,7 +106,7 @@ export function ChangePasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -119,7 +119,7 @@ export function ChangePasswordForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() => setShowPassword(!showPassword)}
@@ -149,7 +149,7 @@ export function ChangePasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     New password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -162,7 +162,7 @@ export function ChangePasswordForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() => setShowNewPassword(!showNewPassword)}
@@ -181,7 +181,7 @@ export function ChangePasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Confirm password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -194,7 +194,7 @@ export function ChangePasswordForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() =>
@@ -213,7 +213,7 @@ export function ChangePasswordForm({
         <div className="flex justify-between items-center gap-3">
           <Button
             type="reset"
-            variant={"outline"}
+            variant={"secondary"}
             className="w-full"
             onClick={onCancel}
             disabled={updateUserMutation.isPending}

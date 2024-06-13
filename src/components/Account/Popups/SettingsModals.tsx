@@ -155,7 +155,7 @@ export const LogOutModal = ({
         <div className="flex justify-between items-center gap-3 mt-1 md:mt-5">
           <Button
             type="reset"
-            variant={"outline"}
+            variant={"secondary"}
             className="w-full"
             onClick={onClose}
             disabled={isButtonsDisabled}
@@ -218,7 +218,7 @@ export const DeleteAccountModal = ({
         <div className="flex justify-between items-center gap-3 mt-1 md:mt-5">
           <Button
             type="reset"
-            variant={"outline"}
+            variant={"secondary"}
             className="w-full"
             onClick={onClose}
             disabled={isButtonsDisabled}

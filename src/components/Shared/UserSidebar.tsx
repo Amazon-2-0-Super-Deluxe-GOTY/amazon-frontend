@@ -23,7 +23,6 @@ import {
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { SignInUpButtons } from "../SignInUpModal/SignInUpModals";
-import type { User } from "@/api/types";
 import { logOut, useUser } from "@/api/users";
 import { useAuthStore } from "@/lib/storage";
 
@@ -36,7 +35,7 @@ export const UserSidebar = ({
   closeSidebar: () => void;
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
-  const { user, refetch } = useUser();
+  const { user } = useUser();
   const isLoggedIn = !!user;
   const fullName = `${user?.firstName} ${user?.lastName}`;
   const clearToken = useAuthStore((state) => state.clearToken);
@@ -89,14 +88,14 @@ export const UserSidebar = ({
                   <SidebarItem icon={item.icon} text={item.title} />
                 </Link>
               ))}
-              <Button variant={"outline"}>See all</Button>
+              <Button variant={"secondary"}>See all</Button>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
         <Separator />
         <div className="flex flex-col gap-3 lg;gap-4">
           {isLoggedIn && (
-            <Link href={"/account?tab=settings-open"} >
+            <Link href={"/account?tab=settings-open"}>
               <SidebarItem icon={<SettingsIcon />} text="Settings" />
             </Link>
           )}

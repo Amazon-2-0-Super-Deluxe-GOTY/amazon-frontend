@@ -27,6 +27,7 @@ export interface Product {
 
 export interface ProductShort {
   id: string;
+  slug: string;
   name: string;
   price: number;
   discountPercent: number | null;
@@ -34,21 +35,26 @@ export interface ProductShort {
   productImages: { imageUrl: string }[];
   generalRate: number;
   reviewsCount: number;
+  quantity: number;
 }
 
-const defaultPageSize = "7";
-
-export function getProducts(filters: {
+export interface ProductFilters {
   categoryId?: number;
   searchQuery?: string;
   page?: number;
   pageSize?: number;
   discount?: boolean;
-  rating?: 1 | 2 | 3 | 4 | 5;
+  rating?: string;
   price?: { min: number; max: number };
   orderBy?: "date" | "rate" | "exp" | "cheap";
   additionalFilters?: { name: string; values: string[] }[];
-}): Promise<
+}
+
+const defaultPageSize = "7";
+
+export function getProducts(
+  filters: ProductFilters
+): Promise<
   ApiResponse<
     [[200, ProductShort[]], [400, ApiValidationErrors], [404, null]]
   > & { count: { pagesCount: number } }
@@ -66,10 +72,12 @@ export function getProducts(filters: {
   filters.rating !== undefined &&
     params.set("rating", filters.rating.toString());
   filters.orderBy && params.set("orderBy", filters.orderBy);
+  filters.price &&
+    params.set("price", `${filters.price.min}-${filters.price.max}`);
 
   if (filters.additionalFilters) {
     for (let param of filters.additionalFilters) {
-      params.set(param.name, param.values.join(" "));
+      params.set(param.name, param.values.join(","));
     }
   }
 
@@ -132,7 +140,7 @@ export function getProductBySlug({
 }): Promise<
   ApiResponse<[[200, Product], [400, ApiValidationErrors], [404, null]]>
 > {
-  return fetch(`/api/products/byId?productSlug=${productSlug}`).then((r) =>
+  return fetch(`/api/products/bySlug?productSlug=${productSlug}`).then((r) =>
     r.json()
   );
 }

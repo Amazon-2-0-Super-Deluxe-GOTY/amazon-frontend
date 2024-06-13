@@ -14,7 +14,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { ShoppingCartIcon, XIcon } from "lucide-react";
 import { SuggestionsProducts } from "./SuggestionsProducts";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
@@ -22,6 +21,7 @@ import { CartProducts } from "./CartProducts";
 import { useScreenSize } from "@/lib/media";
 import { useStorageCart } from "@/lib/storage";
 import { Separator } from "../ui/separator";
+import { ShoppingCartIcon, XIcon } from "../Shared/Icons";
 import { useMemo } from "react";
 
 export const ShoppingCart = () => {
@@ -65,7 +65,7 @@ const ShoppingCartMobile = ({
           <DrawerTitle>
             <div className="flex justify-between items-center pb-6">
               <div className="flex justify-start items-center gap-4">
-                <ShoppingCartIcon className="text-gray-700 w-5 h-5" />
+                <ShoppingCartIcon className="w-5 h-5" />
                 <span className="text-xl">Shopping cart</span>
               </div>
               <DrawerClose className="flex items-center w-4 h-4 mr-4">
@@ -137,10 +137,7 @@ const ShoppingCartMobile = ({
                             >
                               Continue shopping
                             </Button>
-                            <Button
-                              variant={"default"}
-                              className="text-base max-sm:text-sm max-sm:px-3"
-                            >
+                            <Button className="text-base max1-sm:text-sm max-sm:px-3">
                               Checkout
                             </Button>
                           </div>
@@ -205,7 +202,7 @@ const ShoppingCartDesktop = ({
           <DialogTitle>
             <div className="flex justify-between items-center pb-6">
               <div className="flex gap-4">
-                <ShoppingCartIcon className="text-gray-700 w-8 h-8" />
+                <ShoppingCartIcon className="w-8 h-8" />
                 <span className="text-2xl">Shopping cart</span>
               </div>
               <DialogClose className="w-4 h-4 flex justify-center items-center">
@@ -272,9 +269,7 @@ const ShoppingCartDesktop = ({
                             <sup className="text-xl font-bold mt-3 -ml-3">
                               00
                             </sup>
-                            <Button variant={"default"} className="text-xl">
-                              Checkout
-                            </Button>
+                            <Button className="text-xl">Checkout</Button>
                           </div>
                         </div>
                         <Separator />
@@ -315,7 +310,7 @@ const ShoppingCartIconWithBadge = ({
 }) => {
   return (
     <div className="relative">
-      <ShoppingCartIcon className="text-gray-700 w-6 h-6" />
+      <ShoppingCartIcon className="w-6 h-6 stroke-3" />
       {productsCount > 0 && (
         <span className="bg-primary text-primary-foreground text-xs w-5 h-5 inline-flex justify-center items-center rounded-full absolute -top-2.5 -right-2.5">
           {productsCount}
