@@ -8,8 +8,15 @@ import {
 } from "@/components/ui/carousel";
 import { ProductCard } from "./ProductCard";
 import type { ProductShort } from "@/api/products";
+import { ProductCardSkeleton } from "./ProductCardSkeleton";
 
-export function ProductCarousel({ products }: { products: ProductShort[] }) {
+export function ProductCarousel({
+  products,
+  isLoading,
+}: {
+  products: ProductShort[];
+  isLoading: boolean;
+}) {
   return (
     <div className="relative">
       <Carousel
@@ -17,14 +24,23 @@ export function ProductCarousel({ products }: { products: ProductShort[] }) {
         opts={{ align: "end" }}
       >
         <CarouselContent className="p-1">
-          {products.map((product, index) => (
-            <CarouselItem
-              className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"
-              key={index}
-            >
-              <ProductCard product={product} />
-            </CarouselItem>
-          ))}
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <CarouselItem
+                  className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"
+                  key={i}
+                >
+                  <ProductCardSkeleton />
+                </CarouselItem>
+              ))
+            : products.map((product, index) => (
+                <CarouselItem
+                  className="md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4"
+                  key={index}
+                >
+                  <ProductCard product={product} />
+                </CarouselItem>
+              ))}
         </CarouselContent>
         <CarouselPrevious className="left-0" />
         <CarouselNext className="right-0" />

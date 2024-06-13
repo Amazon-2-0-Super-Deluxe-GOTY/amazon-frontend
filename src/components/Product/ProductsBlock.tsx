@@ -9,9 +9,15 @@ interface Props {
   title: string;
   maxSizeMobile?: number;
   products: ProductShort[];
+  isLoading: boolean;
 }
 
-export const ProductsBlock = ({ title, products, maxSizeMobile }: Props) => {
+export const ProductsBlock = ({
+  title,
+  products,
+  maxSizeMobile,
+  isLoading,
+}: Props) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -24,10 +30,14 @@ export const ProductsBlock = ({ title, products, maxSizeMobile }: Props) => {
         </MediaQueryCSS>
       </div>
       <MediaQueryCSS maxSize="lg">
-        <ProductsListMobile products={products} maxSize={maxSizeMobile} />
+        <ProductsListMobile
+          products={products}
+          maxSize={maxSizeMobile}
+          isLoading={isLoading}
+        />
       </MediaQueryCSS>
       <MediaQueryCSS minSize="lg">
-        <ProductCarousel products={products} />
+        <ProductCarousel products={products} isLoading={isLoading} />
       </MediaQueryCSS>
       {maxSizeMobile === undefined && (
         <MediaQueryCSS maxSize="lg">

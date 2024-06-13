@@ -9,17 +9,19 @@ import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/api/products";
 
+const pageSize = 10;
+
 export default function Home() {
   const productsTrendingQuery = useQuery({
     queryKey: ["products", "main", "tranding"],
-    queryFn: () => getProducts({ page: 1, pageSize: 10, orderBy: "date" }),
+    queryFn: () => getProducts({ page: 1, pageSize, orderBy: "date" }),
     select(data) {
       return data.status === 200 ? data.data : [];
     },
   });
   const productsDiscountQuery = useQuery({
     queryKey: ["products", "main", "discount"],
-    queryFn: () => getProducts({ page: 1, pageSize: 10, discount: true }),
+    queryFn: () => getProducts({ page: 1, pageSize, discount: true }),
     select(data) {
       return data.status === 200 ? data.data : [];
     },
@@ -36,8 +38,9 @@ export default function Home() {
           <Separator />
           <div className="py-6">
             <ProductsBlock
-              products={productsTrendingQuery.data ?? []}
               title="Trending deals"
+              isLoading={productsTrendingQuery.isLoading}
+              products={productsTrendingQuery.data ?? []}
             />
           </div>
           <Separator />
@@ -49,8 +52,9 @@ export default function Home() {
           <Separator />
           <div className="py-6">
             <ProductsBlock
-              products={productsDiscountQuery.data ?? []}
               title="Sale"
+              isLoading={productsDiscountQuery.isLoading}
+              products={productsDiscountQuery.data ?? []}
             />
           </div>
           <Separator />

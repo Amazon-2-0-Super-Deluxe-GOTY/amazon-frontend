@@ -85,12 +85,10 @@ interface Props {
   defaultValues?: FormValues;
   allCategories: Category[];
   onSubmit: (values: FormValues) => void;
-  onCancel: () => void;
 }
 
 export const CreateCategoryForm = ({
   onSubmit,
-  onCancel,
   isRoot,
   defaultValues,
   allCategories,
@@ -453,13 +451,6 @@ export const CreateCategoryForm = ({
             </FormMessage>
           </fieldset>
         )}
-
-        {/* <div className="fixed bottom-0 left-0 right-0 p-6 flex justify-end gap-3.5 bg-background z-10 rounded-b-lg">
-          <Button type="button" variant={"secondary"} onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit">{isEdit ? "Save" : "Create"}</Button>
-        </div> */}
       </form>
     </Form>
   );
