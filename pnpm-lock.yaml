@@ -98,6 +98,9 @@ dependencies:
   react-hook-form:
     specifier: ^7.51.3
     version: 7.51.3(react@18.2.0)
+  react-input-mask:
+    specifier: ^2.0.4
+    version: 2.0.4(react-dom@18.2.0)(react@18.2.0)
   react-select:
     specifier: ^5.8.0
     version: 5.8.0(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)
@@ -3735,6 +3738,18 @@ packages:
       react: 18.2.0
     dev: false
 
+  /react-input-mask@2.0.4(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-1hwzMr/aO9tXfiroiVCx5EtKohKwLk/NT8QlJXHQ4N+yJJFyUuMT+zfTpLBwX/lK3PkuMlievIffncpMZ3HGRQ==}
+    peerDependencies:
+      react: '>=0.14.0'
+      react-dom: '>=0.14.0'
+    dependencies:
+      invariant: 2.2.4
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      warning: 4.0.3
+    dev: false
+
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -4434,6 +4449,12 @@ packages:
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
+    dev: false
+
+  /warning@4.0.3:
+    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
+    dependencies:
+      loose-envify: 1.4.0
     dev: false
 
   /webidl-conversions@3.0.1:
