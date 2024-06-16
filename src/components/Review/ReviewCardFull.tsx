@@ -465,7 +465,7 @@ const ReviewBody = ({
       )}
       {!isInUserLanguage && (
         <Button
-          variant={"outline"}
+          variant={"secondary"}
           onClick={handleTranslate}
           disabled={isLoading}
         >
@@ -487,10 +487,10 @@ const ReviewFooter = ({ review }: BasePartProps) => {
       <Separator orientation="horizontal" />
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-2 mt-3 lg:mt-6">
         <div className="flex gap-4">
-          <Button variant={review.isRatedByUser ? "default" : "outline"}>
+          <Button variant={review.isRatedByUser ? "primary" : "secondary"}>
             Helpful
           </Button>
-          <Button variant={"outline"}>Report</Button>
+          <Button variant={"secondary"}>Report</Button>
         </div>
         <span className="text-sm lg:text-base">
           {getRatesCountString(review)}

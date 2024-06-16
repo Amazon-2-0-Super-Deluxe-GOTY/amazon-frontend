@@ -7,7 +7,7 @@ interface Props {
   text: string;
   buttonConfirmText?: string;
   buttonCloseText?: string;
-  variant?: "default" | "destructive";
+  variant?: "primary" | "destructive";
   closeModal: (param?: { action: "CLOSE" } | { action: "CONFIRM" }) => void;
 }
 

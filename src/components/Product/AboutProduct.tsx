@@ -55,21 +55,21 @@ export const AboutProduct = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {items.map((item, i) => (
           <div key={i}>
-            <h3 className="font-semibold text-lg lg:text-xl mb-2">
+            <h3 className="font-medium text-lg lg:text-xl mb-2">
               {item.title}
             </h3>
-            <p className="text-base lg:text-lg">{item.text}</p>
+            <p className="text-base">{item.text}</p>
           </div>
         ))}
       </div>
       {isExpandable && (
         <div className="flex justify-center mt-4">
           {isExpanded ? (
-            <Button variant={"outline"} onClick={onHide}>
+            <Button variant={"secondary"} onClick={onHide}>
               Hide
             </Button>
           ) : (
-            <Button variant={"outline"} onClick={onExpand}>
+            <Button variant={"secondary"} onClick={onExpand}>
               View more
             </Button>
           )}

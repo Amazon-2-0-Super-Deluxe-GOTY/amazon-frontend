@@ -58,7 +58,7 @@ export const CreateCategoryModal = ({
               allCategories={allCategories}
             />
           </ScrollArea>
-          <div className="flex justify-end gap-3.5 bg-white">
+          <div className="flex justify-end gap-3.5 bg-background">
             <Button type="button" variant={"secondary"} onClick={closeModal}>
               Cancel
             </Button>

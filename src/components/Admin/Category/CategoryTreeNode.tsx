@@ -28,7 +28,7 @@ export const CategoryTreeNode = ({
     updatedNodeChecked: CheckedState
   ) => void;
   onSelect: (node: CategoryTreeNodeType) => void;
-  isSelected: (categoryId: string) => boolean;
+  isSelected: (categoryId: number) => boolean;
 }) => {
   const category = node.value;
   const nodeSelected = isSelected(category.id);

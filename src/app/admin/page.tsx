@@ -84,7 +84,7 @@ export default function Page() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                       Email
                     </FormLabel>
                     <FormControl>
@@ -103,7 +103,7 @@ export default function Page() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="relative">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-white p-0.5">
+                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
                       Password
                     </FormLabel>
                     <FormControl>

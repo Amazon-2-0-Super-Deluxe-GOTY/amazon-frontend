@@ -31,7 +31,12 @@ export const Pagination = ({
 
   return (
     <div className="flex justify-center items-center gap-3">
-      <Button variant={"ghost"} disabled={!hasPrev} onClick={onPrev}>
+      <Button
+        variant={"tertiary"}
+        size={"icon"}
+        disabled={!hasPrev}
+        onClick={onPrev}
+      >
         <ChevronLeft className="w-6 h-6" />
       </Button>
       {showFirstPage && (
@@ -45,7 +50,8 @@ export const Pagination = ({
       {pagesArray.map((pageNumber) => {
         return (
           <Button
-            variant={pageNumber === page ? "default" : "secondary"}
+            variant={pageNumber === page ? "primary" : "secondary"}
+            size={"icon"}
             key={pageNumber}
             onClick={() => setPage(pageNumber)}
           >
@@ -58,6 +64,7 @@ export const Pagination = ({
           <p>...</p>
           <Button
             variant={"secondary"}
+            size={"icon"}
             key={pagesCount}
             onClick={() => setPage(pagesCount)}
           >
@@ -65,7 +72,12 @@ export const Pagination = ({
           </Button>
         </>
       )}
-      <Button variant={"ghost"} disabled={!hasNext} onClick={onNext}>
+      <Button
+        variant={"tertiary"}
+        size={"icon"}
+        disabled={!hasNext}
+        onClick={onNext}
+      >
         <ChevronRight className="w-6 h-6" />
       </Button>
     </div>

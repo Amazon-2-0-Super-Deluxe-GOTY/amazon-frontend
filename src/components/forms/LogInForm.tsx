@@ -82,7 +82,7 @@ export function LogInForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Email
                   </FormLabel>
                   <FormControl>
@@ -104,7 +104,7 @@ export function LogInForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -117,7 +117,7 @@ export function LogInForm({
                       />
                     </FormControl>
                     <Button
-                      variant={"ghost"}
+                      variant={"tertiary"}
                       type="button"
                       className="absolute"
                       onClick={() => setShowPassword(!showPassword)}

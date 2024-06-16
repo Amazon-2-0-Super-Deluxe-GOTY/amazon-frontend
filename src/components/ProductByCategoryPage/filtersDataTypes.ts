@@ -26,4 +26,8 @@ export type FilterItem =
   | FilterPriceItem
   | FilterRatingItem;
 
-export type FilterCheckedType = { title: string; values: string[] }[];
+export type FilterCheckedType = {
+  title: string;
+  values: string[];
+  type: "rating" | "price" | "checkbox";
+};

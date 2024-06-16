@@ -64,7 +64,7 @@ export const SidebarAvatar = ({
   image,
   fallback,
 }: {
-  image: string;
+  image?: string;
   fallback: string;
 }) => {
   return (

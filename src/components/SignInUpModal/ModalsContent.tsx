@@ -79,7 +79,7 @@ export const ModalRestorePassword = ({
       </div>
       <div className="absolute flex left-6 top-6 max-md:left-4 max-md:top-4">
         <Button
-          variant={"ghost"}
+          variant={"tertiary"}
           onClick={() => {
             changeModal("login");
           }}
@@ -111,7 +111,7 @@ export const ModalResetPassword = ({
       </div>
       <div className="absolute flex left-6 top-6 max-md:left-4 max-md:top-4">
         <Button
-          variant={"ghost"}
+          variant={"tertiary"}
           onClick={() => {
             changeModal("restore-password");
           }}
@@ -206,7 +206,7 @@ export const ModalSignUpCode = ({
       </div>
       <div className="absolute flex left-6 top-6 max-md:left-4 max-md:top-4">
         <Button
-          variant={"ghost"}
+          variant={"tertiary"}
           onClick={onSignUp}
           className="absolute p-3 pl-1"
         >
@@ -251,7 +251,7 @@ export const ModalSignUpSuccessful = ({ onClose }: { onClose: () => void }) => {
       <div>
         <h1 className={titleStyle}>Congratulation!</h1>
         <h2 className={textStyle}>The registration was completed</h2>
-        <Button variant={"default"} className="w-full mt-32" onClick={onClose}>
+        <Button className="w-full mt-32" onClick={onClose}>
           <Link href={"/"}>Let&apos;s go shopping</Link>
         </Button>
       </div>
