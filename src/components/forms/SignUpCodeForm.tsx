@@ -19,7 +19,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useState } from "react";
-import type { SignInUpModalVariants } from "../../../SignInUpModal/types";
+import type { SignInUpModalVariants } from "../SignInUpModal/types";
 import { useMutation } from "@tanstack/react-query";
 import { confirmEmail, resendConfirmationEmail } from "@/api/users";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";

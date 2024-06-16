@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import type { SignInUpModalVariants } from "../../../SignInUpModal/types";
+import type { SignInUpModalVariants } from "../SignInUpModal/types";
 import { useMutation } from "@tanstack/react-query";
 import { updateUser } from "@/api/users";
 
