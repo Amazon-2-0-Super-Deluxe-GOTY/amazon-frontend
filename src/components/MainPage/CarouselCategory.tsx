@@ -37,16 +37,11 @@ export function CarouselCategory() {
                 "basis-[unset] md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4 lg:pl-6"
               }
             >
-              <Link
-                href={`/category/${index + 1}`}
-                className="w-full max-lg:min-w-44"
-              >
-                <CategoryCard
-                  title={`Test category card title ${index + 1}`}
-                  link="/category/1"
-                  image={image}
-                />
-              </Link>
+              <CategoryCard
+                title={`Test category card title ${index + 1}`}
+                link="/category/1"
+                image={image}
+              />
             </CarouselItem>
           );
         })}

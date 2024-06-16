@@ -7,7 +7,7 @@ interface IconProps extends ComponentAttributes {
   absoluteStrokeWidth?: boolean;
 }
 
-export function ArrowRightIcon(props: IconProps) {
+export function ChevronRightIcon(props: IconProps) {
   return (
     <svg
       width="24"
@@ -28,7 +28,7 @@ export function ArrowRightIcon(props: IconProps) {
   );
 }
 
-export function ArrowLeftIcon(props: IconProps) {
+export function ChevronLeftIcon(props: IconProps) {
   return (
     <svg
       width="24"
@@ -49,7 +49,7 @@ export function ArrowLeftIcon(props: IconProps) {
   );
 }
 
-export function ArrowUpIcon(props: IconProps) {
+export function ChevronUpIcon(props: IconProps) {
   return (
     <svg
       width="24"
@@ -70,7 +70,7 @@ export function ArrowUpIcon(props: IconProps) {
   );
 }
 
-export function ArrowDownIcon(props: IconProps) {
+export function ChevronDownIcon(props: IconProps) {
   return (
     <svg
       width="24"
@@ -848,6 +848,23 @@ export const FilterIcon = (props: IconProps) => {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+};
+
+export const MeatballMenuIcon = (props: IconProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 40 40"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M9 20.3291C9 21.708 7.88175 22.8291 6.49357 22.8291C5.1054 22.8291 4 21.708 4 20.3291C4 18.9502 5.11825 17.8291 6.49357 17.8291C7.86889 17.8291 9 18.9502 9 20.3291Z" />
+      <path d="M22.0498 20.3291C22.0498 21.708 20.9316 22.8291 19.5434 22.8291C18.1552 22.8291 17.0498 21.708 17.0498 20.3291C17.0498 18.9502 18.1681 17.8291 19.5434 17.8291C20.9187 17.8291 22.0498 18.9502 22.0498 20.3291Z" />
+      <path d="M35.1006 20.3291C35.1006 21.708 33.9823 22.8291 32.5942 22.8291C31.206 22.8291 30.1006 21.708 30.1006 20.3291C30.1006 18.9502 31.2188 17.8291 32.5942 17.8291C33.9695 17.8291 35.1006 18.9502 35.1006 20.3291Z" />
     </svg>
   );
 };

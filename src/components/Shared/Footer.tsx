@@ -16,10 +16,10 @@ export function Footer() {
         <div>
           <h3 className="font-bold mb-2">Support</h3>
           <ul>
-            <li className="mb-1">Contact us</li>
+            <li className="mb-1">
+              <a href={"mailto:support@perry.com"}>Contact us</a>
+            </li>
             <li className="mb-1">FAQ</li>
-            <li className="mb-1">Size guide</li>
-            <li className="mb-1">Shipping & returns</li>
           </ul>
         </div>
         <div>
@@ -38,7 +38,6 @@ export function Footer() {
             <li className="mb-1">
               <Link href="/legal-notice?tab=privacy-open">Privacy Policy</Link>
             </li>
-            <li className="mb-1">Cookie Settings</li>
           </ul>
         </div>
         <div>

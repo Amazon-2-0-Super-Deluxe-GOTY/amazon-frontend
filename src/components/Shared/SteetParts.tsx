@@ -1,7 +1,7 @@
 import { SheetClose, SheetTitle } from "@/components/ui/sheet";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { SheetHeader as SheetHeaderBase } from "@/components/ui/sheet";
+import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "./Icons";
 
 interface PageControlsProps {
   hasPrev: boolean;
@@ -22,7 +22,7 @@ type HeaderProps =
 
 export const SheetHeader = (props: HeaderProps) => {
   return (
-    <SheetHeaderBase className="gap-4 lg:gap-6 space-y-0">
+    <SheetHeaderBase className="gap-2 lg:gap-3.5 space-y-0">
       <div className="flex items-center gap-4">
         {"title" in props ? (
           <SheetTitle className="mr-auto text-lg sm:text-2xl lg:text-3xl">
@@ -32,8 +32,8 @@ export const SheetHeader = (props: HeaderProps) => {
           props.element
         )}
         {!!props.pageControls && <PageControls {...props.pageControls} />}
-        <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary ml-[10%]">
-          <X className="h-5 w-5" />
+        <SheetClose className="p-1 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary ml-[10%]">
+          <XIcon className="w-6 h-6 stroke-secondary stroke-3" />
           <span className="sr-only">Close</span>
         </SheetClose>
       </div>
@@ -51,18 +51,18 @@ const PageControls = ({
   return (
     <div className="flex items-center gap-6">
       <button
-        className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+        className="p-1 rounded-sm opacity-70 ring-offset-background transition-opacity disabled:opacity-50 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
         disabled={!hasPrev}
         onClick={onPrev}
       >
-        <ChevronLeft className="group-disabled:stroke-gray-300" />
+        <ChevronLeftIcon className="w-6 h-6 stroke-secondary stroke-3" />
       </button>
       <button
-        className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+        className="p-1 rounded-sm opacity-70 ring-offset-background transition-opacity disabled:opacity-50 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
         disabled={!hasNext}
         onClick={onNext}
       >
-        <ChevronRight className="group-disabled:stroke-gray-300" />
+        <ChevronRightIcon className="w-6 h-6 stroke-secondary stroke-3" />
       </button>
     </div>
   );

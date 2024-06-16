@@ -58,7 +58,8 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
     }
   };
 
-  const increment = () => setCount((c) => c + 1);
+  const increment = () =>
+    setCount((c) => (c < product.quantity ? c + 1 : product.quantity));
   const decrement = () => setCount((c) => (c > 1 ? c - 1 : 1));
 
   const hasPrev = useMemo(() => {
@@ -104,7 +105,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
   //#endregion
 
   return (
-    <Card className="bg-gray-200">
+    <Card>
       <CardHeader className="space-y-3">
         <div className="flex justify-between items-center">
           <div>
@@ -136,9 +137,13 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         <div className="flex justify-between items-center py-1">
           <span className="text-base">Quantity</span>
           <div className="flex items-center gap-4">
-            <MinusIcon className="w-4 cursor-pointer" onClick={decrement} />
-            <span className="text-sm select-none">{count}</span>
-            <PlusIcon className="w-4 cursor-pointer" onClick={increment} />
+            <button onClick={decrement}>
+              <MinusIcon className="w-4" />
+            </button>
+            <span className="text-sm">{count}</span>
+            <button onClick={increment}>
+              <PlusIcon className="w-4" />
+            </button>
           </div>
         </div>
       </CardHeader>
@@ -153,7 +158,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         >
           Buy now
         </Button>
-        <Button variant={"secondary"} className="col-span-2 lg:col-span-1">
+        <Button variant={"tertiary"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
       </CardContent>

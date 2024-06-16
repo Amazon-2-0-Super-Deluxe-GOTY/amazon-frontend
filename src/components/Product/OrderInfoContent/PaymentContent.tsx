@@ -1,4 +1,4 @@
-import { CreditCardIcon, HandCoinsIcon } from "lucide-react";
+import { HandCoinsIcon } from "lucide-react";
 import type { PaymentTypes } from "./types";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -7,6 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card } from "@/components/ui/card";
+import { CreditCardIcon } from "@/components/Shared/Icons";
 
 const paymentMethodsData: {
   type: PaymentTypes;
@@ -17,7 +19,7 @@ const paymentMethodsData: {
   {
     type: "credit_card",
     title: "Credit card",
-    text: "Save your card in your [Marketplace’s name] account to pay faster and more conveniently. After saving your card, you don’t have to login to the bank, enter codes or enter data for subsequent purchases. Lear more",
+    text: "Save your card in your Perry account to pay faster and more conveniently. After saving your card, you don’t have to login to the bank, enter codes or enter data for subsequent purchases. Lear more",
     icon: <CreditCardIcon />,
   },
   {
@@ -50,30 +52,31 @@ export const PaymentContent = () => {
   return (
     <div className="grow space-y-4 lg:space-y-6">
       <p className="text-sm sm:text-base">
-        On [Marketplace’s name] you can pay for your purchases in various ways.
-        At checkout you will see a list of methods available for your purchase.
+        On Perry you can pay for your purchases in various ways. At checkout you
+        will see a list of methods available for your purchase.
       </p>
       <Separator orientation="horizontal" />
-      <div>
+      <div className="space-y-3">
         {paymentMethodsData.map((item, i) => (
-          <Accordion
-            type="single"
-            collapsible
-            className="even:bg-gray-200 rounded-md"
-            key={item.type}
-          >
-            <AccordionItem value="item-1" className="border-none">
-              <AccordionTrigger className="p-4">
-                <div className="flex items-center gap-4">
-                  {item.icon}
-                  {item.title}
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 pt-0 text-sm sm:text-base">
-                {item.text}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <Card key={i}>
+            <Accordion
+              type="single"
+              collapsible
+              className="even:bg-gray-200 rounded-md"
+            >
+              <AccordionItem value="item-1" className="border-none">
+                <AccordionTrigger className="p-4 lg:p-6">
+                  <div className="flex items-center gap-4">
+                    {item.icon}
+                    {item.title}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-4 pt-0 text-sm sm:text-base">
+                  {item.text}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </Card>
         ))}
       </div>
     </div>

@@ -108,28 +108,25 @@ export function SignUpForm({
             name="password"
             render={({ field }) => (
               <FormItem>
-                <div>
+                <div className="relative">
                   <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Password
                   </FormLabel>
-                  <div className="flex justify-end">
-                    <FormControl>
-                      <Input
-                        placeholder="Create your password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <Button
-                      variant={"tertiary"}
-                      type="button"
-                      className="absolute"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeIcon /> : <EyeOffIcon />}
-                    </Button>
-                  </div>
+                  <FormControl>
+                    <Input
+                      placeholder="Create your password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <button
+                    type="button"
+                    className="absolute top-0 bottom-0 right-6"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                  </button>
                 </div>
                 <FormMessage className="max-md:text-xs px-4" />
               </FormItem>
@@ -140,30 +137,25 @@ export function SignUpForm({
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <div>
+                <div className="relative">
                   <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
                     Confirm password
                   </FormLabel>
-                  <div className="flex justify-end">
-                    <FormControl>
-                      <Input
-                        placeholder="Repeat your password"
-                        type={showConfirmPassword ? "text" : "password"}
-                        autoComplete="repeat-password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <Button
-                      variant={"tertiary"}
-                      type="button"
-                      className="absolute"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                    >
-                      {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
-                    </Button>
-                  </div>
+                  <FormControl>
+                    <Input
+                      placeholder="Repeat your password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="repeat-password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <button
+                    type="button"
+                    className="absolute top-0 bottom-0 right-6"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+                  </button>
                 </div>
                 <FormMessage className="max-md:text-xs px-4" />
               </FormItem>

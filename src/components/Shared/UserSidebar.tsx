@@ -25,6 +25,7 @@ import { Button } from "../ui/button";
 import { SignInUpButtons } from "../SignInUpModal/SignInUpModals";
 import { logOut, useUser } from "@/api/users";
 import { useAuthStore } from "@/lib/storage";
+import { useRouter } from "next/navigation";
 
 export const UserSidebar = ({
   isOpen,
@@ -35,6 +36,7 @@ export const UserSidebar = ({
   closeSidebar: () => void;
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
+  const router = useRouter();
   const { user } = useUser();
   const isLoggedIn = !!user;
   const fullName = `${user?.firstName} ${user?.lastName}`;
@@ -50,7 +52,9 @@ export const UserSidebar = ({
   };
 
   const onLogOut = () => {
-    logOut().then(clearToken);
+    logOut()
+      .then(clearToken)
+      .then(() => router.push("/"));
   };
 
   return (

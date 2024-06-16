@@ -1,17 +1,116 @@
-import { useMemo, useState } from "react";
-import { ReviewCard } from "./ReviewCard";
+import {
+  useEffect,
+  useMemo,
+  useOptimistic,
+  useState,
+  useTransition,
+} from "react";
+import { ReviewCard, UserReviewCard } from "./ReviewCard";
 import { ReviewFilter } from "./ReviewFilters";
-import { ReviewsStatisticCard } from "./ReviewsStatisticCard";
-import type { Review, ReviewFilters, ReviewsStatistic } from "./types";
+import {
+  ReviewsStatisticCard,
+  ReviewsStatisticCardSkeleton,
+} from "./ReviewsStatisticCard";
+import {
+  Review,
+  deleteReview,
+  getProductReviewStats,
+  getProductReviews,
+  getReviewTags,
+  likeReview,
+  type ReviewFilters,
+} from "@/api/review";
 import { ReviewCardFull } from "./ReviewCardFull";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Card } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
+import { useUser } from "@/api/users";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
+import clsx from "clsx";
+import { PlusIcon } from "../Shared/Icons";
+import { useModal } from "../Shared/Modal";
+import { CreateReviewModal } from "./CreateReviewModal";
+import { AlertDialog } from "../Admin/AlertDialog";
 
 interface Props {
-  reviews: Review[];
-  reviewsStatistic: ReviewsStatistic;
+  productId: string;
 }
 
-export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
-  const [reviewsFiltered, serReviewsFiltered] = useState(reviews);
+const pageSize = 5;
+
+export const ReviewsBlock = ({ productId }: Props) => {
+  const [filters, setFilters] = useState<ReviewFilters>({
+    pageSize,
+    pageIndex: 1,
+    productId,
+    orderBy: "desc",
+  });
+  const { showModal } = useModal();
+
+  const { user } = useUser();
+
+  const queryClient = useQueryClient();
+  const reviewsStatsQuery = useQuery({
+    queryKey: ["reviewStats", productId],
+    queryFn: () => getProductReviewStats(productId),
+    refetchOnWindowFocus: false,
+    select(data) {
+      return data.status === 200 ? data.data : undefined;
+    },
+  });
+  const reviewsQuery = useQuery({
+    queryKey: [
+      "reviews",
+      filters.pageIndex,
+      filters.pageSize,
+      filters.productId,
+      filters.rating,
+      filters.orderBy,
+    ],
+    queryFn: () => getProductReviews(filters),
+    refetchOnWindowFocus: false,
+    select(data) {
+      return data.status === 200
+        ? data.data.filter((r) => r.user.id !== user?.id)
+        : [];
+    },
+  });
+  const userReviewQuery = useQuery({
+    queryKey: ["review", "user", user, productId],
+    queryFn: () =>
+      getProductReviews({
+        pageSize: 1,
+        pageIndex: 1,
+        userId: user?.id,
+        productId,
+      }),
+    refetchOnWindowFocus: false,
+    select(data) {
+      return data?.status === 200 ? data.data[0] : undefined;
+    },
+  });
+  const reviewTagsQuery = useQuery({
+    queryKey: ["reviewTags"],
+    queryFn: getReviewTags,
+    refetchOnWindowFocus: false,
+    select(data) {
+      return data.status === 200 ? data.data : [];
+    },
+  });
+  const deleteReviewMutation = useMutation({
+    mutationFn: deleteReview,
+  });
+
+  // const reviews, setReviews] = useState<Review[]>([]);
+  const reviews = reviewsQuery.data ?? [];
+  const [reviewsOptimistic, setReviewsOptimistic] = useOptimistic(reviews);
+  const [isLikePending, startLikeTransition] = useTransition();
+
+  // useEffect(() => {
+  //   setReviews(reviewsQuery.data ?? []);
+  // }, [reviewsQuery.data]);
+
   const [openedReviewIndex, setOpenedReviewIndex] = useState<
     number | undefined
   >();
@@ -24,8 +123,8 @@ export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
   const hasNext = useMemo(() => {
     return openedReviewIndex === undefined
       ? false
-      : openedReviewIndex + 1 < reviewsFiltered.length;
-  }, [openedReviewIndex, reviewsFiltered.length]);
+      : openedReviewIndex + 1 < (reviewsOptimistic.length ?? 0);
+  }, [openedReviewIndex, reviewsOptimistic.length]);
 
   const createOnCardClick = (index: number) => () =>
     setOpenedReviewIndex(index);
@@ -46,52 +145,183 @@ export const ReviewsBlock = ({ reviews, reviewsStatistic }: Props) => {
     }
   };
 
-  const onFiltersChange = (filters: ReviewFilters) => {
-    serReviewsFiltered(
-      reviews.filter((r) => {
-        if (!!filters.stars) return r.rating === filters.stars;
+  const onCreateReview = () => {
+    showModal({
+      component: CreateReviewModal,
+      props: {
+        productId: productId,
+        review: userReviewQuery.data,
+        reviewTags: reviewTagsQuery.data ?? [],
+      },
+    }).then((r) => {
+      if (r.action === "CONFIRM") {
+        userReviewQuery.refetch();
+        reviewsStatsQuery.refetch();
+        // invalidate main page queries
+        queryClient.invalidateQueries({
+          queryKey: ["products", "main", "trending"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["products", "main", "discount"],
+        });
+      }
+    });
+  };
 
-        return true;
-      })
-    );
+  const onDeleteReview = () => {
+    const reviewId = userReviewQuery.data?.id;
+    if (!reviewId) return;
+
+    showModal({
+      component: AlertDialog,
+      props: {
+        title: "Are you sure?",
+        text: "Your review will be impossible to recover.",
+        buttonCloseText: "Cancel",
+        buttonConfirmText: "Delete",
+        variant: "destructive",
+      },
+    }).then(async (r) => {
+      if (r.action === "CONFIRM") {
+        await deleteReviewMutation.mutateAsync({ reviewId });
+        userReviewQuery.refetch();
+        reviewsStatsQuery.refetch();
+        // invalidate main page queries
+        queryClient.invalidateQueries({
+          queryKey: ["products", "main", "trending"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["products", "main", "discount"],
+        });
+      }
+    });
+  };
+
+  const onLikeReview = (reviewId: string) => {
+    if (!user) return;
+    startLikeTransition(async () => {
+      setReviewsOptimistic(
+        reviews.map((r) =>
+          r.id === reviewId
+            ? {
+                ...r,
+                currentUserLiked: !r.currentUserLiked,
+                likes: r.likes + 1,
+              }
+            : r
+        )
+      );
+      try {
+        await likeReview({ reviewId });
+        await reviewsQuery.refetch();
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  };
+
+  const onUserCardClick = () => {
+    const reviewId = userReviewQuery.data?.id;
+    if (!userReviewQuery.data || !reviewId) return;
+    showModal({
+      component: ReviewCardFull,
+      props: {
+        isOpen: true,
+        review: userReviewQuery.data,
+        hasPrev: false,
+        hasNext: false,
+        isOwnReview: true,
+        onPrev: () => {},
+        onNext: () => {},
+        onLike: () => onLikeReview(reviewId),
+        startImageIndex: 0,
+      },
+    });
   };
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="lg:max-w-xl w-full">
-        <ReviewsStatisticCard data={reviewsStatistic} />
+        {reviewsStatsQuery.isLoading ? (
+          <ReviewsStatisticCardSkeleton />
+        ) : (
+          <ReviewsStatisticCard data={reviewsStatsQuery.data} />
+        )}
       </div>
       <div className="w-full">
         <div className="mb-6">
-          <ReviewFilter onFiltersChange={onFiltersChange} />
+          <ReviewFilter filters={filters} onFiltersChange={setFilters} />
+        </div>
+        <div className="space-y-6 pb-6">
+          <Separator />
+          {userReviewQuery.isLoading ? (
+            <ReviewCardSkeleton />
+          ) : !!userReviewQuery.data ? (
+            <UserReviewCard
+              review={userReviewQuery.data}
+              onClick={onUserCardClick}
+              onEdit={onCreateReview}
+              onDelete={onDeleteReview}
+              isDeleteInProgress={deleteReviewMutation.isPending}
+            />
+          ) : (
+            <Button
+              variant={"secondary"}
+              className="w-full h-max lg:justify-start gap-4 lg:text-lg font-semibold"
+              onClick={onCreateReview}
+            >
+              <PlusIcon className="w-6 h-6 stroke-secondary" />
+              Create review
+            </Button>
+          )}
         </div>
         <div className="space-y-3 lg:space-y-8">
-          {reviewsFiltered.length ? (
-            reviewsFiltered.map((r, i) => (
+          {reviewsQuery.isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <ReviewCardSkeleton key={i} transparent />
+            ))
+          ) : !!reviewsOptimistic.length ? (
+            reviewsOptimistic.map((r, i) => (
               <ReviewCard
                 review={r}
                 onClick={createOnCardClick(i)}
                 onImageClick={setStartImageIndex}
+                onLike={() => onLikeReview(r.id)}
                 key={i}
               />
             ))
           ) : (
-            <p className="text-center text-gray-600">No reviews</p>
+            <p className="text-center">No reviews</p>
           )}
         </div>
       </div>
       {isFullOpen && (
         <ReviewCardFull
-          review={reviewsFiltered[openedReviewIndex]}
+          review={reviewsOptimistic[openedReviewIndex]}
           isOpen={isFullOpen}
           startImageIndex={startImageIndex}
           hasPrev={hasPrev}
           hasNext={hasNext}
           onPrev={toPrev}
           onNext={toNext}
+          onLike={() => onLikeReview(reviewsOptimistic[openedReviewIndex].id)}
           closeModal={closeFullView}
         />
       )}
     </div>
+  );
+};
+
+const ReviewCardSkeleton = ({ transparent }: { transparent?: boolean }) => {
+  return (
+    <Card className={clsx("p-3", transparent && "bg-transparent shadow-none")}>
+      <div className="flex items-center gap-2 mb-4">
+        <Skeleton className="w-10 h-10 rounded-full" />
+        <Skeleton className="w-1/4 h-6" />
+      </div>
+      <Skeleton className="w-2/4 h-6 mb-2" />
+      <Skeleton className="w-full h-6 mb-2" />
+      <Skeleton className="w-full h-6" />
+    </Card>
   );
 };

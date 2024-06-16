@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useScreenSize } from "@/lib/media";
-import { ArrowUpIcon } from "./Icons";
+import { ChevronUpIcon } from "./Icons";
 
 const ScrollToTopButton = () => {
   //#region isMobile
@@ -44,7 +44,7 @@ const ScrollToTopButton = () => {
         )}
         onClick={scrollToTop}
       >
-        <ArrowUpIcon aria-label="Scroll to top" />
+        <ChevronUpIcon aria-label="Scroll to top" />
       </Button>
     </div>
   );

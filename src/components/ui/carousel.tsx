@@ -8,7 +8,7 @@ import useEmblaCarousel, {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon, ArrowRightIcon } from "../Shared/Icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "../Shared/Icons";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -217,7 +217,7 @@ const CarouselPrevious = React.forwardRef<
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon className="h-4 w-4 stroke-secondary stroke-[3]" />
+      <ChevronLeftIcon className="h-4 w-4 stroke-secondary stroke-[3]" />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -246,7 +246,7 @@ const CarouselNext = React.forwardRef<
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon className="h-4 w-4 stroke-secondary stroke-[3]" />
+      <ChevronRightIcon className="h-4 w-4 stroke-secondary stroke-[3]" />
       <span className="sr-only">Next slide</span>
     </Button>
   );
