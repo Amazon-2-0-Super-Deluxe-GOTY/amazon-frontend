@@ -1,6 +1,5 @@
 "use server";
 import React from "react";
-import { getProductBySlug } from "@/api/products";
 import { ProductPage } from "@/components/ProductPage/ProductPage";
 import { getProductBySlugServer } from "@/api/server";
 import { redirect } from "next/navigation";
@@ -32,6 +31,6 @@ export async function generateMetadata({
   }
 
   return {
-    title: product.data.name,
+    title: `${product.data.name} | Perry`,
   };
 }

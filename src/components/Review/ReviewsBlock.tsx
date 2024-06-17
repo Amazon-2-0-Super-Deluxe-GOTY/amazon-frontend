@@ -206,7 +206,7 @@ export const ReviewsBlock = ({ productId }: Props) => {
             ? {
                 ...r,
                 currentUserLiked: !r.currentUserLiked,
-                likes: r.likes + 1,
+                likes: r.currentUserLiked ? r.likes - 1 : r.likes + 1,
               }
             : r
         )

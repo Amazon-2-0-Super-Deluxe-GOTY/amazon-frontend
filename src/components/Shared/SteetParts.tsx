@@ -25,7 +25,7 @@ export const SheetHeader = (props: HeaderProps) => {
     <SheetHeaderBase className="gap-2 lg:gap-3.5 space-y-0">
       <div className="flex items-center gap-4">
         {"title" in props ? (
-          <SheetTitle className="mr-auto text-lg sm:text-2xl lg:text-3xl">
+          <SheetTitle className="mr-auto lg:text-2xl xl:text-3xl">
             {props.title}
           </SheetTitle>
         ) : (

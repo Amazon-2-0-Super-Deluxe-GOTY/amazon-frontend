@@ -181,7 +181,9 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         count={count}
         increment={increment}
         decrement={decrement}
-        productId={product.id}
+        price={product.discountPercent ? product.discountPrice : product.price}
+        onAddToCard={onAddToCartClick}
+        onBuyNow={onBuyNowClick}
       />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -200,7 +202,9 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
                   onNext: toNext,
                 }}
               />
-              <ScrollArea>{infoElements[openedTabIndex].render()}</ScrollArea>
+              <ScrollArea className="grow">
+                {infoElements[openedTabIndex].render()}
+              </ScrollArea>
             </>
           )}
         </SheetContent>
@@ -213,52 +217,39 @@ const MobileQuickActions = ({
   count,
   increment,
   decrement,
-  productId,
+  price,
+  onAddToCard,
+  onBuyNow,
 }: {
   count: number;
   increment: () => void;
   decrement: () => void;
-  productId: string;
+  price: number;
+  onAddToCard: () => void;
+  onBuyNow: () => void;
 }) => {
-  //#region AddProductToCart
-  const { addToCart, setIsOpenCartModal } = useStorageCart();
-  const onAddToCartClick = () => {
-    const newCartItem = {
-      id: productId,
-      title: "Product_" + productId,
-      price: 39.99,
-      quantity: count,
-    };
-    addToCart(newCartItem);
-  };
-  const onBuyNowClick = () => {
-    onAddToCartClick();
-    setIsOpenCartModal(true);
-  };
-  //#endregion
+  const { whole, fraction } = splitPrice(price);
 
   return (
     <ClientOnlyPortal selector="body">
       <MediaQueryCSS maxSize="md">
-        <Card className="bg-gray-200 fixed bottom-0 left-0 right-0 rounded-t-md z-10">
+        <Card className="bg-card fixed bottom-0 left-0 right-0 rounded-t-md z-10">
           <CardHeader className="space-y-3 p-4">
             <div className="flex justify-between items-center">
               <div>
-                <span className="text-3xl font-bold">
-                  $24<sup>99</sup>
+                <span className="text-2xl font-bold">
+                  ${whole}
+                  <sup>{fraction}</sup>
                 </span>
-                <sub className="ml-2 line-through text-gray-400 text-lg">
-                  $39.99
-                </sub>
               </div>
               <div className="flex items-center gap-2">
                 <button>
                   <HeartIcon />
                 </button>
-                <Button variant={"secondary"} onClick={onAddToCartClick}>
+                <Button variant={"secondary"} onClick={onAddToCard}>
                   To cart
                 </Button>
-                <Button onClick={onBuyNowClick}>Buy</Button>
+                <Button onClick={onBuyNow}>Buy</Button>
               </div>
             </div>
             <hr className="border-black" />

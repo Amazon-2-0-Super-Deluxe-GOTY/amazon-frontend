@@ -1,6 +1,6 @@
 "use client";
 import React, { useMemo } from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { useSearchParamsTools } from "@/lib/router";
@@ -32,26 +32,22 @@ import { FilterCardVariationMobile } from "@/components/ProductByCategoryPage/Fi
 import { FilterCheckedType } from "@/components/ProductByCategoryPage/filtersDataTypes";
 import { MediaQueryCSS } from "@/components/Shared/MediaQuery";
 import { FilterCardVariation } from "@/components/ProductByCategoryPage/FilterCardVariation";
-import { useCategoryFilters } from "@/api/categories";
 import { Pagination } from "@/components/Shared/Pagination";
 import { Separator } from "@/components/ui/separator";
 import { Grid3x3Icon, Grid5x4Icon, HomeIcon } from "@/components/Shared/Icons";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { FilterItemButton } from "@/components/ProductByCategoryPage/FilterItemButton";
-import { ProductFilters, getProducts } from "@/api/products";
+import { ProductFilters, getProducts, useProductFilters } from "@/api/products";
 import { parsePriceParamValue } from "@/lib/products";
 import { useQuery } from "@tanstack/react-query";
 import { ProductCardSkeleton } from "@/components/Product/ProductCardSkeleton";
 import { FilterCardSkeleton } from "@/components/ProductByCategoryPage/FilterCardSkeleton";
+import type { Category } from "@/api/categories";
 
-export default function CategoryPage({
-  params,
-}: {
-  params: { categoryId: string };
-}) {
+export function ProductsListPage({ category }: { category?: Category }) {
+  const categoryId = category?.id;
   const searchParams = useSearchParamsTools();
-  // FIXME: test category id for now
-  const filtersData = useCategoryFilters(1);
+  const filtersData = useProductFilters({ categoryId });
   const filterProperties = useMemo(() => {
     return filtersData.data.map((f) => f.title);
   }, [filtersData.data]);
@@ -67,15 +63,20 @@ export default function CategoryPage({
         (entry) =>
           filterProperties.includes(entry[0]) ||
           entry[0] === "rating" ||
-          entry[0] === "price"
+          entry[0] === "price" ||
+          entry[0] === "searchQuery"
       )
       .map((entry) => ({
         title: entry[0],
         values: entry[1].split(","),
         type:
-          entry[0] === "rating" || entry[0] === "price" ? entry[0] : "checkbox",
+          entry[0] === "rating" || entry[0] === "price"
+            ? entry[0]
+            : entry[0] === "searchQuery"
+            ? "search"
+            : "checkbox",
       }));
-  }, [searchParams]);
+  }, [searchParams, filterProperties]);
 
   const appliedFiltersCount = useMemo(() => {
     return checkedItems.reduce((count, item) => count + item.values.length, 0);
@@ -103,18 +104,18 @@ export default function CategoryPage({
 
   const productFilterParams = useMemo<ProductFilters>(() => {
     return {
-      // FIXME: test category id for now
-      categoryId: 1,
+      categoryId: categoryId,
       orderBy: orderBy as ProductFilters["orderBy"],
       page: page,
       pageSize: pageSize,
       price: parsePriceParamValue(searchParams.get?.("price")),
       rating: searchParams.get?.("rating") ?? undefined,
+      searchQuery: searchParams.get?.("searchQuery") ?? undefined,
       additionalFilters: checkedItems
         .filter((i) => i.type === "checkbox")
         .map((i) => ({ name: i.title, values: i.values })),
     };
-  }, [checkedItems, orderBy, page, searchParams, pageSize]);
+  }, [checkedItems, orderBy, page, searchParams, pageSize, categoryId]);
 
   const productsQuery = useQuery({
     queryKey: ["products", productFilterParams],
@@ -142,45 +143,49 @@ export default function CategoryPage({
 
   return (
     <main className="flex flex-col items-center px-4">
-      <section className="w-full flex items-left gap-1">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/">
-                  <HomeIcon />
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <Slash />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/category">Category {params.categoryId}</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <Slash />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/category/subcategory">
-                  Subcategory {params.categoryId}
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <Slash />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbPage>Products {params.categoryId}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </section>
+      {!!category && (
+        <section className="w-full flex items-left gap-1">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/">
+                    <HomeIcon />
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <Slash />
+              </BreadcrumbSeparator>
+              {/* <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/category">Category {categoryId}</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <Slash />
+              </BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/category/subcategory">
+                    Subcategory {categoryId}
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <Slash />
+              </BreadcrumbSeparator> */}
+              <BreadcrumbItem>
+                <BreadcrumbPage>{category.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </section>
+      )}
       <section className="w-full flex items-left pt-4">
-        <span className="text-4xl font-semibold">Title</span>
+        <span className="text-4xl font-semibold">
+          {category !== undefined ? category?.name : "Products"}
+        </span>
       </section>
       <section className="flex max-sm:flex-col lg:flex-row w-full pt-8 gap-6">
         <MediaQueryCSS minSize="lg">
@@ -192,14 +197,13 @@ export default function CategoryPage({
             ) : (
               <FilterCardVariation filters={filtersData.data} />
             )}
-            <FilterCardSkeleton />
           </div>
         </MediaQueryCSS>
         <div className="grow">
           <div className="w-full flex justify-between items-center gap-2">
             <MediaQueryCSS maxSize="lg">
               <FilterCardVariationMobile
-                categoryId={params.categoryId}
+                categoryId={categoryId}
                 filters={filtersData.data}
                 checkedItems={checkedItems}
                 uncheckFilter={uncheckFilter}
@@ -247,7 +251,13 @@ export default function CategoryPage({
                       </ScrollArea>
                       <Separator className="my-4" />
                       <Button variant={"tertiary"}>
-                        <Link href={`/category/${params.categoryId}`}>
+                        <Link
+                          href={
+                            categoryId !== undefined
+                              ? `/category/${categoryId}`
+                              : "/products"
+                          }
+                        >
                           Clear all
                         </Link>
                       </Button>
@@ -305,7 +315,6 @@ export default function CategoryPage({
               : productsQuery.data?.products.map((product) => (
                   <ProductCard product={product} key={product.id} />
                 ))}
-            <ProductCardSkeleton />
           </div>
           {/* Pagination here */}
           {!!productsQuery.data?.count.pagesCount &&

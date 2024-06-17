@@ -1,4 +1,3 @@
-import { HandCoinsIcon } from "lucide-react";
 import type { PaymentTypes } from "./types";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -8,7 +7,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
-import { CreditCardIcon } from "@/components/Shared/Icons";
+import {
+  ApplePayIcon,
+  CashIcon,
+  CreditCardIcon,
+  GooglePayIcon,
+  PayPalIcon,
+} from "@/components/Shared/Icons";
 
 const paymentMethodsData: {
   type: PaymentTypes;
@@ -26,25 +31,25 @@ const paymentMethodsData: {
     type: "google_pay",
     title: "Google Pay",
     text: "Do you have a device with an Android operating system? In this case, use Google Pay without providing payment data. This is simple and convenient, and importantly - your card data is not stored on the device and not transferred during the transaction.",
-    icon: <CreditCardIcon />,
+    icon: <GooglePayIcon />,
   },
   {
     type: "apple_pay",
     title: "Apple Pay",
     text: "If you are a user of an iOS device, Apple Pay is built-in. This does not require downloading any separate application. In addition, payment with Apple Pay is also possible in the Safari browser.",
-    icon: <CreditCardIcon />,
+    icon: <ApplePayIcon />,
   },
   {
     type: "paypal",
     title: "PayPal",
     text: "PayPal is a global payment method that allows you to pay anywhere in the world without revealing your financial data. Simply top up your PayPal or use your credit or debit card. You can also pay by card once without having to login.Simply top up your PayPal or use a credit or debit card. You can also pay by card once without having to log in.",
-    icon: <CreditCardIcon />,
+    icon: <PayPalIcon />,
   },
   {
     type: "receipt",
     title: "Pay on delivery",
     text: "If you choose the shipping method, you can choose the payment on receipt. This means that you will pay the goods by cash or payment card to the courier who will deliver the parcel to you or at the point of receipt.",
-    icon: <HandCoinsIcon />,
+    icon: <CashIcon />,
   },
 ];
 

@@ -103,7 +103,7 @@ function SelectItemRecursive({
     >
       <AccordionItem value="item-1" className="border-none">
         <div
-          className="flex hover:bg-muted has-[:focus]:bg-muted has-[[data-state=checked]]:bg-muted"
+          className="flex hover:bg-accent has-[:focus]:bg-accent has-[[data-state=checked]]:bg-accent"
           style={{ paddingLeft: `${getOffset(index)}px` }}
         >
           <SelectItem

@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useModal } from "../../Shared/Modal";
 import { ProductImageFullView } from "@/components/Product/ProductImageFullView";
+import { TrashIcon } from "@/components/Shared/Icons";
 
 interface ProductAsideCardProps {
   product?: ProductShort;
@@ -93,16 +94,17 @@ export function ProductAsideCard({
                 className="w-full flex items-center gap-2 text-base"
                 disabled={isButtonsDisabled}
               >
-                <FilePenLineIcon className={"w-5 h-5"} />
+                <FilePenLineIcon className={"w-6 h-6"} />
                 Edit
               </Button>
             </Link>
             <Button
+              variant={"destructive"}
               className="w-full flex items-center gap-2 text-base"
               onClick={handleDelete}
               disabled={isButtonsDisabled}
             >
-              <Trash2Icon className={"w-5 h-5"} />
+              <TrashIcon className={"w-6 h-6"} />
               Delete
             </Button>
           </div>

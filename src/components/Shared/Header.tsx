@@ -1,45 +1,48 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import {
-  ArmchairIcon,
-  HomeIcon,
-  MonitorIcon,
-  ShirtIcon,
-  WrenchIcon,
-} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { UserSidebar } from "./UserSidebar";
 import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
-import { MenuIcon, SearchIcon, UserIcon } from "./Icons";
+import {
+  CleaningSprayIcon,
+  ClothesIcon,
+  ComputerIcon,
+  HammerIcon,
+  MenuIcon,
+  SearchIcon,
+  SofaIcon,
+  UserIcon,
+} from "./Icons";
 import { Logo } from "./Logo";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const sidebarData = {
   // user: { fullName: "Marsha Shields", avatar: "" },
   categories: [
     {
-      icon: <ShirtIcon />,
+      icon: <ClothesIcon />,
       title: "Fashion",
       url: "/category/fashion",
     },
     {
-      icon: <MonitorIcon />,
+      icon: <ComputerIcon />,
       title: "Electronics",
       url: "/category/electronics",
     },
     {
-      icon: <HomeIcon />,
+      icon: <CleaningSprayIcon />,
       title: "Household",
       url: "/category/household",
     },
     {
-      icon: <ArmchairIcon />,
+      icon: <SofaIcon />,
       title: "Furniture",
       url: "/category/furniture",
     },
     {
-      icon: <WrenchIcon />,
+      icon: <HammerIcon />,
       title: "Work tools",
       url: "/category/work-tools",
     },
@@ -47,10 +50,22 @@ const sidebarData = {
 };
 
 export function Header() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState(() => {
+    const existingParams = searchParams?.get("searchQuery");
+    if (!existingParams) return "";
+    return existingParams;
+  });
 
   const openSidebar = () => setIsSidebarOpen(true);
   const closeSidebar = () => setIsSidebarOpen(false);
+
+  const onSearch = () => {
+    if (!searchQuery) return;
+    router.push(`/products?searchQuery=${searchQuery}`);
+  };
 
   return (
     <header className="px-4 py-4 border-b bg-secondary text-light">
@@ -67,8 +82,14 @@ export function Header() {
           <Input
             placeholder="Search..."
             className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && onSearch()}
           />
-          <Button className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-0 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto">
+          <Button
+            className="rounded-s-none px-2 absolute top-1/2 -translate-y-1/2 right-0 pointer-events-none lg:px-4 lg:inline-flex lg:right-0 lg:pointer-events-auto"
+            onClick={onSearch}
+          >
             <SearchIcon className="stroke-3" />
           </Button>
         </div>

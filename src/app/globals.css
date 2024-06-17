@@ -102,8 +102,8 @@
 
   @media (min-width: 1024px) {
     .banner-signup {
-      background-image: url(/banner-signup-desktop.avif),
-        url(/banner-signup-desktop-drop.avif);
+      background-image: url(/banner-signup-desktop.webp),
+        url(/banner-signup-desktop-drop.webp);
       background-position: right center, left 15px bottom 15px;
       background-size: contain, 100px 100px;
       background-repeat: no-repeat;
@@ -121,7 +121,7 @@
       left: -9rem;
       bottom: -3rem;
       z-index: -1;
-      background-image: url(/banner-signup-text-bg.avif);
+      background-image: url(/banner-signup-text-bg.webp);
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;

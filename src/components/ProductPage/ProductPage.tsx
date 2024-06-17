@@ -16,17 +16,50 @@ import { ProductDetails } from "@/components/Product/ProductDetails";
 import { AboutProduct } from "@/components/Product/AboutProduct";
 import { ReviewsBlock } from "@/components/Review/ReviewsBlock";
 import { ProductImagesBlock } from "@/components/ProductPage/ProductImagesBlock";
-import { Product } from "@/api/products";
+import { Product, getProducts } from "@/api/products";
 import {
   HomeIcon,
   StarEmptyIcon,
   StarFullIcon,
 } from "@/components/Shared/Icons";
 import { Separator } from "../ui/separator";
+import { useQuery } from "@tanstack/react-query";
+import { ProductsBlock } from "../Product/ProductsBlock";
 
 const maxRating = 5;
 
 export function ProductPage({ product }: { product: Product }) {
+  const categoryId = product.category.id;
+  const otherProductsInCategoryQuery = useQuery({
+    queryKey: ["productsInCategory", "other", categoryId],
+    queryFn: () =>
+      getProducts({
+        pageSize: 9,
+        page: 1,
+        categoryId,
+        orderBy: "rate",
+      }),
+    refetchOnWindowFocus: false,
+    select(data) {
+      return data?.status === 200 ? data.data : [];
+    },
+  });
+  const discountProductsInCategoryQuery = useQuery({
+    queryKey: ["productsInCategory", "discount", categoryId],
+    queryFn: () =>
+      getProducts({
+        pageSize: 9,
+        page: 1,
+        categoryId,
+        orderBy: "rate",
+        discount: true,
+      }),
+    refetchOnWindowFocus: false,
+    select(data) {
+      return data?.status === 200 ? data.data : [];
+    },
+  });
+
   const starElements = useMemo(() => {
     return Array.from({ length: maxRating }).map((_, index) =>
       index < product.generalRate ? (
@@ -125,15 +158,33 @@ export function ProductPage({ product }: { product: Product }) {
         </h2>
         <ReviewsBlock productId={product.id} />
       </section>
-      {/* <div className="py-6 border-t-2">
-        <ProductsBlock title="You may also like" maxSizeMobile={6} />
-      </div>
       <div className="py-6 border-t-2">
         <ProductsBlock
-          title="Best sellers in women's fashion"
+          title={`More in: ${product.category.name}`}
           maxSizeMobile={6}
+          products={otherProductsInCategoryQuery.data ?? []}
+          isLoading={otherProductsInCategoryQuery.isLoading}
         />
-      </div> */}
+      </div>
+      {discountProductsInCategoryQuery.isLoading ? (
+        <div className="py-6 border-t-2">
+          <ProductsBlock
+            title={`${product.category.name}: sale`}
+            maxSizeMobile={6}
+            products={[]}
+            isLoading
+          />
+        </div>
+      ) : !!discountProductsInCategoryQuery.data?.length ? (
+        <div className="py-6 border-t-2">
+          <ProductsBlock
+            title={`${product.category.name}: sale`}
+            maxSizeMobile={6}
+            products={discountProductsInCategoryQuery.data}
+            isLoading={false}
+          />
+        </div>
+      ) : null}
     </main>
   );
 }

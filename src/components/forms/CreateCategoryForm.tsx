@@ -101,7 +101,7 @@ export const CreateCategoryForm = ({
           name: "",
           description: "",
           isDeleted: false,
-          iconId: isRoot ? "shirt" : undefined,
+          iconId: isRoot ? "clothes" : undefined,
           categoryPropertyKeys: [],
         },
   });

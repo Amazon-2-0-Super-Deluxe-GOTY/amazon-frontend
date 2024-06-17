@@ -124,11 +124,13 @@ export default function Page() {
     <div className="flex items-center gap-4 w-full">
       <div className="flex items-center gap-3 basis-1/3">
         <h2 className="font-medium">Category</h2>
-        <CategorySelect
-          categories={categoriesQuery.data?.data}
-          value={selectedCategory?.id}
-          onValueChange={onSelectCategory}
-        />
+        <div className="min-w-72">
+          <CategorySelect
+            categories={categoriesQuery.data?.data}
+            value={selectedCategory?.id}
+            onValueChange={onSelectCategory}
+          />
+        </div>
       </div>
       <Input
         type="text"

@@ -4,15 +4,6 @@ import { Sheet, SheetContent } from "../ui/sheet";
 import type { Review } from "@/api/review";
 import { Separator } from "../ui/separator";
 import React, { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
-  ChevronsUpIcon,
-  StarIcon,
-  X,
-} from "lucide-react";
 import clsx from "clsx";
 import { formatReviewDate } from "@/lib/date";
 import { Button } from "../ui/button";
@@ -32,7 +23,16 @@ import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { getReviewTranslation } from "@/api/review";
 import { useQuery } from "@tanstack/react-query";
-import { StarEmptyIcon, StarFullIcon } from "../Shared/Icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  ChevronsUpIcon,
+  StarEmptyIcon,
+  StarFullIcon,
+  XIcon,
+} from "../Shared/Icons";
 
 interface ReviewCardProps {
   review: Review;
@@ -230,14 +230,14 @@ const HeaderControls = ({
         disabled={!hasPrev}
         onClick={onPrev}
       >
-        <ChevronLeft className="group-disabled:stroke-gray-300" />
+        <ChevronLeftIcon className="stroke-3 group-disabled:opacity-25" />
       </button>
       <button
         className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
         disabled={!hasNext}
         onClick={onNext}
       >
-        <ChevronRight className="group-disabled:stroke-gray-300" />
+        <ChevronRightIcon className="stroke-3 group-disabled:opacity-25" />
       </button>
     </div>
   );
@@ -291,10 +291,14 @@ const ReviewImageCarouselDesktop = ({
         <CarouselNext />
       </Carousel>
       <button
-        className="absolute top-6 right-6 w-10 h-10 bg-white rounded-full flex justify-center items-center"
+        className="absolute top-6 right-6 w-10 h-10 bg-background rounded-full flex justify-center items-center text-secondary"
         onClick={onToggle}
       >
-        {isImageExpanded ? <ChevronsLeftIcon /> : <ChevronsRightIcon />}
+        {isImageExpanded ? (
+          <ChevronsLeftIcon className="stroke-3" />
+        ) : (
+          <ChevronsRightIcon className="stroke-3" />
+        )}
       </button>
     </div>
   );
@@ -342,7 +346,7 @@ const ReviewImageCarouselMobile = ({
       </Carousel>
       {isImageExpanded && (
         <button
-          className="absolute bottom-[6vh] right-4 w-10 h-10 bg-white rounded-full flex justify-center items-center"
+          className="absolute bottom-[6vh] right-4 w-10 h-10 bg-background text-secondary rounded-full flex justify-center items-center"
           onClick={onToggle}
         >
           <ChevronsUpIcon />
@@ -391,7 +395,7 @@ const ReviewHeaderMobile = ({
   const fullName = `${review.user.firstName} ${review.user.lastName}`;
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="w-full flex justify-between items-center mb-1">
+      <div className="w-full flex justify-between items-center mb-1 text-secondary">
         <HeaderControls
           hasPrev={hasPrev}
           hasNext={hasNext}
@@ -399,7 +403,7 @@ const ReviewHeaderMobile = ({
           onNext={onNext}
         />
         <DrawerClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary ml-[10%]">
-          <X className="h-5 w-5" />
+          <XIcon className="h-5 w-5" />
           <span className="sr-only">Close</span>
         </DrawerClose>
       </div>

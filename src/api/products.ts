@@ -1,5 +1,8 @@
 import { authStore } from "@/lib/storage";
 import { ApiResponse, ApiValidationErrors } from "./types";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useMemo } from "react";
+import type { FilterItem } from "@/components/ProductByCategoryPage/filtersDataTypes";
 
 export interface Product {
   id: string;
@@ -48,6 +51,12 @@ export interface ProductFilters {
   price?: { min: number; max: number };
   orderBy?: "date" | "rate" | "exp" | "cheap";
   additionalFilters?: { name: string; values: string[] }[];
+}
+
+interface ProductFilterItems {
+  filterItems: Record<string, string[]>;
+  minPrice: number;
+  maxPrice: number;
 }
 
 const defaultPageSize = "7";
@@ -209,4 +218,56 @@ export function deleteProducts(
       "content-type": "application/json",
     },
   }).then((r) => r.json());
+}
+
+export function getProductFilters(
+  categoryId?: number
+): Promise<ApiResponse<[[200, ProductFilterItems], [404, null]]>> {
+  const searchParamsStr =
+    categoryId === undefined ? "" : `?categoryId=${categoryId}`;
+  return fetch(`/api/products/filterItems${searchParamsStr}`).then((r) =>
+    r.json()
+  );
+}
+
+export function useProductFilters({ categoryId }: { categoryId?: number }) {
+  const filtersQuery = useQuery({
+    queryKey: ["productFilters", categoryId],
+    queryFn: useCallback(() => getProductFilters(categoryId), [categoryId]),
+    select(data) {
+      return data.status === 200 ? data.data : undefined;
+    },
+  });
+  const data = useMemo<FilterItem[]>(() => {
+    const ratingFilter: FilterItem = {
+      type: "rating",
+      title: "Customer reviews",
+      values: [1, 2, 3, 4, 5],
+      isSearch: false,
+    };
+    const priceFilter: FilterItem = {
+      type: "price",
+      title: "Price",
+      values: {
+        min: filtersQuery.data?.minPrice ?? 0,
+        max: filtersQuery.data?.maxPrice ?? 0,
+      },
+      isSearch: false,
+    };
+
+    if (!filtersQuery.data) return [priceFilter, ratingFilter];
+
+    const propertyFilters = Object.entries(filtersQuery.data.filterItems).map(
+      (entry): FilterItem => ({
+        type: "checkbox",
+        title: entry[0],
+        values: entry[1],
+        isSearch: true,
+      })
+    );
+
+    return [...propertyFilters, priceFilter, ratingFilter];
+  }, [filtersQuery.data]);
+
+  return { data, isLoading: filtersQuery.isLoading };
 }
