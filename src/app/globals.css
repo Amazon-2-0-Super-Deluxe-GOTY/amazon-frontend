@@ -28,7 +28,7 @@
     --tertiary-hover: 220 100% 94%;
     --tertiary-press: 220 100% 90%;
 
-    --shadow-color-card: 220 69% 40% 0.25;
+    --shadow-color-card: 220 69% 40% / 0.25;
     --shadow-color-card-hover: 220 100% 90%;
 
     --light: 220 30% 96%;
@@ -44,7 +44,7 @@
     --destructive-shadow: 0 72% 44% 0.5;
     --destructive-press: 0 100% 90%;
 
-    --border: 221 47% 71%;
+    --border: 220 100% 90%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
@@ -102,8 +102,8 @@
 
   @media (min-width: 1024px) {
     .banner-signup {
-      background-image: url(/banner-signup-desktop.avif),
-        url(/banner-signup-desktop-drop.avif);
+      background-image: url(/banner-signup-desktop.webp),
+        url(/banner-signup-desktop-drop.webp);
       background-position: right center, left 15px bottom 15px;
       background-size: contain, 100px 100px;
       background-repeat: no-repeat;
@@ -121,7 +121,7 @@
       left: -9rem;
       bottom: -3rem;
       z-index: -1;
-      background-image: url(/banner-signup-text-bg.avif);
+      background-image: url(/banner-signup-text-bg.webp);
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;

@@ -16,9 +16,9 @@ export const ProductDetails = (props: { items: Item[] }) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
       {items.map((item, i) => (
-        <div className="text-base lg:text-lg" key={i}>
-          <h3 className="font-semibold">{item.key}</h3>
-          <p>{item.value}</p>
+        <div key={i}>
+          <h3 className="font-bold text-base lg:text-lg">{item.key}</h3>
+          <p className="text-base">{item.value}</p>
         </div>
       ))}
       {isExpandable && (

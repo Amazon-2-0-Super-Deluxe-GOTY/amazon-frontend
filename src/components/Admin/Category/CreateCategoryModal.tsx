@@ -52,7 +52,6 @@ export const CreateCategoryModal = ({
           <ScrollArea className="grow">
             <CreateCategoryForm
               onSubmit={onSubmit}
-              onCancel={closeModal}
               isRoot={isRoot}
               defaultValues={category}
               allCategories={allCategories}

@@ -1,4 +1,4 @@
-import { StarFullIcon, XIcon } from "../Shared/Icons";
+import { SearchIcon, StarFullIcon, XIcon } from "../Shared/Icons";
 import type { FilterCheckedType } from "./filtersDataTypes";
 
 export function FilterItemButton({
@@ -22,6 +22,11 @@ export function FilterItemButton({
         </p>
       ) : type === "price" ? (
         <span>{value}$</span>
+      ) : type === "search" ? (
+        <p className="inline-flex items-center gap-1">
+          <SearchIcon className="w-4 h-4" />
+          <span>{value}</span>
+        </p>
       ) : (
         <span>{value}</span>
       )}

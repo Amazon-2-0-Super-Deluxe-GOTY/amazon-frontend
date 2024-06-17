@@ -4,7 +4,7 @@ const data: Category[] = [
   {
     id: 1,
     name: "Fashion",
-    iconId: "shirt",
+    iconId: "clothes",
     description:
       "Explore a diverse collection of clothing, footwear, accessories, and more to elevate your style and keep up with the latest fashion trends. From timeless classics to bold statements, find everything you need to express your individuality and stay fashionable.",
     image: { id: "1", imageUrl: "" },
@@ -14,7 +14,7 @@ const data: Category[] = [
   {
     id: 2,
     name: "Electronics",
-    iconId: "monitor",
+    iconId: "computer",
     description: "Test description",
     image: { id: "1", imageUrl: "" },
     categoryPropertyKeys: [],
@@ -23,7 +23,7 @@ const data: Category[] = [
   {
     id: 3,
     name: "Household",
-    iconId: "home",
+    iconId: "cleaning-spray",
     description: "Test description",
     image: { id: "1", imageUrl: "" },
     categoryPropertyKeys: [],
@@ -32,7 +32,7 @@ const data: Category[] = [
   {
     id: 4,
     name: "Furniture",
-    iconId: "armchair",
+    iconId: "sofa",
     description: "Test description",
     image: { id: "1", imageUrl: "" },
     categoryPropertyKeys: [],
@@ -41,7 +41,7 @@ const data: Category[] = [
   {
     id: 5,
     name: "Work tools",
-    iconId: "wrench",
+    iconId: "hammer",
     description: "Test description",
     image: { id: "1", imageUrl: "" },
     categoryPropertyKeys: [],

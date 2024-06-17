@@ -25,7 +25,7 @@ export const SingInUpBanner = () => {
         <div className="basis-1/2 w-full h-full relative lg:hidden">
           <picture className="block h-full">
             <img
-              src={"/banner-signup-mobile.avif"}
+              src={"/banner-signup-mobile.webp"}
               alt="Treasure chest"
               className="object-cover"
               loading="lazy"

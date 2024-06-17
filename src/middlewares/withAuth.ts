@@ -2,7 +2,7 @@ import { getUserProfileServer } from "@/api/server";
 import type { User } from "@/api/types";
 import { type NextRequest, NextResponse } from "next/server";
 
-const protectedPathsShop = ["/account"];
+const protectedPathsShop = ["/account", "/checkout"];
 
 export const withAuth = async (
   subdomain: string,

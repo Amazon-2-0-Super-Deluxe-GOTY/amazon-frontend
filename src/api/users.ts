@@ -124,7 +124,7 @@ export function getUserProfile(): Promise<
   }).then((r) => r.json());
 }
 
-export function useUser() {
+export function useUser(params?: { initialData: User }) {
   const authStore = useAuthStore((state) => state);
   const userQuery = useQuery({
     queryKey: ["user", authStore.token ?? "unauthorized"],
@@ -133,6 +133,9 @@ export function useUser() {
       [authStore.token]
     ),
     retry: false,
+    initialData: params?.initialData
+      ? { status: 200, message: "", data: params.initialData }
+      : undefined,
     select(data) {
       return data?.status === 200 ? data.data : null;
     },
