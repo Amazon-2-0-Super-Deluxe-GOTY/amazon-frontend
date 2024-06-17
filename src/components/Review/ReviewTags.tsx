@@ -1,12 +1,14 @@
-export const ReviewTags = ({ tags }: { tags: string[] }) => {
+import type { ReviewTag } from "@/api/review";
+
+export const ReviewTags = ({ tags }: { tags: ReviewTag[] }) => {
   return (
     <div className="mt-3 flex lg:flex-wrap gap-2 w-full overflow-x-auto whitespace-nowrap">
       {tags.map((tag, i) => (
         <div
-          className="px-3 lg:px-4 py-1.5 lg:py-2 text-sm lg:text-base bg-gray-300 rounded-full"
+          className="py-2 px-5 text-sm lg:text-base bg-tertiary-hover rounded-sm"
           key={i}
         >
-          {tag}
+          {tag.name}
         </div>
       ))}
     </div>

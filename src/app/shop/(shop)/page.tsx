@@ -9,12 +9,13 @@ import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/api/products";
 
-const pageSize = 10;
+const pageSize = 9;
 
 export default function Home() {
   const productsTrendingQuery = useQuery({
-    queryKey: ["products", "main", "tranding"],
+    queryKey: ["products", "main", "trending"],
     queryFn: () => getProducts({ page: 1, pageSize, orderBy: "date" }),
+    refetchOnWindowFocus: false,
     select(data) {
       return data.status === 200 ? data.data : [];
     },
@@ -22,6 +23,7 @@ export default function Home() {
   const productsDiscountQuery = useQuery({
     queryKey: ["products", "main", "discount"],
     queryFn: () => getProducts({ page: 1, pageSize, discount: true }),
+    refetchOnWindowFocus: false,
     select(data) {
       return data.status === 200 ? data.data : [];
     },

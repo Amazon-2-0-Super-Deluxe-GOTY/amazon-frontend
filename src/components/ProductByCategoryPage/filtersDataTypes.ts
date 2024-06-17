@@ -29,5 +29,5 @@ export type FilterItem =
 export type FilterCheckedType = {
   title: string;
   values: string[];
-  type: "rating" | "price" | "checkbox";
+  type: "rating" | "price" | "search" | "checkbox";
 };

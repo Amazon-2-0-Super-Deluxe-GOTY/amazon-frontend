@@ -23,7 +23,7 @@ import { useUser } from "@/api/users";
 
 export function AccountPage({ user: initialUser }: { user: User }) {
   const [user, setUser] = useState(initialUser);
-  const userData = useUser();
+  const userData = useUser({ initialData: initialUser });
   const param = useSearchParamsTools();
 
   const userFullName = `${user.firstName} ${user.lastName}`;
@@ -116,21 +116,21 @@ export function AccountPage({ user: initialUser }: { user: User }) {
               </div>
             </div>
             <Button
-              variant={"ghost"}
+              variant={"tertiary"}
               onClick={() => onChangeAccountTab("orders")}
               className="flex justify-start font-normal text-base"
             >
               My orders
             </Button>
             <Button
-              variant={"ghost"}
+              variant={"tertiary"}
               onClick={() => onChangeAccountTab("wishlist")}
               className="flex justify-start font-normal text-base"
             >
               Wishlist
             </Button>
             <Button
-              variant={"ghost"}
+              variant={"tertiary"}
               onClick={() => onChangeAccountTab("settings")}
               className="flex justify-start font-normal text-base"
             >
@@ -146,7 +146,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
           >
             <div>
               <Button
-                variant={"ghost"}
+                variant={"tertiary"}
                 className="pl-2 mb-3 md:hidden"
                 onClick={onBack}
               >

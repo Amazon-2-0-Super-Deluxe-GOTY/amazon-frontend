@@ -29,7 +29,7 @@ export const FilterCardVariationMobile = ({
   appliedFiltersCount,
   isLoading,
 }: {
-  categoryId: string;
+  categoryId?: number;
   filters: FilterItem[];
   checkedItems: FilterCheckedType[];
   uncheckFilter: (param: { title: string; value: string }) => void;
@@ -80,7 +80,15 @@ export const FilterCardVariationMobile = ({
               </div>
               <div>
                 <Button variant={"destructive"}>
-                  <Link href={`/category/${categoryId}`}>Reset all</Link>
+                  <Link
+                    href={
+                      categoryId !== undefined
+                        ? `/category/${categoryId}`
+                        : "/products"
+                    }
+                  >
+                    Reset all
+                  </Link>
                 </Button>
               </div>
             </div>

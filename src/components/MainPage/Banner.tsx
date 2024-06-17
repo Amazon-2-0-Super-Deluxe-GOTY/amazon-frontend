@@ -11,8 +11,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-// import bannerImage1 from "../../../public/images/banner-main-1.png";
-// import bannerImage1 from "../../../public/images/banner-main-1.avif";
 
 export function Banner() {
   return (
@@ -34,19 +32,13 @@ export function Banner() {
             <div className="w-full h-56 lg:h-80 relative">
               <Card className="w-full h-full">
                 <CardContent className="flex items-center justify-center">
-                  {/* <Image
-                    src={"/banner-main-1.avif"}
-                    alt="placeholder"
-                    fill={true}
-                    className="object-cover"
-                  /> */}
                   <picture className="block">
                     <source
                       media="(max-width: 768px)"
                       srcSet="/banner-main-mobile-1.avif"
                     />
                     <Image
-                      src={"/banner-main-1.avif"}
+                      src={"/banner-main-1.webp"}
                       alt="Banner with waves and cutlery"
                       fill={true}
                       className="object-cover"

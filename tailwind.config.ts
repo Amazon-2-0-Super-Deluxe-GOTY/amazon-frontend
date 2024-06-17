@@ -105,6 +105,7 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       containers: {
+        "sm-card": "11rem",
         "md-card": "13rem",
         "lg-card": "23rem",
       },

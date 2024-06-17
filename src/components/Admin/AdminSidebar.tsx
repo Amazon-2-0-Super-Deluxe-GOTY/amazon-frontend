@@ -21,6 +21,7 @@ import type { User } from "@/api/types";
 import { useAuthStore } from "@/lib/storage";
 import { logOut } from "@/api/users";
 import { useRouter } from "next/navigation";
+import { CategoryIcon } from "../Shared/Icons";
 
 const links = [
   {
@@ -31,7 +32,7 @@ const links = [
   {
     title: "Category",
     url: "/categories",
-    icon: <ScrollTextIcon />,
+    icon: <CategoryIcon />,
   },
   {
     title: "Products",

@@ -224,8 +224,8 @@ export default function Page() {
             className={clsx(
               "capitalize px-3 py-2 rounded-lg w-max",
               row.original.isDeleted
-                ? "bg-destructive text-destructive-foreground"
-                : "bg-secondary text-secondary-foreground"
+                ? "bg-destructive text-light"
+                : "bg-primary text-primary-foreground"
             )}
           >
             {row.original.isDeleted ? "Deleted" : "Active"}
