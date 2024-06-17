@@ -57,21 +57,21 @@ export default function NotFound() {
               <h1 className="text-xl md:text-2xl font-medium">Legal notice</h1>
             </div>
             <Button
-              variant={"ghost"}
+              variant={"tertiary"}
               onClick={() => onChangeAccountTab("terms")}
               className="flex justify-start font-medium text-base md:text-lg"
             >
               Terms and conditions
             </Button>
             <Button
-              variant={"ghost"}
+              variant={"tertiary"}
               onClick={() => onChangeAccountTab("license")}
               className="flex justify-start font-medium text-base md:text-lg"
             >
               License agreement
             </Button>
             <Button
-              variant={"ghost"}
+              variant={"tertiary"}
               onClick={() => onChangeAccountTab("privacy")}
               className="flex justify-start font-medium text-base md:text-lg"
             >

@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductsListPage } from "@/components/Product/ProductsListPage";
+import { ProductsListPage } from "@/components/ProductPage/ProductsListPage";
 import { useMemo } from "react";
 
 export default function CategoryPage({
