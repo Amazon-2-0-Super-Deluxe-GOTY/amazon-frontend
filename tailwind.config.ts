@@ -66,6 +66,9 @@ const config = {
         light: {
           DEFAULT: "hsl(var(--light))",
         },
+        halftone: {
+          DEFAULT: "hsl(var(--halftone))",
+        },
       },
       boxShadow: {
         button: "0px 1px 7px -5px",
