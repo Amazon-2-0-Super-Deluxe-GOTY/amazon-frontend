@@ -1,14 +1,12 @@
 "use client"
 import React from "react";
 import { CheckoutForm } from "@/components/forms/shop/checkout/CheckoutForm";
-import { useRouter } from "next/navigation";
 import { useUser } from "@/api/users";
 import { useCart } from "@/api/products";
 import { OrderProduct } from "@/api/orders";
 
 export default function CheckOut() {
-  const router = useRouter();
-  const cart = useCart().data;
+  const cart = useCart().cart.data;
   const user = useUser().user;
   if(!user || !cart) return null;
   const checkout = { 
@@ -16,14 +14,12 @@ export default function CheckOut() {
       ...res, {
         name: item.product.name,
         productId: item.product.id,
-        quantity: item.product.quantity,
-        price: item.product.price,
-        totalPrice: item.product.price * item.product.quantity,
+        quantity: item.quantity,
+        price: item.product.discountPrice > 0 ? item.product.discountPrice : item.product.price,
+        totalPrice: item.price,
       }
     ], []),  
-    totalPrice: cart.cartItems.reduce((sum, item) => {
-      return sum + item.product.price * item.product.quantity;
-    }, 0), 
+    totalPrice: cart.totalPrice,
   };
   const priceParts = (checkout.totalPrice)?.toFixed(2).split(".") ?? [0,0];
   const whole = priceParts[0];
@@ -38,13 +34,9 @@ export default function CheckOut() {
     fraction: fraction,
   };
 
-  const onSubmit = () => {
-    router.push("/orders");
-  };
-
   return (
     <main className="m-4 md:m-6 flex lg:justify-center">
-      <CheckoutForm headerData={headerData} onSubmit={onSubmit} />
+      <CheckoutForm headerData={headerData} />
     </main>
   );
 }

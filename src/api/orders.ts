@@ -10,23 +10,11 @@ export interface OrderProduct {
 }
 
 export interface Order {
-  customerName: string;
   paymentMethod: string;
-  status: string;
-  totalPrice: number;
-  orderItems: {
-    name: string;
-    productId: string;
-    quantity: number;
-    price: number;
-    totalPrice: number;
-  }[];
-  deliveryAddresses: {
-    country: string;
-    state: string;
-    city?: string;
-    postIndex: string;
-  };
+  country: string;
+  state: string;
+  city?: string;
+  postIndex: string;
 }
 
 export function createOrder(
