@@ -1,6 +1,6 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CreateCategoryForm } from "@/components/forms/CreateCategoryForm";
+import { CreateCategoryForm } from "@/components/forms/admin/CreateCategoryForm";
 import type { Category } from "@/api/categories";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -52,13 +52,12 @@ export const CreateCategoryModal = ({
           <ScrollArea className="grow">
             <CreateCategoryForm
               onSubmit={onSubmit}
-              onCancel={closeModal}
               isRoot={isRoot}
               defaultValues={category}
               allCategories={allCategories}
             />
           </ScrollArea>
-          <div className="flex justify-end gap-3.5 bg-white">
+          <div className="flex justify-end gap-3.5 bg-background">
             <Button type="button" variant={"secondary"} onClick={closeModal}>
               Cancel
             </Button>

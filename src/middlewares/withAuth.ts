@@ -1,18 +1,8 @@
-import type { ApiResponse, User } from "@/api/types";
+import { getUserProfileServer } from "@/api/server";
+import type { User } from "@/api/types";
 import { type NextRequest, NextResponse } from "next/server";
 
-const protectedPathsShop = ["/account"];
-
-const getUserProfile = (
-  token: string
-): Promise<ApiResponse<[[200, User], [401, null]]>> => {
-  return fetch(`${process.env.BASE_PATH}/api/users/profile`, {
-    headers: { authorization: `Bearer ${token}` },
-    next: {
-      revalidate: 120,
-    },
-  }).then((r) => r.json());
-};
+const protectedPathsShop = ["/account", "/checkout"];
 
 export const withAuth = async (
   subdomain: string,
@@ -31,7 +21,7 @@ export const withAuth = async (
   if (isProtectedPath) {
     if (token) {
       try {
-        const profileResponse = await getUserProfile(token.value);
+        const profileResponse = await getUserProfileServer(token.value);
 
         if (profileResponse.status === 200) {
           profile = profileResponse.data;

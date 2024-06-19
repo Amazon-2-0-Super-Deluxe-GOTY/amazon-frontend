@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import type { ApiResponse } from "./types";
+import { useQuery } from "@tanstack/react-query";
 
 export interface CategoryPropertyKey {
   name: string;
 }
 
 export interface Category {
-  id: string;
-  parentId?: string;
+  id: number;
+  parentId?: number;
   iconId?: string;
   name: string;
   image: { id: string; imageUrl: string };
@@ -29,7 +29,7 @@ export function getCategories(): Promise<{ data: Category[] }> {
 export function getCategory({
   categoryId,
 }: {
-  categoryId: string;
+  categoryId: number;
 }): Promise<{ data: Category }> {
   return fetch(`/api/admin/category/${categoryId}`).then((r) => r.json());
 }

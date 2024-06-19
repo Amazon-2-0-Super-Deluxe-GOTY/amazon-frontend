@@ -40,7 +40,7 @@ export const DeliveryContent = () => {
           <div className="space-y-2">
             <div className="relative px-0.5">
               <label
-                className="absolute left-5 bottom-10 bg-white text-sm z-10 pointer-events-none"
+                className="absolute left-5 bottom-10 bg-background text-sm z-10 pointer-events-none"
                 htmlFor="country-select"
               >
                 Country of delivery

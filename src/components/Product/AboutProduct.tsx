@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { Card } from "../ui/card";
 
 interface Item {
   title: string;
@@ -31,20 +32,24 @@ export const AboutProduct = ({
 
   if (variant === "list") {
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2 lg:gap-3">
         {initialItems.map((item, i) => (
-          <Accordion type="single" collapsible key={i}>
-            {/* All items within an accordion should use a unique value. */}
-            <AccordionItem
-              className="p-3 pt-0 lg:p-6 lg:pt-3 border rounded-sm"
-              value={i.toString()}
-            >
-              <AccordionTrigger className="font-semibold">
-                {item.title}
-              </AccordionTrigger>
-              <AccordionContent className="mt-2">{item.text}</AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <Card key={i}>
+            <Accordion type="single" collapsible>
+              {/* All items within an accordion should use a unique value. */}
+              <AccordionItem
+                className="p-4 pt-1 lg:p-6 lg:pt-3 border rounded-sm"
+                value={i.toString()}
+              >
+                <AccordionTrigger className="font-bold lg:text-lg">
+                  {item.title}
+                </AccordionTrigger>
+                <AccordionContent className="mt-4">
+                  {item.text}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </Card>
         ))}
       </div>
     );
@@ -55,21 +60,21 @@ export const AboutProduct = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {items.map((item, i) => (
           <div key={i}>
-            <h3 className="font-semibold text-lg lg:text-xl mb-2">
+            <h3 className="font-medium text-lg lg:text-xl mb-2">
               {item.title}
             </h3>
-            <p className="text-base lg:text-lg">{item.text}</p>
+            <p className="text-base">{item.text}</p>
           </div>
         ))}
       </div>
       {isExpandable && (
         <div className="flex justify-center mt-4">
           {isExpanded ? (
-            <Button variant={"outline"} onClick={onHide}>
+            <Button variant={"secondary"} onClick={onHide}>
               Hide
             </Button>
           ) : (
-            <Button variant={"outline"} onClick={onExpand}>
+            <Button variant={"secondary"} onClick={onExpand}>
               View more
             </Button>
           )}

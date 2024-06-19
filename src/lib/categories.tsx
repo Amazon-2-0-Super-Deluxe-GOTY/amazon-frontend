@@ -1,38 +1,99 @@
 import {
-  ArmchairIcon,
-  HomeIcon,
-  MonitorIcon,
-  ShirtIcon,
-  WrenchIcon,
-} from "lucide-react";
+  BedIcon,
+  BoxingGlovesIcon,
+  CleanerIcon,
+  CleaningSprayIcon,
+  ClothesIcon,
+  ComputerIcon,
+  HammerIcon,
+  HangerIcon,
+  JumpRopeIcon,
+  LaptopIcon,
+  RulerIcon,
+  SofaIcon,
+  VacuumCleanerIcon,
+  WashingMachineIcon,
+} from "@/components/Shared/Icons";
 
 const icons: { id: string; render: (className?: string) => React.ReactNode }[] =
   [
     {
-      id: "shirt",
-      render: (className) => <ShirtIcon className={className} key={"shirt"} />,
-    },
-    {
-      id: "monitor",
+      id: "clothes",
       render: (className) => (
-        <MonitorIcon className={className} key={"monitor"} />
+        <ClothesIcon className={className} key={"clothes"} />
       ),
     },
     {
-      id: "home",
-      render: (className) => <HomeIcon className={className} key={"home"} />,
-    },
-    {
-      id: "armchair",
+      id: "hanger",
       render: (className) => (
-        <ArmchairIcon className={className} key={"armchair"} />
+        <HangerIcon className={className} key={"hanger"} />
       ),
     },
     {
-      id: "wrench",
+      id: "ruler",
+      render: (className) => <RulerIcon className={className} key={"ruler"} />,
+    },
+    {
+      id: "bed",
+      render: (className) => <BedIcon className={className} key={"bed"} />,
+    },
+    {
+      id: "boxing-gloves",
       render: (className) => (
-        <WrenchIcon className={className} key={"wrench"} />
+        <BoxingGlovesIcon className={className} key={"boxing-gloves"} />
       ),
+    },
+    {
+      id: "cleaner",
+      render: (className) => (
+        <CleanerIcon className={className} key={"cleaner"} />
+      ),
+    },
+    {
+      id: "cleaning-spray",
+      render: (className) => (
+        <CleaningSprayIcon className={className} key={"cleaning-spray"} />
+      ),
+    },
+    {
+      id: "jump-rope",
+      render: (className) => (
+        <JumpRopeIcon className={className} key={"jump-rope"} />
+      ),
+    },
+    {
+      id: "laptop",
+      render: (className) => (
+        <LaptopIcon className={className} key={"laptop"} />
+      ),
+    },
+    {
+      id: "hammer",
+      render: (className) => (
+        <HammerIcon className={className} key={"hammer"} />
+      ),
+    },
+    {
+      id: "vacuum-cleaner",
+      render: (className) => (
+        <VacuumCleanerIcon className={className} key={"vacuum-cleaner"} />
+      ),
+    },
+    {
+      id: "washing-machine",
+      render: (className) => (
+        <WashingMachineIcon className={className} key={"washing-machine"} />
+      ),
+    },
+    {
+      id: "computer",
+      render: (className) => (
+        <ComputerIcon className={className} key={"computer"} />
+      ),
+    },
+    {
+      id: "sofa",
+      render: (className) => <SofaIcon className={className} key={"sofa"} />,
     },
   ];
 

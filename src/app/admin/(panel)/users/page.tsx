@@ -224,8 +224,8 @@ export default function Page() {
             className={clsx(
               "capitalize px-3 py-2 rounded-lg w-max",
               row.original.isDeleted
-                ? "bg-destructive text-destructive-foreground"
-                : "bg-secondary text-secondary-foreground"
+                ? "bg-destructive text-light"
+                : "bg-primary text-primary-foreground"
             )}
           >
             {row.original.isDeleted ? "Deleted" : "Active"}
@@ -286,7 +286,7 @@ export default function Page() {
           return showMore ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button variant="tertiary" className="h-8 w-8 p-0">
                   <span className="sr-only">Open quick actions</span>
                   <MoreVertical className="h-4 w-4" />
                 </Button>
@@ -316,7 +316,7 @@ export default function Page() {
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button variant="tertiary" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -455,7 +455,7 @@ const TableHeader = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="outline"
+              variant="secondary"
               className="ml-auto w-[200px] justify-between"
             >
               Columns <ChevronDown className="ml-2 h-4 w-4" />

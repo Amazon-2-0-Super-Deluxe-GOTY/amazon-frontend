@@ -76,7 +76,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
                   return (
                     <TableHead
                       key={header.id}
-                      className="text-base text-primary font-medium"
+                      className="text-base text-foreground font-medium"
                     >
                       {header.isPlaceholder
                         ? null

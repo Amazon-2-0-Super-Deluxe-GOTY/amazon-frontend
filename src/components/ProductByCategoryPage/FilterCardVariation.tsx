@@ -1,276 +1,204 @@
-import { useEffect, useState } from "react";
-
-import Image from "next/image";
-import RatingFillStar from "@/../public/Icons/RatingFillStar.svg";
-import RatingLineStar from "@/../public/Icons/RatingLineStar.svg";
-
-import { Checkbox } from "../ui/checkbox";
-import {
-  FilterCheckboxItem,
-  FilterTilesItem,
-  FilterPriceItem,
-  FilterRatingItem,
-  FilterItem,
-  FilterCheckedType,
-} from "./filtersDataTypes";
+import { useEffect, useMemo, useState } from "react";
+import { MediaQueryCSS } from "../Shared/MediaQuery";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { ScrollArea } from "../ui/scroll-area";
-import { useSearchParamsTools } from "@/lib/router";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
+import type {
+  FilterCheckboxItem,
+  FilterItem,
+  FilterPriceItem,
+  FilterRatingItem,
+  FilterTilesItem,
+} from "./filtersDataTypes";
+import { useSearchParamsTools } from "@/lib/router";
 import { DoubleThumbSlider } from "../ui/slider";
-import { MediaQueryCSS } from "../Shared/MediaQuery";
+import { Button } from "../ui/button";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { StarEmptyIcon, StarFullIcon } from "../Shared/Icons";
+import { Separator } from "../ui/separator";
+import { parsePriceParamValue } from "@/lib/products";
 
-export const FilterCardVariation = ({
+export function FilterCardVariation({
   filters,
-  checkedItems,
-  setCheckedItems,
   isOpen = true,
 }: {
   filters: FilterItem[];
-  checkedItems: FilterCheckedType;
-  setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>;
   isOpen?: boolean;
-}) => {
-  const [searchTextArray, setSearchTextArray] = useState<string[]>(
-    filters.map(() => "")
-  );
-  const handleSearchTextChange = (index: number, value: string) => {
-    const updatedSearchTextArray = [...searchTextArray];
-    updatedSearchTextArray[index] = value.toLowerCase();
-    setSearchTextArray(updatedSearchTextArray);
-  };
+}) {
+  const searchableFiltersCount = filters.filter((f) => f.isSearch).length;
+  const [searchQueries, setSearchQueries] = useState<string[]>([]);
 
-  return filters.map((filter, i) => (
-    <div key={filter.title + i}>
-      <div
-        className={
-          "max-h-[414px] w-full py-6 px-5 pt-3 bg-gray-200 rounded-lg lg:shadow"
-        }
-      >
-        <Accordion
-          type="single"
-          defaultValue={isOpen ? i.toString() : ""}
-          collapsible
+  const onSearch =
+    (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newSearchQueries = [...searchQueries];
+      newSearchQueries[index] = e.target.value;
+      setSearchQueries(newSearchQueries);
+    };
+
+  useEffect(() => {
+    if (searchableFiltersCount > searchQueries.length) {
+      const newQueries = Array.from({
+        length: searchableFiltersCount - searchQueries.length,
+      }).fill("") as string[];
+      setSearchQueries((current) => [...current, ...newQueries]);
+    }
+  }, [filters.values, searchableFiltersCount, searchQueries.length]);
+
+  return filters.map((filter, i) => {
+    return (
+      <div key={filter.title + i}>
+        <div
+          className={
+            "max-h-[414px] w-full py-6 px-5 pt-3 bg-card rounded-lg lg:shadow"
+          }
         >
-          <AccordionItem value={i.toString()}>
-            <AccordionTrigger className="font-semibold">
-              {filter.title}
-            </AccordionTrigger>
-            <AccordionContent>
-              {filter.isSearch ? (
-                <div className="px-1">
-                  <Input
-                    placeholder="Search..."
-                    className="my-3"
-                    value={searchTextArray[i]}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleSearchTextChange(i, e.target.value)
-                    }
-                  />
-                </div>
-              ) : (
-                <></>
-              )}
-              <ScrollArea className="px-1">
-                <div className="list-none p-0 m-0 max-h-64 w-full">
-                  {(() => {
-                    switch (filter.type) {
-                      case "checkbox":
-                        return (
-                          <FilterCheckbox
-                            data={filter}
-                            searchText={searchTextArray[i]}
-                            checkedItems={checkedItems.find(
-                              (v) => v.title === filter.title
-                            )}
-                            setCheckedItems={setCheckedItems}
-                          />
-                        );
-                      case "tiles":
-                        return (
-                          <FilterTiles
-                            data={filter}
-                            searchText={searchTextArray[i]}
-                            checkedItems={checkedItems.find(
-                              (v) => v.title === filter.title
-                            )}
-                            setCheckedItems={setCheckedItems}
-                          />
-                        );
-                      case "price":
-                        return (
-                          <FilterPrice
-                            data={filter}
-                            checkedItems={checkedItems.find(
-                              (v) => v.title === filter.title
-                            )}
-                            setCheckedItems={setCheckedItems}
-                          />
-                        );
-                      case "rating":
-                        return (
-                          <FilterRating
-                            data={filter}
-                            checkedItems={checkedItems.find(
-                              (v) => v.title === filter.title
-                            )}
-                            setCheckedItems={setCheckedItems}
-                          />
-                        );
+          <Accordion
+            type="single"
+            defaultValue={isOpen ? i.toString() : undefined}
+            collapsible
+          >
+            <AccordionItem value={i.toString()} className="border-none">
+              <AccordionTrigger className="font-semibold text-heading-3">
+                {filter.title}
+              </AccordionTrigger>
+              <AccordionContent>
+                {filter.isSearch && (
+                  <div className="px-1">
+                    <Input
+                      placeholder="Search..."
+                      className="my-3 bg-card"
+                      value={searchQueries[i] ?? ""}
+                      onChange={onSearch(i)}
+                    />
+                  </div>
+                )}
+                <ScrollArea className="px-1">
+                  <div className="list-none p-0 m-0 max-h-64 w-full">
+                    {(() => {
+                      switch (filter.type) {
+                        case "checkbox":
+                          return (
+                            <CheckboxFilterCard
+                              filter={filter}
+                              search={searchQueries[i] ?? ""}
+                            />
+                          );
 
-                      default:
-                        return null;
-                    }
-                  })()}
-                </div>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+                        case "tiles":
+                          return (
+                            <FilterTiles
+                              filter={filter}
+                              search={searchQueries[i] ?? ""}
+                            />
+                          );
+
+                        case "price":
+                          return <FilterPrice filter={filter} />;
+
+                        case "rating":
+                          return <FilterRating filter={filter} />;
+
+                        default:
+                          return null;
+                      }
+                    })()}
+                  </div>
+                </ScrollArea>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+        <MediaQueryCSS maxSize="lg">
+          <Separator />
+        </MediaQueryCSS>
       </div>
-      <MediaQueryCSS maxSize="lg">
-        <hr className="mt-2 border-gray-300 border-y"></hr>
-      </MediaQueryCSS>
-    </div>
-  ));
-};
+    );
+  });
+}
 
-const FilterCheckbox = ({
-  data,
-  checkedItems,
-  setCheckedItems,
-  searchText,
-}: {
-  data: FilterCheckboxItem;
-  checkedItems: { title: string; values: string[] } | undefined;
-  setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>;
-  searchText: string;
-}) => {
+interface FilterCardProps<T extends FilterItem> {
+  filter: T;
+  search?: string;
+}
+
+function CheckboxFilterCard({
+  filter,
+  search,
+}: FilterCardProps<FilterCheckboxItem>) {
   const searchParams = useSearchParamsTools();
+  const checkedItems = useMemo<string[]>(() => {
+    const existingParams = searchParams.get?.(filter.title);
+    if (!existingParams) return [];
+    return existingParams
+      .split(",")
+      .filter((param) => filter.values.includes(param));
+  }, [searchParams, filter.title, filter.values]);
 
-  const onToggle = (value: string) => () => {
-    if (value.length <= 0) return;
+  const filteredValues = useMemo(() => {
+    const searchLower = search?.toLowerCase();
+    return searchLower
+      ? filter.values.filter((item) => item.toLowerCase().includes(searchLower))
+      : filter.values;
+  }, [filter.values, search]);
 
-    const isChecked = checkedItems?.values.includes(value);
-    if (isChecked) {
-      if (checkedItems?.values.length === 1)
-        searchParams.set(data.title, undefined);
-      else
-        searchParams.set(
-          data.title,
-          checkedItems?.values.filter((v) => v !== value).join(",")
-        );
-
-      setCheckedItems((prevItems) =>
-        prevItems.map((item) =>
-          item.title === data.title
-            ? { ...item, values: item.values.filter((val) => val !== value) }
-            : item
-        )
-      );
+  const onToggle = (item: string) => () => {
+    const newItems = checkedItems.includes(item)
+      ? checkedItems.filter((elem) => elem !== item)
+      : [...checkedItems, item];
+    if (newItems.length > 0) {
+      searchParams.set(filter.title, newItems.join(","));
     } else {
-      searchParams.set(
-        data.title,
-        checkedItems?.values
-          ? checkedItems?.values.join(",") + "," + value
-          : value
-      );
-
-      setCheckedItems((prevItems) => [
-        ...prevItems.filter((item) => item.title !== data.title),
-        {
-          title: data.title,
-          values: [
-            ...(prevItems.find((item) => item.title === data.title)?.values ||
-              []),
-            value,
-          ],
-        },
-      ]);
+      searchParams.set(filter.title, undefined);
     }
   };
 
   return (
     <ul>
-      {data.values
-        .filter((v) => v.toLowerCase().includes(searchText))
-        .map((item, index) => (
-          <li
-            key={index}
-            className="flex items-center space-x-2 pb-1"
-            onClick={onToggle(item)}
-          >
-            <Checkbox
-              checked={
-                checkedItems?.values.find((v) => v === item) ? true : false
-              }
-            />
-            <span className="text-base">{item}</span>
-          </li>
-        ))}
+      {filteredValues.map((item, index) => (
+        <li
+          key={index}
+          className="flex items-center space-x-2 pb-1 cursor-pointer"
+          onClick={onToggle(item)}
+        >
+          <Checkbox checked={!!checkedItems.find((v) => v === item)} />
+          <span className="text-base">{item}</span>
+        </li>
+      ))}
     </ul>
   );
-};
+}
 
-const FilterTiles = ({
-  data,
-  checkedItems,
-  setCheckedItems,
-  searchText,
-}: {
-  data: FilterTilesItem;
-  checkedItems: { title: string; values: string[] } | undefined;
-  setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>;
-  searchText: string;
-}) => {
+const FilterTiles = ({ filter, search }: FilterCardProps<FilterTilesItem>) => {
   const searchParams = useSearchParamsTools();
+  const checkedItems = useMemo<string[]>(() => {
+    const existingParams = searchParams.get?.(filter.title);
+    if (!existingParams) return [];
+    return existingParams
+      .split(",")
+      .filter((param) => filter.values.includes(param));
+  }, [searchParams, filter.title, filter.values]);
 
-  const onToggle = (value: string) => () => {
-    if (value.length <= 0) return;
+  const filteredValues = useMemo(() => {
+    const searchLower = search?.toLowerCase();
+    return searchLower
+      ? filter.values.filter((item) => item.toLowerCase().includes(searchLower))
+      : filter.values;
+  }, [filter.values, search]);
 
-    const isChecked = checkedItems?.values.includes(value);
-    if (isChecked) {
-      if (checkedItems?.values.length === 1)
-        searchParams.set(data.title, undefined);
-      else
-        searchParams.set(
-          data.title,
-          checkedItems?.values.filter((v) => v !== value).join(",")
-        );
-
-      setCheckedItems((prevItems) =>
-        prevItems.map((item) =>
-          item.title === data.title
-            ? { ...item, values: item.values.filter((val) => val !== value) }
-            : item
-        )
-      );
+  const onToggle = (item: string) => () => {
+    const newItems = checkedItems.includes(item)
+      ? checkedItems.filter((elem) => elem !== item)
+      : [...checkedItems, item];
+    if (newItems.length > 0) {
+      searchParams.set(filter.title, newItems.join(","));
     } else {
-      searchParams.set(
-        data.title,
-        checkedItems?.values
-          ? checkedItems?.values.join(",") + "," + value
-          : value
-      );
-
-      setCheckedItems((prevItems) => [
-        ...prevItems.filter((item) => item.title !== data.title),
-        {
-          title: data.title,
-          values: [
-            ...(prevItems.find((item) => item.title === data.title)?.values ||
-              []),
-            value,
-          ],
-        },
-      ]);
+      searchParams.set(filter.title, undefined);
     }
   };
 
@@ -281,144 +209,129 @@ const FilterTiles = ({
         type="multiple"
         className={`grid grid-cols-5 max-[340px]:grid-cols-4 max-[250px]:grid-cols-3 max-[180px]:grid-cols-2 `}
       >
-        {data.values
-          .filter((v) => v.toLowerCase().includes(searchText))
-          .map((item, index) => (
-            <ToggleGroupItem
-              key={data.title + index}
-              value={item}
-              aria-label={"Toggle" + item}
-              className="border-black border-[1.5px]"
-              data-state={
-                checkedItems?.values.find((v) => v === item) ? "on" : "off"
-              }
-              onClick={onToggle(item)}
-            >
-              {item}
-            </ToggleGroupItem>
-          ))}
+        {filteredValues.map((item, index) => (
+          <ToggleGroupItem
+            key={filter.title + index}
+            value={item}
+            aria-label={"Toggle" + item}
+            className="border-black border-[1.5px]"
+            data-state={checkedItems?.includes(item) ? "on" : "off"}
+            onClick={onToggle(item)}
+          >
+            {item}
+          </ToggleGroupItem>
+        ))}
       </ToggleGroup>
     </>
   );
 };
 
-const FilterPrice = ({
-  data,
-  checkedItems,
-  setCheckedItems,
-}: {
-  data: FilterPriceItem;
-  checkedItems: { title: string; values: string[] } | undefined;
-  setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>;
-}) => {
+const FilterPrice = ({ filter }: FilterCardProps<FilterPriceItem>) => {
   const searchParams = useSearchParamsTools();
 
+  function parsePriceValue() {
+    const defaultValue = searchParams.get?.(filter.type);
+    const value = parsePriceParamValue(defaultValue);
+    return value ? value : filter.values;
+  }
+
   const [priceValue, setPriceValue] = useState<{ min: number; max: number }>(
-    () => {
-      const defaultValue = searchParams.get?.("Price");
-
-      if (defaultValue) {
-        const filteredValues = defaultValue
-          .split("-")
-          .map((v) => parseFloat(v))
-          .filter((v) => !isNaN(v) && v !== undefined);
-        if (filteredValues && filteredValues.length === 2) {
-          filteredValues.sort((a, b) => a - b);
-          return { min: filteredValues[0], max: filteredValues[1] };
-        }
-      }
-
-      return data.values;
-    }
+    parsePriceValue
   );
 
   const onInputMinValueChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const newMin = parseFloat(event.target.value);
-    if (newMin) setPriceValue((prevValue) => ({ ...prevValue, min: newMin }));
+    let newMin = parseFloat(event.target.value);
+
+    if (isNaN(newMin)) return;
+
+    if (newMin < filter.values.min) {
+      newMin = filter.values.min;
+    }
+
+    if (newMin > filter.values.max) {
+      newMin = filter.values.max;
+    }
+
+    if (newMin > priceValue.max) {
+      newMin = priceValue.max;
+    }
+
+    setPriceValue((prevValue) => ({ ...prevValue, min: newMin }));
   };
   const onInputMaxValueChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const newMax = parseFloat(event.target.value);
-    if (newMax) setPriceValue((prevValue) => ({ ...prevValue, max: newMax }));
+    let newMax = parseFloat(event.target.value);
+
+    if (isNaN(newMax)) return;
+
+    if (newMax < filter.values.min) {
+      newMax = filter.values.min;
+    }
+
+    if (newMax > filter.values.max) {
+      newMax = filter.values.max;
+    }
+
+    if (newMax < priceValue.min) {
+      newMax = priceValue.min;
+    }
+
+    setPriceValue((prevValue) => ({ ...prevValue, max: newMax }));
   };
 
   const onSliderValueChange = (value: number[]) => {
-    setPriceValue((prevValue) => ({
-      ...prevValue,
+    setPriceValue({
       min: value[0],
       max: value[1],
-    }));
+    });
   };
 
   function savePriceChange() {
-    setSearchParams();
-    if (checkedItems) {
-      setCheckedItems((prevItems) =>
-        prevItems.map((item) =>
-          item.title === data.title
-            ? { ...item, values: [priceValue.min + "-" + priceValue.max] }
-            : item
-        )
-      );
-    } else {
-      setCheckedItems((prevItems) => [
-        ...prevItems.filter((item) => item.title !== data.title),
-        { title: data.title, values: [priceValue.min + "-" + priceValue.max] },
-      ]);
-    }
+    searchParams.set(filter.type, `${priceValue.min}-${priceValue.max}`);
   }
 
-  const setSearchParams = () => {
-    const params = searchParams.get?.(data.title);
-    if (params) {
-      if (priceValue.min && priceValue.max)
-        searchParams.set(data.title, priceValue.min + "-" + priceValue.max);
-      else searchParams.set(data.title, undefined);
-    } else {
-      if (priceValue.min && priceValue.max)
-        searchParams.set(data.title, priceValue.min + "-" + priceValue.max);
-    }
-  };
-
   useEffect(() => {
-    if (!checkedItems) setPriceValue(data.values);
-  }, [checkedItems, data.values]);
+    const newValue = parsePriceValue();
+    if (priceValue.min !== newValue.min || priceValue.max !== newValue.max) {
+      setPriceValue(newValue);
+    }
+  }, [searchParams.get?.(filter.type)]);
 
   return (
     <div className="h-full overflow-hidden mt-3">
       <div className="flex justify-between w-full p-1 pb-3">
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex justify-between items-center gap-2">
           <Input
-            className="max-w-16"
+            className="w-16 bg-card text-center"
             value={priceValue.min}
+            min={priceValue.min}
+            max={priceValue.max}
             onChange={onInputMinValueChange}
-          ></Input>
+          />
           <span className="font-bold">—</span>
           <Input
-            className="max-w-16"
+            className="w-16 bg-card text-center"
             value={priceValue.max}
+            min={priceValue.min}
+            max={priceValue.max}
             onChange={onInputMaxValueChange}
-          ></Input>
+          />
         </div>
         <div>
-          <Button
-            variant={"ghost"}
-            className="bg-gray-300"
-            onClick={savePriceChange}
-          >
+          <Button variant={"primary"} onClick={savePriceChange}>
             Save
           </Button>
         </div>
       </div>
       <div className="h-5 px-1">
         <DoubleThumbSlider
-          defaultValue={[data.values.min, data.values.max]}
+          defaultValue={[filter.values.min, filter.values.max]}
           value={[priceValue.min, priceValue.max]}
-          max={data.values.max}
-          min={data.values.min}
+          max={filter.values.max}
+          min={filter.values.min}
           step={1}
           minStepsBetweenThumbs={1}
           onValueChange={onSliderValueChange}
@@ -428,85 +341,46 @@ const FilterPrice = ({
   );
 };
 
-const FilterRating = ({
-  data,
-  checkedItems,
-  setCheckedItems,
-}: {
-  data: FilterRatingItem;
-  checkedItems: { title: string; values: string[] } | undefined;
-  setCheckedItems: React.Dispatch<React.SetStateAction<FilterCheckedType>>;
-}) => {
+const maxRating = 5;
+const FilterRating = ({ filter }: FilterCardProps<FilterRatingItem>) => {
   const searchParams = useSearchParamsTools();
 
-  const onToggle = (value: string) => () => {
-    if (value.length <= 0) return;
+  const checkedItems = useMemo<number[]>(() => {
+    const existingParams = searchParams
+      .get?.(filter.type)
+      ?.split(",")
+      .map(Number);
 
-    const isChecked = checkedItems?.values.includes(value);
-    if (isChecked) {
-      if (checkedItems?.values.length === 1)
-        searchParams.set(data.title, undefined);
-      else
-        searchParams.set(
-          data.title,
-          checkedItems?.values.filter((v) => v !== value).join(",")
-        );
+    if (!existingParams || existingParams.some(isNaN)) return [];
+    return existingParams;
+  }, [searchParams, filter]);
 
-      setCheckedItems((prevItems) =>
-        prevItems.map((item) =>
-          item.title === data.title
-            ? { ...item, values: item.values.filter((val) => val !== value) }
-            : item
-        )
-      );
+  const onToggle = (value: number) => () => {
+    const newItems = checkedItems.includes(value)
+      ? checkedItems.filter((elem) => elem !== value)
+      : [...checkedItems, value];
+    if (newItems.length > 0) {
+      searchParams.set(filter.type, newItems.join(","));
     } else {
-      searchParams.set(
-        data.title,
-        checkedItems?.values
-          ? checkedItems?.values.join(",") + "," + value
-          : value
-      );
-
-      setCheckedItems((prevItems) => [
-        ...prevItems.filter((item) => item.title !== data.title),
-        {
-          title: data.title,
-          values: [
-            ...(prevItems.find((item) => item.title === data.title)?.values ||
-              []),
-            value,
-          ],
-        },
-      ]);
+      searchParams.set(filter.type, undefined);
     }
   };
 
   return (
     <div className="mt-3">
-      {data.values.map((item, index) => (
+      {filter.values.map((item, index) => (
         <li
           key={index}
           className="flex items-center space-x-2 pb-2"
-          onClick={onToggle(item.toString())}
+          onClick={onToggle(item)}
         >
-          <Checkbox
-            checked={
-              checkedItems?.values.find((v) => v === item.toString())
-                ? true
-                : false
-            }
-          />
+          <Checkbox checked={checkedItems.includes(item)} />
           <span className="text-base flex gap-[3.44px]">
-            {Array.from({ length: item }).map((_, _index) => (
-              <Image key={_index} src={RatingFillStar} alt="placeholder" />
+            {Array.from({ length: item }).map((_, index) => (
+              <StarFullIcon key={index} className="fill-current w-6 h-6" />
             ))}
-            {Array.from({ length: index }).map((_, _index) => (
-              <Image
-                key={_index}
-                src={RatingLineStar}
-                alt="placeholder"
-                fill={false}
-              />
+            {Array.from({ length: maxRating - item }).map((_, index) => (
+              <StarEmptyIcon key={index} className="w-6 h-6" />
             ))}
           </span>
         </li>

@@ -1,5 +1,5 @@
 "use client";
-import { getProductsShort, type ProductShort } from "@/api/products";
+import { deleteProducts, getProducts, type ProductShort } from "@/api/products";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -45,29 +45,37 @@ export default function Page() {
   >();
   const [defferedSearch] = useDebounce(searchQuery, 300);
   const { showModal } = useModal();
-  const [isTransiton, startTransition] = useTransition();
+  const [isTransition, startTransition] = useTransition();
 
   const fetchProducts = useCallback(async () => {
-    if (!selectedCategory) return { data: [], count: { pageCount: 0 } };
-    return getProductsShort({
+    if (!selectedCategory)
+      return { data: [] as ProductShort[], count: { pagesCount: 0 } };
+    const res = await getProducts({
       categoryId: selectedCategory.id,
       page,
       searchQuery: defferedSearch,
       pageSize: 7,
     });
+
+    if (res.status === 200) {
+      return { data: res.data, count: res.count };
+    }
+
+    return { data: [] as ProductShort[], count: { pagesCount: 0 } };
   }, [selectedCategory, page, defferedSearch]);
 
   const categoriesQuery = useCategories();
   const productsQuery = useQuery({
     queryKey: ["productsShort", selectedCategory?.id, page, defferedSearch],
     queryFn: fetchProducts,
+    staleTime: 10 * 1000,
   });
 
   const [dataOptimistic, setDataOptimistic] = useOptimistic(
     productsQuery.data?.data
   );
 
-  function onSelectCategory(id: string) {
+  function onSelectCategory(id: number) {
     const value = categoriesQuery.data?.data.find((c) => c.id === id);
     value && setSelectedCategory(value);
   }
@@ -98,7 +106,15 @@ export default function Page() {
           setDataOptimistic((current) =>
             current?.filter((v) => !ids.includes(v.id))
           );
-          // TODO: send api request
+          const data = await deleteProducts(ids);
+
+          if (
+            data.status === 200 &&
+            selectedProduct?.id &&
+            ids.includes(selectedProduct.id)
+          ) {
+            setSelectedProduct(undefined);
+          }
         });
       }
     });
@@ -108,11 +124,13 @@ export default function Page() {
     <div className="flex items-center gap-4 w-full">
       <div className="flex items-center gap-3 basis-1/3">
         <h2 className="font-medium">Category</h2>
-        <CategorySelect
-          categories={categoriesQuery.data?.data}
-          value={selectedCategory?.id}
-          onValueChange={onSelectCategory}
-        />
+        <div className="min-w-72">
+          <CategorySelect
+            categories={categoriesQuery.data?.data}
+            value={selectedCategory?.id}
+            onValueChange={onSelectCategory}
+          />
+        </div>
       </div>
       <Input
         type="text"
@@ -174,13 +192,14 @@ export default function Page() {
           const product = row.original;
           return (
             <div className="flex items-center gap-3">
-              <Image
-                src={product.images[0]}
-                alt="Product image"
-                width={80}
-                height={80}
-                className="object-cover"
-              />
+              <div className="w-20 h-20 relative">
+                <Image
+                  src={product.productImages[0].imageUrl}
+                  alt="Product image"
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <p className="max-w-xs line-clamp-2 text-xl">{product.name}</p>
             </div>
           );
@@ -188,12 +207,12 @@ export default function Page() {
       },
       {
         header: "Rating",
-        accessorKey: "rating",
+        accessorKey: "generalRate",
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <StarIcon className="fill-black w-6 h-6" />
             <span className="text-xl">
-              {parseFloat(row.getValue("rating")).toFixed(1)}
+              {parseFloat(row.getValue("generalRate")).toFixed(1)}
             </span>
           </div>
         ),
@@ -203,23 +222,22 @@ export default function Page() {
         accessorKey: "price",
         cell: ({ row }) => {
           const product = row.original;
-          const price = splitPrice(product.price);
-          const discountPrice = product.discountPrice
-            ? splitPrice(product.discountPrice)
-            : undefined;
-          const firstPrice = discountPrice ?? price;
-          const secondPrice = discountPrice ? price : undefined;
+          const displayedPrice = product.discountPercent
+            ? product.discountPrice
+            : product.price;
+          const displayedPriceParts = splitPrice(displayedPrice);
+          const normalPriceParts = splitPrice(product.price);
 
           return (
             <div className="flex items-center gap-3">
               <p className="text-xl">
-                ${firstPrice.whole}
-                <sup>{firstPrice.fraction}</sup>
+                ${displayedPriceParts.whole}
+                <sup>{displayedPriceParts.fraction}</sup>
               </p>
-              {!!secondPrice && (
+              {!!product.discountPercent && (
                 <p className="text-base line-through text-gray-500">
-                  ${secondPrice.whole}
-                  <sup>{secondPrice.fraction}</sup>
+                  ${normalPriceParts.whole}
+                  <sup>{normalPriceParts.fraction}</sup>
                 </p>
               )}
             </div>
@@ -313,12 +331,16 @@ export default function Page() {
         {!!productsQuery.data && productsQuery.data.data.length > 0 && (
           <Pagination
             page={page}
-            pagesCount={productsQuery.data.count.pageCount}
+            pagesCount={productsQuery.data.count.pagesCount}
             setPage={changePage}
           />
         )}
       </div>
-      <ProductAsideCard product={selectedProduct} onDelete={handleDelete} />
+      <ProductAsideCard
+        product={selectedProduct}
+        onDelete={handleDelete}
+        isButtonsDisabled={isTransition}
+      />
     </div>
   );
 }

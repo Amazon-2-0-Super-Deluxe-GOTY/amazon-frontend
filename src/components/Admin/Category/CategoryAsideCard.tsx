@@ -16,7 +16,7 @@ interface Props {
   mainCategory?: Category;
   allCategories?: Category[];
   onViewMain?: () => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 }
 
 const iconClassLarge = "w-8 h-8";
@@ -103,6 +103,7 @@ export const CategoryAsideCard = ({
               Edit
             </Button>
             <Button
+              variant={"destructive"}
               className="w-full flex items-center gap-2 text-base"
               onClick={handleDelete}
             >

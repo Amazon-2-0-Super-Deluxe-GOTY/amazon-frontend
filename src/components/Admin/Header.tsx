@@ -1,34 +1,34 @@
 "use client";
 import * as React from "react";
-import Link from "next/link";
-import { MenuIcon, UserIcon } from "lucide-react";
 import { AdminSidebar } from "./AdminSidebar";
+import { useUser } from "@/api/users";
+import { Logo } from "../Shared/Logo";
+import { MenuIcon, UserIcon } from "../Shared/Icons";
 
 export function Header() {
+  const { user } = useUser();
   const [isSidebarOpen, setIsSedebarOpen] = React.useState(false);
 
   const openSidebar = () => setIsSedebarOpen(true);
   const closeSidebar = () => setIsSedebarOpen(false);
 
   return (
-    <header className="px-4 py-4 border-b">
+    <header className="px-4 py-4 border-b bg-secondary text-light">
       <div className="max-w-[1600px] flex items-center justify-between w-full mx-auto">
         <div className="flex items-center space-x-4">
           <button onClick={openSidebar}>
-            <MenuIcon className="text-gray-700" />
+            <MenuIcon className="stroke-3" />
           </button>
-          <Link href={"/"}>
-            <span className="font-bold text-xl">Logo</span>
-          </Link>
+          <Logo />
         </div>
         <div className="flex items-center space-x-4">
-          <UserIcon className="text-gray-700 hidden md:block" />
+          <UserIcon className="w-8 h-8 stroke-3 [&_:nth-child(1)]:stroke-1 hidden md:block" />
         </div>
       </div>
       <AdminSidebar
         isOpen={isSidebarOpen}
         closeSidebar={closeSidebar}
-        user={{ avatar: "", fullName: "Randolph Charles" }}
+        user={user}
       />
     </header>
   );

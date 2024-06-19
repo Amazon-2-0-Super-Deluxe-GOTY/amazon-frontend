@@ -1,9 +1,4 @@
-import {
-  ChevronRightIcon,
-  HeartIcon,
-  MinusIcon,
-  PlusIcon,
-} from "lucide-react";
+import { ChevronRightIcon, HeartIcon, MinusIcon, PlusIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -28,12 +23,10 @@ import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { useStorageCart } from "@/lib/storage";
+import { useCart, type Product } from "@/api/products";
+import { splitPrice } from "@/lib/products";
 
 const infoElements = [
-  {
-    title: "Delivery",
-    render: () => <DeliveryContent />,
-  },
   {
     title: "Payment methods",
     render: () => <PaymentContent />,
@@ -42,21 +35,17 @@ const infoElements = [
     title: "Security",
     render: () => <SecurityContent />,
   },
-  {
-    title: "Returns",
-    render: () => <ReturnsContent />,
-  },
 ];
 
-export const ProductOrderCard = ({
-  productId,
-  isOptionsSelected,
-}: {
-  productId: string;
-  isOptionsSelected: boolean;
-}) => {
+export const ProductOrderCard = ({ product }: { product: Product }) => {
   const [count, setCount] = useState(1);
   const [openedTabIndex, setOpenedTabIndex] = useState<number>();
+  const displayedPrice = product.discountPercent
+    ? product.discountPrice
+    : product.price;
+  const { whole, fraction } = splitPrice(displayedPrice);
+
+  const isInStock = product.quantity > 0;
 
   const isOpen = openedTabIndex !== undefined;
 
@@ -69,7 +58,8 @@ export const ProductOrderCard = ({
     }
   };
 
-  const increment = () => setCount((c) => c + 1);
+  const increment = () =>
+    setCount((c) => (c < product.quantity ? c + 1 : product.quantity));
   const decrement = () => setCount((c) => (c > 1 ? c - 1 : 1));
 
   const hasPrev = useMemo(() => {
@@ -93,31 +83,49 @@ export const ProductOrderCard = ({
   };
 
   //#region AddProductToCart
-  const { addToCart, buyNow } = useStorageCart();
+  const { openModal } = useStorageCart();
+  const { addToCart, cart } = useCart();
+
+  const canAddToCart = useMemo(() => {
+    if (!cart.data) return true;
+
+    const existingCartItem = cart.data.cartItems.find(
+      (i) => i.product.id === product.id
+    );
+    return existingCartItem
+      ? count < existingCartItem.product.quantity - existingCartItem.quantity
+      : true;
+  }, [cart.data, count, product.id]);
+
   const onAddToCartClick = () => {
-    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
-    addToCart(newCartItem);
+    if (!canAddToCart) return;
+    addToCart.mutateAsync({ productId: product.id, quantity: count });
   };
   const onBuyNowClick = () => {
-    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
-    buyNow(newCartItem);
+    if (!canAddToCart) return;
+    addToCart
+      .mutateAsync({ productId: product.id, quantity: count })
+      .then(openModal);
   };
   //#endregion
 
   return (
-    <Card className="bg-gray-200">
+    <Card>
       <CardHeader className="space-y-3">
         <div className="flex justify-between items-center">
           <div>
             <span className="text-3xl font-bold">
-              $24<sup>99</sup>
+              ${whole}
+              <sup>{fraction}</sup>
             </span>
-            <sub className="ml-2 line-through text-gray-400 text-lg">
-              $39.99
-            </sub>
+            {product.discountPercent && (
+              <sub className="ml-2 line-through text-halftone text-lg">
+                ${product.price}
+              </sub>
+            )}
           </div>
           <MediaQueryCSS maxSize="lg">
-            <span>In stock</span>
+            <span>{isInStock ? "In stock" : "Out of stock"}</span>
           </MediaQueryCSS>
         </div>
         <MediaQueryCSS minSize="lg">
@@ -125,7 +133,7 @@ export const ProductOrderCard = ({
           <ul className="space-y-1">
             <li className="flex justify-between text-base">
               <span>Status</span>
-              <span>In stock</span>
+              <span>{isInStock ? "In stock" : "Out of stock"}</span>
             </li>
             <InfoLabelsList openTab={openTab} />
           </ul>
@@ -134,16 +142,31 @@ export const ProductOrderCard = ({
         <div className="flex justify-between items-center py-1">
           <span className="text-base">Quantity</span>
           <div className="flex items-center gap-4">
-            <MinusIcon className="w-4 cursor-pointer" onClick={decrement} />
-            <span className="text-sm select-none">{count}</span>
-            <PlusIcon className="w-4 cursor-pointer" onClick={increment} />
+            <button onClick={decrement}>
+              <MinusIcon className="w-4" />
+            </button>
+            <span className="text-sm">{count}</span>
+            <button onClick={increment}>
+              <PlusIcon className="w-4" />
+            </button>
           </div>
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
-        <Button disabled={!isOptionsSelected} onClick={onAddToCartClick}>Add to cart</Button>
-        <Button disabled={!isOptionsSelected} onClick={onBuyNowClick}>Buy now</Button>
-        <Button variant={"outline"} className="col-span-2 lg:col-span-1">
+        <Button
+          onClick={onAddToCartClick}
+          disabled={!isInStock || !canAddToCart}
+        >
+          Add to cart
+        </Button>
+        <Button
+          onClick={onBuyNowClick}
+          variant={"secondary"}
+          disabled={!isInStock || !canAddToCart}
+        >
+          Buy now
+        </Button>
+        <Button variant={"tertiary"} className="col-span-2 lg:col-span-1">
           Add to wish list
         </Button>
       </CardContent>
@@ -166,8 +189,9 @@ export const ProductOrderCard = ({
         count={count}
         increment={increment}
         decrement={decrement}
-        productId={productId}
-        isOptionsSelected={isOptionsSelected}
+        price={product.discountPercent ? product.discountPrice : product.price}
+        onAddToCard={onAddToCartClick}
+        onBuyNow={onBuyNowClick}
       />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -186,7 +210,9 @@ export const ProductOrderCard = ({
                   onNext: toNext,
                 }}
               />
-              <ScrollArea>{infoElements[openedTabIndex].render()}</ScrollArea>
+              <ScrollArea className="grow">
+                {infoElements[openedTabIndex].render()}
+              </ScrollArea>
             </>
           )}
         </SheetContent>
@@ -199,48 +225,39 @@ const MobileQuickActions = ({
   count,
   increment,
   decrement,
-  productId,
-  isOptionsSelected,
+  price,
+  onAddToCard,
+  onBuyNow,
 }: {
   count: number;
   increment: () => void;
   decrement: () => void;
-  productId: string;
-  isOptionsSelected: boolean;
+  price: number;
+  onAddToCard: () => void;
+  onBuyNow: () => void;
 }) => {
-
-  //#region AddProductToCart
-  const { addToCart, setIsOpenCartModal } = useStorageCart();
-  const onAddToCartClick = () => {
-    const newCartItem = { id: productId, title: "Product_" + productId, price: 39.99, quantity: count };
-    addToCart(newCartItem);
-  };
-  const onBuyNowClick = () => {
-    onAddToCartClick();
-    setIsOpenCartModal(true);
-  };
-  //#endregion
+  const { whole, fraction } = splitPrice(price);
 
   return (
     <ClientOnlyPortal selector="body">
       <MediaQueryCSS maxSize="md">
-        <Card className="bg-gray-200 fixed bottom-0 left-0 right-0 rounded-t-md z-10">
+        <Card className="bg-card fixed bottom-0 left-0 right-0 rounded-t-md z-10">
           <CardHeader className="space-y-3 p-4">
             <div className="flex justify-between items-center">
               <div>
-                <span className="text-3xl font-bold">
-                  $24<sup>99</sup>
+                <span className="text-2xl font-bold">
+                  ${whole}
+                  <sup>{fraction}</sup>
                 </span>
-                <sub className="ml-2 line-through text-gray-400 text-lg">
-                  $39.99
-                </sub>
               </div>
               <div className="flex items-center gap-2">
                 <button>
                   <HeartIcon />
                 </button>
-                <Button variant={"outline"} disabled={!isOptionsSelected} onClick={onAddToCartClick}>To cart</Button>
-                <Button disabled={!isOptionsSelected} onClick={onBuyNowClick}>Buy</Button>
+                <Button variant={"secondary"} onClick={onAddToCard}>
+                  To cart
+                </Button>
+                <Button onClick={onBuyNow}>Buy</Button>
               </div>
             </div>
             <hr className="border-black" />

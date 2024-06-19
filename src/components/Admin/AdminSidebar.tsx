@@ -17,6 +17,11 @@ import {
   UsersRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { User } from "@/api/types";
+import { useAuthStore } from "@/lib/storage";
+import { logOut } from "@/api/users";
+import { useRouter } from "next/navigation";
+import { CategoryIcon } from "../Shared/Icons";
 
 const links = [
   {
@@ -27,7 +32,7 @@ const links = [
   {
     title: "Category",
     url: "/categories",
-    icon: <ScrollTextIcon />,
+    icon: <CategoryIcon />,
   },
   {
     title: "Products",
@@ -53,18 +58,28 @@ export const AdminSidebar = ({
 }: {
   isOpen: boolean;
   closeSidebar: () => void;
-  user: { fullName: string; avatar: string };
+  user?: User | null;
 }) => {
+  const router = useRouter();
+  const clearToken = useAuthStore((state) => state.clearToken);
+  const fullName = `${user?.firstName} ${user?.lastName}`;
+
+  const onLogOut = () => {
+    logOut()
+      .then(clearToken)
+      .then(() => router.refresh());
+  };
+
   return (
     <div>
       <Sidebar isOpen={isOpen} closeModal={closeSidebar}>
         <SidebarHeader>
           <SidebarAvatar
-            image={user.avatar}
-            fallback={textAvatar(user.fullName)}
+            image={user?.avatarUrl}
+            fallback={textAvatar(fullName)}
           />
           <div>
-            <SidebarTitle>{user.fullName}</SidebarTitle>
+            <SidebarTitle>{fullName}</SidebarTitle>
             <SidebarDescription>Administrator</SidebarDescription>
           </div>
         </SidebarHeader>
@@ -82,7 +97,7 @@ export const AdminSidebar = ({
           ))}
         </div>
         <Separator className="bg-black" />
-        <button>
+        <button onClick={onLogOut}>
           <SidebarItem icon={<LogOutIcon />} text="Log out" />
         </button>
       </Sidebar>

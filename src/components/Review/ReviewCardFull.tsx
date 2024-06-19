@@ -1,18 +1,9 @@
 import { textAvatar } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Sheet, SheetClose, SheetContent } from "../ui/sheet";
-import type { Review } from "./types";
+import { Sheet, SheetContent } from "../ui/sheet";
+import type { Review } from "@/api/review";
 import { Separator } from "../ui/separator";
 import React, { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
-  ChevronsUpIcon,
-  StarIcon,
-  X,
-} from "lucide-react";
 import clsx from "clsx";
 import { formatReviewDate } from "@/lib/date";
 import { Button } from "../ui/button";
@@ -32,6 +23,16 @@ import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { getReviewTranslation } from "@/api/review";
 import { useQuery } from "@tanstack/react-query";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  ChevronsUpIcon,
+  StarEmptyIcon,
+  StarFullIcon,
+  XIcon,
+} from "../Shared/Icons";
 
 interface ReviewCardProps {
   review: Review;
@@ -39,8 +40,10 @@ interface ReviewCardProps {
   startImageIndex: number;
   hasPrev: boolean;
   hasNext: boolean;
+  isOwnReview?: boolean;
   onPrev: () => void;
   onNext: () => void;
+  onLike: () => void;
   closeModal: () => void;
 }
 
@@ -50,14 +53,17 @@ export const ReviewCardFull = ({
   review,
   hasPrev,
   hasNext,
+  isOwnReview = false,
   onPrev,
   onNext,
+  onLike,
   closeModal,
 }: ReviewCardProps) => {
   const isDesktop = useScreenSize({ minSize: "lg" });
   const [isImageExpanded, setIsImageExpanded] = useState(false);
-  const [isInUserLanguage, setIsInUserLanguage] = useState(true);
-  const [translatedReviews, setTrenslatedReviews] = useState<string[]>([]);
+  const [translatedReviews, setTranslatedReviews] = useState<string[]>([]);
+  const displayTranslationButton =
+    !isOwnReview && Boolean(review.title || review.text);
 
   const translation = useQuery<{ title: string; text: string }>({
     queryKey: ["translation", review.id],
@@ -65,19 +71,14 @@ export const ReviewCardFull = ({
     enabled: false,
   });
 
-  React.useEffect(() => {
-    const browserLang = navigator.language;
-    setIsInUserLanguage(review.language.startsWith(browserLang));
-  }, [review.language]);
-
   const onTranslate = async (id: string) => {
     if (translatedReviews.includes(id)) {
-      setTrenslatedReviews(translatedReviews.filter((i) => i !== id));
+      setTranslatedReviews(translatedReviews.filter((i) => i !== id));
     } else {
       if (!translation.isFetched) {
         await translation.refetch();
       }
-      setTrenslatedReviews([...translatedReviews, id]);
+      setTranslatedReviews([...translatedReviews, id]);
     }
   };
 
@@ -90,7 +91,7 @@ export const ReviewCardFull = ({
     }
   };
 
-  const withImages = !!review.images?.length;
+  const withImages = !!review.reviewImages?.length;
 
   if (isDesktop) {
     return (
@@ -112,17 +113,21 @@ export const ReviewCardFull = ({
           <ScrollArea className="grow">
             <ReviewBody
               review={review}
-              isInUserLanguage={isInUserLanguage}
+              displayTranslationButton={displayTranslationButton}
               isTranslated={translatedReviews.includes(review.id)}
               isLoading={translation.isLoading}
               translation={translation.data}
               onTranslate={onTranslate}
             />
           </ScrollArea>
-          <ReviewFooter review={review} />
+          <ReviewFooter
+            review={review}
+            displayLikeButton={!isOwnReview}
+            onLike={onLike}
+          />
           {withImages && (
             <ReviewImageCarouselDesktop
-              images={review.images!}
+              images={review.reviewImages.map((i) => i.imageUrl)}
               isImageExpanded={isImageExpanded}
               onToggle={onImageExpandToggle}
               startImageIndex={startImageIndex}
@@ -153,17 +158,21 @@ export const ReviewCardFull = ({
             />
             <ReviewBody
               review={review}
-              isInUserLanguage={isInUserLanguage}
+              displayTranslationButton={displayTranslationButton}
               isTranslated={translatedReviews.includes(review.id)}
               isLoading={translation.isLoading}
               translation={translation.data}
               onTranslate={onTranslate}
             />
-            <ReviewFooter review={review} />
+            <ReviewFooter
+              review={review}
+              displayLikeButton={!isOwnReview}
+              onLike={onLike}
+            />
           </div>
           {withImages && (
             <ReviewImageCarouselMobile
-              images={review.images!}
+              images={review.reviewImages.map((i) => i.imageUrl)}
               isImageExpanded={isImageExpanded}
               onToggle={onImageExpandToggle}
               startImageIndex={startImageIndex}
@@ -196,11 +205,16 @@ interface ReviewImageCarouselProps {
 interface ReviewHeaderProps extends BasePartProps, HeaderControlsProps {}
 
 interface ReviewBodyProps extends BasePartProps {
-  isInUserLanguage: boolean;
+  displayTranslationButton: boolean;
   isTranslated: boolean;
   isLoading: boolean;
   translation?: { title: string; text: string };
   onTranslate: (id: string) => void;
+}
+
+interface ReviewFooterProps extends BasePartProps {
+  displayLikeButton: boolean;
+  onLike: () => void;
 }
 
 const HeaderControls = ({
@@ -216,14 +230,14 @@ const HeaderControls = ({
         disabled={!hasPrev}
         onClick={onPrev}
       >
-        <ChevronLeft className="group-disabled:stroke-gray-300" />
+        <ChevronLeftIcon className="stroke-3 group-disabled:opacity-25" />
       </button>
       <button
         className="group rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
         disabled={!hasNext}
         onClick={onNext}
       >
-        <ChevronRight className="group-disabled:stroke-gray-300" />
+        <ChevronRightIcon className="stroke-3 group-disabled:opacity-25" />
       </button>
     </div>
   );
@@ -266,7 +280,7 @@ const ReviewImageCarouselDesktop = ({
                     src={img}
                     alt="Placeholder"
                     fill={true}
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
               </CarouselItem>
@@ -277,10 +291,14 @@ const ReviewImageCarouselDesktop = ({
         <CarouselNext />
       </Carousel>
       <button
-        className="absolute top-6 right-6 w-10 h-10 bg-white rounded-full flex justify-center items-center"
+        className="absolute top-6 right-6 w-10 h-10 bg-background rounded-full flex justify-center items-center text-secondary"
         onClick={onToggle}
       >
-        {isImageExpanded ? <ChevronsLeftIcon /> : <ChevronsRightIcon />}
+        {isImageExpanded ? (
+          <ChevronsLeftIcon className="stroke-3" />
+        ) : (
+          <ChevronsRightIcon className="stroke-3" />
+        )}
       </button>
     </div>
   );
@@ -315,7 +333,7 @@ const ReviewImageCarouselMobile = ({
                     src={img}
                     alt="Placeholder"
                     fill={true}
-                    className="object-cover"
+                    className="object-contain"
                     onClick={onToggle}
                   />
                 </div>
@@ -328,7 +346,7 @@ const ReviewImageCarouselMobile = ({
       </Carousel>
       {isImageExpanded && (
         <button
-          className="absolute bottom-[6vh] right-4 w-10 h-10 bg-white rounded-full flex justify-center items-center"
+          className="absolute bottom-[6vh] right-4 w-10 h-10 bg-background text-secondary rounded-full flex justify-center items-center"
           onClick={onToggle}
         >
           <ChevronsUpIcon />
@@ -345,21 +363,20 @@ const ReviewHeaderDesktop = ({
   onPrev,
   onNext,
 }: ReviewHeaderProps) => {
+  const fullName = `${review.user.firstName} ${review.user.lastName}`;
   return (
     <SheetHeader
       element={
         <div className="flex items-center gap-2 mr-auto">
-          <Avatar>
-            <AvatarImage src={review.user.avatar} />
-            <AvatarFallback>{textAvatar(review.user.fullName)}</AvatarFallback>
+          <Avatar className="w-12 h-12">
+            <AvatarImage src={review.user.avatarUrl} />
+            <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
           </Avatar>
-          <div className="text-sm xl:text-base">
-            <span>{review.user.fullName}</span>
-            <div className="flex items-center gap-2 h-5">
-              <span>{review.user.location}</span>
-              <Separator orientation="vertical" />
-              <span>{formatReviewDate(review.createdAt)}</span>
-            </div>
+          <div>
+            <p className="text-lg">{fullName}</p>
+            <p className="text-sm">
+              {formatReviewDate(new Date(review.createdAt))}
+            </p>
           </div>
         </div>
       }
@@ -375,9 +392,10 @@ const ReviewHeaderMobile = ({
   onPrev,
   onNext,
 }: ReviewHeaderProps) => {
+  const fullName = `${review.user.firstName} ${review.user.lastName}`;
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="w-full flex justify-between items-center mb-1">
+      <div className="w-full flex justify-between items-center mb-1 text-secondary">
         <HeaderControls
           hasPrev={hasPrev}
           hasNext={hasNext}
@@ -385,7 +403,7 @@ const ReviewHeaderMobile = ({
           onNext={onNext}
         />
         <DrawerClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary ml-[10%]">
-          <X className="h-5 w-5" />
+          <XIcon className="h-5 w-5" />
           <span className="sr-only">Close</span>
         </DrawerClose>
       </div>
@@ -393,14 +411,13 @@ const ReviewHeaderMobile = ({
       <div className="w-full flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
           <Avatar>
-            <AvatarImage src={review.user.avatar} />
-            <AvatarFallback>{textAvatar(review.user.fullName)}</AvatarFallback>
+            <AvatarImage src={review.user.avatarUrl} />
+            <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
           </Avatar>
-          <span>{review.user.fullName}</span>
+          <span>{fullName}</span>
         </div>
         <div className="text-xs text-end">
-          <p>{review.user.location}</p>
-          <p>{formatReviewDate(review.createdAt)}</p>
+          <p>{formatReviewDate(new Date(review.createdAt))}</p>
         </div>
       </div>
     </div>
@@ -409,26 +426,21 @@ const ReviewHeaderMobile = ({
 
 const ReviewBody = ({
   review,
-  isInUserLanguage,
+  displayTranslationButton,
   isLoading,
   isTranslated,
   translation,
   onTranslate,
 }: ReviewBodyProps) => {
   const starsElements = React.useMemo(() => {
-    if (!review) return [];
-    const maxRating = 5;
-    const elems = [];
-    for (let i = 0; i < maxRating; i++) {
-      elems.push(
-        <StarIcon
-          className={clsx("w-4 h-4", i < review.rating && "fill-black")}
-          key={i}
-        />
-      );
-    }
-    return elems;
-  }, [review]);
+    return Array.from({ length: 5 }).map((_, index) =>
+      index < review.mark ? (
+        <StarFullIcon className="w-6 h-6" key={index} />
+      ) : (
+        <StarEmptyIcon className="w-6 h-6" key={index} />
+      )
+    );
+  }, [review.mark]);
 
   const handleTranslate = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -438,20 +450,10 @@ const ReviewBody = ({
   return (
     <div className="grow space-y-3 lg:space-y-4">
       <div className="-mt-0.5 lg:mt-0">
-        <div className="flex items-center gap-2 lg:gap-4 h-5 text-xs lg:text-base">
-          <div className="flex items-center gap-1 h-full">{starsElements}</div>
-          {review.options.map((opt, i) => (
-            <React.Fragment key={i}>
-              <Separator orientation="vertical" />
-              <span>
-                {opt.title}: {opt.value}
-              </span>
-            </React.Fragment>
-          ))}
-        </div>
+        <div className="flex items-center gap-1 h-full">{starsElements}</div>
       </div>
       <div className="space-y-2">
-        <p className="font-semibold">{review.title}</p>
+        <p className="font-bold text-lg">{review.title}</p>
         <p className="whitespace-pre-line">{review.text}</p>
       </div>
       {isTranslated && !!translation && (
@@ -463,9 +465,9 @@ const ReviewBody = ({
           </div>
         </>
       )}
-      {!isInUserLanguage && (
+      {displayTranslationButton && (
         <Button
-          variant={"outline"}
+          variant={"secondary"}
           onClick={handleTranslate}
           disabled={isLoading}
         >
@@ -476,25 +478,33 @@ const ReviewBody = ({
             : "Translate"}
         </Button>
       )}
-      {!!review.tags?.length && <ReviewTags tags={review.tags} />}
+      {!!review.reviewTags?.length && <ReviewTags tags={review.reviewTags} />}
     </div>
   );
 };
 
-const ReviewFooter = ({ review }: BasePartProps) => {
+const ReviewFooter = ({
+  review,
+  displayLikeButton,
+  onLike,
+}: ReviewFooterProps) => {
+  const ratesString = getRatesCountString(review);
+
+  if (!ratesString && !displayLikeButton) return null;
+
   return (
     <div>
       <Separator orientation="horizontal" />
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-2 mt-3 lg:mt-6">
-        <div className="flex gap-4">
-          <Button variant={review.isRatedByUser ? "default" : "outline"}>
+        {displayLikeButton && (
+          <Button
+            variant={review.currentUserLiked ? "primary" : "secondary"}
+            onClick={onLike}
+          >
             Helpful
           </Button>
-          <Button variant={"outline"}>Report</Button>
-        </div>
-        <span className="text-sm lg:text-base">
-          {getRatesCountString(review)}
-        </span>
+        )}
+        <span className="text-sm lg:text-base">{ratesString}</span>
       </div>
     </div>
   );

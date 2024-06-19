@@ -11,12 +11,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import placeholderImage from "../../../public/Icons/placeholder.svg";
 
 export function Banner() {
   return (
     <Carousel
-      className="w-full rounded-lg overflow-hidden"
+      className="w-full lg:rounded-lg overflow-hidden"
       plugins={[
         Autoplay({
           delay: 4000,
@@ -30,15 +29,21 @@ export function Banner() {
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index}>
-            <div className="w-full h-80 relative">
+            <div className="w-full h-56 lg:h-80 relative">
               <Card className="w-full h-full">
                 <CardContent className="flex items-center justify-center">
-                  <Image
-                    src={placeholderImage}
-                    alt="placeholder"
-                    fill={true}
-                    className="object-cover"
-                  />
+                  <picture className="block">
+                    <source
+                      media="(max-width: 768px)"
+                      srcSet="/banner-main-mobile-1.avif"
+                    />
+                    <Image
+                      src={"/banner-main-1.webp"}
+                      alt="Banner with waves and cutlery"
+                      fill={true}
+                      className="object-cover"
+                    />
+                  </picture>
                 </CardContent>
               </Card>
             </div>
@@ -46,8 +51,8 @@ export function Banner() {
         ))}
       </CarouselContent>
 
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="hidden lg:inline-flex" />
+      <CarouselNext className="hidden lg:inline-flex" />
     </Carousel>
   );
 }
