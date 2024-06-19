@@ -1,4 +1,4 @@
-import { authStore } from "@/lib/storage";
+import { authStore, useAuthStore } from "@/lib/storage";
 import { ApiResponse, ApiValidationErrors } from "./types";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
@@ -57,6 +57,29 @@ interface ProductFilterItems {
   filterItems: Record<string, string[]>;
   minPrice: number;
   maxPrice: number;
+}
+
+interface Cart {
+  id: string;
+  totalPrice: number;
+  cartItems: CartItem[];
+}
+
+export interface CartItem {
+  id: string;
+  quantity: number;
+  price: number;
+  createdAt: string;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    imageUrl: string;
+    quantity: number;
+    discountPrice: number;
+    discountPercent: number | null;
+    price: number;
+  };
 }
 
 const defaultPageSize = "7";
@@ -270,4 +293,33 @@ export function useProductFilters({ categoryId }: { categoryId?: number }) {
   }, [filtersQuery.data]);
 
   return { data, isLoading: filtersQuery.isLoading };
+}
+
+export function getCart({
+  pageSize,
+  pageIndex,
+}: {
+  pageSize: number;
+  pageIndex: number;
+}): Promise<ApiResponse<[[200, Cart], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch(`/api/cart?pageSize=${pageSize}&pageIndex=${pageIndex}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function useCart() {
+  const token = useAuthStore((state) => state.token);
+  return useQuery({
+    queryKey: ["cart", token],
+    queryFn: useCallback(
+      () => (!!token ? getCart({ pageSize: 100, pageIndex: 1 }) : null),
+      [token]
+    ),
+    select(data) {
+      return data?.status === 200 ? data.data : undefined;
+    },
+  });
 }

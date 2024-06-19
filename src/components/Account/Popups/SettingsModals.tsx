@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export const ChangeNameModal = ({
   user,
@@ -30,7 +32,7 @@ export const ChangeNameModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+      <DialogTrigger className={cn(buttonVariants({ variant:"secondary", size:"default", className:"px-4 py-2" }))}>
         Change name
       </DialogTrigger>
       <DialogContent className="rounded-lg" hideClose>
@@ -70,7 +72,7 @@ export const ChangeEmailModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+      <DialogTrigger className={cn(buttonVariants({ variant:"secondary", size:"default", className:"px-4 py-2" }))}>
         Change email
       </DialogTrigger>
       <DialogContent className="rounded-lg" hideClose>
@@ -110,7 +112,7 @@ export const ChangePasswordModal = ({ onSubmit }: { onSubmit: () => void }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+      <DialogTrigger className={cn(buttonVariants({ variant:"secondary", size:"default", className:"px-4 py-2" }))}>
         Change password
       </DialogTrigger>
       <DialogContent className="rounded-lg" hideClose>
@@ -137,7 +139,7 @@ export const LogOutModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogTrigger
-        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+        className={cn(buttonVariants({ variant:"secondary", size:"default", className:"px-4 py-2" }))}
         disabled={isButtonsDisabled}
       >
         Log out
@@ -191,7 +193,7 @@ export const DeleteAccountModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogTrigger
-        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm md:text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        className={cn(buttonVariants({ variant:"destructive", size:"default", className:"px-4 py-2" }))}
         disabled={isButtonsDisabled}
       >
         Delete
