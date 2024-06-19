@@ -1,5 +1,9 @@
 import { authStore, useAuthStore } from "@/lib/storage";
-import { ApiResponse, ApiValidationErrors } from "./types";
+import {
+  ApiResponse,
+  ApiResponseWithPages,
+  ApiValidationErrors,
+} from "./types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import type { FilterItem } from "@/components/ProductByCategoryPage/filtersDataTypes";
@@ -87,9 +91,9 @@ const defaultPageSize = "7";
 export function getProducts(
   filters: ProductFilters
 ): Promise<
-  ApiResponse<
+  ApiResponseWithPages<
     [[200, ProductShort[]], [400, ApiValidationErrors], [404, null]]
-  > & { count: { pagesCount: number } }
+  >
 > {
   const params = new URLSearchParams();
   params.set("pageIndex", filters.page ? filters.page.toString() : "1");

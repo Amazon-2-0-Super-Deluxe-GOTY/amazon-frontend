@@ -12,6 +12,17 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 
+const imageUrls: { desktop: string; mobile: string }[] = [
+  {
+    desktop: "/banner-main-1.webp",
+    mobile: "/banner-main-mobile-1.avif",
+  },
+  {
+    desktop: "/banner-main-2.webp",
+    mobile: "/banner-main-mobile-1.avif",
+  },
+];
+
 export function Banner() {
   return (
     <Carousel
@@ -27,18 +38,15 @@ export function Banner() {
       }}
     >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
+        {imageUrls.map((image, index) => (
           <CarouselItem key={index}>
             <div className="w-full h-56 lg:h-80 relative">
               <Card className="w-full h-full">
                 <CardContent className="flex items-center justify-center">
                   <picture className="block">
-                    <source
-                      media="(max-width: 768px)"
-                      srcSet="/banner-main-mobile-1.avif"
-                    />
+                    <source media="(max-width: 768px)" srcSet={image.mobile} />
                     <Image
-                      src={"/banner-main-1.webp"}
+                      src={image.desktop}
                       alt="Banner with waves and cutlery"
                       fill={true}
                       className="object-cover"

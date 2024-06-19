@@ -183,19 +183,19 @@ export const OrderDetailsModal = ({
               <div className="w-full h-full">
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Recipient&apos;s name</span>
-                  <span className="text-base font-light text-right">{additionalInfo.name}</span>
+                  <span className="text-base text-right">{additionalInfo.name}</span>
                 </div>
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Adress</span>
-                  <span className="text-base font-light text-right">{additionalInfo.adress}</span>
+                  <span className="text-base text-right">{additionalInfo.adress}</span>
                 </div>
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Payment type</span>
-                  <span className="text-base font-light text-right">{additionalInfo.paymentType}</span>
+                  <span className="text-base text-right">{additionalInfo.paymentType}</span>
                 </div>
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Delivered on</span>
-                  <span className="text-base font-light text-right">{additionalInfo.dateDelivered}</span>
+                  <span className="text-base text-right">{additionalInfo.dateDelivered}</span>
                 </div>
               </div>
             </div>

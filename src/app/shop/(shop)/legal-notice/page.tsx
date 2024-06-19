@@ -87,7 +87,7 @@ export default function NotFound() {
           >
             <div>
               <Button
-                variant={"ghost"}
+                variant={"tertiary"}
                 className="pl-2 mb-3 md:hidden"
                 onClick={onBack}
               >

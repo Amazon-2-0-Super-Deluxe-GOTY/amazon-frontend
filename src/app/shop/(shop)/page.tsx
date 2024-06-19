@@ -7,10 +7,15 @@ import { ProductsBlock } from "@/components/Product/ProductsBlock";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/api/products";
+import { useCategories } from "@/api/categories";
 
 const pageSize = 8;
 
 export default function Home() {
+  const categoriesQuery = useCategories({
+    pageSize: pageSize * 2,
+    pageNumber: 1,
+  });
   const productsTrendingQuery = useQuery({
     queryKey: ["products", "main", "trending"],
     queryFn: () => getProducts({ page: 1, pageSize, orderBy: "date" }),
@@ -28,11 +33,18 @@ export default function Home() {
     },
   });
 
+  const categories = categoriesQuery.data ?? [];
+  const categoriesFirst = categories.slice(0, pageSize);
+  const categoriesSecond = categories.slice(pageSize);
+
   return (
     <main className="lg:px-4 text-foreground">
       <Banner />
       <section className="py-6">
-        <CarouselCategory />
+        <CarouselCategory
+          categories={categoriesFirst}
+          isLoading={categoriesQuery.isLoading}
+        />
       </section>
       <section className="px-4">
         <Separator />
@@ -46,7 +58,10 @@ export default function Home() {
         <Separator />
       </section>
       <div className="py-6">
-        <CarouselCategory />
+        <CarouselCategory
+          categories={categoriesSecond}
+          isLoading={categoriesQuery.isLoading}
+        />
       </div>
       <section className="px-4">
         <Separator />

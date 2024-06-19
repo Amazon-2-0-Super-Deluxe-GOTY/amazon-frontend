@@ -1,5 +1,5 @@
 "use client";
-import { useCategories } from "@/api/categories";
+import { useAdminCategories } from "@/api/categories";
 import { getProductById } from "@/api/products";
 import { CreateProductForm } from "@/components/forms/CreateProductForm";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ export function CreateProductPage({
   productId?: string;
   categoryId?: number;
 }) {
-  const categoriesQuery = useCategories();
+  const categoriesQuery = useAdminCategories();
   const productQuery = useQuery({
     queryKey: ["product", productId],
     staleTime: 0,
@@ -81,7 +81,7 @@ export function CreateProductPage({
       </div>
       <Separator orientation="vertical" />
       <CreateProductForm
-        categories={categoriesQuery.data?.data ?? []}
+        categories={categoriesQuery.data ?? []}
         defaultValues={formDefaultValues}
         defaultCategoryId={categoryId}
         onSubmit={onSubmit}

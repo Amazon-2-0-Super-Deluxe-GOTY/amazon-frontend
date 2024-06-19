@@ -46,7 +46,7 @@ export function ProductAsideCard({
   };
 
   return (
-    <aside className="lg:basis-1/3 grow bg-gray-200 rounded-lg sticky top-4 max-h-[85vh]">
+    <aside className="lg:basis-1/3 grow bg-card rounded-lg sticky top-4 max-h-[85vh]">
       {!!product ? (
         <div className="flex flex-col gap-3.5 h-full p-6">
           <div className="grid grid-cols-3 grid-rows-4 gap-2 h-1/2">
@@ -111,7 +111,7 @@ export function ProductAsideCard({
         </div>
       ) : (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
-          <p className="px-6 py-3 rounded-sm bg-gray-100 w-max">
+          <p className="px-6 py-3 rounded-sm bg-secondary-light w-max text-lg">
             Select a product to see its information
           </p>
         </div>

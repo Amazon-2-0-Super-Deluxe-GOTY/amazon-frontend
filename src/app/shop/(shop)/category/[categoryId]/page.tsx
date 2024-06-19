@@ -1,20 +1,26 @@
-"use client";
-
+"use server";
+import type { Category } from "@/api/categories";
+import { getCategoryServer } from "@/api/server";
 import { ProductsListPage } from "@/components/ProductPage/ProductsListPage";
-import { useMemo } from "react";
+import { redirect } from "next/navigation";
 
-export default function CategoryPage({
+export default async function CategoryPage({
   params,
 }: {
   params: { categoryId: string };
 }) {
-  const categoryId = useMemo(() => {
-    const val = Number(params.categoryId);
-    return isNaN(val) ? 1 : val;
-  }, [params.categoryId]);
+  const categoryId = Number(params.categoryId);
 
-  // FIXME: fetch real category
-  return (
-    <ProductsListPage category={{ id: categoryId, name: "TestCategory" }} />
-  );
+  if (isNaN(categoryId)) return redirect("/");
+
+  let category: Category | null = null;
+  try {
+    category = await getCategoryServer({ categoryId });
+  } catch (err) {
+    return redirect("/");
+  }
+
+  if (!category.isActive) return redirect("/");
+
+  return <ProductsListPage category={category} />;
 }

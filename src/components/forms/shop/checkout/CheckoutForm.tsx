@@ -198,7 +198,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                             Last name
                           </FormLabel>
                           <FormControl>
@@ -221,7 +221,7 @@ export function CheckoutForm({
                   render={({ field }) => (
                     <FormItem>
                       <div>
-                        <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                        <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                           Email
                         </FormLabel>
                         <FormControl>
@@ -250,7 +250,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                             Country
                           </FormLabel>
                           <FormControl>
@@ -290,7 +290,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                             State
                           </FormLabel>
                           <FormControl>
@@ -340,7 +340,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                             City
                           </FormLabel>
                           <FormControl>
@@ -396,7 +396,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                             Postcode
                           </FormLabel>
                           <FormControl>
@@ -474,7 +474,7 @@ export function CheckoutForm({
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div>
-                            <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                            <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                               Card number
                             </FormLabel>
                             <FormControl>
@@ -495,7 +495,7 @@ export function CheckoutForm({
                         render={({ field }) => (
                           <FormItem className="w-full">
                             <div>
-                              <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                              <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                                 Date of expiration
                               </FormLabel>
                               <FormControl>
@@ -515,7 +515,7 @@ export function CheckoutForm({
                         render={({ field }) => (
                           <FormItem className="w-full">
                             <div>
-                              <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-white p-0.5">
+                              <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
                                 CVV/CVC
                               </FormLabel>
                               <FormControl>

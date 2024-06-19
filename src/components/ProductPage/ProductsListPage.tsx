@@ -308,13 +308,19 @@ export function ProductsListPage({ category }: { category?: Category }) {
               listView === "cols-5" && "md:grid-cols-3 lg:grid-cols-5"
             )}
           >
-            {productsQuery.isLoading
-              ? Array.from({ length: pageSize }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))
-              : productsQuery.data?.products.map((product) => (
-                  <ProductCard product={product} key={product.id} />
-                ))}
+            {productsQuery.isLoading ? (
+              Array.from({ length: pageSize }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))
+            ) : !!productsQuery.data?.products.length ? (
+              productsQuery.data?.products.map((product) => (
+                <ProductCard product={product} key={product.id} />
+              ))
+            ) : (
+              <p className="text-lg text-center col-span-5">
+                No products found
+              </p>
+            )}
           </div>
           {/* Pagination here */}
           {!!productsQuery.data?.count.pagesCount &&
