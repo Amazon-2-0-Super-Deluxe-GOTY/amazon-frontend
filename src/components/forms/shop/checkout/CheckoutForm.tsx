@@ -96,7 +96,6 @@ const FormSchema = z
 
 export function CheckoutForm({
   headerData,
-  onSubmit,
 } : {
   headerData: {
     firstName: string;
@@ -109,7 +108,6 @@ export function CheckoutForm({
     whole: string;
     fraction: string;
   };
-  onSubmit: (order: Order) => void;
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -144,18 +142,10 @@ export function CheckoutForm({
     mutationFn: createOrder,
   });
   const handleSubmit = (values: z.infer<typeof FormSchema>) => {
-
-    // console.log(values);
     createOrderMutation
-      .mutateAsync({ ...values, 
-        customerName: values.firstName + " " + values.lastName, 
-        status: "created", 
-        totalPrice: headerData.checkout.totalPrice, 
-        orderItems: headerData.checkout.products, 
-        deliveryAddresses: { country: values.country, state: values.state, city: values.city, postIndex: values.postcode },
+      .mutateAsync({ ...values, postIndex: values.postcode,
       }).then((res) => {
         if (res.status === 201) {
-          onSubmit(res.data);
           setIsOpen(true);
         } else if (res.status === 400) {
           for (let error of res.data) {
@@ -588,9 +578,9 @@ export function CheckoutForm({
               </div>
             </div>
             <div className="w-full flex flex-col justify-center gap-2">
-              <Button type="submit">Place order</Button>
+              <Button type="submit" disabled={createOrderMutation.isPending}>Place order</Button>
               <Link href={"/"}>
-                <Button type="reset" variant={"secondary"} className="w-full">Cancel</Button>
+                <Button type="reset" variant={"secondary"} className="w-full" disabled={createOrderMutation.isPending}>Cancel</Button>
               </Link>
               <PlaceOrderModal isOpen={isOpen} />
               <span className="w-full text-center text-sm md:text-base">

@@ -32,6 +32,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/api/users";
 import { splitPrice } from "@/lib/products";
+import Link from "next/link";
 
 export const ShoppingCart = () => {
   const isDesktop = useScreenSize({ minSize: "md" });
@@ -315,7 +316,9 @@ const ShoppingCartDesktop = ({
                             <sup className="text-xl font-bold mt-3 -ml-3">
                               {priceParts.fraction}
                             </sup>
-                            <Button className="text-xl">Checkout</Button>
+                            <Link href={"/checkout"}>
+                              <Button className="text-xl">Checkout</Button>
+                            </Link>
                           </div>
                         </div>
                         <Separator />
