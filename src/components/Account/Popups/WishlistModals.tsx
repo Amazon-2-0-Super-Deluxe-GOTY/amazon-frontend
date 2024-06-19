@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export const RemoveFromWishListModal = ({
@@ -19,7 +20,7 @@ export const RemoveFromWishListModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 font-semibold max-md:px-2 max-md:h-8 max-md:text-xs">
+      <DialogTrigger className={cn(buttonVariants({ variant:"secondary", size:"sm", className:"bg-background h-8 max-md:text-sm px-5 py-3 md:px-4 md:py-2" }))}>
         Remove
       </DialogTrigger>
       <DialogContent className="max-w-[464px] gap-5 md:gap-6" hideClose>

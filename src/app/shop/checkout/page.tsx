@@ -1,51 +1,50 @@
 "use client"
 import React from "react";
-import { useState, useEffect } from "react";
-import { cn, textAvatar } from "@/lib/utils";
-import { useSearchParamsTools } from "@/lib/router";
-import Image from "next/image";
-import Link from "next/link";
-import { ChevronLeft, Slash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { CheckoutProductCard } from "@/components/Checkout/CheckoutProductCard";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { CheckoutForm } from "@/components/forms/shop/checkout/CheckoutForm";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/api/users";
+import { useCart } from "@/api/products";
+import { OrderProduct } from "@/api/orders";
 
-const products = Array.from({ length: 9 }).map((_, index) => ({
-  code: index.toString(),
-  title: `Product ${index + 1}`,
-  quantity: index + 1,
-  price: (index + 1) * 23.5,
-}));
-
-export default function CheckOut({
-  params,
-} : {
-  params: {checkoutId:string};
-}) {
-  const user = { firstName: "Qwerty", secondName: "Aswd", email: "qwerty228@gmail.com" };
-  const checkout = { id: params.checkoutId, products: products, totalCost: products.reduce((sum, item) => {
-    return sum + item.price * item.quantity;
-  }, 0), };
-
-  const priceParts = (checkout.totalCost).toFixed(2).split(".");
+export default function CheckOut() {
+  const router = useRouter();
+  const cart = useCart().data;
+  const user = useUser().user;
+  if(!user || !cart) return null;
+  const checkout = { 
+    products: cart.cartItems.reduce<OrderProduct[]>((res, item) => [
+      ...res, {
+        name: item.product.name,
+        productId: item.product.id,
+        quantity: item.product.quantity,
+        price: item.product.price,
+        totalPrice: item.product.price * item.product.quantity,
+      }
+    ], []),  
+    totalPrice: cart.cartItems.reduce((sum, item) => {
+      return sum + item.product.price * item.product.quantity;
+    }, 0), 
+  };
+  const priceParts = (checkout.totalPrice)?.toFixed(2).split(".") ?? [0,0];
   const whole = priceParts[0];
   const fraction = priceParts[1];
 
-  const isLoggedIn = !!user;
   const headerData = {
-    firstName: isLoggedIn ? user.firstName : "",
-    secondName: isLoggedIn ? user.secondName : "",
-    email: isLoggedIn ? user.email : "",
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
     checkout: checkout,
     whole: whole,
     fraction: fraction,
   };
 
+  const onSubmit = () => {
+    router.push("/orders");
+  };
+
   return (
-    <main className="px-4 md:px-6 pb-4">
-      <CheckoutForm headerData={headerData} />
+    <main className="m-4 md:m-6 flex lg:justify-center">
+      <CheckoutForm headerData={headerData} onSubmit={onSubmit} />
     </main>
   );
 }

@@ -19,9 +19,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
+import { Textarea } from "../../ui/textarea";
 import clsx from "clsx";
-import { StarEmptyIcon, StarFullIcon } from "../Shared/Icons";
+import { StarEmptyIcon, StarFullIcon } from "../../Shared/Icons";
 import { UploadPhotoListFormField } from "./UploadPhotoListFormFields";
 
 const maxImages = 10;

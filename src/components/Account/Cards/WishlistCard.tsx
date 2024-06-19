@@ -35,7 +35,7 @@ export const WishlistCard = ({
           <div className="absolute top-6 left-0 rounded-e-xl bg-gray-100 px-2 pl-4 pr-6">
             -24%
           </div>
-          <div className="absolute right-[-6px] top-[-6px] md:right-[-6px] md:top-[-6px]">
+          <div className="absolute right-[-8px] top-[-8px]">
             <RemoveFromWishListModal onRemoveItem={() => removeWishlistItem(code)} />
           </div>
         </div>
@@ -73,3 +73,82 @@ export const WishlistCard = ({
     </Card>
   );
 };
+
+// "use client"
+// import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { MessageCircle, StarIcon } from "lucide-react";
+// import placeholder from "@/../public/Icons/placeholder.svg";
+// import Image from "next/image";
+// import { Button } from "@/components/ui/button";
+// import Link from "next/link";
+// import { RemoveFromWishListModal } from "../Popups/WishlistModals";
+// import { ProductCard } from "@/components/Product/ProductCard";
+// import { useQuery } from "@tanstack/react-query";
+
+// interface ProductShort {
+//   id: string;
+//   slug: string;
+//   name: string;
+//   price: number;
+//   discountPercent: number | null;
+//   discountPrice: number;
+//   productImages: { imageUrl: string }[];
+//   generalRate: number;
+//   reviewsCount: number;
+//   quantity: number;
+// }
+
+// export const WishlistCard = ({
+//   code,
+//   title,
+//   price,
+//   quantity,
+//   removeWishlistItem,
+// }: {
+//   code: string;
+//   title: string;
+//   price: number;
+//   quantity?: number;
+//   removeWishlistItem: (code: string) => void;
+// }) => {
+//   const priceParts = price.toFixed(2).split(".");
+//   const whole = priceParts[0];
+//   const fraction = priceParts[1];
+//   const isOutOfStock = quantity === 0;
+
+//   // const productsInWishlistQuery = useQuery({
+//   //   queryKey: ["productsInWishlist"],
+//   //   queryFn: async () => {
+//   //     return await fetch("/api/orders").then((res) => res.json());
+//   //   },
+//   //   refetchOnWindowFocus: false,
+//   //   select(data) {
+//   //     return data?.status === 200 ? data.data : [];
+//   //   },
+//   // });
+
+//   const products:ProductShort = {
+//     id: code,
+//     slug: "123",
+//     name: title,
+//     price: price,
+//     discountPercent: null,
+//     discountPrice: 10,
+//     productImages: [ {imageUrl: "/banner-signup-mobile.webp"} ],
+//     generalRate: 4,
+//     reviewsCount: 7,
+//     quantity: quantity ?? 0,
+//   };
+
+//   return (
+//     <div className="max-w-[243px] max-h-[263px]">
+//       <div className="-mb-9">
+//         <ProductCard product={products} />
+//         {/* <ProductCard product={productsInWishlistQuery.data ?? []} /> */}
+//       </div>
+//       <div className="absolute right-4 top-3">
+//         <RemoveFromWishListModal onRemoveItem={() => removeWishlistItem(code)} />
+//       </div>
+//     </div>
+//   );
+// };

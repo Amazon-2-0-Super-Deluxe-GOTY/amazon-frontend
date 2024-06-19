@@ -11,14 +11,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 import Image from "next/image";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { InfoIcon, Trash2Icon } from "lucide-react";
-import { PlusIcon } from "../Shared/Icons";
+import { PlusIcon } from "../../Shared/Icons";
 import { isImageValid } from "@/lib/products";
-import { AlertDialog } from "../Admin/AlertDialog";
-import { useModal } from "../Shared/Modal";
+import { AlertDialog } from "../../Admin/AlertDialog";
+import { useModal } from "../../Shared/Modal";
 
 interface UploadPhotoListFormFieldProps {
   title: string;

@@ -8,7 +8,7 @@ import {
   type Review,
   type ReviewTag,
 } from "@/api/review";
-import { CreateReviewForm } from "../forms/CreateReviewForm";
+import { CreateReviewForm } from "../forms/admin/CreateReviewForm";
 import { useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
 
