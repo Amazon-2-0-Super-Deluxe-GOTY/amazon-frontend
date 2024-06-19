@@ -23,7 +23,7 @@ import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { useStorageCart } from "@/lib/storage";
-import type { Product } from "@/api/products";
+import { useCart, type Product } from "@/api/products";
 import { splitPrice } from "@/lib/products";
 
 const infoElements = [
@@ -83,24 +83,29 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
   };
 
   //#region AddProductToCart
-  const { addToCart, buyNow } = useStorageCart();
+  const { openModal } = useStorageCart();
+  const { addToCart, cart } = useCart();
+
+  const canAddToCart = useMemo(() => {
+    if (!cart.data) return true;
+
+    const existingCartItem = cart.data.cartItems.find(
+      (i) => i.product.id === product.id
+    );
+    return existingCartItem
+      ? count < existingCartItem.product.quantity - existingCartItem.quantity
+      : true;
+  }, [cart.data, count, product.id]);
+
   const onAddToCartClick = () => {
-    const newCartItem = {
-      id: product.id,
-      title: "Product_" + product.id,
-      price: product.price,
-      quantity: count,
-    };
-    addToCart(newCartItem);
+    if (!canAddToCart) return;
+    addToCart.mutateAsync({ productId: product.id, quantity: count });
   };
   const onBuyNowClick = () => {
-    const newCartItem = {
-      id: product.id,
-      title: "Product_" + product.id,
-      price: product.price,
-      quantity: count,
-    };
-    buyNow(newCartItem);
+    if (!canAddToCart) return;
+    addToCart
+      .mutateAsync({ productId: product.id, quantity: count })
+      .then(openModal);
   };
   //#endregion
 
@@ -114,7 +119,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
               <sup>{fraction}</sup>
             </span>
             {product.discountPercent && (
-              <sub className="ml-2 line-through text-gray-400 text-lg">
+              <sub className="ml-2 line-through text-halftone text-lg">
                 ${product.price}
               </sub>
             )}
@@ -148,13 +153,16 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2 pb-3">
-        <Button onClick={onAddToCartClick} disabled={!isInStock}>
+        <Button
+          onClick={onAddToCartClick}
+          disabled={!isInStock || !canAddToCart}
+        >
           Add to cart
         </Button>
         <Button
           onClick={onBuyNowClick}
           variant={"secondary"}
-          disabled={!isInStock}
+          disabled={!isInStock || !canAddToCart}
         >
           Buy now
         </Button>

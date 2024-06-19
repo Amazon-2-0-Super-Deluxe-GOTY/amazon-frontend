@@ -284,7 +284,7 @@ export function ProductsListPage({ category }: { category?: Category }) {
                 className="flex gap-0 max-md:hidden"
                 type="single"
                 value={listView}
-                onValueChange={setListView}
+                onValueChange={(value) => value && setListView(value)}
               >
                 <ToggleGroupItem
                   value="cols-3"
