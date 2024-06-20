@@ -19,7 +19,7 @@ const imageUrls: { desktop: string; mobile: string }[] = [
   },
   {
     desktop: "/banner-main-2.webp",
-    mobile: "/banner-main-mobile-1.avif",
+    mobile: "/banner-main-mobile-2.avif",
   },
 ];
 
