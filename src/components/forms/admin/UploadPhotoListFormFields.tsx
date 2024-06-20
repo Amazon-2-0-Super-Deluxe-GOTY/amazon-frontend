@@ -143,7 +143,7 @@ export function UploadPhotoListFormField({
               ))}
               {(field.value?.length ?? 0) < maxImages && (
                 <label
-                  className="w-28 h-28 flex justify-center items-center bg-tertiary-hover rounded-lg relative cursor-pointer data-[disabled=true]:opacity-40 data-[disabled=true]:cursor-not-allowed"
+                  className="w-28 h-28 flex justify-center items-center bg-secondary-light rounded-lg relative cursor-pointer data-[disabled=true]:opacity-40 data-[disabled=true]:cursor-not-allowed"
                   data-disabled={isUploading}
                 >
                   <PlusIcon className="w-16 h-16" />

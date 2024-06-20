@@ -363,7 +363,7 @@ export function CreateProductForm({
             name="name"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                   Name
                 </FormLabel>
                 <FormControl>
@@ -382,13 +382,13 @@ export function CreateProductForm({
             render={({ field }) => (
               <FormItem>
                 <div className="relative">
-                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                     Barcode
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter product code..." {...field} />
                   </FormControl>
-                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
+                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 bg-background p-0.5">
                     {field.value.length}/{barcodeLenght}
                   </FormDescription>
                 </div>
@@ -401,7 +401,7 @@ export function CreateProductForm({
             name="categoryId"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                   Category
                 </FormLabel>
                 <FormControl>
@@ -432,7 +432,7 @@ export function CreateProductForm({
             name="price"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                   Price, $
                 </FormLabel>
                 <FormControl>
@@ -455,7 +455,7 @@ export function CreateProductForm({
             name="discount"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                   Discount, % (optional)
                 </FormLabel>
                 <FormControl>
@@ -479,7 +479,7 @@ export function CreateProductForm({
             name="quantity"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                   Quantity
                 </FormLabel>
                 <FormControl>
@@ -523,7 +523,7 @@ export function CreateProductForm({
                         {...field}
                       />
                     </FormControl>
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5 peer-disabled:text-gray-500">
+                    <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5 peer-disabled:text-gray-500">
                       Name
                     </FormLabel>
                     <FormMessage className="px-4 pt-2" />
@@ -536,7 +536,7 @@ export function CreateProductForm({
                 render={({ field }) => (
                   <FormItem className="relative basis-2/3 space-y-0">
                     <div className="relative">
-                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                      <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                         Attribute
                       </FormLabel>
                       <FormControl>
@@ -546,7 +546,7 @@ export function CreateProductForm({
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
+                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 bg-background p-0.5">
                         {field.value.length}/{productDetailsMaxTextLength}
                       </FormDescription>
                     </div>
@@ -593,7 +593,7 @@ export function CreateProductForm({
                 name={`aboutProduct.${i}.name`}
                 render={({ field }) => (
                   <FormItem className="relative basis-1/3 space-y-0">
-                    <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                    <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                       Name
                     </FormLabel>
                     <FormControl>
@@ -613,7 +613,7 @@ export function CreateProductForm({
                 render={({ field }) => (
                   <FormItem className="basis-2/3 space-y-0">
                     <div className="relative">
-                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                      <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                         Attribute
                       </FormLabel>
                       <FormControl>
@@ -623,7 +623,7 @@ export function CreateProductForm({
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
+                      <FormDescription className="absolute right-3 -bottom-2.5 mt-0 bg-background p-0.5">
                         {field.value.length}/{aboutProductMaxTextLength}
                       </FormDescription>
                     </div>

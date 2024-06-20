@@ -26,16 +26,20 @@ export function CategorySelect({
   disallowRoots,
 }: {
   categories?: Category[];
-  value?: number;
+  value?: number | null;
   onValueChange: (value: number) => void;
   disallowRoots?: boolean;
 }) {
   const treeRoots = useMemo(
     () =>
-      createTreeArray(categories ?? [], {
-        getId: (value) => value.id,
-        getParentId: (value) => value.parentId,
-      }),
+      createTreeArray(
+        categories ?? [],
+        {
+          getId: (value) => value.id,
+          getParentId: (value) => value.parentId,
+        },
+        null
+      ),
     [categories]
   );
   const selectedCategory = categories?.find((c) => c.id === value);

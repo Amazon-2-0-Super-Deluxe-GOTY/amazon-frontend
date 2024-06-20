@@ -57,7 +57,7 @@ export const CategoryTreeNode = ({
         <div
           className={clsx(
             "flex items-center gap-4 w-full py-2 pr-4",
-            nodeSelected && "bg-gray-200 rounded-lg"
+            nodeSelected && "bg-secondary-light/50 rounded-lg"
           )}
           style={{ paddingLeft: `${getOffset(index)}px` }}
         >
@@ -91,7 +91,7 @@ export const CategoryTreeNode = ({
     <div
       className={clsx(
         "flex items-center gap-4 py-2 pr-4",
-        nodeSelected && "bg-gray-200 rounded-lg"
+        nodeSelected && "bg-secondary-light/50 rounded-lg"
       )}
       style={{ paddingLeft: `${getOffset(index)}px` }}
     >

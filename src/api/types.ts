@@ -6,6 +6,15 @@ export type ApiResponse<T extends [number, unknown][]> = {
   };
 }[number];
 
+export type ApiResponseWithPages<T extends [number, unknown][]> = {
+  [index in keyof T]: {
+    status: T[index][0];
+    message: string;
+    data: T[index][1];
+    count: { pagesCount: number; currentPage: number };
+  };
+}[number];
+
 export type ApiValidationErrors = {
   propertyName: string;
   errorMessage: string;

@@ -60,7 +60,9 @@ const FormSchema = z
     postcode: z.string().min(1, {
       message: "This field is necessary to continue!",
     }),
-    paymentMethod: z.string().min(1, {
+    paymentMethod: z
+      .string()
+      .min(1, {
         message: "This field is necessary to continue!",
       })
       .default("cash"),
@@ -96,7 +98,7 @@ const FormSchema = z
 
 export function CheckoutForm({
   headerData,
-} : {
+}: {
   headerData: {
     firstName: string;
     lastName: string;
@@ -129,13 +131,39 @@ export function CheckoutForm({
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  type AllowedFields = "firstName" | "lastName" | "email" | "country" | "state" | "city" | "postcode" | "paymentMethod" | "cardNumber" | "cardDate" | "cardCVV" | "root" | `root.${string}`;
+  type AllowedFields =
+    | "firstName"
+    | "lastName"
+    | "email"
+    | "country"
+    | "state"
+    | "city"
+    | "postcode"
+    | "paymentMethod"
+    | "cardNumber"
+    | "cardDate"
+    | "cardCVV"
+    | "root"
+    | `root.${string}`;
   function isAllowedField(field: string): field is AllowedFields {
     const allowedFields: AllowedFields[] = [
-      "firstName", "lastName", "email", "country", "state", "city", "postcode",
-      "paymentMethod", "cardNumber", "cardDate", "cardCVV", "root"
+      "firstName",
+      "lastName",
+      "email",
+      "country",
+      "state",
+      "city",
+      "postcode",
+      "paymentMethod",
+      "cardNumber",
+      "cardDate",
+      "cardCVV",
+      "root",
     ];
-    return allowedFields.includes(field as AllowedFields) || field.startsWith('root.');
+    return (
+      allowedFields.includes(field as AllowedFields) ||
+      field.startsWith("root.")
+    );
   }
 
   const createOrderMutation = useMutation({
@@ -143,8 +171,8 @@ export function CheckoutForm({
   });
   const handleSubmit = (values: z.infer<typeof FormSchema>) => {
     createOrderMutation
-      .mutateAsync({ ...values, postIndex: values.postcode,
-      }).then((res) => {
+      .mutateAsync({ ...values, postIndex: values.postcode })
+      .then((res) => {
         if (res.status === 201) {
           setIsOpen(true);
         } else if (res.status === 400) {
@@ -191,7 +219,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             First name
                           </FormLabel>
                           <FormControl>
@@ -213,7 +241,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             Last name
                           </FormLabel>
                           <FormControl>
@@ -236,7 +264,7 @@ export function CheckoutForm({
                   render={({ field }) => (
                     <FormItem>
                       <div>
-                        <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                        <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                           Email
                         </FormLabel>
                         <FormControl>
@@ -265,7 +293,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             Country
                           </FormLabel>
                           <FormControl>
@@ -305,7 +333,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             State
                           </FormLabel>
                           <FormControl>
@@ -355,7 +383,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             City
                           </FormLabel>
                           <FormControl>
@@ -411,7 +439,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             Postcode
                           </FormLabel>
                           <FormControl>
@@ -483,7 +511,7 @@ export function CheckoutForm({
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div>
-                            <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                            <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                               Card number
                             </FormLabel>
                             <FormControl>
@@ -504,7 +532,7 @@ export function CheckoutForm({
                         render={({ field }) => (
                           <FormItem className="w-full">
                             <div>
-                              <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                              <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                                 Date of expiration
                               </FormLabel>
                               <FormControl>
@@ -524,7 +552,7 @@ export function CheckoutForm({
                         render={({ field }) => (
                           <FormItem className="w-full">
                             <div>
-                              <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                              <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                                 CVV/CVC
                               </FormLabel>
                               <FormControl>
@@ -578,9 +606,18 @@ export function CheckoutForm({
               </div>
             </div>
             <div className="w-full flex flex-col justify-center gap-2">
-              <Button type="submit" disabled={createOrderMutation.isPending}>Place order</Button>
+              <Button type="submit" disabled={createOrderMutation.isPending}>
+                Place order
+              </Button>
               <Link href={"/"}>
-                <Button type="reset" variant={"secondary"} className="w-full" disabled={createOrderMutation.isPending}>Cancel</Button>
+                <Button
+                  type="reset"
+                  variant={"secondary"}
+                  className="w-full"
+                  disabled={createOrderMutation.isPending}
+                >
+                  Cancel
+                </Button>
               </Link>
               <PlaceOrderModal isOpen={isOpen} />
               <span className="w-full text-center text-sm md:text-base">

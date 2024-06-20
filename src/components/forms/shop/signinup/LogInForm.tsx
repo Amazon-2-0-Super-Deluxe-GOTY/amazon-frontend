@@ -82,7 +82,7 @@ export function LogInForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                     Email
                   </FormLabel>
                   <FormControl>
@@ -104,7 +104,7 @@ export function LogInForm({
             render={({ field }) => (
               <FormItem>
                 <div className="relative">
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                     Password
                   </FormLabel>
                   <FormControl>
