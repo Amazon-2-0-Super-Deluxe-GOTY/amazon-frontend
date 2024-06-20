@@ -107,7 +107,7 @@ export function ChangePasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                     Password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -150,7 +150,7 @@ export function ChangePasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                     New password
                   </FormLabel>
                   <div className="flex justify-end">
@@ -182,7 +182,7 @@ export function ChangePasswordForm({
             render={({ field }) => (
               <FormItem>
                 <div>
-                  <FormLabel className="absolute ml-3 -mt-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                     Confirm password
                   </FormLabel>
                   <div className="flex justify-end">

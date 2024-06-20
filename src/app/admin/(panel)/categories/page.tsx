@@ -7,8 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusIcon } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useMemo } from "react";
 import type {
   CategoryTreeNodeType,
   CheckedState,
@@ -24,7 +23,12 @@ import {
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
-import { useCategories, type Category } from "@/api/categories";
+import {
+  deleteCategory,
+  useAdminCategories,
+  type Category,
+} from "@/api/categories";
+import { PlusIcon } from "@/components/Shared/Icons";
 
 const iconClassSmall = "w-5 h-5";
 
@@ -34,18 +38,26 @@ const treeOptions = {
 };
 
 export default function Page() {
-  const { data } = useCategories();
-  const allCategoriesTrees = React.useMemo(
-    () => (data?.data ? createTreeArray(data.data, treeOptions) : []),
-    [data?.data]
+  const categoriesQuery = useAdminCategories();
+  const categories = useMemo(
+    () => categoriesQuery.data ?? [],
+    [categoriesQuery.data]
   );
-  const [selectedCategory, setSelectedCategory] = useState<Category>();
+
+  const allCategoriesTrees = React.useMemo(
+    () =>
+      !!categories.length ? createTreeArray(categories, treeOptions, null) : [],
+    [categories]
+  );
+
+  const [selectedCategory, setSelectedCategory] = React.useState<Category>();
   const checkboxTree = useCheckboxTree<Category, number>({
     options: treeOptions,
+    initialTree: null,
   });
-  const [search, setSearch] = useState("");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const createModalParams = useRef<{
+  const [search, setSearch] = React.useState("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const createModalParams = React.useRef<{
     isRoot: boolean;
     defaultRootId?: number;
   }>({ isRoot: true });
@@ -92,17 +104,19 @@ export default function Page() {
     const node = checkboxTree.findById(id);
     if (!node) return;
 
+    deleteCategory({ categoryId: node.value.id });
     const newTree = checkboxTree.remove(node);
     checkboxTree.set(newTree);
   };
 
   const onDeleteCategories = (nodes: TreeNodeType<Category>[]) => {
+    nodes.forEach((node) => deleteCategory({ categoryId: node.value.id }));
     const newTree = checkboxTree.removeMany(nodes);
     checkboxTree.set(newTree);
   };
 
-  const onCreateCategory = (categoryValue: Omit<Category, "id">) => {
-    console.log(categoryValue);
+  const onCreateCategory = () => {
+    categoriesQuery.refetch();
   };
 
   const isSelected = (categoryId: number) =>
@@ -120,12 +134,22 @@ export default function Page() {
     openCreateModal();
   };
 
+  React.useEffect(() => {
+    if (checkboxTree.root) {
+      const newTree = allCategoriesTrees.find(
+        (t) => t.value.id === checkboxTree.root?.value.id
+      );
+      if (!newTree) return;
+      checkboxTree.set(newTree);
+    }
+  }, [allCategoriesTrees]);
+
   return (
     <div className="grow flex flex-col lg:flex-row gap-4 lg:gap-6">
       <div className="lg:basis-2/3 flex flex-col gap-4 lg:gap-6">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 basis-1/3">
-            <h2 className="font-medium">Category</h2>
+            <h2 className="font-medium text-lg">Category</h2>
             <Select onValueChange={onSelectRootCategory}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose category" />
@@ -147,8 +171,7 @@ export default function Page() {
                     checkOffset={4}
                   >
                     <div className="flex items-center gap-3">
-                      {category.iconId &&
-                        getIcon(category.iconId, iconClassSmall)}
+                      {category.logo && getIcon(category.logo, iconClassSmall)}
                       <span>{category.name}</span>
                     </div>
                   </SelectItem>
@@ -179,13 +202,13 @@ export default function Page() {
             ) : (
               <div className="h-full flex justify-center items-center">
                 <button
-                  className="p-8 max-w-sm w-full border rounded-lg flex flex-col gap-3 items-center"
+                  className="p-8 max-w-sm w-full border border-secondary rounded-lg flex flex-col gap-3 items-center"
                   onClick={() =>
                     checkboxTree.root &&
                     openCreateModalAsChild(checkboxTree.root.value.id)
                   }
                 >
-                  <PlusIcon className="w-12 h-12" />
+                  <PlusIcon className="w-12 h-12 stroke-secondary" />
                   <span className="text-xl font-medium">
                     Create subcategory
                   </span>
@@ -207,11 +230,11 @@ export default function Page() {
 
       <CategoryAsideCard
         category={selectedCategory}
-        parentCategory={data?.data.find(
+        parentCategory={categories?.find(
           (c) => c.id === selectedCategory?.parentId
         )}
         mainCategory={checkboxTree.root?.value}
-        allCategories={data?.data ?? []}
+        allCategories={categories}
         onViewMain={() =>
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
@@ -221,7 +244,7 @@ export default function Page() {
       <CreateCategoryModal
         isOpen={isCreateModalOpen}
         closeModal={closeCreateModal}
-        allCategories={data?.data ?? []}
+        allCategories={categories}
         onSubmit={onCreateCategory}
         {...createModalParams.current}
       />

@@ -67,7 +67,7 @@ const CartProductCard = ({
   const onDelete = deleteItem;
 
   return (
-    <div className="hover:bg-tertiary-hover transition-colors rounded-lg">
+    <div className="hover:bg-secondary-light transition-colors rounded-lg">
       <div className="w-full flex max-md:gap-2 gap-6 p-6 max-md:p-3">
         <div className="w-24 lg:w-40 flex-1 basis-40 aspect-square relative">
           <Image

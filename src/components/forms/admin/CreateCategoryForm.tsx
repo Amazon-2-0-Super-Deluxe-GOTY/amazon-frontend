@@ -26,8 +26,7 @@ import { Textarea } from "../../ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
 import { useEffect, useTransition } from "react";
 import { getAllIcons } from "@/lib/categories";
-import { Separator } from "../../ui/separator";
-import { InfoIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import { uploadCategoryImage, type Category } from "@/api/categories";
 import { CategorySelect } from "../../Admin/Category/CategorySelect";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
@@ -35,12 +34,13 @@ import { isImageValid } from "@/lib/products";
 import { AlertDialog } from "../../Admin/AlertDialog";
 import { useModal } from "../../Shared/Modal";
 import Image from "next/image";
-import { Skeleton } from "../../ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
+import { InfoIcon, PlusIcon, TrashIcon } from "@/components/Shared/Icons";
 
 const formSchema = z
   .object({
-    iconId: z.string().optional(),
-    parentId: z.number().optional(),
+    logo: z.string().optional().nullable(),
+    parentId: z.number().optional().nullable(),
     name: z.string().min(1, {
       message: "Category name must not be empty.",
     }),
@@ -52,7 +52,7 @@ const formSchema = z
       .max(300, {
         message: "Category description must not be more than 300 characters.",
       }),
-    isDeleted: z.boolean(),
+    isActive: z.boolean(),
     image: z.object(
       {
         id: z.string(),
@@ -69,7 +69,7 @@ const formSchema = z
     ),
   })
   .superRefine((values, ctx) => {
-    if (!values.iconId && !values.parentId) {
+    if (!values.logo && !values.parentId) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Please, select parent category",
@@ -80,11 +80,26 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
+interface FormReturnValues {
+  name: string;
+  description: string;
+  isActive: boolean;
+  categoryPropertyKeys: {
+    name: string;
+  }[];
+  image: {
+    id: string;
+    imageUrl: string;
+  };
+  logo: string | null | undefined;
+  parentId: number | null | undefined;
+}
+
 interface Props {
   isRoot: boolean;
   defaultValues?: FormValues;
   allCategories: Category[];
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: FormReturnValues) => void;
 }
 
 export const CreateCategoryForm = ({
@@ -100,8 +115,8 @@ export const CreateCategoryForm = ({
       : {
           name: "",
           description: "",
-          isDeleted: false,
-          iconId: isRoot ? "clothes" : undefined,
+          isActive: true,
+          logo: isRoot ? "clothes" : undefined,
           categoryPropertyKeys: [],
         },
   });
@@ -120,22 +135,24 @@ export const CreateCategoryForm = ({
 
   const handleSubmit = (values: FormValues) => {
     // for some reason form methods doesn't reset fields, so just form the object manually
-    const cleanValues = isRoot
+    const cleanValues: FormReturnValues = isRoot
       ? {
           name: values.name,
           description: values.description,
-          isDeleted: values.isDeleted,
+          isActive: values.isActive,
           categoryPropertyKeys: values.categoryPropertyKeys,
           image: values.image,
-          iconId: values.iconId,
+          logo: values.logo,
+          parentId: null,
         }
       : {
           name: values.name,
           description: values.description,
-          isDeleted: values.isDeleted,
+          isActive: values.isActive,
           categoryPropertyKeys: values.categoryPropertyKeys,
           image: values.image,
           parentId: values.parentId,
+          logo: null,
         };
     onSubmit(cleanValues);
   };
@@ -163,7 +180,7 @@ export const CreateCategoryForm = ({
     startUploadTransition(async () => {
       const uploadedImage = await uploadCategoryImage(image);
 
-      if (uploadedImage.status === 200) {
+      if (uploadedImage.status === 201) {
         form.setValue("image", uploadedImage.data[0]);
       }
     });
@@ -184,14 +201,14 @@ export const CreateCategoryForm = ({
         id="create-category-form"
       >
         <fieldset className="space-y-6" id="info">
-          <div className="flex items-center gap-6 h-32">
+          <div className="flex items-center gap-6">
             <FormField
               control={form.control}
               name="image"
               render={({ field }) => (
-                <FormItem className="relative flex items-center justify-between">
+                <FormItem className="relative flex flex-col items-center justify-between">
                   <FormControl>
-                    <div className="w-32 h-32 flex justify-center items-center bg-gray-200 rounded-lg overflow-hidden relative">
+                    <div className="w-32 h-32 flex justify-center items-center bg-secondary-light rounded-lg overflow-hidden relative">
                       {isUploading ? (
                         <Skeleton className="absolute inset-0 z-20 rounded-lg" />
                       ) : field.value?.imageUrl ? (
@@ -223,19 +240,19 @@ export const CreateCategoryForm = ({
                 </FormItem>
               )}
             />
-            <div className="w-full h-full flex flex-col justify-between">
+            <div className="w-full h-full flex flex-col justify-around gap-4">
               <div className="flex items-center gap-6">
                 {isRoot && (
                   <FormField
                     control={form.control}
-                    name="iconId"
+                    name="logo"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel hidden>Icon</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            defaultValue={field.value ?? undefined}
                           >
                             <SelectTrigger className="gap-3.5 p-0 border-none w-max h-max">
                               <div className="p-3 border-2 rounded-sm">
@@ -271,7 +288,7 @@ export const CreateCategoryForm = ({
                   name="name"
                   render={({ field }) => (
                     <FormItem className="w-full relative">
-                      <FormLabel className="absolute left-3 -top-0.5 font-light bg-background p-0.5">
+                      <FormLabel className="absolute left-3 -top-0.5 bg-background p-0.5">
                         Category name
                       </FormLabel>
                       <FormControl>
@@ -287,7 +304,7 @@ export const CreateCategoryForm = ({
               </div>
               <FormField
                 control={form.control}
-                name="isDeleted"
+                name="isActive"
                 render={({ field }) => (
                   <FormItem className="relative flex items-center justify-between">
                     <FormLabel className="text-xl font-semibold">
@@ -302,8 +319,8 @@ export const CreateCategoryForm = ({
                           value && field.onChange(value === "true")
                         }
                       >
-                        <ToggleGroupItem value="false">Active</ToggleGroupItem>
-                        <ToggleGroupItem value="true">
+                        <ToggleGroupItem value="true">Active</ToggleGroupItem>
+                        <ToggleGroupItem value="false">
                           Not active
                         </ToggleGroupItem>
                       </ToggleGroup>
@@ -321,7 +338,7 @@ export const CreateCategoryForm = ({
             render={({ field }) => (
               <FormItem>
                 <div className="relative">
-                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                     Category description
                   </FormLabel>
                   <FormControl>
@@ -331,8 +348,8 @@ export const CreateCategoryForm = ({
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 font-light bg-background p-0.5">
-                    {field.value.length}/300
+                  <FormDescription className="absolute right-3 -bottom-2.5 mt-0 bg-background p-0.5">
+                    {field.value?.length}/300
                   </FormDescription>
                 </div>
                 <FormMessage className="px-4" />
@@ -345,7 +362,7 @@ export const CreateCategoryForm = ({
               name="parentId"
               render={({ field }) => (
                 <FormItem className="w-full relative">
-                  <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                  <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                     Parent category
                   </FormLabel>
                   <FormControl>
@@ -373,7 +390,7 @@ export const CreateCategoryForm = ({
                 </p>
                 <Popover>
                   <PopoverTrigger className="group">
-                    <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
+                    <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-halftone" />
                   </PopoverTrigger>
                   <PopoverContent align="end" className="max-w-sm w-full">
                     <div className="space-y-4 text-sm">
@@ -413,7 +430,7 @@ export const CreateCategoryForm = ({
                   name={`categoryPropertyKeys.${i}.name`}
                   render={({ field }) => (
                     <FormItem className="relative w-full space-y-0">
-                      <FormLabel className="absolute left-3 -top-2.5 font-light bg-background p-0.5">
+                      <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
                         Property key
                       </FormLabel>
                       <FormControl>
@@ -433,7 +450,7 @@ export const CreateCategoryForm = ({
                   className="h-max p-3"
                   onClick={onRemovePropertyKey(i)}
                 >
-                  <Trash2Icon className="w-6 h-6" />
+                  <TrashIcon className="w-6 h-6" />
                 </Button>
               </div>
             ))}

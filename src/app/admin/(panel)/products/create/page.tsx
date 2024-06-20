@@ -1,5 +1,5 @@
 "use server";
-import { getCategories } from "@/api/categories";
+import { getAdminCategories, getCategories } from "@/api/categories";
 import { getProductById } from "@/api/products";
 import { CreateProductPage } from "@/components/Admin/Product/CreateProductPage";
 import {
@@ -20,8 +20,8 @@ export default async function Page({
 
   await Promise.allSettled([
     queryClient.prefetchQuery({
-      queryKey: ["categories"],
-      queryFn: getCategories,
+      queryKey: ["categories", "admin"],
+      queryFn: () => getAdminCategories({ pageNumber: 1, pageSize: 100 }),
     }),
     queryClient.prefetchQuery({
       queryKey: ["product", productId],

@@ -1,5 +1,10 @@
 import { authStore, useAuthStore } from "@/lib/storage";
-import type { ApiResponse, ApiValidationErrors, User } from "./types";
+import type {
+  ApiResponse,
+  ApiResponseWithPages,
+  ApiValidationErrors,
+  User,
+} from "./types";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 
@@ -194,6 +199,68 @@ export function deleteCurrentUser(): Promise<
     method: "DELETE",
     headers: {
       authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function getAdminUsers(params: {
+  pageSize: number;
+  pageIndex: number;
+  searchQuery?: string;
+  role?: string;
+}): Promise<ApiResponseWithPages<[[200, User[]], [404, null]]>> {
+  const searchParams = new URLSearchParams();
+  searchParams.set("pageSize", params.pageSize.toString());
+  searchParams.set("pageIndex", params.pageIndex.toString());
+  params.searchQuery && searchParams.set("searchQuery", params.searchQuery);
+  params.role && searchParams.set("role", params.role);
+
+  const token = authStore.getState().token;
+  return fetch(`/api/users?${searchParams}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function switchUserRole(body: {
+  userId: string;
+}): Promise<ApiResponse<[[200, User], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/users/role", {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+export function deleteUsers(body: {
+  usersIds: string[];
+}): Promise<ApiResponse<[[200, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/users/removeUsers", {
+    method: "DELETE",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+export function restoreUser(body: {
+  userId: string;
+}): Promise<ApiResponse<[[200, User], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/users/restore", {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
   }).then((r) => r.json());
 }

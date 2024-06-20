@@ -1,4 +1,5 @@
-import type { ApiResponse } from "./types";
+import { authStore } from "@/lib/storage";
+import type { ApiResponse, ApiValidationErrors } from "./types";
 import { useQuery } from "@tanstack/react-query";
 
 export interface CategoryPropertyKey {
@@ -7,13 +8,13 @@ export interface CategoryPropertyKey {
 
 export interface Category {
   id: number;
-  parentId?: number;
-  iconId?: string;
+  parentId: number | null;
+  logo: string | null;
   name: string;
-  image: { id: string; imageUrl: string };
   description: string;
+  image: { id: string; url: string };
+  isActive: boolean;
   categoryPropertyKeys: CategoryPropertyKey[];
-  isDeleted: boolean;
 }
 
 export interface CategoryOption {
@@ -22,36 +23,134 @@ export interface CategoryOption {
   appearance: "tiles" | "rows";
 }
 
-export function getCategories(): Promise<{ data: Category[] }> {
-  return fetch("/api/admin/categories").then((r) => r.json());
+export function getCategories(params: {
+  pageNumber: number;
+  pageSize: number;
+}): Promise<Category[]> {
+  return fetch(
+    `/api/categories/category?pageNumber=${params.pageNumber}&pageSize=${params.pageSize}`
+  ).then((r) => r.json());
+}
+
+export function getAdminCategories(params: {
+  pageNumber: number;
+  pageSize: number;
+}): Promise<Category[]> {
+  const token = authStore.getState().token;
+  return fetch(
+    `/api/categories/category_admin?pageNumber=${params.pageNumber}&pageSize=${params.pageSize}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  ).then((r) => r.json());
 }
 
 export function getCategory({
   categoryId,
 }: {
   categoryId: number;
-}): Promise<{ data: Category }> {
-  return fetch(`/api/admin/category/${categoryId}`).then((r) => r.json());
+}): Promise<Category> {
+  return fetch(`/api/categories/category/${categoryId}`).then((r) => r.json());
 }
 
 export function uploadCategoryImage(
   file: File
 ): Promise<
-  ApiResponse<[[200, { id: string; imageUrl: string }[]], [400, null]]>
+  ApiResponse<
+    [[201, { id: string; imageUrl: string }[]], [400, ApiValidationErrors]]
+  >
 > {
   const data = new FormData();
 
-  data.append("files[]", file, file.name);
+  data.append("categoryImages", file, file.name);
 
-  return fetch("/api/admin/upload", {
+  const token = authStore.getState().token;
+  return fetch("/api/categoryImages", {
     method: "POST",
     body: data,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
   }).then((r) => r.json());
 }
 
-export function useCategories() {
+export function deleteCategoryImage(body: {
+  categoryImageId: string;
+}): Promise<ApiResponse<[[200, null], [400, ApiValidationErrors]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/categoryImages", {
+    method: "DELETE",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+interface CategoryCreateObject {
+  parentCategoryId: number | null;
+  name: string;
+  description: string;
+  imageId: string;
+  isActive: boolean;
+  logo: string | null;
+  propertyKeys: { name: string }[];
+}
+
+export function createCategory(body: CategoryCreateObject) {
+  const token = authStore.getState().token;
+  return fetch("/api/categories/create_category", {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => ({ status: r.status }));
+}
+
+interface CategoryEditObject extends CategoryCreateObject {
+  id: number;
+}
+
+export function updateCategory(body: CategoryEditObject) {
+  const token = authStore.getState().token;
+  return fetch("/api/categories/update", {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => ({ status: r.status }));
+}
+
+export function deleteCategory(params: { categoryId: number }) {
+  const token = authStore.getState().token;
+  return fetch(`/api/categories/delete_id/${params.categoryId}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => ({ status: r.status }));
+}
+
+export function useCategories(params: {
+  pageNumber: number;
+  pageSize: number;
+}) {
   return useQuery({
     queryKey: ["categories"],
-    queryFn: getCategories,
+    queryFn: () => getCategories(params),
+  });
+}
+
+export function useAdminCategories() {
+  return useQuery({
+    queryKey: ["categories", "admin"],
+    queryFn: () => getAdminCategories({ pageNumber: 1, pageSize: 100 }),
   });
 }

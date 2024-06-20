@@ -12,7 +12,7 @@ export function FilterItemButton({
 }) {
   return (
     <button
-      className="bg-tertiary-hover flex items-center gap-3 px-5 py-2 rounded-sm"
+      className="bg-secondary-light flex items-center gap-3 px-5 py-2 rounded-sm"
       onClick={onClick}
     >
       {type === "rating" ? (

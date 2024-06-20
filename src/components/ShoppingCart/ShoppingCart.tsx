@@ -32,10 +32,11 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/api/users";
 import { splitPrice } from "@/lib/products";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const ShoppingCart = () => {
   const isDesktop = useScreenSize({ minSize: "md" });
+  const router = useRouter();
 
   const { user } = useUser();
   const suggestionsProductsQuery = useQuery({
@@ -50,8 +51,15 @@ export const ShoppingCart = () => {
   const suggestionsProducts = suggestionsProductsQuery.data ?? [];
 
   const { cart } = useCart();
+  const { closeModal } = useStorageCart();
 
   const isAuthenticated = !!user;
+
+  function onCheckout() {
+    isAuthenticated &&
+      !!cart.data?.cartItems.length &&
+      router.push("/checkout");
+  }
 
   return (
     <>
@@ -60,12 +68,16 @@ export const ShoppingCart = () => {
           suggestionsProducts={suggestionsProducts}
           cart={cart.data}
           isAuthenticated={isAuthenticated}
+          onContinue={closeModal}
+          onCheckout={onCheckout}
         />
       ) : (
         <ShoppingCartMobile
           suggestionsProducts={suggestionsProducts}
           cart={cart.data}
           isAuthenticated={isAuthenticated}
+          onContinue={closeModal}
+          onCheckout={onCheckout}
         />
       )}
     </>
@@ -76,12 +88,16 @@ interface ShoppingCartProps {
   cart?: Cart;
   suggestionsProducts: ProductShort[];
   isAuthenticated: boolean;
+  onContinue: () => void;
+  onCheckout: () => void;
 }
 
 const ShoppingCartMobile = ({
   suggestionsProducts,
   cart,
   isAuthenticated,
+  onContinue,
+  onCheckout,
 }: ShoppingCartProps) => {
   const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
   const cartItems = useMemo(() => cart?.cartItems ?? [], [cart?.cartItems]);
@@ -176,10 +192,17 @@ const ShoppingCartMobile = ({
                             <Button
                               variant={"secondary"}
                               className="text-base max-sm:text-sm max-sm:px-3"
+                              onClick={onContinue}
                             >
                               Continue shopping
                             </Button>
-                            <Button className="text-base max1-sm:text-sm max-sm:px-3">
+                            <Button
+                              className="text-base max1-sm:text-sm max-sm:px-3"
+                              onClick={onCheckout}
+                              disabled={
+                                !isAuthenticated || !cart?.cartItems.length
+                              }
+                            >
                               Checkout
                             </Button>
                           </div>
@@ -223,6 +246,8 @@ const ShoppingCartDesktop = ({
   suggestionsProducts,
   cart,
   isAuthenticated,
+  onContinue,
+  onCheckout,
 }: ShoppingCartProps) => {
   const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
   const cartItems = useMemo(() => cart?.cartItems ?? [], [cart?.cartItems]);
@@ -305,7 +330,11 @@ const ShoppingCartDesktop = ({
                         </div>
                         <Separator />
                         <div className="flex justify-between py-6">
-                          <Button variant={"secondary"} className="text-xl">
+                          <Button
+                            variant={"secondary"}
+                            className="text-xl"
+                            onClick={onContinue}
+                          >
                             Continue shopping
                           </Button>
                           <div className="flex justify-center items-center gap-4">
@@ -316,9 +345,15 @@ const ShoppingCartDesktop = ({
                             <sup className="text-xl font-bold mt-3 -ml-3">
                               {priceParts.fraction}
                             </sup>
-                            <Link href={"/checkout"}>
-                              <Button className="text-xl">Checkout</Button>
-                            </Link>
+                            <Button
+                              className="text-xl"
+                              onClick={onCheckout}
+                              disabled={
+                                !isAuthenticated || !cart?.cartItems.length
+                              }
+                            >
+                              Checkout
+                            </Button>
                           </div>
                         </div>
                         <Separator />

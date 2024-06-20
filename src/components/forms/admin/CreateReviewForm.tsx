@@ -223,7 +223,7 @@ export function CreateReviewForm({
                         "py-2 px-5 text-sm lg:text-base rounded-sm",
                         field.value?.some((t) => t.id === tag.id)
                           ? "bg-tertiary-press"
-                          : "bg-tertiary-hover"
+                          : "bg-secondary-light"
                       )}
                       onClick={() => onSelectTag(tag.id)}
                       key={tag.id}

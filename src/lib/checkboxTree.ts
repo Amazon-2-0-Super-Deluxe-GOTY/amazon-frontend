@@ -4,7 +4,7 @@ export type CheckedState = boolean | "indeterminate";
 
 interface NodeOptions<TValue, TId> {
   getId: (value: TValue) => TId;
-  getParentId: (value: TValue) => TId | undefined;
+  getParentId: (value: TValue) => TId | null;
 }
 
 export interface TreeNodeType<TValue> {
@@ -17,7 +17,7 @@ export interface TreeNodeType<TValue> {
 export function createTreeArray<TValue, TId>(
   data: TValue[],
   options: NodeOptions<TValue, TId>,
-  parentId?: TId
+  parentId: TId | null
 ): TreeNodeType<TValue>[] {
   const elems = data.filter((i) => {
     return options.getParentId(i) === parentId;
@@ -107,7 +107,7 @@ export function updateTree<TValue, TId>(
 export function filterTree<TValue>(
   root: TreeNodeType<TValue>,
   predicate: (node: TreeNodeType<TValue>) => boolean
-): TreeNodeType<TValue> | undefined {
+): TreeNodeType<TValue> | null {
   const filteredNodes: TreeNodeType<TValue>[] = [];
   for (let node of root.nodes) {
     const matchedNode = filterTree(node, predicate);
@@ -128,14 +128,14 @@ export function filterTree<TValue>(
         checked: checked,
         nodes: filteredNodes,
       }
-    : undefined;
+    : null;
 }
 
 export function findNodeById<TValue, TId>(
   root: TreeNodeType<TValue>,
   nodeId: TId,
   options: NodeOptions<TValue, TId>
-): TreeNodeType<TValue> | undefined {
+): TreeNodeType<TValue> | null {
   const isMatch = options.getId(root.value) === nodeId;
 
   if (isMatch) return root;
@@ -145,7 +145,7 @@ export function findNodeById<TValue, TId>(
     if (checkedNode) return checkedNode;
   }
 
-  return undefined;
+  return null;
 }
 
 export function treeToArray<TValue>(
@@ -216,9 +216,9 @@ export function removeTreeNode<TValue, TId>(
   root: TreeNodeType<TValue>,
   nodeToRemove: TreeNodeType<TValue>,
   options: NodeOptions<TValue, TId>
-): TreeNodeType<TValue> | undefined {
+): TreeNodeType<TValue> | null {
   if (options.getId(root.value) === options.getId(nodeToRemove.value)) {
-    return undefined;
+    return null;
   }
 
   const copiedNodes: TreeNodeType<TValue>[] = [];
@@ -244,13 +244,13 @@ export function removeTreeNodes<TValue, TId>(
   root: TreeNodeType<TValue>,
   nodesToRemove: TreeNodeType<TValue>[],
   options: NodeOptions<TValue, TId>
-): TreeNodeType<TValue> | undefined {
+): TreeNodeType<TValue> | null {
   if (
     nodesToRemove.some(
       (node) => options.getId(root.value) === options.getId(node.value)
     )
   ) {
-    return undefined;
+    return null;
   }
 
   const copiedNodes: TreeNodeType<TValue>[] = [];
@@ -276,10 +276,10 @@ export function useCheckboxTree<TValue, TId>({
   initialTree,
   options,
 }: {
-  initialTree?: TreeNodeType<TValue>;
+  initialTree: TreeNodeType<TValue> | null;
   options: NodeOptions<TValue, TId>;
 }) {
-  const [tree, setTree] = useState(initialTree);
+  const [tree, setTree] = useState<TreeNodeType<TValue> | null>(initialTree);
 
   return {
     root: tree,
@@ -290,32 +290,32 @@ export function useCheckboxTree<TValue, TId>({
       updatedNodeChecked: CheckedState
     ) => updateTree(root, updatedNode, updatedNodeChecked, options),
     filter: (predicate: (node: TreeNodeType<TValue>) => boolean) => {
-      if (!tree) return;
+      if (!tree) return null;
 
       return filterTree(tree, predicate);
     },
     findById: (nodeId: TId) => {
-      if (!tree) return;
+      if (!tree) return null;
 
       return findNodeById(tree, nodeId, options);
     },
     getByCheckedState: (checkedState: CheckedState) => {
-      if (!tree) return;
+      if (!tree) return null;
 
       return getNodesByCheckedState(tree, checkedState);
     },
     append: (appendRoot: TreeNodeType<TValue>, value: TValue) => {
-      if (!tree) return;
+      if (!tree) return null;
 
       return appendTreeNode(tree, appendRoot, value, options);
     },
     remove: (nodeToRemove: TreeNodeType<TValue>) => {
-      if (!tree) return;
+      if (!tree) return null;
 
       return removeTreeNode(tree, nodeToRemove, options);
     },
     removeMany: (nodesToRemove: TreeNodeType<TValue>[]) => {
-      if (!tree) return;
+      if (!tree) return null;
 
       return removeTreeNodes(tree, nodesToRemove, options);
     },

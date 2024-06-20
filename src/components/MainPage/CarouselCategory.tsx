@@ -5,16 +5,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import placeholder from "../../../public/Icons/placeholder2.svg";
 import { CategoryCard } from "./CategoryCard";
-import Link from "next/link";
+import { CategoryCardSkeleton } from "./CategoryCardSkeleton";
+import type { Category } from "@/api/categories";
 
-const imagesForCards = Array.from({ length: 9 }).map(() => ({
-  id: (Math.random() * 1000).toFixed(0),
-  imageUrl: placeholder.src,
-}));
-
-export function CarouselCategory() {
+export function CarouselCategory({
+  categories,
+  isLoading,
+}: {
+  categories: Category[];
+  isLoading: boolean;
+}) {
   return (
     <Carousel
       className="w-full mx-auto"
@@ -29,22 +30,29 @@ export function CarouselCategory() {
       }}
     >
       <CarouselContent className="p-1">
-        {imagesForCards.map((image, index) => {
-          return (
-            <CarouselItem
-              key={index}
-              className={
-                "basis-[unset] md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4 lg:pl-6"
-              }
-            >
-              <CategoryCard
-                title={`Test category card title ${index + 1}`}
-                link="/category/1"
-                image={image}
-              />
-            </CarouselItem>
-          );
-        })}
+        {isLoading
+          ? Array.from({ length: 8 }).map((_, index) => (
+              <CarouselItem
+                key={index}
+                className={
+                  "basis-[unset] md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4 lg:pl-6"
+                }
+              >
+                <CategoryCardSkeleton />
+              </CarouselItem>
+            ))
+          : categories.map((category, index) => {
+              return (
+                <CarouselItem
+                  key={index}
+                  className={
+                    "basis-[unset] md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4 lg:pl-6"
+                  }
+                >
+                  <CategoryCard category={category} />
+                </CarouselItem>
+              );
+            })}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />
