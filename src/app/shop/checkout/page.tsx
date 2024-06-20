@@ -12,8 +12,9 @@ export default function CheckOut() {
   const checkout = { 
     products: cart.cartItems.reduce<OrderProduct[]>((res, item) => [
       ...res, {
-        name: item.product.name,
         productId: item.product.id,
+        name: item.product.name,
+        imageUrl: item.product.imageUrl,
         quantity: item.quantity,
         price: item.product.discountPrice > 0 ? item.product.discountPrice : item.product.price,
         totalPrice: item.price,

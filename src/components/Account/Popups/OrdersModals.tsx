@@ -27,11 +27,13 @@ export const OrderDetailsModal = ({
   code,
   status,
   products,
+  totalPrice,
   additionalInfo,
 } : {
   code: string;
   status: string;
-  products: { name:string, quantity:number, price:number }[];
+  products: { imageUrl:string, name:string, quantity:number, price:number }[];
+  totalPrice: number;
   additionalInfo: { name:string, adress:string, paymentType:string, dateDelivered:string }
 }) => {
   const isDesktop = useScreenSize({minSize:"md"});
@@ -39,6 +41,10 @@ export const OrderDetailsModal = ({
   const onClose = () => {
     setIsOpen(!isOpen);
   };
+
+  const priceParts = totalPrice.toFixed(2).split(".");
+  const whole = priceParts[0];
+  const fraction = priceParts[1];
 
   if(isDesktop)
   {
@@ -57,7 +63,7 @@ export const OrderDetailsModal = ({
                                     status === "Ready for pickup" && "text-blue-600", 
                                     status === "Shipped" && "text-cyan-500", 
                                     status === "Ordered" && "text-gray-300", 
-                                    status === "Cancelled" && "text-red-500", 
+                                    status === "Canceled" && "text-red-500", 
                                     "font-medium text-base")} >{status}</span>
               </div>
               <DialogClose className="w-4 h-4 flex justify-center items-center" >
@@ -75,18 +81,27 @@ export const OrderDetailsModal = ({
                     <div>
                       {products.map((item, i) => {
                         return(
-                          <OrderDetailsProductCard key={i} name={item.name} quantity={item.quantity} price={item.price} />
+                          <OrderDetailsProductCard key={i} imageUrl={item.imageUrl} name={item.name} quantity={item.quantity} price={item.price} />
                         );
                       })}
                     </div>
                   </div>
                   <Separator />
                   <div className="flex justify-between py-6">
-                    <Button variant={"secondary"} className="text-xl">How to cancel order?</Button>
+                    <Popover>
+                    <PopoverTrigger className="group">
+                      <span className={cn(buttonVariants({variant:"secondary"}), "text-xl")}>How to cancel order?</span>
+                    </PopoverTrigger>
+                    <PopoverContent align="start" className="max-w-sm w-full">
+                      <div className="space-y-2 text-sm">
+                        <p className="font-semibold">How to cancel order?</p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                     <div className="flex justify-center items-center gap-4">
                       <span className="text-2xl font-medium">Total:</span>
-                      <span className="text-2xl font-medium">$ 999</span>
-                      <sup className="text-xl font-bold mt-3 -ml-3">00</sup>
+                      <span className="text-2xl font-medium">$ {whole}</span>
+                      <sup className="text-xl font-bold mt-3 -ml-3">{fraction}</sup>
                     </div>
                   </div>
                   <Separator />
@@ -135,7 +150,7 @@ export const OrderDetailsModal = ({
                                     status === "Ready for pickup" && "text-blue-600", 
                                     status === "Shipped" && "text-cyan-500", 
                                     status === "Ordered" && "text-gray-300", 
-                                    status === "Cancelled" && "text-red-500", 
+                                    status === "Canceled" && "text-red-500", 
                                     "font-medium text-sm")} >{status}</span>
               </div>
               <DrawerClose className="w-4 h-4 flex justify-center items-center" >
@@ -153,7 +168,7 @@ export const OrderDetailsModal = ({
                   <div>
                     {products.map((item, i) => {
                       return(
-                        <OrderDetailsProductCard key={i} name={item.name} quantity={item.quantity} price={item.price} />
+                        <OrderDetailsProductCard key={i} imageUrl={item.imageUrl} name={item.name} quantity={item.quantity} price={item.price} />
                       );
                     })}
                   </div>
@@ -172,8 +187,8 @@ export const OrderDetailsModal = ({
                   </Popover>
                   <div className="flex justify-center items-center gap-4">
                     <span className="text-xl font-medium">Total:</span>
-                    <span className="text-xl font-medium">$ 999</span>
-                    <sup className="text-sm font-bold mt-2 -ml-3">00</sup>
+                    <span className="text-xl font-medium">$ {whole}</span>
+                    <sup className="text-sm font-bold mt-2 -ml-3">{fraction}</sup>
                   </div>
                 </div>
                 <Separator />
