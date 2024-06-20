@@ -22,21 +22,23 @@ export const WishlistCard = ({
   const isOutOfStock = product.quantity === 0;
 
   return (
-    <Link href={`/product/${product.slug}`} className="contents">
-      <Card className="max-w-sm w-full border-0 relative shadow-none before:ring-1 before:ring-gray-300 before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
-        <CardHeader className="pb-0">
-          <div className="relative aspect-square">
+    <Card className="max-w-sm w-full border-0 relative shadow-none before:ring-1 before:ring-gray-300 before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
+      <CardHeader className="pb-0">
+        <div className="relative aspect-square">
+          <Link href={`/product/${product.slug}`} className="contents">
             <Image src={product.productImages[0].imageUrl ?? placeholder} fill={true} alt="Placeholder" className="object-cover" />
-            {product.discountPercent && 
-              <div className="absolute top-6 left-0 rounded-e-xl bg-gray-100 px-2 pl-4 pr-6">
-                -{product.discountPercent}%
-              </div>
-            }
-            <div className="absolute right-[-8px] top-[-8px]">
-              <RemoveFromWishListModal onRemoveItem={() => removeWishlistItem(code)} />
+          </Link>
+          {product.discountPercent && 
+            <div className="absolute top-6 left-0 rounded-e-xl bg-gray-100 px-2 pl-4 pr-6">
+              -{product.discountPercent}%
             </div>
+          }
+          <div className="absolute right-[-8px] top-[-8px]">
+            <RemoveFromWishListModal onRemoveItem={() => removeWishlistItem(code)} />
           </div>
-        </CardHeader>
+        </div>
+      </CardHeader>
+      <Link href={`/product/${product.slug}`} className="contents">
         <CardContent>
           <div className="mt-3 flex flex-col justify-center items-center">
             <span className="text-lg line-clamp-2">{product.name}</span>
@@ -57,15 +59,15 @@ export const WishlistCard = ({
             </div>
           </div>
         </CardContent>
-        {isOutOfStock && (
-          <div className="absolute inset-0 bg-gray-200/50">
-            <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-center max-w-[230px] w-full">
-              <span className="text-base xl:text-xl">Out of Stock</span>
-              <Button className="mt-4 text-wrap text-xs xl:text-sm">Notify when available</Button>
-            </div>
+      </Link>
+      {isOutOfStock && (
+        <div className="absolute inset-0 bg-gray-200/50">
+          <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-center max-w-[230px] w-full">
+            <span className="text-base xl:text-xl">Out of Stock</span>
+            <Button className="mt-4 text-wrap text-xs xl:text-sm">Notify when available</Button>
           </div>
-        )}
-      </Card>
-    </Link>
+        </div>
+      )}
+    </Card>
   );
 };

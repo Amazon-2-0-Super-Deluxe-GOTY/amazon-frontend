@@ -39,7 +39,7 @@ export const OrderDetailsProductCard = ({
               <div className="flex justify-end items-center gap-3" >
                 <span className="text-xs md:text-base font-medium">{quantity}</span>
                 <span className="text-xs md:text-base font-medium">x</span>
-                <span className="text-xs md:text-base font-medium">${price}</span>
+                <span className="text-xs md:text-base font-medium">${price.toFixed(2)}</span>
               </div>
               <div className="flex justify-end items-center" >
                 <div className="flex">

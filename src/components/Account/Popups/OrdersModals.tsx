@@ -90,7 +90,7 @@ export const OrderDetailsModal = ({
                   <div className="flex justify-between py-6">
                     <Popover>
                     <PopoverTrigger className="group">
-                      <Button variant={"secondary"} className="text-xl">How to cancel order?</Button>
+                      <span className={cn(buttonVariants({variant:"secondary"}), "text-xl")}>How to cancel order?</span>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="max-w-sm w-full">
                       <div className="space-y-2 text-sm">
