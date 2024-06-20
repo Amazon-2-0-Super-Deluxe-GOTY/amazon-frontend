@@ -27,7 +27,7 @@ export const CheckoutProductCard = ({
                 <div className="flex justify-end items-center gap-2">
                   <span className="text-xs md:text-sm font-medium">{quantity}</span>
                   <span className="text-xs md:text-sm font-medium">x</span>
-                  <span className="text-xs md:text-sm font-medium">${price}</span>
+                  <span className="text-xs md:text-sm font-medium">${price.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-end items-center">
                   <div>
