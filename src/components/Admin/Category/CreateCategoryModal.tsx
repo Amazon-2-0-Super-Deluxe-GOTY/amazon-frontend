@@ -1,6 +1,6 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CreateCategoryForm } from "@/components/forms/CreateCategoryForm";
+import { CreateCategoryForm } from "@/components/forms/admin/CreateCategoryForm";
 import {
   createCategory,
   updateCategory,

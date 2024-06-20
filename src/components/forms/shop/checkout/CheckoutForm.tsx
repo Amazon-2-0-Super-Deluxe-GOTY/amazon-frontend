@@ -32,15 +32,12 @@ import {
   MaskedInputCardDate,
   MaskedInputCardCVV,
 } from "@/components/Checkout/MaskedInput";
-import { cn } from "@/lib/utils";
 import { PlaceOrderModal } from "@/components/Checkout/PlaceOrderModal";
-import { skipToken, useQuery } from "@tanstack/react-query";
-
-interface IDeliveryData {
-  id: number;
-  name: string;
-  iso2: string;
-}
+import { GetCountryData, GetStateData, GetCityData } from "./DeliveryData";
+import { Logo } from "@/components/Shared/Logo";
+import { CartItem } from "@/api/products";
+import { OrderProduct, Order, createOrder } from "@/api/orders";
+import { useMutation } from "@tanstack/react-query";
 
 const FormSchema = z
   .object({
@@ -63,7 +60,7 @@ const FormSchema = z
     postcode: z.string().min(1, {
       message: "This field is necessary to continue!",
     }),
-    paymentType: z
+    paymentMethod: z
       .string()
       .min(1, {
         message: "This field is necessary to continue!",
@@ -74,7 +71,7 @@ const FormSchema = z
     cardCVV: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.paymentType !== "cash") {
+    if (data.paymentMethod !== "cash") {
       if (!data.cardNumber) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -101,50 +98,93 @@ const FormSchema = z
 
 export function CheckoutForm({
   headerData,
-}: // onSubmit,
-{
+}: {
   headerData: {
     firstName: string;
-    secondName: string;
+    lastName: string;
     email: string;
     checkout: {
-      id: string;
-      products: {
-        code: string;
-        title: string;
-        quantity: number;
-        price: number;
-      }[];
-      totalCost: number;
+      products: OrderProduct[];
+      totalPrice: number;
     };
     whole: string;
     fraction: string;
   };
-  // onSubmit: (token: string) => void;
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
+      firstName: headerData.firstName,
+      lastName: headerData.lastName,
+      email: headerData.email,
       country: "",
       state: "",
       city: "",
       postcode: "",
-      paymentType: "cash",
+      paymentMethod: "cash",
       cardNumber: "",
       cardDate: "",
       cardCVV: "",
     },
   });
 
-  const [value, setValue] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  type AllowedFields =
+    | "firstName"
+    | "lastName"
+    | "email"
+    | "country"
+    | "state"
+    | "city"
+    | "postcode"
+    | "paymentMethod"
+    | "cardNumber"
+    | "cardDate"
+    | "cardCVV"
+    | "root"
+    | `root.${string}`;
+  function isAllowedField(field: string): field is AllowedFields {
+    const allowedFields: AllowedFields[] = [
+      "firstName",
+      "lastName",
+      "email",
+      "country",
+      "state",
+      "city",
+      "postcode",
+      "paymentMethod",
+      "cardNumber",
+      "cardDate",
+      "cardCVV",
+      "root",
+    ];
+    return (
+      allowedFields.includes(field as AllowedFields) ||
+      field.startsWith("root.")
+    );
+  }
+
+  const createOrderMutation = useMutation({
+    mutationFn: createOrder,
+  });
   const handleSubmit = (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
-    setIsOpen(true);
+    createOrderMutation
+      .mutateAsync({ ...values, postIndex: values.postcode })
+      .then((res) => {
+        if (res.status === 201) {
+          setIsOpen(true);
+        } else if (res.status === 400) {
+          for (let error of res.data) {
+            if (isAllowedField(error.propertyName)) {
+              form.setError(error.propertyName, {
+                message: error.errorMessage,
+              });
+            }
+          }
+        }
+      });
   };
 
   const selectCountry = form.watch("country");
@@ -157,13 +197,16 @@ export function CheckoutForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="grid lg:grid-cols-[57.6875fr_40.8125fr] w-full h-full gap-6"
+        className="grid lg:grid-cols-[57.6875fr_40.8125fr] lg:grid-rows-[56px_100fr] w-full h-full gap-6 max-w-[1600px]"
       >
-        <section className="w-full flex flex-col gap-6">
-          <div className="w-full grid grid-cols-2">
-            <span className="text-2xl md:text-3xl">Logo</span>
-            <span className="text-2xl md:text-3xl">Checkout</span>
-          </div>
+        <section className="w-full flex justify-between items-center">
+          <Link href={"/"}>
+            <Logo width="120" height="47" color="#4A7BD9" />
+          </Link>
+          <span className="text-2xl md:text-3xl">Checkout</span>
+          <span></span>
+        </section>
+        <section className="w-full flex flex-col gap-6 lg:row-start-2">
           <Separator />
           <div className="flex flex-col w-full h-full gap-6">
             <div className="flex flex-col gap-6">
@@ -198,7 +241,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             Last name
                           </FormLabel>
                           <FormControl>
@@ -221,7 +264,7 @@ export function CheckoutForm({
                   render={({ field }) => (
                     <FormItem>
                       <div>
-                        <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                        <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                           Email
                         </FormLabel>
                         <FormControl>
@@ -250,7 +293,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             Country
                           </FormLabel>
                           <FormControl>
@@ -290,7 +333,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             State
                           </FormLabel>
                           <FormControl>
@@ -340,7 +383,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             City
                           </FormLabel>
                           <FormControl>
@@ -396,7 +439,7 @@ export function CheckoutForm({
                     render={({ field }) => (
                       <FormItem>
                         <div>
-                          <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                          <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                             Postcode
                           </FormLabel>
                           <FormControl>
@@ -421,7 +464,7 @@ export function CheckoutForm({
               <div>
                 <FormField
                   control={form.control}
-                  name="paymentType"
+                  name="paymentMethod"
                   render={({ field }) => (
                     <FormItem>
                       <div>
@@ -430,25 +473,19 @@ export function CheckoutForm({
                             value={field.value}
                             onValueChange={(value) => {
                               if (value) field.onChange(value);
-                              setValue(value);
+                              setPaymentMethod(value);
                             }}
                             type="single"
                             className="w-full flex max-md:flex-col gap-6"
                           >
                             <ToggleGroupItem
-                              className={cn(
-                                "w-full flex justify-between",
-                                field.value === "cash" && "bg-gray-100"
-                              )}
+                              className="w-full flex justify-between"
                               value="cash"
                             >
                               Cash
                             </ToggleGroupItem>
                             <ToggleGroupItem
-                              className={cn(
-                                "w-full flex justify-between",
-                                field.value === "card" && "bg-gray-100"
-                              )}
+                              className="w-full flex justify-between"
                               value="card"
                             >
                               Card
@@ -462,7 +499,7 @@ export function CheckoutForm({
                 />
               </div>
             </div>
-            {value === "card" && (
+            {paymentMethod === "card" && (
               <>
                 <Separator />
                 <div className="flex flex-col gap-6">
@@ -474,7 +511,7 @@ export function CheckoutForm({
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div>
-                            <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                            <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                               Card number
                             </FormLabel>
                             <FormControl>
@@ -495,7 +532,7 @@ export function CheckoutForm({
                         render={({ field }) => (
                           <FormItem className="w-full">
                             <div>
-                              <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                              <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                                 Date of expiration
                               </FormLabel>
                               <FormControl>
@@ -515,7 +552,7 @@ export function CheckoutForm({
                         render={({ field }) => (
                           <FormItem className="w-full">
                             <div>
-                              <FormLabel className="absolute ml-3 -mt-2.5 bg-white p-0.5">
+                              <FormLabel className="absolute ml-3 -mt-2.5 bg-background p-0.5">
                                 CVV/CVC
                               </FormLabel>
                               <FormControl>
@@ -536,18 +573,18 @@ export function CheckoutForm({
             )}
           </div>
         </section>
-        <section className="w-full">
-          <div className="w-full flex flex-col gap-4 rounded-lg p-6 bg-card">
+        <section className="w-full lg:row-start-2">
+          <div className="w-full flex flex-col gap-4 rounded-lg p-6 bg-card shadow-sm">
             <span className="text-xl md:text-2xl">Summary</span>
             <Separator />
             <div>
               <ScrollArea className="mr-[-12px]">
                 <div className="max-h-[410px]">
-                  {headerData.checkout.products.map((item, i) => {
+                  {headerData.checkout.products?.map((item, i) => {
                     return (
                       <CheckoutProductCard
                         key={i}
-                        name={item.title}
+                        name={item.name}
                         quantity={item.quantity}
                         price={item.price}
                       />
@@ -569,7 +606,19 @@ export function CheckoutForm({
               </div>
             </div>
             <div className="w-full flex flex-col justify-center gap-2">
-              <Button type="submit">Place order</Button>
+              <Button type="submit" disabled={createOrderMutation.isPending}>
+                Place order
+              </Button>
+              <Link href={"/"}>
+                <Button
+                  type="reset"
+                  variant={"secondary"}
+                  className="w-full"
+                  disabled={createOrderMutation.isPending}
+                >
+                  Cancel
+                </Button>
+              </Link>
               <PlaceOrderModal isOpen={isOpen} />
               <span className="w-full text-center text-sm md:text-base">
                 By clicking “Place order” you agree with{" "}
@@ -586,64 +635,4 @@ export function CheckoutForm({
       </form>
     </Form>
   );
-}
-
-function GetCountryData() {
-  const countryQuery = useQuery<IDeliveryData[]>({
-    queryKey: ["countries"],
-    queryFn: async () => {
-      return await fetch("/api/countries").then((res) => res.json());
-    },
-    refetchOnWindowFocus: false,
-  });
-
-  const res = {
-    data: countryQuery.data,
-    isLoading: countryQuery.isLoading,
-  };
-
-  return res;
-}
-
-function GetStateData(stateIso2: string) {
-  const stateQuery = useQuery<IDeliveryData[]>({
-    queryKey: ["states", stateIso2],
-    queryFn: stateIso2
-      ? async () => {
-          return await fetch(`/api/states?ciso=${stateIso2}`).then((res) =>
-            res.json()
-          );
-        }
-      : skipToken,
-    refetchOnWindowFocus: false,
-  });
-
-  const res = {
-    data: stateQuery.data,
-    isLoading: stateQuery.isLoading,
-  };
-
-  return res;
-}
-
-function GetCityData(countryIso2: string, stateIso2: string) {
-  const cityQuery = useQuery<IDeliveryData[]>({
-    queryKey: ["cities", countryIso2, stateIso2],
-    queryFn:
-      countryIso2 && stateIso2
-        ? async () => {
-            return await fetch(
-              `/api/cities?ciso=${countryIso2}&siso=${stateIso2}`
-            ).then((res) => res.json());
-          }
-        : skipToken,
-    refetchOnWindowFocus: false,
-  });
-
-  const res = {
-    data: cityQuery.data,
-    isLoading: cityQuery.isLoading,
-  };
-
-  return res;
 }

@@ -22,20 +22,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "../ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Textarea } from "../../ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
 import { useEffect, useTransition } from "react";
 import { getAllIcons } from "@/lib/categories";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
 import { uploadCategoryImage, type Category } from "@/api/categories";
-import { CategorySelect } from "../Admin/Category/CategorySelect";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { CategorySelect } from "../../Admin/Category/CategorySelect";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { isImageValid } from "@/lib/products";
-import { AlertDialog } from "../Admin/AlertDialog";
-import { useModal } from "../Shared/Modal";
+import { AlertDialog } from "../../Admin/AlertDialog";
+import { useModal } from "../../Shared/Modal";
 import Image from "next/image";
-import { Skeleton } from "../ui/skeleton";
-import { InfoIcon, PlusIcon, TrashIcon } from "../Shared/Icons";
+import { Skeleton } from "@/components/ui/skeleton";
+import { InfoIcon, PlusIcon, TrashIcon } from "@/components/Shared/Icons";
 
 const formSchema = z
   .object({

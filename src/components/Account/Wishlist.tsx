@@ -5,7 +5,6 @@ import { WishlistCard } from "./Cards/WishlistCard";
 import { useState } from "react";
 
 export const Wishlist = () => {
-
   const [wishlistProducts, setWishlistProducts] = useState<{code:string, title:string, price:number}[]>(Array.from({ length: 9 }).map((_, index) => ({
     code: index.toString(),
     title: `Product ${index + 1}`,
@@ -35,7 +34,7 @@ export const Wishlist = () => {
         </div>
       </div>
       <Separator />
-      <div className="w-full grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 grid-cols-2 py-6">
+      <div className="w-full grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-2 py-6">
         {wishlistProducts.filter((v) => v.title.toLowerCase().includes(searchText)).map((product, index) => (
           <WishlistCard key={index} code={product.code} title={product.title} price={product.price} removeWishlistItem={removeWishlistItem} />
         ))}

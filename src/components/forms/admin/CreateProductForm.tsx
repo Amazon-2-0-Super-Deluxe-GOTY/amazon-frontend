@@ -31,7 +31,7 @@ import { useModal } from "@/components/Shared/Modal";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
 import { UploadPhotoListFormField } from "./UploadPhotoListFormFields";
-import { PlusIcon } from "../Shared/Icons";
+import { PlusIcon } from "../../Shared/Icons";
 
 const barcodeLenght = 13;
 const maxImages = 10;
