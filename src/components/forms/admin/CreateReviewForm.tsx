@@ -250,6 +250,8 @@ export function CreateReviewForm({
   );
 }
 
+const iconSizeClass = "w-10 h-10 lg:w-20 lg:h-20";
+
 function StarsRatingSelect({
   value,
   onSelect,
@@ -276,27 +278,14 @@ function StarsRatingSelect({
             onMouseLeave={() => setHoveringOverStar(undefined)}
             onClick={() => onSelect(rating)}
           >
-            {/* {hoveringOverStar !== undefined ? (
-              isHovering ? (
-                <StarFullIcon
-                  className={"w-20 h-20 stroke-1 fill-foreground/25"}
-                />
-              ) : (
-                <StarEmptyIcon className={"w-20 h-20 stroke-1"} />
-              )
-            ) : isSelected ? (
-              <StarFullIcon className={"w-20 h-20"} />
-            ) : (
-              <StarEmptyIcon className={"w-20 h-20 stroke-1"} />
-            )} */}
             {isSelected ? (
-              <StarFullIcon className={"w-20 h-20"} />
+              <StarFullIcon className={iconSizeClass} />
             ) : isHovering ? (
               <StarFullIcon
-                className={"w-20 h-20 stroke-1 fill-foreground/25"}
+                className={`${iconSizeClass} stroke-1 fill-foreground/25`}
               />
             ) : (
-              <StarEmptyIcon className={"w-20 h-20 stroke-1"} />
+              <StarEmptyIcon className={`${iconSizeClass} stroke-1`} />
             )}
           </button>
         );

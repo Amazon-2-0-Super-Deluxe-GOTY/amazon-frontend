@@ -1,31 +1,29 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Check, ChevronDown } from "lucide-react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+import { ChevronDownIcon } from "../Shared/Icons";
 
 type ComboboxDataItem = {
-    value: string;
-    label: string;
+  value: string;
+  label: string;
 };
 
-function ComboboxFilters({ data } : { data:ComboboxDataItem[] }) {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+function ComboboxFilters({ data }: { data: ComboboxDataItem[] }) {
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -39,7 +37,7 @@ function ComboboxFilters({ data } : { data:ComboboxDataItem[] }) {
           {value
             ? data.find((item) => item.value === value)?.label
             : "Selected filters"}
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0 bg-gray-400">
@@ -73,9 +71,7 @@ function ComboboxFilters({ data } : { data:ComboboxDataItem[] }) {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
 
-export {
-    ComboboxFilters
-};
+export { ComboboxFilters };

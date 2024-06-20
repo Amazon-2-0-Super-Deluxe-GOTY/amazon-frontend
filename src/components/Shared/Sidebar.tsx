@@ -1,5 +1,5 @@
 import { useScreenSize } from "@/lib/media";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarImage } from "../ui/avatar";
 import {
   Sheet,
   SheetClose,
@@ -9,6 +9,7 @@ import {
   SheetTitle,
 } from "../ui/sheet";
 import { ChevronsLeftIcon } from "./Icons";
+import { AvatarDefaultFallback } from "./AvatarDefaultFallback";
 
 export const Sidebar = ({
   isOpen,
@@ -60,13 +61,7 @@ export const SidebarDescription = ({ children }: { children: string }) => {
   );
 };
 
-export const SidebarAvatar = ({
-  image,
-  fallback,
-}: {
-  image?: string;
-  fallback: string;
-}) => {
+export const SidebarAvatar = ({ image }: { image?: string }) => {
   return (
     <Avatar
       className="w-12 h-12"
@@ -75,7 +70,7 @@ export const SidebarAvatar = ({
       }}
     >
       <AvatarImage src={image} />
-      <AvatarFallback>{fallback}</AvatarFallback>
+      <AvatarDefaultFallback />
     </Avatar>
   );
 };

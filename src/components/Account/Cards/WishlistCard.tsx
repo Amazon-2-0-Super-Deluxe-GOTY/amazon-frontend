@@ -1,11 +1,11 @@
-"use client"
+"use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MessageCircle, StarIcon } from "lucide-react";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { RemoveFromWishListModal } from "../Popups/WishlistModals";
+import { CustomerReviewsIcon, StarFullIcon } from "@/components/Shared/Icons";
 
 export const WishlistCard = ({
   code,
@@ -36,37 +36,41 @@ export const WishlistCard = ({
             -24%
           </div>
           <div className="absolute right-[-8px] top-[-8px]">
-            <RemoveFromWishListModal onRemoveItem={() => removeWishlistItem(code)} />
+            <RemoveFromWishListModal
+              onRemoveItem={() => removeWishlistItem(code)}
+            />
           </div>
         </div>
       </CardHeader>
       <CardContent>
-      <Link href={`/product/${code}`}>
-        <div className="mt-3 flex flex-col justify-center items-center">
-          <span className="text-lg line-clamp-2">{title}</span>
-          <div className="pb-3 flex gap-3 items-center">
-            <div className="flex items-center gap-1">
-              <StarIcon width={16} height={16} />
-              <span className="text-sm">4.7</span>
+        <Link href={`/product/${code}`}>
+          <div className="mt-3 flex flex-col justify-center items-center">
+            <span className="text-lg line-clamp-2">{title}</span>
+            <div className="pb-3 flex gap-3 items-center">
+              <div className="flex items-center gap-1">
+                <StarFullIcon width={16} height={16} />
+                <span className="text-sm">4.7</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <CustomerReviewsIcon width={16} height={16} />
+                <span className="text-sm">228</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <MessageCircle width={16} height={16} />
-              <span className="text-sm">228</span>
+            <div>
+              <span className="text-xl">${whole}</span>
+              <sup>{fraction}</sup>
+              <sub className="ml-2 line-through text-gray-400">$39.99</sub>
             </div>
           </div>
-          <div>
-            <span className="text-xl">${whole}</span>
-            <sup>{fraction}</sup>
-            <sub className="ml-2 line-through text-gray-400">$39.99</sub>
-          </div>
-        </div>
-      </Link>
+        </Link>
       </CardContent>
       {isOutOfStock && (
         <div className="absolute inset-0 bg-gray-200/50">
           <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-center max-w-[230px] w-full">
             <span className="text-base xl:text-xl">Out of Stock</span>
-            <Button className="mt-4 text-wrap text-xs xl:text-sm">Notify when available</Button>
+            <Button className="mt-4 text-wrap text-xs xl:text-sm">
+              Notify when available
+            </Button>
           </div>
         </div>
       )}

@@ -14,8 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "../../ui/skeleton";
 import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { InfoIcon, Trash2Icon } from "lucide-react";
-import { PlusIcon } from "../../Shared/Icons";
+import { InfoIcon, PlusIcon, TrashIcon } from "../../Shared/Icons";
 import { isImageValid } from "@/lib/products";
 import { AlertDialog } from "../../Admin/AlertDialog";
 import { useModal } from "../../Shared/Modal";
@@ -91,7 +90,7 @@ export function UploadPhotoListFormField({
               <FormLabel className="font-bold text-lg">{title}</FormLabel>
               <Popover>
                 <PopoverTrigger className="group">
-                  <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
+                  <InfoIcon className="w-6 h-6 group-data-[state=closed]:text-halftone" />
                 </PopoverTrigger>
                 <PopoverContent align="start" className="max-w-sm w-full">
                   <div className="space-y-2 text-sm">
@@ -134,7 +133,7 @@ export function UploadPhotoListFormField({
                     className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100 rounded-lg"
                     onClick={onDeleteImage(i)}
                   >
-                    <Trash2Icon className="w-10 h-10 stroke-white" />
+                    <TrashIcon className="w-10 h-10 text-light" />
                   </button>
                 </div>
               ))}

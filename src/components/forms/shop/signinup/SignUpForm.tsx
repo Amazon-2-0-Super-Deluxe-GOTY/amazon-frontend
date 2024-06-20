@@ -13,11 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { useAuthStore } from "@/lib/storage";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/api/users";
+import { EyeClosedIcon, EyeOpenedIcon } from "@/components/Shared/Icons";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
@@ -125,7 +125,7 @@ export function SignUpForm({
                     className="absolute top-0 bottom-0 right-6"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                    {showPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
                   </button>
                 </div>
                 <FormMessage className="max-md:text-xs px-4" />
@@ -154,7 +154,11 @@ export function SignUpForm({
                     className="absolute top-0 bottom-0 right-6"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
-                    {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+                    {showConfirmPassword ? (
+                      <EyeOpenedIcon />
+                    ) : (
+                      <EyeClosedIcon />
+                    )}
                   </button>
                 </div>
                 <FormMessage className="max-md:text-xs px-4" />

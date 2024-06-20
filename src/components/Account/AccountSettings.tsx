@@ -1,4 +1,3 @@
-import { InfoIcon } from "lucide-react";
 import { Separator } from "../ui/separator";
 import {
   ChangeEmailModal,
@@ -14,6 +13,7 @@ import { useAuthStore } from "@/lib/storage";
 import { deleteCurrentUser, logOut } from "@/api/users";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { InfoIcon } from "../Shared/Icons";
 
 export const AccountSettings = ({
   user,
@@ -50,12 +50,13 @@ export const AccountSettings = ({
       </h1>
       <Separator />
       <div className="w-full flex flex-col py-4 lg:py-6">
-        <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2
+        <div
+          className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2
                         lg:px-6 max-lg:flex-col max-lg:justify-center max-lg:items-stretch max-lg:gap-3"
         >
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3">
             <span className="text-base md:text-xl">Profile photo</span>
-            <span className="text-sm md:tetx-base text-gray-400">
+            <span className="text-sm md:tetx-base text-halftone">
               Change your profile picture.
             </span>
           </div>
@@ -63,7 +64,7 @@ export const AccountSettings = ({
             <ChangePhotoForm onSubmit={refetchUser} />
             <Popover>
               <PopoverTrigger className="group">
-                <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
+                <InfoIcon className="w-6 h-6 group-data-[state=closed]:text-halftone" />
               </PopoverTrigger>
               <PopoverContent align="start" className="max-w-sm w-full mr-2">
                 <div className="space-y-2 text-sm bg-card">

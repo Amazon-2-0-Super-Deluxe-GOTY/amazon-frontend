@@ -1,4 +1,3 @@
-import { ChevronRightIcon, HeartIcon, MinusIcon, PlusIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,7 +7,6 @@ import {
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MediaQueryCSS } from "../Shared/MediaQuery";
-import ClientOnlyPortal from "../Shared/ClientOnlyPortal";
 import { Sheet, SheetContent } from "../ui/sheet";
 import {
   Accordion,
@@ -16,15 +14,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { DeliveryContent } from "./OrderInfoContent/DeliveryContent";
 import { PaymentContent } from "./OrderInfoContent/PaymentContent";
 import { SecurityContent } from "./OrderInfoContent/SecurityContent";
-import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { useStorageCart } from "@/lib/storage";
 import { useCart, type Product } from "@/api/products";
 import { splitPrice } from "@/lib/products";
+import { ChevronRightIcon, MinusIcon, PlusIcon } from "../Shared/Icons";
 
 const infoElements = [
   {
@@ -185,15 +182,6 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         </CardFooter>
       </MediaQueryCSS>
 
-      <MobileQuickActions
-        count={count}
-        increment={increment}
-        decrement={decrement}
-        price={product.discountPercent ? product.discountPrice : product.price}
-        onAddToCard={onAddToCartClick}
-        onBuyNow={onBuyNowClick}
-      />
-
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent
           hideClose
@@ -210,7 +198,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
                   onNext: toNext,
                 }}
               />
-              <ScrollArea className="grow">
+              <ScrollArea className="grow" viewportClassName="p-0">
                 {infoElements[openedTabIndex].render()}
               </ScrollArea>
             </>
@@ -218,61 +206,6 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         </SheetContent>
       </Sheet>
     </Card>
-  );
-};
-
-const MobileQuickActions = ({
-  count,
-  increment,
-  decrement,
-  price,
-  onAddToCard,
-  onBuyNow,
-}: {
-  count: number;
-  increment: () => void;
-  decrement: () => void;
-  price: number;
-  onAddToCard: () => void;
-  onBuyNow: () => void;
-}) => {
-  const { whole, fraction } = splitPrice(price);
-
-  return (
-    <ClientOnlyPortal selector="body">
-      <MediaQueryCSS maxSize="md">
-        <Card className="bg-card fixed bottom-0 left-0 right-0 rounded-t-md z-10">
-          <CardHeader className="space-y-3 p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="text-2xl font-bold">
-                  ${whole}
-                  <sup>{fraction}</sup>
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button>
-                  <HeartIcon />
-                </button>
-                <Button variant={"secondary"} onClick={onAddToCard}>
-                  To cart
-                </Button>
-                <Button onClick={onBuyNow}>Buy</Button>
-              </div>
-            </div>
-            <hr className="border-black" />
-            <div className="flex justify-between items-center py-1">
-              <span className="text-base">Quantity</span>
-              <div className="flex items-center gap-4">
-                <MinusIcon className="w-4 cursor-pointer" onClick={decrement} />
-                <span className="text-sm select-none">{count}</span>
-                <PlusIcon className="w-4 cursor-pointer" onClick={increment} />
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
-      </MediaQueryCSS>
-    </ClientOnlyPortal>
   );
 };
 

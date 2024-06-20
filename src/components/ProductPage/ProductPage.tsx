@@ -132,7 +132,10 @@ export function ProductPage({ product }: { product: Product }) {
             </div>
           </div>
           <div className="mt-3 mb-6 lg:mt-8 lg:mb-0">
-            <h2 className="text-heading-3 font-semibold hidden lg:block mb-4">
+            <MediaQueryCSS maxSize="lg">
+              <Separator />
+            </MediaQueryCSS>
+            <h2 className="text-heading-3 font-semibold my-6 text-center lg:text-start lg:bt-0 lg:mb-4">
               About product
             </h2>
             <AboutProduct items={product.aboutProductItems} variant="list" />

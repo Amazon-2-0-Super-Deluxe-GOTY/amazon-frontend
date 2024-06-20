@@ -22,7 +22,6 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -31,7 +30,7 @@ import { useModal } from "@/components/Shared/Modal";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
 import { UploadPhotoListFormField } from "./UploadPhotoListFormFields";
-import { PlusIcon } from "../../Shared/Icons";
+import { PlusIcon, TrashIcon } from "../../Shared/Icons";
 
 const barcodeLenght = 13;
 const maxImages = 10;
@@ -561,7 +560,7 @@ export function CreateProductForm({
                   className="h-max p-3"
                   onClick={onRemoveProductDetail(i)}
                 >
-                  <Trash2Icon className="w-6 h-6" />
+                  <TrashIcon className="w-6 h-6" />
                 </Button>
               )}
             </fieldset>
@@ -637,7 +636,7 @@ export function CreateProductForm({
                 className="h-max p-3"
                 onClick={onRemoveAboutProduct(i)}
               >
-                <Trash2Icon className="w-6 h-6" />
+                <TrashIcon className="w-6 h-6" />
               </Button>
             </fieldset>
           ))}

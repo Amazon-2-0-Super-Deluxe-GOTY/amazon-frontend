@@ -2,12 +2,11 @@ import type { ProductShort } from "@/api/products";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import clsx from "clsx";
-import { FilePenLineIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useModal } from "../../Shared/Modal";
 import { ProductImageFullView } from "@/components/Product/ProductImageFullView";
-import { TrashIcon } from "@/components/Shared/Icons";
+import { EditIcon, TrashIcon } from "@/components/Shared/Icons";
 
 interface ProductAsideCardProps {
   product?: ProductShort;
@@ -94,7 +93,7 @@ export function ProductAsideCard({
                 className="w-full flex items-center gap-2 text-base"
                 disabled={isButtonsDisabled}
               >
-                <FilePenLineIcon className={"w-6 h-6"} />
+                <EditIcon className={"w-6 h-6"} />
                 Edit
               </Button>
             </Link>

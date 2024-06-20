@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
+import { ChevronLeftIcon, ChevronRightIcon } from "./Icons";
 
 const pageOffset = 2;
 
@@ -37,7 +37,7 @@ export const Pagination = ({
         disabled={!hasPrev}
         onClick={onPrev}
       >
-        <ChevronLeft className="w-6 h-6" />
+        <ChevronLeftIcon className="w-6 h-6" />
       </Button>
       {showFirstPage && (
         <>
@@ -78,7 +78,7 @@ export const Pagination = ({
         disabled={!hasNext}
         onClick={onNext}
       >
-        <ChevronRight className="w-6 h-6" />
+        <ChevronRightIcon className="w-6 h-6" />
       </Button>
     </div>
   );

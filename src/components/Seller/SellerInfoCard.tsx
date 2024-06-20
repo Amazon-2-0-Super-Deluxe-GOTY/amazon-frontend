@@ -1,4 +1,3 @@
-import { ChevronRightIcon, StarIcon, UserRoundIcon } from "lucide-react";
 import { Card } from "../ui/card";
 import { MediaQueryCSS } from "../Shared/MediaQuery";
 import { SellerInfo } from "./types";
@@ -13,6 +12,7 @@ import {
 } from "../ui/accordion";
 import { formatAboutSellerDate } from "@/lib/date";
 import { ScrollArea } from "../ui/scroll-area";
+import { ChevronRightIcon, StarFullIcon, UserIcon } from "../Shared/Icons";
 
 export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
   const sellerGrade = getSellerGrade(sellerInfo.byersRatingPercent);
@@ -21,7 +21,7 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
     <Card className="bg-gray-200 p-6 space-y-3">
       <div className="flex lg:flex-col justify-between lg:justify-start gap-3">
         <div className="flex items-center gap-3">
-          <UserRoundIcon className="w-8 h-8 lg:w-10 lg:h-10" />
+          <UserIcon className="w-8 h-8 lg:w-10 lg:h-10" />
           <div>
             <p className="text-base font-semibold">{sellerInfo.fullName}</p>
             <p className="text-sm">
@@ -66,7 +66,7 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
           <ScrollArea>
             <div className="space-y-4 lg:space-y-6 pt-2">
               <div className="flex items-center gap-3">
-                <UserRoundIcon className="w-10 h-10 lg:w-14 lg:h-14" />
+                <UserIcon className="w-10 h-10 lg:w-14 lg:h-14" />
                 <div>
                   <h3 className="text-lg lg:text-2xl font-semibold">
                     {sellerInfo.fullName}
@@ -92,7 +92,7 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
                       {sellerInfo.serviceRating.toFixed(1)}/
                       <span className="text-lg">5</span>
                     </span>
-                    <StarIcon className="fill-black" />
+                    <StarFullIcon className="fill-black" />
                   </p>
                   <p className="text-sm xl:text-base">customer service</p>
                 </div>
