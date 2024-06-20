@@ -27,11 +27,13 @@ export const OrderDetailsModal = ({
   code,
   status,
   products,
+  totalPrice,
   additionalInfo,
 } : {
   code: string;
   status: string;
-  products: { name:string, quantity:number, price:number }[];
+  products: { imageUrl:string, name:string, quantity:number, price:number }[];
+  totalPrice: number;
   additionalInfo: { name:string, adress:string, paymentType:string, dateDelivered:string }
 }) => {
   const isDesktop = useScreenSize({minSize:"md"});
@@ -39,6 +41,10 @@ export const OrderDetailsModal = ({
   const onClose = () => {
     setIsOpen(!isOpen);
   };
+
+  const priceParts = totalPrice.toFixed(2).split(".");
+  const whole = priceParts[0];
+  const fraction = priceParts[1];
 
   if(isDesktop)
   {
@@ -75,7 +81,7 @@ export const OrderDetailsModal = ({
                     <div>
                       {products.map((item, i) => {
                         return(
-                          <OrderDetailsProductCard key={i} name={item.name} quantity={item.quantity} price={item.price} />
+                          <OrderDetailsProductCard key={i} imageUrl={item.imageUrl} name={item.name} quantity={item.quantity} price={item.price} />
                         );
                       })}
                     </div>
@@ -85,8 +91,8 @@ export const OrderDetailsModal = ({
                     <Button variant={"secondary"} className="text-xl">How to cancel order?</Button>
                     <div className="flex justify-center items-center gap-4">
                       <span className="text-2xl font-medium">Total:</span>
-                      <span className="text-2xl font-medium">$ 999</span>
-                      <sup className="text-xl font-bold mt-3 -ml-3">00</sup>
+                      <span className="text-2xl font-medium">$ {whole}</span>
+                      <sup className="text-xl font-bold mt-3 -ml-3">{fraction}</sup>
                     </div>
                   </div>
                   <Separator />
@@ -153,7 +159,7 @@ export const OrderDetailsModal = ({
                   <div>
                     {products.map((item, i) => {
                       return(
-                        <OrderDetailsProductCard key={i} name={item.name} quantity={item.quantity} price={item.price} />
+                        <OrderDetailsProductCard key={i} imageUrl={item.imageUrl} name={item.name} quantity={item.quantity} price={item.price} />
                       );
                     })}
                   </div>
@@ -172,8 +178,8 @@ export const OrderDetailsModal = ({
                   </Popover>
                   <div className="flex justify-center items-center gap-4">
                     <span className="text-xl font-medium">Total:</span>
-                    <span className="text-xl font-medium">$ 999</span>
-                    <sup className="text-sm font-bold mt-2 -ml-3">00</sup>
+                    <span className="text-xl font-medium">$ {whole}</span>
+                    <sup className="text-sm font-bold mt-2 -ml-3">{fraction}</sup>
                   </div>
                 </div>
                 <Separator />

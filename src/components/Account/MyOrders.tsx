@@ -1,27 +1,20 @@
 "use client";
 import { Separator } from "../ui/separator";
-import { useState } from "react";
 import { MyOrderCard } from "./Cards/MyOrderCard";
-
-const orderItems = Array.from({ length: 9 }).map((_, index) => ({
-  code: index.toString(),
-  status: index%2===0 ? "Recived" : index%3===0 ? "Ready for pickup" : index%5===0 ? "Shipped" : index%7===0 ? "Cancelled" : "Ordered",
-  // cost: Math.floor(Math.random() * 200 + 1),
-  // count: Math.floor(Math.random() * 20 + 1),
-  cost: index+100,
-  count: index+1,
-  date: "24.05.2024",
-}));
+import { useOrders } from "@/api/orders";
 
 export const MyOrders = () => {
+  const orders = useOrders().orders.data;
+  if(!orders) return null;
+  const dateOfArrived = "14.07.2024";
   
   return (
     <div className="flex flex-col gap-3">
       <h1 className="text-2xl md:text-3xl">My orders</h1>
       <Separator />
       <div className="w-full md:py-6">
-        {orderItems.map((order, index) => (
-          <MyOrderCard key={index} code={order.code} status={order.status} cost={order.cost} count={order.count} dateOfArrived={order.date}  />
+        {orders?.map((order, index) => (
+          <MyOrderCard key={index} order={order} dateOfArrived={dateOfArrived} />
         ))}
       </div>
     </div>
