@@ -37,8 +37,16 @@ import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import clsx from "clsx";
 import { formatUserRegistrationDate } from "@/lib/date";
-import { UserRoles, getUsers } from "@/api/users";
-import { useQuery } from "@tanstack/react-query";
+import {
+  UserRoles,
+  deleteUsers,
+  getAdminUsers,
+  getUsers,
+  restoreUser,
+  switchUserRole,
+  useUser,
+} from "@/api/users";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import { useModal } from "@/components/Shared/Modal";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
@@ -56,7 +64,7 @@ export type Payment = {
 };
 
 const pageSize = 10;
-const delay = () => new Promise((res) => setTimeout(res, 1000));
+const delay = () => new Promise((res) => setTimeout(res, 100));
 
 const roles = ["all", "user", "admin"] as const;
 
@@ -76,23 +84,38 @@ export default function Page() {
   });
   const [defferedSearch] = useDebounce(searchQuery, 300);
   const { showModal } = useModal();
+  const { user } = useUser();
+  console.log(defferedSearch);
 
   const fetchUsers = useCallback(
     () =>
-      getUsers({
+      getAdminUsers({
         role: selectedRole,
         searchQuery: defferedSearch,
-        page,
+        pageIndex: page,
         pageSize,
       }),
     [selectedRole, defferedSearch, page]
   );
 
-  const { data } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ["users", selectedRole, defferedSearch, page],
     queryFn: fetchUsers,
+    refetchOnWindowFocus: false,
   });
-  const [dataOptimistic, setDataOptimistic] = useOptimistic(data?.data);
+  const switchRoleMutation = useMutation({
+    mutationFn: switchUserRole,
+  });
+  const deleteUsersMutation = useMutation({
+    mutationFn: deleteUsers,
+  });
+  const restoreUsersMutation = useMutation({
+    mutationFn: restoreUser,
+  });
+
+  const [dataOptimistic, setDataOptimistic] = useOptimistic(
+    usersQuery.data?.data?.filter((u) => u.id !== user?.id)
+  );
 
   const changeSelectedRole = (value: UserRoles) => {
     setSelectedRole(value);
@@ -114,8 +137,8 @@ export default function Page() {
       setDataOptimistic((current) =>
         current?.map((v) => (id === v.id ? { ...v, isAdmin: false } : v))
       );
-      // TODO: send api request
-      await delay();
+      await switchRoleMutation.mutateAsync({ userId: id });
+      await usersQuery.refetch();
     });
   };
   const handleMakeAdmin = (id: string) => {
@@ -123,8 +146,8 @@ export default function Page() {
       setDataOptimistic((current) =>
         current?.map((v) => (id === v.id ? { ...v, isAdmin: true } : v))
       );
-      // TODO: send api request
-      await delay();
+      await switchRoleMutation.mutateAsync({ userId: id });
+      await usersQuery.refetch();
     });
   };
 
@@ -146,8 +169,8 @@ export default function Page() {
               ids.includes(v.id) ? { ...v, isDeleted: true } : v
             )
           );
-          // TODO: send api request
-          await delay();
+          await deleteUsersMutation.mutateAsync({ usersIds: ids });
+          await usersQuery.refetch();
         });
       }
     });
@@ -159,8 +182,11 @@ export default function Page() {
           ids.includes(v.id) ? { ...v, isDeleted: false } : v
         )
       );
-      // TODO: send api request
-      await delay();
+      await Promise.allSettled([
+        ids.map((id) => restoreUsersMutation.mutateAsync({ userId: id })),
+      ])
+        .then(delay)
+        .then(() => usersQuery.refetch());
     });
   };
 
@@ -222,10 +248,10 @@ export default function Page() {
         cell: ({ row }) => (
           <div
             className={clsx(
-              "capitalize px-3 py-2 rounded-lg w-max",
+              "capitalize px-3 py-1 rounded-lg w-max text-sm",
               row.original.isDeleted
-                ? "bg-destructive text-destructive-foreground"
-                : "bg-secondary text-secondary-foreground"
+                ? "bg-destructive text-light"
+                : "bg-primary text-primary-foreground"
             )}
           >
             {row.original.isDeleted ? "Deleted" : "Active"}
@@ -286,7 +312,7 @@ export default function Page() {
           return showMore ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button variant="tertiary" className="h-8 w-8 p-0">
                   <span className="sr-only">Open quick actions</span>
                   <MoreVertical className="h-4 w-4" />
                 </Button>
@@ -316,7 +342,7 @@ export default function Page() {
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button variant="tertiary" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -382,13 +408,15 @@ export default function Page() {
           </div>
         }
       />
-      {!!data && data.data.length > 0 && (
-        <Pagination
-          page={page}
-          pagesCount={data.count.pageCount}
-          setPage={changePage}
-        />
-      )}
+      {!!usersQuery?.data &&
+        (dataOptimistic?.length ?? 0) > 0 &&
+        usersQuery.data.count.pagesCount > 1 && (
+          <Pagination
+            page={page}
+            pagesCount={usersQuery.data.count.pagesCount}
+            setPage={changePage}
+          />
+        )}
     </div>
   );
 }
@@ -455,7 +483,7 @@ const TableHeader = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="outline"
+              variant="secondary"
               className="ml-auto w-[200px] justify-between"
             >
               Columns <ChevronDown className="ml-2 h-4 w-4" />

@@ -7,21 +7,22 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "../ui/carousel";
-import placeholder from "@/../public/Icons/placeholder.svg";
-import Image from "next/image";
-import clsx from "clsx";
 import { ProductImageFullView } from "../Product/ProductImageFullView";
 import { useModal } from "../Shared/Modal";
+import Image from "next/image";
+import discountShape from "@/../public/Icons/discount-shape.svg";
 
-export const ImagesBlock = () => {
+export const ProductImagesBlock = ({
+  images,
+  discountPercent,
+}: {
+  images: { id: string; imageUrl: string }[];
+  discountPercent: number | null;
+}) => {
   const [mainCarouselApi, setMainCarouselApi] = React.useState<CarouselApi>();
   const [previewCarouselApi, setPreviewCarouselApi] =
     React.useState<CarouselApi>();
   const [currentImageIndex, setCurrentImageIndex] = React.useState<number>(0);
-  const images = React.useMemo(
-    () => Array.from({ length: 10 }).map(() => placeholder),
-    []
-  );
   const { showModal } = useModal();
 
   React.useEffect(() => {
@@ -49,7 +50,7 @@ export const ImagesBlock = () => {
     showModal({
       component: ProductImageFullView,
       props: {
-        images,
+        images: images.map((i) => i.imageUrl),
         startIndex: currentImageIndex,
       },
     });
@@ -66,12 +67,16 @@ export const ImagesBlock = () => {
         setApi={setMainCarouselApi}
       >
         <CarouselContent>
-          {images.map((_, index) => {
+          {images.map((image) => {
             return (
-              <CarouselItem key={index}>
+              <CarouselItem
+                key={image.id}
+                className="w-full aspect-square relative"
+              >
                 <Image
-                  src={placeholder}
-                  alt="Placeholder"
+                  src={image.imageUrl}
+                  fill
+                  alt="Product"
                   className="object-cover rounded-lg"
                   onClick={openModal}
                 />
@@ -81,11 +86,23 @@ export const ImagesBlock = () => {
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />
-        <span className="w-1/5 absolute top-[4%] lg:top-8 left-0 pl-[3%] py-2 bg-gray-50 rounded-e-full text-base lg:text-2xl">
-          -24%
-        </span>
+        {discountPercent && (
+          <div className="absolute top-4 right-4 w-20 h-12 md:w-24 md:h-16 xl:w-32 xl:h-20">
+            <Image
+              src={discountShape}
+              alt="Discount"
+              fill
+              style={{
+                filter: "drop-shadow(0px 4px 8px hsla(0, 0%, 3%, 0.25))",
+              }}
+            />
+            <span className="absolute left-[18%] top-[20%] font-bold text-sm md:text-lg lg:text-2xl">
+              -{discountPercent}%
+            </span>
+          </div>
+        )}
       </Carousel>
-      <div className="mt-2 lg:mt-8">
+      <div className="mt-2 lg:mt-4">
         <Carousel
           className="w-full"
           opts={{
@@ -95,23 +112,24 @@ export const ImagesBlock = () => {
           setApi={setPreviewCarouselApi}
         >
           <CarouselContent>
-            {images.map((_, index) => {
+            {images.map((image, index) => {
               return (
                 <CarouselItem
-                  key={index}
-                  className={
-                    "basis-[unset] pl-2 first:pl-4 lg:pl-6 md:pl-4 lg:first:pl-4"
-                  }
+                  key={image.id}
+                  className={"basis-[unset] pl-2 md:pl-3"}
                 >
-                  <Image
-                    src={placeholder}
-                    alt="Placeholder"
-                    className={clsx(
-                      "w-14 h-14 lg:w-20 lg:h-20 object-cover rounded-lg",
-                      currentImageIndex !== index && "brightness-75"
+                  <div className="w-14 h-14 lg:w-20 lg:h-20 relative cursor-pointer z-0">
+                    <Image
+                      src={image.imageUrl}
+                      alt="Product"
+                      fill
+                      className={"object-cover rounded-lg"}
+                      onClick={onPreviewImageClick(index)}
+                    />
+                    {currentImageIndex !== index && "brightness-30" && (
+                      <div className="absolute inset-0 bg-black/35 rounded-lg pointer-events-none" />
                     )}
-                    onClick={onPreviewImageClick(index)}
-                  />
+                  </div>
                 </CarouselItem>
               );
             })}

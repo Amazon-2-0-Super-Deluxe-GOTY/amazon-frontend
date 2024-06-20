@@ -9,10 +9,10 @@ import {
   useState,
   useTransition,
 } from "react";
-import { getCategories, useCategories, type Category } from "@/api/categories";
+import { useAdminCategories, type Category } from "@/api/categories";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, PlusIcon, StarIcon } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductAsideCard } from "@/components/Admin/Product/ProductAsideCart";
 import placeholder from "@/../public/Icons/placeholder.svg";
@@ -20,7 +20,6 @@ import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { splitPrice } from "@/lib/products";
 
-import { TreeNodeType, createTreeArray } from "@/lib/checkboxTree";
 import { useSearchParamsTools } from "@/lib/router";
 import { Pagination } from "@/components/Shared/Pagination";
 import { useDebounce } from "use-debounce";
@@ -28,6 +27,7 @@ import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
 import Link from "next/link";
 import { useModal } from "@/components/Shared/Modal";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
+import { PlusIcon, StarFullIcon } from "@/components/Shared/Icons";
 
 export default function Page() {
   const searchParams = useSearchParamsTools();
@@ -64,7 +64,7 @@ export default function Page() {
     return { data: [] as ProductShort[], count: { pagesCount: 0 } };
   }, [selectedCategory, page, defferedSearch]);
 
-  const categoriesQuery = useCategories();
+  const categoriesQuery = useAdminCategories();
   const productsQuery = useQuery({
     queryKey: ["productsShort", selectedCategory?.id, page, defferedSearch],
     queryFn: fetchProducts,
@@ -76,7 +76,7 @@ export default function Page() {
   );
 
   function onSelectCategory(id: number) {
-    const value = categoriesQuery.data?.data.find((c) => c.id === id);
+    const value = categoriesQuery.data?.find((c) => c.id === id);
     value && setSelectedCategory(value);
   }
 
@@ -124,11 +124,13 @@ export default function Page() {
     <div className="flex items-center gap-4 w-full">
       <div className="flex items-center gap-3 basis-1/3">
         <h2 className="font-medium">Category</h2>
-        <CategorySelect
-          categories={categoriesQuery.data?.data}
-          value={selectedCategory?.id}
-          onValueChange={onSelectCategory}
-        />
+        <div className="min-w-72">
+          <CategorySelect
+            categories={categoriesQuery.data}
+            value={selectedCategory?.id}
+            onValueChange={onSelectCategory}
+          />
+        </div>
       </div>
       <Input
         type="text"
@@ -208,7 +210,7 @@ export default function Page() {
         accessorKey: "generalRate",
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
-            <StarIcon className="fill-black w-6 h-6" />
+            <StarFullIcon className="w-6 h-6" />
             <span className="text-xl">
               {parseFloat(row.getValue("generalRate")).toFixed(1)}
             </span>
@@ -220,23 +222,22 @@ export default function Page() {
         accessorKey: "price",
         cell: ({ row }) => {
           const product = row.original;
-          const price = splitPrice(product.price);
-          const discountPrice = product.discountPrice
-            ? splitPrice(product.discountPrice)
-            : undefined;
-          const firstPrice = discountPrice ?? price;
-          const secondPrice = discountPrice ? price : undefined;
+          const displayedPrice = product.discountPercent
+            ? product.discountPrice
+            : product.price;
+          const displayedPriceParts = splitPrice(displayedPrice);
+          const normalPriceParts = splitPrice(product.price);
 
           return (
             <div className="flex items-center gap-3">
               <p className="text-xl">
-                ${firstPrice.whole}
-                <sup>{firstPrice.fraction}</sup>
+                ${displayedPriceParts.whole}
+                <sup>{displayedPriceParts.fraction}</sup>
               </p>
-              {!!secondPrice && (
+              {!!product.discountPercent && (
                 <p className="text-base line-through text-gray-500">
-                  ${secondPrice.whole}
-                  <sup>{secondPrice.fraction}</sup>
+                  ${normalPriceParts.whole}
+                  <sup>{normalPriceParts.fraction}</sup>
                 </p>
               )}
             </div>
@@ -257,13 +258,9 @@ export default function Page() {
           return (
             <div className="min-w-20 flex justify-end items-center">
               {isDelete ? (
-                <Button
-                  variant={"link"}
-                  className="text-destructive"
-                  onClick={onDelete}
-                >
+                <button className="text-destructive" onClick={onDelete}>
                   Delete
-                </Button>
+                </button>
               ) : (
                 <Link
                   href={`/products/create?categoryId=${selectedCategory?.id}`}
@@ -306,10 +303,13 @@ export default function Page() {
                     <p>Product not found</p>
                   </div>
                 ) : (
-                  <button className="p-8 max-w-sm w-full border rounded-lg flex flex-col gap-3 items-center">
-                    <PlusIcon className="w-12 h-12" />
+                  <Link
+                    href={`/products/create?categoryId=${selectedCategory?.id}`}
+                    className="p-8 max-w-sm w-full border border-secondary rounded-lg flex flex-col gap-3 items-center"
+                  >
+                    <PlusIcon className="w-12 h-12 stroke-secondary" />
                     <span className="text-xl font-medium">Create product</span>
-                  </button>
+                  </Link>
                 )}
               </div>
             }
@@ -327,13 +327,15 @@ export default function Page() {
             </div>
           </div>
         )}
-        {!!productsQuery.data && productsQuery.data.data.length > 0 && (
-          <Pagination
-            page={page}
-            pagesCount={productsQuery.data.count.pagesCount}
-            setPage={changePage}
-          />
-        )}
+        {!!productsQuery.data &&
+          productsQuery.data.data.length > 0 &&
+          productsQuery.data.count.pagesCount > 1 && (
+            <Pagination
+              page={page}
+              pagesCount={productsQuery.data.count.pagesCount}
+              setPage={changePage}
+            />
+          )}
       </div>
       <ProductAsideCard
         product={selectedProduct}

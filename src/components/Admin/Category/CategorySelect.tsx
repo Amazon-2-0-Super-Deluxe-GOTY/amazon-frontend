@@ -26,16 +26,20 @@ export function CategorySelect({
   disallowRoots,
 }: {
   categories?: Category[];
-  value?: number;
+  value?: number | null;
   onValueChange: (value: number) => void;
   disallowRoots?: boolean;
 }) {
   const treeRoots = useMemo(
     () =>
-      createTreeArray(categories ?? [], {
-        getId: (value) => value.id,
-        getParentId: (value) => value.parentId,
-      }),
+      createTreeArray(
+        categories ?? [],
+        {
+          getId: (value) => value.id,
+          getParentId: (value) => value.parentId,
+        },
+        null
+      ),
     [categories]
   );
   const selectedCategory = categories?.find((c) => c.id === value);
@@ -103,7 +107,7 @@ function SelectItemRecursive({
     >
       <AccordionItem value="item-1" className="border-none">
         <div
-          className="flex hover:bg-muted has-[:focus]:bg-muted has-[[data-state=checked]]:bg-muted"
+          className="flex hover:bg-accent has-[:focus]:bg-accent has-[[data-state=checked]]:bg-accent"
           style={{ paddingLeft: `${getOffset(index)}px` }}
         >
           <SelectItem

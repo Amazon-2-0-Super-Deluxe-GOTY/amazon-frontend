@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import { useModal } from "../Shared/Modal";
 import type { SignInUpModalVariants } from "./types";
 import { AlertDialog } from "../Admin/AlertDialog";
+import clsx from "clsx";
 
 export const SignInUpButtons = ({
   variant,
@@ -40,16 +41,16 @@ export const SignInUpButtons = ({
 
   return (
     <>
-      <Button
-        variant={"default"}
-        className="h-11 px-8 text-base lg:text-xl"
-        onClick={onOpenSignUpModal}
-      >
+      <Button variant={"primary"} onClick={onOpenSignUpModal}>
         Sign up
       </Button>
       <Button
-        variant={variant === "banner" ? "outline" : "secondary"}
-        className="h-11 px-8 text-base lg:text-xl"
+        variant={variant === "banner" ? "secondary" : "secondary"}
+        className={
+          variant === "banner"
+            ? "lg:border-light lg:text-light lg:active:bg-transparent"
+            : undefined
+        }
         onClick={onOpenLogInModal}
       >
         Log in
@@ -92,7 +93,7 @@ export const AuthModal = ({
         text: "If you close the dialog now, your changes will not be saved",
         buttonCloseText: "Back",
         buttonConfirmText: "Close",
-        variant: "default",
+        variant: "primary",
       },
     }).then((value) => value.action === "CONFIRM" && closeModal());
   };

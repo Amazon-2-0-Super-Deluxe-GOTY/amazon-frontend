@@ -14,18 +14,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import {
-  HelpCircleIcon,
-  LogOutIcon,
-  SettingsIcon,
-  ShoppingBagIcon,
-} from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { SignInUpButtons } from "../SignInUpModal/SignInUpModals";
-import type { User } from "@/api/types";
 import { logOut, useUser } from "@/api/users";
 import { useAuthStore } from "@/lib/storage";
+import { useRouter } from "next/navigation";
+import { CategoryIcon, ExitIcon, FAQIcon, SettingsIcon } from "./Icons";
 
 export const UserSidebar = ({
   isOpen,
@@ -36,7 +31,8 @@ export const UserSidebar = ({
   closeSidebar: () => void;
   categories: { icon: React.ReactNode; title: string; url: string }[];
 }) => {
-  const { user, refetch } = useUser();
+  const router = useRouter();
+  const { user } = useUser();
   const isLoggedIn = !!user;
   const fullName = `${user?.firstName} ${user?.lastName}`;
   const clearToken = useAuthStore((state) => state.clearToken);
@@ -51,7 +47,9 @@ export const UserSidebar = ({
   };
 
   const onLogOut = () => {
-    logOut().then(clearToken);
+    logOut()
+      .then(clearToken)
+      .then(() => router.push("/"));
   };
 
   return (
@@ -76,7 +74,7 @@ export const UserSidebar = ({
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1" className="border-none">
             <AccordionTrigger className="py-3 lg:data-[state=open]:pb-4">
-              <SidebarItem icon={<ShoppingBagIcon />} text="Product catalog" />
+              <SidebarItem icon={<CategoryIcon />} text="Product catalog" />
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-3 lg:gap-4">
               {categories.map((item) => (
@@ -89,26 +87,26 @@ export const UserSidebar = ({
                   <SidebarItem icon={item.icon} text={item.title} />
                 </Link>
               ))}
-              <Button variant={"outline"}>See all</Button>
+              <Button variant={"secondary"}>See all</Button>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
         <Separator />
         <div className="flex flex-col gap-3 lg;gap-4">
           {isLoggedIn && (
-            <Link href={"/account?tab=settings-open"} >
+            <Link href={"/account?tab=settings-open"}>
               <SidebarItem icon={<SettingsIcon />} text="Settings" />
             </Link>
           )}
           <Link href={"/help"}>
-            <SidebarItem icon={<HelpCircleIcon />} text="Help & FAQ" />
+            <SidebarItem icon={<FAQIcon />} text="Help & FAQ" />
           </Link>
         </div>
         {isLoggedIn && (
           <>
             <Separator />
             <button onClick={onLogOut}>
-              <SidebarItem icon={<LogOutIcon />} text="Log out" />
+              <SidebarItem icon={<ExitIcon />} text="Log out" />
             </button>
           </>
         )}

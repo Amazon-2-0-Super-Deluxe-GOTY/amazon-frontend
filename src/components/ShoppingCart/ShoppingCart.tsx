@@ -14,7 +14,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { ShoppingCartIcon, XIcon } from "lucide-react";
 import { SuggestionsProducts } from "./SuggestionsProducts";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
@@ -22,50 +21,102 @@ import { CartProducts } from "./CartProducts";
 import { useScreenSize } from "@/lib/media";
 import { useStorageCart } from "@/lib/storage";
 import { Separator } from "../ui/separator";
+import { ShoppingCartIcon, XIcon } from "../Shared/Icons";
 import { useMemo } from "react";
+import {
+  type Cart,
+  type ProductShort,
+  getProducts,
+  useCart,
+} from "@/api/products";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/api/users";
+import { splitPrice } from "@/lib/products";
+import { useRouter } from "next/navigation";
 
 export const ShoppingCart = () => {
   const isDesktop = useScreenSize({ minSize: "md" });
+  const router = useRouter();
 
-  const suggestionsProducts = Array.from({ length: 12 }).map((_, index) => ({
-    title: `Product ${index + 1}`,
-    price: 39.99,
-  }));
+  const { user } = useUser();
+  const suggestionsProductsQuery = useQuery({
+    queryKey: ["suggestionsProducts"],
+    queryFn: () => getProducts({ pageSize: 20, page: 1, orderBy: "rate" }),
+    select(data) {
+      return data.status === 200 ? data.data : [];
+    },
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+  });
+  const suggestionsProducts = suggestionsProductsQuery.data ?? [];
+
+  const { cart } = useCart();
+  const { closeModal } = useStorageCart();
+
+  const isAuthenticated = !!user;
+
+  function onCheckout() {
+    isAuthenticated &&
+      !!cart.data?.cartItems.length &&
+      router.push("/checkout");
+  }
 
   return (
     <>
       {isDesktop ? (
-        <ShoppingCartDesktop suggestionsProducts={suggestionsProducts} />
+        <ShoppingCartDesktop
+          suggestionsProducts={suggestionsProducts}
+          cart={cart.data}
+          isAuthenticated={isAuthenticated}
+          onContinue={closeModal}
+          onCheckout={onCheckout}
+        />
       ) : (
-        <ShoppingCartMobile suggestionsProducts={suggestionsProducts} />
+        <ShoppingCartMobile
+          suggestionsProducts={suggestionsProducts}
+          cart={cart.data}
+          isAuthenticated={isAuthenticated}
+          onContinue={closeModal}
+          onCheckout={onCheckout}
+        />
       )}
     </>
   );
 };
 
+interface ShoppingCartProps {
+  cart?: Cart;
+  suggestionsProducts: ProductShort[];
+  isAuthenticated: boolean;
+  onContinue: () => void;
+  onCheckout: () => void;
+}
+
 const ShoppingCartMobile = ({
   suggestionsProducts,
-}: {
-  suggestionsProducts: { title: string; price: number }[];
-}) => {
-  const { products, isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  cart,
+  isAuthenticated,
+  onContinue,
+  onCheckout,
+}: ShoppingCartProps) => {
+  const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const cartItems = useMemo(() => cart?.cartItems ?? [], [cart?.cartItems]);
   const productsCount = useMemo(
-    () => products.reduce((prev, current) => prev + current.quantity, 0),
-    [products]
+    () => cartItems.reduce((prev, current) => prev + current.quantity, 0),
+    [cartItems]
   );
-  const isAuthorized = false;
 
   return (
     <Drawer open={isOpenCartModal} onOpenChange={setIsOpenCartModal}>
       <DrawerTrigger>
         <ShoppingCartIconWithBadge productsCount={productsCount} />
       </DrawerTrigger>
-      <DrawerContent className="h-full max-h-[95%]">
+      <DrawerContent className="h-full max-h-[95%] bg-card">
         <DrawerHeader className="pt-2">
           <DrawerTitle>
             <div className="flex justify-between items-center pb-6">
               <div className="flex justify-start items-center gap-4">
-                <ShoppingCartIcon className="text-gray-700 w-5 h-5" />
+                <ShoppingCartIcon className="w-5 h-5" />
                 <span className="text-xl">Shopping cart</span>
               </div>
               <DrawerClose className="flex items-center w-4 h-4 mr-4">
@@ -79,8 +130,8 @@ const ShoppingCartMobile = ({
           <div>
             <div className="w-full h-full flex justify-center items-center">
               {(() => {
-                const cartState = !isAuthorized
-                  ? products.length > 0
+                const cartState = isAuthenticated
+                  ? cartItems.length > 0
                     ? "products"
                     : "empty"
                   : "not-authorized";
@@ -114,11 +165,14 @@ const ShoppingCartMobile = ({
                       </div>
                     );
                   case "products":
+                    const priceParts = cart
+                      ? splitPrice(cart.totalPrice)
+                      : { whole: 0, fraction: 0 };
                     return (
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts />
+                            <CartProducts cartItems={cart?.cartItems ?? []} />
                           </div>
                         </div>
                         <Separator />
@@ -126,20 +180,28 @@ const ShoppingCartMobile = ({
                           <div className="flex justify-between items-center gap-1 mb-[6px]">
                             <span className="text-xl font-medium">Total:</span>
                             <div>
-                              <span className="text-xl font-medium">$ 999</span>
-                              <sup className="text-sm font-bold mt-3">00</sup>
+                              <span className="text-xl font-medium">
+                                ${priceParts.whole}
+                              </span>
+                              <sup className="text-sm font-bold mt-3">
+                                ${priceParts.fraction}
+                              </sup>
                             </div>
                           </div>
                           <div className="w-full flex justify-between items-center gap-1">
                             <Button
                               variant={"secondary"}
                               className="text-base max-sm:text-sm max-sm:px-3"
+                              onClick={onContinue}
                             >
                               Continue shopping
                             </Button>
                             <Button
-                              variant={"default"}
-                              className="text-base max-sm:text-sm max-sm:px-3"
+                              className="text-base max1-sm:text-sm max-sm:px-3"
+                              onClick={onCheckout}
+                              disabled={
+                                !isAuthenticated || !cart?.cartItems.length
+                              }
                             >
                               Checkout
                             </Button>
@@ -155,7 +217,7 @@ const ShoppingCartMobile = ({
               })()}
             </div>
             <div className="w-full h-full">
-              {products.length > 0 ? (
+              {cartItems.length > 0 ? (
                 <div className="font-semibold text-center text-xl mx-4 mt-3">
                   You might also like
                 </div>
@@ -182,15 +244,17 @@ const ShoppingCartMobile = ({
 
 const ShoppingCartDesktop = ({
   suggestionsProducts,
-}: {
-  suggestionsProducts: { title: string; price: number }[];
-}) => {
-  const { products, isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  cart,
+  isAuthenticated,
+  onContinue,
+  onCheckout,
+}: ShoppingCartProps) => {
+  const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
+  const cartItems = useMemo(() => cart?.cartItems ?? [], [cart?.cartItems]);
   const productsCount = useMemo(
-    () => products.reduce((prev, current) => prev + current.quantity, 0),
-    [products]
+    () => cartItems.reduce((prev, current) => prev + current.quantity, 0),
+    [cartItems]
   );
-  const isAuthorized = false;
 
   return (
     <Dialog open={isOpenCartModal} onOpenChange={setIsOpenCartModal}>
@@ -199,13 +263,13 @@ const ShoppingCartDesktop = ({
       </DialogTrigger>
       <DialogContent
         hideClose
-        className="max-w-7xl max-h-[750px] w-full h-full p-6 pr-3"
+        className="max-w-7xl max-h-[750px] w-full h-full p-6 pr-3 bg-card"
       >
         <div className="pr-3">
           <DialogTitle>
             <div className="flex justify-between items-center pb-6">
               <div className="flex gap-4">
-                <ShoppingCartIcon className="text-gray-700 w-8 h-8" />
+                <ShoppingCartIcon className="w-8 h-8" />
                 <span className="text-2xl">Shopping cart</span>
               </div>
               <DialogClose className="w-4 h-4 flex justify-center items-center">
@@ -219,8 +283,8 @@ const ShoppingCartDesktop = ({
           <div>
             <div className="w-full h-full flex justify-center items-center">
               {(() => {
-                const cartState = !isAuthorized
-                  ? products.length > 0
+                const cartState = isAuthenticated
+                  ? cartItems.length > 0
                     ? "products"
                     : "empty"
                   : "not-authorized";
@@ -254,25 +318,40 @@ const ShoppingCartDesktop = ({
                       </div>
                     );
                   case "products":
+                    const priceParts = cart
+                      ? splitPrice(cart.totalPrice)
+                      : { whole: 0, fraction: 0 };
                     return (
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts />
+                            <CartProducts cartItems={cart?.cartItems ?? []} />
                           </div>
                         </div>
                         <Separator />
                         <div className="flex justify-between py-6">
-                          <Button variant={"secondary"} className="text-xl">
+                          <Button
+                            variant={"secondary"}
+                            className="text-xl"
+                            onClick={onContinue}
+                          >
                             Continue shopping
                           </Button>
                           <div className="flex justify-center items-center gap-4">
                             <span className="text-2xl font-medium">Total:</span>
-                            <span className="text-2xl font-medium">$ 999</span>
+                            <span className="text-2xl font-medium">
+                              ${priceParts.whole}
+                            </span>
                             <sup className="text-xl font-bold mt-3 -ml-3">
-                              00
+                              {priceParts.fraction}
                             </sup>
-                            <Button variant={"default"} className="text-xl">
+                            <Button
+                              className="text-xl"
+                              onClick={onCheckout}
+                              disabled={
+                                !isAuthenticated || !cart?.cartItems.length
+                              }
+                            >
                               Checkout
                             </Button>
                           </div>
@@ -288,7 +367,7 @@ const ShoppingCartDesktop = ({
             </div>
           </div>
           <div className=" mt-6">
-            {products.length > 0 ? (
+            {cartItems.length > 0 ? (
               <span className="font-medium text-2xl">You might also like</span>
             ) : (
               <>
@@ -314,10 +393,10 @@ const ShoppingCartIconWithBadge = ({
   productsCount: number;
 }) => {
   return (
-    <div className="relative">
-      <ShoppingCartIcon className="text-gray-700 w-6 h-6" />
+    <div className="relative p-2">
+      <ShoppingCartIcon className="w-8 h-8 stroke-3" />
       {productsCount > 0 && (
-        <span className="bg-primary text-primary-foreground text-xs w-5 h-5 inline-flex justify-center items-center rounded-full absolute -top-2.5 -right-2.5">
+        <span className="bg-primary text-primary-foreground text-xs w-5 h-5 inline-flex justify-center items-center rounded-full absolute -top-0.5 -right-0.5">
           {productsCount}
         </span>
       )}

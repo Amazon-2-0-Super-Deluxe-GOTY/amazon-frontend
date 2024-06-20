@@ -3,13 +3,13 @@ import { Separator } from "@/components/ui/separator";
 import { CategoryTreeNode } from "./CategoryTreeNode";
 import type { CategoryTreeNodeType, CheckedState } from "./types";
 import type { Category } from "@/api/categories";
-import { PlusIcon } from "lucide-react";
 import { useMemo } from "react";
 import { type TreeNodeType, treeToArray } from "@/lib/checkboxTree";
 import { Button } from "@/components/ui/button";
 import { AlertDialog } from "../AlertDialog";
 import clsx from "clsx";
 import { useModal } from "../../Shared/Modal";
+import { PlusIcon } from "@/components/Shared/Icons";
 
 export const CategoryTree = ({
   root,
@@ -40,7 +40,7 @@ export const CategoryTree = ({
       component: AlertDialog,
       props: {
         title: "Are you sure?",
-        text: "Deleting subcategories means losing both the categories and their products.",
+        text: "Removing the selected categories you will not be able to recover; products will be deactivated.",
       },
     }).then(({ action }) => action === "CONFIRM" && onDelete(checkedNodes));
   };
@@ -52,7 +52,7 @@ export const CategoryTree = ({
         <div
           className={clsx(
             "flex justify-between items-center px-4 py-2",
-            isSelected(root.value.id) && "bg-gray-200 rounded-lg"
+            isSelected(root.value.id) && "bg-secondary-light/50 rounded-lg"
           )}
         >
           <div className="flex items-center gap-4">
@@ -69,13 +69,9 @@ export const CategoryTree = ({
             </h2>
           </div>
           {checkedNodes.length > 0 ? (
-            <Button
-              variant={"link"}
-              className="py-0 h-max text-lg text-red-600"
-              onClick={handleDelete}
-            >
+            <button className="text-lg text-destructive" onClick={handleDelete}>
               Delete
-            </Button>
+            </button>
           ) : (
             <button onClick={() => onCreateClick(root.value.id)}>
               <PlusIcon className="w-6 h-6" />

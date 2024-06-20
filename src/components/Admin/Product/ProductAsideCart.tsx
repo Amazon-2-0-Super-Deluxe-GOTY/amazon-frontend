@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useModal } from "../../Shared/Modal";
 import { ProductImageFullView } from "@/components/Product/ProductImageFullView";
+import { TrashIcon } from "@/components/Shared/Icons";
 
 interface ProductAsideCardProps {
   product?: ProductShort;
@@ -45,7 +46,7 @@ export function ProductAsideCard({
   };
 
   return (
-    <aside className="lg:basis-1/3 grow bg-gray-200 rounded-lg sticky top-4 max-h-[85vh]">
+    <aside className="lg:basis-1/3 grow bg-card rounded-lg sticky top-4 max-h-[85vh]">
       {!!product ? (
         <div className="flex flex-col gap-3.5 h-full p-6">
           <div className="grid grid-cols-3 grid-rows-4 gap-2 h-1/2">
@@ -69,7 +70,7 @@ export function ProductAsideCard({
             ))}
             {isMoreImages && (
               <button
-                className="col-start-3 row-start-4 w-full h-full bg-black/55 flex justify-center items-center text-white text-lg"
+                className="col-start-3 row-start-4 w-full h-full bg-black/55 flex justify-center items-center text-white text-lg z-10"
                 onClick={handlePreview(maxImages - 1)}
               >
                 +{imagesLeft}
@@ -93,23 +94,24 @@ export function ProductAsideCard({
                 className="w-full flex items-center gap-2 text-base"
                 disabled={isButtonsDisabled}
               >
-                <FilePenLineIcon className={"w-5 h-5"} />
+                <FilePenLineIcon className={"w-6 h-6"} />
                 Edit
               </Button>
             </Link>
             <Button
+              variant={"destructive"}
               className="w-full flex items-center gap-2 text-base"
               onClick={handleDelete}
               disabled={isButtonsDisabled}
             >
-              <Trash2Icon className={"w-5 h-5"} />
+              <TrashIcon className={"w-6 h-6"} />
               Delete
             </Button>
           </div>
         </div>
       ) : (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
-          <p className="px-6 py-3 rounded-sm bg-gray-100 w-max">
+          <p className="px-6 py-3 rounded-sm bg-secondary-light w-max text-lg">
             Select a product to see its information
           </p>
         </div>

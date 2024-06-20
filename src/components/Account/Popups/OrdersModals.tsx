@@ -21,6 +21,7 @@ import { useState } from "react";
 import { OrderDetailsProductCard } from "../Cards/OrderDetailsProductCard";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useScreenSize } from "@/lib/media";
+import { buttonVariants } from "@/components/ui/button";
   
 export const OrderDetailsModal = ({
   code,
@@ -43,7 +44,7 @@ export const OrderDetailsModal = ({
   {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 font-semibold">
+        <DialogTrigger className={cn(buttonVariants({ variant:"secondary", size:"default", className:"h-10 px-4 py-2 font-semibold" }))}>
           Details
         </DialogTrigger>
         <DialogContent hideClose className="max-w-7xl max-h-[750px] w-full p-6 pr-3 flex flex-col gap-4">
@@ -121,7 +122,7 @@ export const OrderDetailsModal = ({
 
   return (
     <Drawer>
-      <DrawerTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 font-semibold">
+      <DrawerTrigger className={cn(buttonVariants({ variant:"secondary", size:"default", className:"h-10 px-4 py-2 font-semibold" }))}>
         Details
       </DrawerTrigger>
       <DrawerContent className="max-h-[750px] w-full p-4 pr-1 flex flex-col gap-3">
@@ -183,19 +184,19 @@ export const OrderDetailsModal = ({
               <div className="w-full h-full">
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Recipient&apos;s name</span>
-                  <span className="text-base font-light text-right">{additionalInfo.name}</span>
+                  <span className="text-base text-right">{additionalInfo.name}</span>
                 </div>
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Adress</span>
-                  <span className="text-base font-light text-right">{additionalInfo.adress}</span>
+                  <span className="text-base text-right">{additionalInfo.adress}</span>
                 </div>
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Payment type</span>
-                  <span className="text-base font-light text-right">{additionalInfo.paymentType}</span>
+                  <span className="text-base text-right">{additionalInfo.paymentType}</span>
                 </div>
                 <div className="w-full flex justify-between items-start gap-3">
                   <span className="text-base font-medium">Delivered on</span>
-                  <span className="text-base font-light text-right">{additionalInfo.dateDelivered}</span>
+                  <span className="text-base text-right">{additionalInfo.dateDelivered}</span>
                 </div>
               </div>
             </div>

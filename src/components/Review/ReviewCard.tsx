@@ -1,29 +1,40 @@
 import React, { useState } from "react";
-import type { Review } from "./types";
-import { StarIcon } from "lucide-react";
+import type { Review } from "@/api/review";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { formatReviewDate } from "@/lib/date";
 import { Button } from "../ui/button";
-import clsx from "clsx";
 import { textAvatar } from "@/lib/utils";
 import Image from "next/image";
 import { ReviewTags } from "./ReviewTags";
 import { getRatesCountString } from "@/lib/review";
 import { useQuery } from "@tanstack/react-query";
 import { getReviewTranslation } from "@/api/review";
+import { MeatballMenuIcon, StarEmptyIcon, StarFullIcon } from "../Shared/Icons";
+import { Card } from "../ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export const ReviewCard = ({
   review,
   onClick,
   onImageClick,
+  onLike,
 }: {
   review: Review;
-  onClick?: () => void;
-  onImageClick?: (imageIndex: number) => void;
+  onClick: () => void;
+  onImageClick: (imageIndex: number) => void;
+  onLike: () => void;
 }) => {
-  const [isInUserLanguage, setIsInUserLanguage] = useState(true);
-  const [isTranslated, setIsTrenslated] = useState(false);
+  const [isTranslated, setIsTranslated] = useState(false);
+  const displayTranslationButton = Boolean(review.title || review.text);
+
+  const fullName = `${review.user.firstName} ${review.user.lastName}`;
 
   const translation = useQuery<{ title: string; text: string }>({
     queryKey: ["translation", review.id],
@@ -33,104 +44,91 @@ export const ReviewCard = ({
 
   const maxImages = 5;
   const starsElements = React.useMemo(() => {
-    const maxRating = 5;
-    const elems = [];
-    for (let i = 0; i < maxRating; i++) {
-      elems.push(
-        <StarIcon
-          className={clsx("w-4 h-4", i < review.rating && "fill-black")}
-          key={i}
-        />
-      );
-    }
-    return elems;
-  }, [review.rating]);
+    return Array.from({ length: 5 }).map((_, index) =>
+      index < review.mark ? (
+        <StarFullIcon className="w-6 h-6" key={index} />
+      ) : (
+        <StarEmptyIcon className="w-6 h-6" key={index} />
+      )
+    );
+  }, [review.mark]);
 
-  React.useEffect(() => {
-    const browserLang = navigator.language;
-    setIsInUserLanguage(review.language.startsWith(browserLang));
-  }, [review.language]);
-
-  const onTranslate = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-
+  const onTranslate = async () => {
     if (isTranslated) {
-      setIsTrenslated(false);
+      setIsTranslated(false);
     } else {
-      if (!translation.isFetched) {
+      if (!translation.isFetched && !translation.isSuccess) {
         await translation.refetch();
       }
-      setIsTrenslated(true);
+      setIsTranslated(true);
     }
   };
 
   return (
-    <div className="pt-3 lg:pt-10 border-t-2 cursor-pointer" onClick={onClick}>
-      <div className="mb-4">
+    <div className="pt-3 lg:pt-10 first-of-type:pt-0 border-t-[2.5px] first-of-type:border-none space-y-4">
+      <div>
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center gap-2">
             <Avatar>
-              <AvatarImage src={review.user.avatar} />
-              <AvatarFallback>
-                {textAvatar(review.user.fullName)}
-              </AvatarFallback>
+              <AvatarImage src={review.user.avatarUrl} />
+              <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
             </Avatar>
-            <span>{review.user.fullName}</span>
+            <span className="text-base lg:text-lg">{fullName}</span>
           </div>
-          <div className="flex items-center gap-1 lg:gap-2 h-5 text-xs lg:text-base">
-            <span>{review.user.location}</span>
-            <Separator orientation="vertical" />
-            <span>{formatReviewDate(review.createdAt)}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 lg:gap-4 h-5 text-xs lg:text-base">
-          <div className="flex items-center gap-1 h-full">{starsElements}</div>
-          {review.options.map((opt, i) => (
-            <React.Fragment key={i}>
-              <Separator orientation="vertical" />
-              <span>
-                {opt.title}: {opt.value}
-              </span>
-            </React.Fragment>
-          ))}
+          <span className="text-xs lg:text-sm">
+            {formatReviewDate(new Date(review.createdAt))}
+          </span>
         </div>
       </div>
-      <div className="mb-4">
-        <p className="font-semibold">{review.title}</p>
-        <p className="whitespace-pre-line">{review.text}</p>
-      </div>
-      {isTranslated && !!translation.data && (
-        <>
-          <Separator orientation="horizontal" />
-          <div className="my-4">
-            <p className="font-semibold">{translation.data.title}</p>
-            <p className="whitespace-pre-line">{translation.data.text}</p>
+      <div className="cursor-pointer space-y-4" onClick={onClick}>
+        <div className="flex items-center -mt-2">{starsElements}</div>
+        {(!!review.title || !!review.text) && (
+          <div>
+            {!!review.title && (
+              <p className="font-bold text-lg mb-2">{review.title}</p>
+            )}
+            {!!review.text && (
+              <p className="whitespace-pre-line">{review.text}</p>
+            )}
           </div>
-        </>
-      )}
-      {!!review.tags?.length && (
-        <div className="mb-6">
-          <ReviewTags tags={review.tags} />
-        </div>
-      )}
-      {!!review.images?.length && (
-        <ImagesList
-          images={review.images.slice(0, maxImages)}
-          imagesLeft={review.images.length - maxImages}
-          onClick={onImageClick}
-        />
-      )}
+        )}
+        {isTranslated && !!translation.data && (
+          <>
+            <Separator orientation="horizontal" />
+            <div>
+              <p className="font-semibold">{translation.data.title}</p>
+              <p className="whitespace-pre-line">{translation.data.text}</p>
+            </div>
+          </>
+        )}
+        {!!review.reviewImages?.length && (
+          <ImagesList
+            images={review.reviewImages
+              .slice(0, maxImages)
+              .map((i) => i.imageUrl)}
+            imagesLeft={review.reviewImages.length - maxImages}
+            onClick={onImageClick}
+          />
+        )}
+        {!!review.reviewTags?.length && (
+          <div className="pb-2">
+            <ReviewTags tags={review.reviewTags} />
+          </div>
+        )}
+      </div>
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-2">
-        <div className="flex gap-4 items-center h-10">
-          <Button variant={review.isRatedByUser ? "default" : "outline"}>
+        <div className="flex gap-2 lg:gap-4 items-center h-10">
+          <Button
+            variant={review.currentUserLiked ? "primary" : "secondary"}
+            onClick={onLike}
+          >
             Helpful
           </Button>
-          <Button variant={"outline"}>Report</Button>
-          {!isInUserLanguage && (
+          {displayTranslationButton && (
             <>
               <Separator orientation="vertical" />
               <Button
-                variant={"outline"}
+                variant={"secondary"}
                 onClick={onTranslate}
                 disabled={translation.isLoading}
               >
@@ -143,11 +141,106 @@ export const ReviewCard = ({
             </>
           )}
         </div>
-        <span className="text-sm lg:text-base">
-          {getRatesCountString(review)}
-        </span>
+        <span className="text-sm">{getRatesCountString(review)}</span>
       </div>
     </div>
+  );
+};
+
+export const UserReviewCard = ({
+  review,
+  onClick,
+  onEdit,
+  onDelete,
+  isDeleteInProgress,
+}: {
+  review: Review;
+  onClick: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  isDeleteInProgress?: boolean;
+}) => {
+  const fullName = `${review.user.firstName} ${review.user.lastName}`;
+  const ratesCountString = getRatesCountString(review);
+
+  const maxImages = 5;
+  const starsElements = React.useMemo(() => {
+    return Array.from({ length: 5 }).map((_, index) =>
+      index < review.mark ? (
+        <StarFullIcon className="w-6 h-6" key={index} />
+      ) : (
+        <StarEmptyIcon className="w-6 h-6" key={index} />
+      )
+    );
+  }, [review.mark]);
+
+  return (
+    <Card className="p-6 space-y-4 relative">
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center gap-2">
+            <Avatar>
+              <AvatarImage src={review.user.avatarUrl} />
+              <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
+            </Avatar>
+            <span className="text-base lg:text-lg">{fullName}</span>
+          </div>
+          <div className="flex items-center gap-1 lg:gap-3">
+            <span className="text-xs lg:text-sm">
+              {formatReviewDate(new Date(review.createdAt))}
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="border-1.5 border-foreground/50 rounded-sm w-10 h-10 flex justify-center items-center">
+                  <MeatballMenuIcon className="w-6 h-6" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem className="px-4 py-2.5" onClick={onEdit}>
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="px-4 py-2.5 text-destructive"
+                  onClick={onDelete}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </div>
+      <div className="cursor-pointer space-y-4" onClick={onClick}>
+        <div className="flex items-center -mt-2">{starsElements}</div>
+        {(!!review.title || !!review.text) && (
+          <div>
+            {!!review.title && (
+              <p className="font-bold text-lg mb-2">{review.title}</p>
+            )}
+            {!!review.text && (
+              <p className="whitespace-pre-line">{review.text}</p>
+            )}
+          </div>
+        )}
+        {!!review.reviewImages?.length && (
+          <ImagesList
+            images={review.reviewImages
+              .slice(0, maxImages)
+              .map((i) => i.imageUrl)}
+            imagesLeft={review.reviewImages.length - maxImages}
+          />
+        )}
+        {!!review.reviewTags?.length && (
+          <div className="pb-2">
+            <ReviewTags tags={review.reviewTags} />
+          </div>
+        )}
+      </div>
+      {!!ratesCountString && (
+        <p className="text-sm text-end">{getRatesCountString(review)}</p>
+      )}
+      {isDeleteInProgress && <div className="absolute inset-0 bg-card/60" />}
+    </Card>
   );
 };
 
@@ -166,13 +259,13 @@ const ImagesList = ({
         <figure
           className="relative w-full min-w-20 max-w-28 aspect-square rounded-md overflow-hidden"
           key={i}
+          onClick={() => onClick?.(i)}
         >
           <Image
             src={img}
             fill={true}
             alt="Placeholder"
             className="object-cover"
-            onClick={() => onClick?.(i)}
           />
           {!!imagesLeft && imagesLeft > 0 && i + 1 === images.length && (
             <div className="absolute inset-0 bg-black/60 flex justify-center items-center">

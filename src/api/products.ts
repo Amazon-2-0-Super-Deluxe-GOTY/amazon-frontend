@@ -1,5 +1,12 @@
-import { authStore } from "@/lib/storage";
-import { ApiResponse, ApiValidationErrors } from "./types";
+import { authStore, useAuthStore } from "@/lib/storage";
+import {
+  ApiResponse,
+  ApiResponseWithPages,
+  ApiValidationErrors,
+} from "./types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo } from "react";
+import type { FilterItem } from "@/components/ProductByCategoryPage/filtersDataTypes";
 
 export interface Product {
   id: string;
@@ -27,6 +34,7 @@ export interface Product {
 
 export interface ProductShort {
   id: string;
+  slug: string;
   name: string;
   price: number;
   discountPercent: number | null;
@@ -34,24 +42,58 @@ export interface ProductShort {
   productImages: { imageUrl: string }[];
   generalRate: number;
   reviewsCount: number;
+  quantity: number;
 }
 
-const defaultPageSize = "7";
-
-export function getProducts(filters: {
+export interface ProductFilters {
   categoryId?: number;
   searchQuery?: string;
   page?: number;
   pageSize?: number;
   discount?: boolean;
-  rating?: 1 | 2 | 3 | 4 | 5;
+  rating?: string;
   price?: { min: number; max: number };
   orderBy?: "date" | "rate" | "exp" | "cheap";
   additionalFilters?: { name: string; values: string[] }[];
-}): Promise<
-  ApiResponse<
+}
+
+interface ProductFilterItems {
+  filterItems: Record<string, string[]>;
+  minPrice: number;
+  maxPrice: number;
+}
+
+export interface Cart {
+  id: string;
+  totalPrice: number;
+  cartItems: CartItem[];
+}
+
+export interface CartItem {
+  id: string;
+  quantity: number;
+  price: number;
+  createdAt: string;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    imageUrl: string;
+    quantity: number;
+    discountPrice: number;
+    discountPercent: number | null;
+    price: number;
+  };
+}
+
+const defaultPageSize = "7";
+
+export function getProducts(
+  filters: ProductFilters
+): Promise<
+  ApiResponseWithPages<
     [[200, ProductShort[]], [400, ApiValidationErrors], [404, null]]
-  > & { count: { pagesCount: number } }
+  >
 > {
   const params = new URLSearchParams();
   params.set("pageIndex", filters.page ? filters.page.toString() : "1");
@@ -66,10 +108,12 @@ export function getProducts(filters: {
   filters.rating !== undefined &&
     params.set("rating", filters.rating.toString());
   filters.orderBy && params.set("orderBy", filters.orderBy);
+  filters.price &&
+    params.set("price", `${filters.price.min}-${filters.price.max}`);
 
   if (filters.additionalFilters) {
     for (let param of filters.additionalFilters) {
-      params.set(param.name, param.values.join(" "));
+      params.set(param.name, param.values.join(","));
     }
   }
 
@@ -132,7 +176,7 @@ export function getProductBySlug({
 }): Promise<
   ApiResponse<[[200, Product], [400, ApiValidationErrors], [404, null]]>
 > {
-  return fetch(`/api/products/byId?productSlug=${productSlug}`).then((r) =>
+  return fetch(`/api/products/bySlug?productSlug=${productSlug}`).then((r) =>
     r.json()
   );
 }
@@ -201,4 +245,156 @@ export function deleteProducts(
       "content-type": "application/json",
     },
   }).then((r) => r.json());
+}
+
+export function getProductFilters(
+  categoryId?: number
+): Promise<ApiResponse<[[200, ProductFilterItems], [404, null]]>> {
+  const searchParamsStr =
+    categoryId === undefined ? "" : `?categoryId=${categoryId}`;
+  return fetch(`/api/products/filterItems${searchParamsStr}`).then((r) =>
+    r.json()
+  );
+}
+
+export function useProductFilters({ categoryId }: { categoryId?: number }) {
+  const filtersQuery = useQuery({
+    queryKey: ["productFilters", categoryId],
+    queryFn: useCallback(() => getProductFilters(categoryId), [categoryId]),
+    select(data) {
+      return data.status === 200 ? data.data : undefined;
+    },
+  });
+  const data = useMemo<FilterItem[]>(() => {
+    const ratingFilter: FilterItem = {
+      type: "rating",
+      title: "Customer reviews",
+      values: [1, 2, 3, 4, 5],
+      isSearch: false,
+    };
+    const priceFilter: FilterItem = {
+      type: "price",
+      title: "Price",
+      values: {
+        min: filtersQuery.data?.minPrice ?? 0,
+        max: filtersQuery.data?.maxPrice ?? 0,
+      },
+      isSearch: false,
+    };
+
+    if (!filtersQuery.data) return [priceFilter, ratingFilter];
+
+    const propertyFilters = Object.entries(filtersQuery.data.filterItems).map(
+      (entry): FilterItem => ({
+        type: "checkbox",
+        title: entry[0],
+        values: entry[1],
+        isSearch: true,
+      })
+    );
+
+    return [...propertyFilters, priceFilter, ratingFilter];
+  }, [filtersQuery.data]);
+
+  return { data, isLoading: filtersQuery.isLoading };
+}
+
+export function getCart({
+  pageSize,
+  pageIndex,
+}: {
+  pageSize: number;
+  pageIndex: number;
+}): Promise<ApiResponse<[[200, Cart], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch(`/api/cart?pageSize=${pageSize}&pageIndex=${pageIndex}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+}
+
+export function addToCart(body: {
+  productId: string;
+  quantity: number;
+}): Promise<ApiResponse<[[200, CartItem], [201, CartItem], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/cart", {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+export function updateCartItemQuantity(body: {
+  cartItemId: string;
+  quantity: number;
+}): Promise<ApiResponse<[[200, CartItem], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/cart", {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+export function deleteCartItems(body: {
+  cartItemIds: string[];
+}): Promise<ApiResponse<[[200, null], [404, null]]>> {
+  const token = authStore.getState().token;
+  return fetch("/api/cart", {
+    method: "DELETE",
+    body: JSON.stringify(body),
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+  }).then((r) => r.json());
+}
+
+export function useCart() {
+  const token = useAuthStore((state) => state.token);
+
+  const cartQuery = useQuery({
+    queryKey: ["cart", token],
+    queryFn: useCallback(
+      () => (!!token ? getCart({ pageSize: 100, pageIndex: 1 }) : null),
+      [token]
+    ),
+    select(data) {
+      return data?.status === 200 ? data.data : undefined;
+    },
+  });
+
+  const addToCartMutation = useMutation({
+    mutationFn: addToCart,
+    onSuccess() {
+      cartQuery.refetch();
+    },
+  });
+  const updateCartItemQuantityMutation = useMutation({
+    mutationFn: updateCartItemQuantity,
+    onSuccess() {
+      cartQuery.refetch();
+    },
+  });
+  const deleteCartItemsMutation = useMutation({
+    mutationFn: deleteCartItems,
+    onSuccess() {
+      cartQuery.refetch();
+    },
+  });
+
+  return {
+    cart: cartQuery,
+    addToCart: addToCartMutation,
+    updateCartItemQuantity: updateCartItemQuantityMutation,
+    deleteCartItems: deleteCartItemsMutation,
+  };
 }
