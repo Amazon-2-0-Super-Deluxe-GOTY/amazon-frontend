@@ -30,10 +30,10 @@ export const MyOrderCard = ({
             <div className="flex justify-start items-center gap-4">
               <span className="text-base md:text-xl">Order #{order.orderNumber}</span>
               <span className={cn(order.status === "Recived" && "text-green-500",
-                                  status === "Ready for pickup" && "text-blue-600", 
-                                  status === "Shipped" && "text-cyan-500", 
-                                  status === "Ordered" && "text-gray-300", 
-                                  status === "Cancelled" && "text-red-500", 
+                                  order.status === "Ready for pickup" && "text-blue-600", 
+                                  order.status === "Shipped" && "text-cyan-500", 
+                                  order.status === "Ordered" && "text-gray-300", 
+                                  order.status === "Canceled" && "text-red-500", 
                                   "font-medium text-xs md:text-base")} >{order.status}</span>
             </div>
             <span className="text-sm md:text-base text-gray-400 font-medium">Arrived on {dateOfArrived}</span>
