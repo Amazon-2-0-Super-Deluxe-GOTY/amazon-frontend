@@ -249,10 +249,10 @@ export default function Page() {
         cell: ({ row }) => (
           <div
             className={clsx(
-              "capitalize px-3 py-1 rounded-lg w-max text-sm",
+              "capitalize px-3 py-1.5 rounded-sm w-max text-base text-foreground",
               row.original.isDeleted
-                ? "bg-destructive text-light"
-                : "bg-primary text-primary-foreground"
+                ? "bg-destructive-press"
+                : "bg-tertiary-press"
             )}
           >
             {row.original.isDeleted ? "Deleted" : "Active"}
