@@ -15,12 +15,6 @@ import {
   useOptimistic,
   useState,
 } from "react";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  MoreHorizontal,
-  MoreVertical,
-} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -55,6 +49,13 @@ import { textAvatar } from "@/lib/utils";
 import { Pagination } from "@/components/Shared/Pagination";
 import { useSearchParamsTools } from "@/lib/router";
 import type { User } from "@/api/types";
+import { AvatarDefaultFallback } from "@/components/Shared/AvatarDefaultFallback";
+import {
+  ArrowUpDownIcon,
+  ChevronDownIcon,
+  KebabMenuIcon,
+  MeatballMenuIcon,
+} from "@/components/Shared/Icons";
 
 export type Payment = {
   id: string;
@@ -228,8 +229,8 @@ export default function Page() {
           return (
             <div className="flex items-center gap-3">
               <Avatar className="w-12 h-12">
-                {/* <AvatarImage src={placeholder} /> */}
-                <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
+                <AvatarImage src={user.avatarUrl} />
+                <AvatarDefaultFallback />
               </Avatar>
               <div>
                 <p className="text-base">{fullName}</p>
@@ -248,10 +249,10 @@ export default function Page() {
         cell: ({ row }) => (
           <div
             className={clsx(
-              "capitalize px-3 py-1 rounded-lg w-max text-sm",
+              "capitalize px-3 py-1.5 rounded-sm w-max text-base text-foreground",
               row.original.isDeleted
-                ? "bg-destructive text-light"
-                : "bg-primary text-primary-foreground"
+                ? "bg-destructive-press"
+                : "bg-tertiary-press"
             )}
           >
             {row.original.isDeleted ? "Deleted" : "Active"}
@@ -278,7 +279,7 @@ export default function Page() {
                   column.toggleSorting(column.getIsSorted() === "asc")
                 }
               >
-                <ArrowUpDown className="h-4 w-4" />
+                <ArrowUpDownIcon className="h-4 w-4" />
               </button>
             </div>
           );
@@ -314,7 +315,7 @@ export default function Page() {
               <DropdownMenuTrigger asChild>
                 <Button variant="tertiary" className="h-8 w-8 p-0">
                   <span className="sr-only">Open quick actions</span>
-                  <MoreVertical className="h-4 w-4" />
+                  <KebabMenuIcon className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="p-4 w-60">
@@ -344,7 +345,7 @@ export default function Page() {
               <DropdownMenuTrigger asChild>
                 <Button variant="tertiary" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
+                  <MeatballMenuIcon className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="p-4 w-72">
@@ -486,7 +487,7 @@ const TableHeader = ({
               variant="secondary"
               className="ml-auto w-[200px] justify-between"
             >
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="p-4 w-72">

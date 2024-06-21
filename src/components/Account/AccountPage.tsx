@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import { cn, textAvatar } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useSearchParamsTools } from "@/lib/router";
 import Link from "next/link";
-import { ChevronLeft, HomeIcon, Slash } from "lucide-react";
+import { Slash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
@@ -20,6 +20,9 @@ import { Wishlist } from "@/components/Account/Wishlist";
 import { MyOrders } from "@/components/Account/MyOrders";
 import { User } from "@/api/types";
 import { useUser } from "@/api/users";
+import { AvatarDefaultFallback } from "../Shared/AvatarDefaultFallback";
+import { ChevronLeftIcon, HomeIcon } from "../Shared/Icons";
+import clsx from "clsx";
 
 export function AccountPage({ user: initialUser }: { user: User }) {
   const [user, setUser] = useState(initialUser);
@@ -27,6 +30,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
   const param = useSearchParamsTools();
 
   const userFullName = `${user.firstName} ${user.lastName}`;
+  const tabFromParams = param.get?.("tab");
 
   const [isOpenTab, setIsOpenTab] = useState<boolean>(() => {
     const defaultValue = param.get?.("tab");
@@ -102,10 +106,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
             )}
           >
             <div className="flex gap-4">
-              <AvatarNameBlock
-                image={user.avatarUrl}
-                fallback={textAvatar(userFullName)}
-              />
+              <AvatarNameBlock image={user.avatarUrl} />
               <div className="flex flex-col">
                 <span className="text-lg lg:text-xl font-semibold">
                   {userFullName}
@@ -118,21 +119,30 @@ export function AccountPage({ user: initialUser }: { user: User }) {
             <Button
               variant={"tertiary"}
               onClick={() => onChangeAccountTab("orders")}
-              className="flex justify-start font-normal text-base"
+              className={clsx(
+                "flex justify-start font-normal text-base",
+                tabFromParams === "orders-open" && "bg-tertiary-hover"
+              )}
             >
               My orders
             </Button>
             <Button
               variant={"tertiary"}
               onClick={() => onChangeAccountTab("wishlist")}
-              className="flex justify-start font-normal text-base"
+              className={clsx(
+                "flex justify-start font-normal text-base",
+                tabFromParams === "wishlist-open" && "bg-tertiary-hover"
+              )}
             >
               Wishlist
             </Button>
             <Button
               variant={"tertiary"}
               onClick={() => onChangeAccountTab("settings")}
-              className="flex justify-start font-normal text-base"
+              className={clsx(
+                "flex justify-start font-normal text-base",
+                tabFromParams === "settings-open" && "bg-tertiary-hover"
+              )}
             >
               Account settings
             </Button>
@@ -150,7 +160,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
                 className="pl-2 mb-3 md:hidden"
                 onClick={onBack}
               >
-                <ChevronLeft />
+                <ChevronLeftIcon />
                 <span className="text-base">Back</span>
               </Button>
               {(() => {
@@ -178,17 +188,11 @@ export function AccountPage({ user: initialUser }: { user: User }) {
   );
 }
 
-const AvatarNameBlock = ({
-  image,
-  fallback,
-}: {
-  image?: string;
-  fallback: string;
-}) => {
+const AvatarNameBlock = ({ image }: { image?: string }) => {
   return (
     <Avatar className="w-12 h-12">
       <AvatarImage src={image} />
-      <AvatarFallback>{fallback}</AvatarFallback>
+      <AvatarDefaultFallback />
     </Avatar>
   );
 };

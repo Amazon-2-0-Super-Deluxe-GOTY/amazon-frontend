@@ -14,11 +14,11 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "../../ui/skeleton";
 import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { InfoIcon, Trash2Icon } from "lucide-react";
-import { PlusIcon } from "../../Shared/Icons";
+import { InfoIcon, PlusIcon, TrashIcon } from "../../Shared/Icons";
 import { isImageValid } from "@/lib/products";
 import { AlertDialog } from "../../Admin/AlertDialog";
 import { useModal } from "../../Shared/Modal";
+import { Button } from "@/components/ui/button";
 
 interface UploadPhotoListFormFieldProps {
   title: string;
@@ -67,7 +67,7 @@ export function UploadPhotoListFormField({
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "primary",
+          colorVariant: "primary",
         },
       });
       return;
@@ -91,7 +91,7 @@ export function UploadPhotoListFormField({
               <FormLabel className="font-bold text-lg">{title}</FormLabel>
               <Popover>
                 <PopoverTrigger className="group">
-                  <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
+                  <InfoIcon className="w-6 h-6 group-data-[state=closed]:text-halftone" />
                 </PopoverTrigger>
                 <PopoverContent align="start" className="max-w-sm w-full">
                   <div className="space-y-2 text-sm">
@@ -129,13 +129,17 @@ export function UploadPhotoListFormField({
                     fill
                     className="object-cover rounded-lg"
                   />
-                  <button
-                    type="button"
-                    className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100 rounded-lg"
-                    onClick={onDeleteImage(i)}
-                  >
-                    <Trash2Icon className="w-10 h-10 stroke-white" />
-                  </button>
+                  <div className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100 rounded-lg">
+                    <Button
+                      type="button"
+                      variant={"destructive"}
+                      size={"icon"}
+                      onClick={onDeleteImage(i)}
+                      className="border-light"
+                    >
+                      <TrashIcon className="w-6 h-6 text-light stroke-2" />
+                    </Button>
+                  </div>
                 </div>
               ))}
               {uploadLoadingElements.map((_, i) => (

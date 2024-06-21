@@ -67,7 +67,7 @@ export const PaymentContent = () => {
             <Accordion
               type="single"
               collapsible
-              className="even:bg-gray-200 rounded-md"
+              className="even:bg-halftone rounded-md"
             >
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="p-4 lg:p-6">

@@ -1,14 +1,12 @@
-import { ChevronRightIcon, HeartIcon, MinusIcon, PlusIcon } from "lucide-react";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MediaQueryCSS } from "../Shared/MediaQuery";
-import ClientOnlyPortal from "../Shared/ClientOnlyPortal";
 import { Sheet, SheetContent } from "../ui/sheet";
 import {
   Accordion,
@@ -16,16 +14,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { DeliveryContent } from "./OrderInfoContent/DeliveryContent";
 import { PaymentContent } from "./OrderInfoContent/PaymentContent";
 import { SecurityContent } from "./OrderInfoContent/SecurityContent";
-import { ReturnsContent } from "./OrderInfoContent/ReturnsContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { useStorageCart } from "@/lib/storage";
 import { ProductShort, useCart, type Product } from "@/api/products";
 import { splitPrice } from "@/lib/products";
+import { ChevronRightIcon, MinusIcon, PlusIcon } from "../Shared/Icons";
 import { useWishlist } from "@/api/wishlist";
+import { useUser } from "@/api/users";
 
 const infoElements = [
   {
@@ -39,6 +37,7 @@ const infoElements = [
 ];
 
 export const ProductOrderCard = ({ product }: { product: Product }) => {
+  const { user } = useUser();
   const [count, setCount] = useState(1);
   const [openedTabIndex, setOpenedTabIndex] = useState<number>();
   const displayedPrice = product.discountPercent
@@ -88,6 +87,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
   const { addToCart, cart } = useCart();
 
   const canAddToCart = useMemo(() => {
+    if (!user || product.quantity === 0) return false;
     if (!cart.data) return true;
 
     const existingCartItem = cart.data.cartItems.find(
@@ -117,13 +117,14 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
     if (!wishlist.data) return true;
 
     const isInWishlistItem = wishlist.data.find(
-      (i:ProductShort) => i.id === product.id
+      (i: ProductShort) => i.id === product.id
     );
     return isInWishlistItem ? false : true;
   }, [wishlist.data, product.id]);
 
   const onAddToWishlist = () => {
-    if (!canAddToWishlist) removeFromWishlist.mutateAsync({ productIds: [product.id] });
+    if (!canAddToWishlist)
+      removeFromWishlist.mutateAsync({ productIds: [product.id] });
     else addToWishlist.mutateAsync({ productId: product.id });
   };
   //#endregion
@@ -144,19 +145,29 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
             )}
           </div>
           <MediaQueryCSS maxSize="lg">
-            <span>{isInStock ? "In stock" : "Out of stock"}</span>
+            {isInStock ? (
+              <span className="text-secondary">In stock</span>
+            ) : (
+              <span className="text-destructive">Out of stock</span>
+            )}
           </MediaQueryCSS>
         </div>
-        <MediaQueryCSS minSize="lg">
+        <div>
           <hr className="border-black mb-3" />
           <ul className="space-y-1">
-            <li className="flex justify-between text-base">
-              <span>Status</span>
-              <span>{isInStock ? "In stock" : "Out of stock"}</span>
-            </li>
+            <MediaQueryCSS minSize="lg">
+              <li className="flex justify-between text-base">
+                <span>Status</span>
+                {isInStock ? (
+                  <span className="text-secondary">In stock</span>
+                ) : (
+                  <span className="text-destructive">Out of stock</span>
+                )}
+              </li>
+            </MediaQueryCSS>
             <InfoLabelsList openTab={openTab} />
           </ul>
-        </MediaQueryCSS>
+        </div>
         <hr className="border-black" />
         <div className="flex justify-between items-center py-1">
           <span className="text-base">Quantity</span>
@@ -185,39 +196,15 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         >
           Buy now
         </Button>
-        <Button 
-          variant={"tertiary"} 
+        <Button
+          variant={"tertiary"}
           className="col-span-2 lg:col-span-1"
           onClick={onAddToWishlist}
+          disabled={!user}
         >
           {canAddToWishlist ? "Add to wish list" : "Remove from wish list"}
         </Button>
       </CardContent>
-      <MediaQueryCSS maxSize="lg">
-        <CardFooter className="justify-center gap-2 ">
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1" className="border-none">
-              <AccordionTrigger className="flex justify-center items-center gap-1">
-                Details
-              </AccordionTrigger>
-              <AccordionContent className="p-4 pt-0">
-                <InfoLabelsList openTab={openTab} />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardFooter>
-      </MediaQueryCSS>
-
-      <MobileQuickActions
-        count={count}
-        increment={increment}
-        decrement={decrement}
-        price={product.discountPercent ? product.discountPrice : product.price}
-        onAddToCard={onAddToCartClick}
-        onBuyNow={onBuyNowClick}
-        onAddToWishlist={onAddToWishlist}
-        canAddToWishlist={canAddToWishlist}
-      />
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent
@@ -235,7 +222,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
                   onNext: toNext,
                 }}
               />
-              <ScrollArea className="grow">
+              <ScrollArea className="grow" viewportClassName="p-0">
                 {infoElements[openedTabIndex].render()}
               </ScrollArea>
             </>
@@ -243,65 +230,6 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         </SheetContent>
       </Sheet>
     </Card>
-  );
-};
-
-const MobileQuickActions = ({
-  count,
-  increment,
-  decrement,
-  price,
-  onAddToCard,
-  onBuyNow,
-  onAddToWishlist,
-  canAddToWishlist,
-}: {
-  count: number;
-  increment: () => void;
-  decrement: () => void;
-  price: number;
-  onAddToCard: () => void;
-  onBuyNow: () => void;
-  onAddToWishlist: () => void;
-  canAddToWishlist: boolean;
-}) => {
-  const { whole, fraction } = splitPrice(price);
-
-  return (
-    <ClientOnlyPortal selector="body">
-      <MediaQueryCSS maxSize="md">
-        <Card className="bg-card fixed bottom-0 left-0 right-0 rounded-t-md z-10">
-          <CardHeader className="space-y-3 p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="text-2xl font-bold">
-                  ${whole}
-                  <sup>{fraction}</sup>
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button onClick={onAddToWishlist}>
-                  {canAddToWishlist ? <HeartIcon /> : <HeartIcon fill="true" />}
-                </button>
-                <Button variant={"secondary"} onClick={onAddToCard}>
-                  To cart
-                </Button>
-                <Button onClick={onBuyNow}>Buy</Button>
-              </div>
-            </div>
-            <hr className="border-black" />
-            <div className="flex justify-between items-center py-1">
-              <span className="text-base">Quantity</span>
-              <div className="flex items-center gap-4">
-                <MinusIcon className="w-4 cursor-pointer" onClick={decrement} />
-                <span className="text-sm select-none">{count}</span>
-                <PlusIcon className="w-4 cursor-pointer" onClick={increment} />
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
-      </MediaQueryCSS>
-    </ClientOnlyPortal>
   );
 };
 

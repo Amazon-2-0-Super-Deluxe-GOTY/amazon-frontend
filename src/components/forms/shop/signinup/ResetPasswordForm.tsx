@@ -13,9 +13,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import type { SignInUpModalVariants } from "../../../SignInUpModal/types";
+import { EyeClosedIcon, EyeOpenedIcon } from "@/components/Shared/Icons";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
@@ -89,7 +89,7 @@ export function ResetPasswordForm({
                       className="absolute"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                      {showPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
                     </Button>
                   </div>
                 </div>
@@ -123,7 +123,11 @@ export function ResetPasswordForm({
                         setShowConfirmPassword(!showConfirmPassword)
                       }
                     >
-                      {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+                      {showConfirmPassword ? (
+                        <EyeOpenedIcon />
+                      ) : (
+                        <EyeClosedIcon />
+                      )}
                     </Button>
                   </div>
                 </div>

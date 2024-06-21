@@ -1,6 +1,5 @@
 "use client";
 import { deleteProducts, getProducts, type ProductShort } from "@/api/products";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   useCallback,
@@ -12,7 +11,6 @@ import {
 import { useAdminCategories, type Category } from "@/api/categories";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductAsideCard } from "@/components/Admin/Product/ProductAsideCart";
 import placeholder from "@/../public/Icons/placeholder.svg";
@@ -27,7 +25,11 @@ import { CategorySelect } from "@/components/Admin/Category/CategorySelect";
 import Link from "next/link";
 import { useModal } from "@/components/Shared/Modal";
 import { AlertDialog } from "@/components/Admin/AlertDialog";
-import { PlusIcon, StarFullIcon } from "@/components/Shared/Icons";
+import {
+  ArrowUpDownIcon,
+  PlusIcon,
+  StarFullIcon,
+} from "@/components/Shared/Icons";
 
 export default function Page() {
   const searchParams = useSearchParamsTools();
@@ -182,7 +184,7 @@ export default function Page() {
                   column.toggleSorting(column.getIsSorted() === "asc")
                 }
               >
-                <ArrowUpDown className="h-4 w-4" />
+                <ArrowUpDownIcon className="h-4 w-4" />
               </button>
             </div>
           );
@@ -235,7 +237,7 @@ export default function Page() {
                 <sup>{displayedPriceParts.fraction}</sup>
               </p>
               {!!product.discountPercent && (
-                <p className="text-base line-through text-gray-500">
+                <p className="text-base line-through text-halftone">
                   ${normalPriceParts.whole}
                   <sup>{normalPriceParts.fraction}</sup>
                 </p>

@@ -196,7 +196,7 @@ export function CheckoutForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="grid lg:grid-cols-[57.6875fr_40.8125fr] lg:grid-rows-[56px_100fr] w-full h-full gap-6 max-w-[1600px]"
+        className="grid lg:grid-cols-[6fr_4fr] lg:grid-rows-[56px_1fr] w-full h-full gap-6 max-w-[1600px]"
       >
         <section className="w-full flex justify-between items-center">
           <Link href={"/"}>

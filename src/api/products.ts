@@ -370,6 +370,7 @@ export function useCart() {
     select(data) {
       return data?.status === 200 ? data.data : undefined;
     },
+    retry: 0,
   });
 
   const addToCartMutation = useMutation({

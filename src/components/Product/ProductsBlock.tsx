@@ -1,9 +1,9 @@
-import { ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { ProductCarousel } from "./ProductCarousel";
 import { ProductsListMobile } from "./ProductsListMobile";
 import { MediaQueryCSS } from "../Shared/MediaQuery";
 import type { ProductShort } from "@/api/products";
+import { ChevronRightIcon } from "../Shared/Icons";
 
 interface Props {
   title: string;
@@ -25,7 +25,7 @@ export const ProductsBlock = ({
         <MediaQueryCSS minSize="lg">
           <Button variant="tertiary" className="text-sm">
             See all{" "}
-            <ChevronRight className="ml-2 stroke-secondary w-4 h-4 lg:w-6 lg:h-6" />
+            <ChevronRightIcon className="ml-2 stroke-secondary w-4 h-4 lg:w-6 lg:h-6" />
           </Button>
         </MediaQueryCSS>
       </div>

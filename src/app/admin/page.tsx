@@ -64,84 +64,74 @@ export default function Page() {
   }, [user, router]);
 
   return (
-    <main className="h-screen grid grid-cols-1 lg:grid-cols-7">
-      <div className="col-span-3 max-lg:px-6 pl-[13vw] pr-[6vw] flex justify-center items-center">
-        <div className="max-w-md w-full flex flex-col items-center gap-[13vh]">
-          <div className="space-y-4 text-center">
-            <h1 className="text-2xl lg:text-4xl font-semibold">
-              Welcome to admin panel
-            </h1>
-            <p className="text-lg lg:text-2xl">Login into your account</p>
-          </div>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="w-full space-y-6"
-              id="admin-login-form"
-            >
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="relative">
-                    <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
-                      Email
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="px-4" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem className="relative">
-                    <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
-                      Password
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        autoComplete="current-password"
-                        placeholder="Enter your password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="px-4" />
-                  </FormItem>
-                )}
-              />
-              {!!user && !user.isAdmin && (
-                <FormMessage className="px-4">
-                  You don&apos;t have privileges to use admin panel
-                </FormMessage>
-              )}
-            </form>
-          </Form>
-          <Button
-            type="submit"
-            form="admin-login-form"
-            className="w-full"
-            disabled={logInMutation.isPending}
-          >
-            Log in
-          </Button>
+    <main className="h-screen grid place-items-center">
+      <div className="max-w-md w-full flex flex-col items-center gap-[13vh]">
+        <div className="space-y-4 text-center">
+          <h1 className="text-2xl lg:text-4xl font-semibold">
+            Welcome to admin panel
+          </h1>
+          <p className="text-lg lg:text-2xl">Login into your account</p>
         </div>
-      </div>
-      <div className="col-span-4 hidden lg:block relative">
-        <Image
-          src={placeholder}
-          alt="Illustration"
-          fill
-          className="object-cover"
-        />
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-full space-y-6"
+            id="admin-login-form"
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
+                    Email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="px-4" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="Enter your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="px-4" />
+                </FormItem>
+              )}
+            />
+            {!!user && !user.isAdmin && (
+              <FormMessage className="px-4">
+                You don&apos;t have privileges to use admin panel
+              </FormMessage>
+            )}
+          </form>
+        </Form>
+        <Button
+          type="submit"
+          form="admin-login-form"
+          className="w-full"
+          disabled={logInMutation.isPending}
+        >
+          Log in
+        </Button>
       </div>
     </main>
   );

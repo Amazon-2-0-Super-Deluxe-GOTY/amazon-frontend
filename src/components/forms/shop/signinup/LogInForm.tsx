@@ -6,18 +6,17 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useMutation } from "@tanstack/react-query";
 import { logIn } from "@/api/users";
+import { EyeClosedIcon, EyeOpenedIcon } from "@/components/Shared/Icons";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -120,7 +119,7 @@ export function LogInForm({
                     className="absolute top-0 bottom-0 right-6"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                    {showPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
                   </button>
                 </div>
                 <FormMessage className="max-md:text-xs px-4" />

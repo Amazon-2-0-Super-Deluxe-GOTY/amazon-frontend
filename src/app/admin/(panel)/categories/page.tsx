@@ -18,6 +18,7 @@ import { CategoryAsideCard } from "@/components/Admin/Category/CategoryAsideCard
 import {
   TreeNodeType,
   createTreeArray,
+  findNodeById,
   useCheckboxTree,
 } from "@/lib/checkboxTree";
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
@@ -141,6 +142,15 @@ export default function Page() {
       );
       if (!newTree) return;
       checkboxTree.set(newTree);
+
+      if (selectedCategory) {
+        const newSelectedCategory = findNodeById(
+          newTree,
+          selectedCategory.id,
+          treeOptions
+        );
+        newSelectedCategory && setSelectedCategory(newSelectedCategory.value);
+      }
     }
   }, [allCategoriesTrees]);
 
@@ -239,6 +249,7 @@ export default function Page() {
           !!checkboxTree.root && onSelectCategory(checkboxTree.root)
         }
         onDelete={onDeleteCategory}
+        onUpdate={onCreateCategory}
       />
 
       <CreateCategoryModal

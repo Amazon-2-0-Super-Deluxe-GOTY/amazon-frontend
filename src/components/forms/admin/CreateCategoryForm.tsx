@@ -171,7 +171,7 @@ export const CreateCategoryForm = ({
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "primary",
+          colorVariant: "primary",
         },
       });
       return;
@@ -240,7 +240,7 @@ export const CreateCategoryForm = ({
                 </FormItem>
               )}
             />
-            <div className="w-full h-full flex flex-col justify-around gap-4">
+            <div className="w-full h-full flex flex-col justify-between gap-4">
               <div className="flex items-center gap-6">
                 {isRoot && (
                   <FormField
@@ -255,7 +255,7 @@ export const CreateCategoryForm = ({
                             defaultValue={field.value ?? undefined}
                           >
                             <SelectTrigger className="gap-3.5 p-0 border-none w-max h-max">
-                              <div className="p-3 border-2 rounded-sm">
+                              <div className="p-3 border-2 border-halftone rounded-sm">
                                 <SelectValue className="border-2" />
                               </div>
                             </SelectTrigger>
@@ -268,7 +268,7 @@ export const CreateCategoryForm = ({
                                     className="w-max p-2 data-[state=checked]:ring-1 ring-black"
                                     showCheck={false}
                                   >
-                                    {icon.render("w-8 h-8")}
+                                    {icon.render("w-6 h-6")}
                                   </SelectItem>
                                 ))}
                               </div>
@@ -307,9 +307,7 @@ export const CreateCategoryForm = ({
                 name="isActive"
                 render={({ field }) => (
                   <FormItem className="relative flex items-center justify-between">
-                    <FormLabel className="text-xl font-semibold">
-                      Status
-                    </FormLabel>
+                    <FormLabel className="text-lg font-bold">Status</FormLabel>
                     <FormControl>
                       <ToggleGroup
                         type="single"
@@ -446,11 +444,11 @@ export const CreateCategoryForm = ({
                 />
                 <Button
                   type="button"
-                  variant={"tertiary"}
-                  className="h-max p-3"
+                  variant={"destructive"}
+                  size={"icon"}
                   onClick={onRemovePropertyKey(i)}
                 >
-                  <TrashIcon className="w-6 h-6" />
+                  <TrashIcon className="w-6 h-6 text-destructive stroke-2" />
                 </Button>
               </div>
             ))}

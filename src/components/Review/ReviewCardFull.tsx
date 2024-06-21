@@ -33,6 +33,7 @@ import {
   StarFullIcon,
   XIcon,
 } from "../Shared/Icons";
+import { AvatarDefaultFallback } from "../Shared/AvatarDefaultFallback";
 
 interface ReviewCardProps {
   review: Review;
@@ -370,7 +371,7 @@ const ReviewHeaderDesktop = ({
         <div className="flex items-center gap-2 mr-auto">
           <Avatar className="w-12 h-12">
             <AvatarImage src={review.user.avatarUrl} />
-            <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
+            <AvatarDefaultFallback />
           </Avatar>
           <div>
             <p className="text-lg">{fullName}</p>
@@ -412,7 +413,7 @@ const ReviewHeaderMobile = ({
         <div className="flex items-center gap-2">
           <Avatar>
             <AvatarImage src={review.user.avatarUrl} />
-            <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
+            <AvatarDefaultFallback />
           </Avatar>
           <span>{fullName}</span>
         </div>

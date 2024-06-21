@@ -1,4 +1,3 @@
-import { ChevronLeft } from "lucide-react";
 import { SignUpCodeForm } from "../forms/shop/signinup/SignUpCodeForm";
 import { Button } from "../ui/button";
 import { SignUpForm } from "../forms/shop/signinup/SignUpForm";
@@ -10,6 +9,7 @@ import { SignUpFirstLastNameForm } from "../forms/shop/signinup/SignUpFirstLastN
 import { useAuthStore } from "@/lib/storage";
 import type { SignInUpModalVariants } from "./types";
 import { useUser } from "@/api/users";
+import { ChevronLeftIcon } from "../Shared/Icons";
 
 const titleStyle =
   "text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl font-semibold";
@@ -85,7 +85,7 @@ export const ModalRestorePassword = ({
           }}
           className="absolute p-3 pl-1"
         >
-          <ChevronLeft />
+          <ChevronLeftIcon />
           <span className="lg:text-2xl md:text-xl text-base">Back</span>
         </Button>
       </div>
@@ -117,7 +117,7 @@ export const ModalResetPassword = ({
           }}
           className="absolute p-3 pl-1"
         >
-          <ChevronLeft />
+          <ChevronLeftIcon />
           <span className="lg:text-2xl md:text-xl text-base">Back</span>
         </Button>
       </div>
@@ -210,7 +210,7 @@ export const ModalSignUpCode = ({
           onClick={onSignUp}
           className="absolute p-3 pl-1"
         >
-          <ChevronLeft />
+          <ChevronLeftIcon />
           <span className="lg:text-2xl md:text-xl text-base">Back</span>
         </Button>
       </div>

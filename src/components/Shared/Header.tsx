@@ -95,8 +95,11 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2">
           {/* designer moment 🤡 */}
-          <Link href={"/account/?tab=settings-open"} className="p-4">
-            <UserIcon className="hidden md:block stroke-3 [&_:nth-child(1)]:stroke-1 w-8 h-8" />
+          <Link
+            href={"/account/?tab=settings-open"}
+            className="p-4 hidden md:block"
+          >
+            <UserIcon className="stroke-3 [&_:nth-child(1)]:stroke-1 w-8 h-8" />
           </Link>
           <ShoppingCart />
         </div>

@@ -26,7 +26,7 @@ export function ChangePhotoForm({ onSubmit }: { onSubmit: () => void }) {
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "primary",
+          colorVariant: "primary",
         },
       });
       return;

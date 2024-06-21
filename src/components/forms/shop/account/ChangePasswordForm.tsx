@@ -6,14 +6,12 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { useMutation } from "@tanstack/react-query";
@@ -202,7 +200,11 @@ export function ChangePasswordForm({
                         setShowConfirmPassword(!showConfirmPassword)
                       }
                     >
-                      {showConfirmPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
+                      {showConfirmPassword ? (
+                        <EyeOpenedIcon />
+                      ) : (
+                        <EyeClosedIcon />
+                      )}
                     </Button>
                   </div>
                 </div>
