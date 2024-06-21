@@ -15,6 +15,7 @@ interface Props {
   allCategories?: Category[];
   onViewMain?: () => void;
   onDelete: (id: number) => void;
+  onUpdate: () => void;
 }
 
 const iconClassLarge = "w-10 h-10";
@@ -26,6 +27,7 @@ export const CategoryAsideCard = ({
   allCategories,
   onViewMain,
   onDelete,
+  onUpdate,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showModal } = useModal();
@@ -115,7 +117,7 @@ export const CategoryAsideCard = ({
             isOpen={isModalOpen}
             closeModal={closeModal}
             category={category}
-            onSubmit={console.log}
+            onSubmit={onUpdate}
             allCategories={allCategories ?? []}
           />
         </div>

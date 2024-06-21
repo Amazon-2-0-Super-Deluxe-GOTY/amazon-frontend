@@ -99,7 +99,7 @@ export function ProductPage({ product }: { product: Product }) {
         <div className="lg:max-w-2xl w-full">
           <MediaQueryCSS maxSize="lg">
             <h1 className="text-heading-1">{product.name}</h1>
-            <span className="text-sm text-gray-400">Code: {product.code}</span>
+            <span className="text-sm text-halftone">Code: {product.code}</span>
             <div className="my-3 flex items-center">
               <div className="flex items-center gap-1 h-4">{starElements}</div>
               <span className="text-base font-bold ml-2">

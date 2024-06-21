@@ -94,7 +94,7 @@ export const AccountSettings = ({
             <span className="text-base md:text-xl">
               First name and last name
             </span>
-            <span className="text-sm md:tetx-base text-gray-400">
+            <span className="text-sm md:tetx-base text-halftone">
               Update your first and last name for your profile where it&apos;s
               displayed.
             </span>
@@ -107,7 +107,7 @@ export const AccountSettings = ({
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3 max-lg:w-full">
             <span className="text-base md:text-xl">Email</span>
-            <span className="text-sm md:tetx-base text-gray-400">
+            <span className="text-sm md:tetx-base text-halftone">
               Update the email address associated with your account.
             </span>
           </div>
@@ -119,7 +119,7 @@ export const AccountSettings = ({
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start lg:gap-3 gap-1 max-lg:w-full">
             <span className="text-base md:text-xl">Password</span>
-            <span className="text-sm md:tetx-base text-gray-400">
+            <span className="text-sm md:tetx-base text-halftone">
               Change your account&apos;s password.
             </span>
           </div>
@@ -131,7 +131,7 @@ export const AccountSettings = ({
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3 max-lg:w-full">
             <span className="text-base md:text-xl">Log out</span>
-            <span className="text-sm md:tetx-base text-gray-400">
+            <span className="text-sm md:tetx-base text-halftone">
               Ends current session, disconnecting user from account or system.
             </span>
           </div>
@@ -142,7 +142,7 @@ export const AccountSettings = ({
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3 max-lg:w-full">
             <span className="text-base md:text-xl">Delete account</span>
-            <span className="text-sm md:tetx-base text-gray-400">
+            <span className="text-sm md:tetx-base text-halftone">
               Permanently remove your account and associated data, disabling
               access and erasing personal information.
             </span>

@@ -122,19 +122,29 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
             )}
           </div>
           <MediaQueryCSS maxSize="lg">
-            <span>{isInStock ? "In stock" : "Out of stock"}</span>
+            {isInStock ? (
+              <span className="text-secondary">In stock</span>
+            ) : (
+              <span className="text-destructive">Out of stock</span>
+            )}
           </MediaQueryCSS>
         </div>
-        <MediaQueryCSS minSize="lg">
+        <div>
           <hr className="border-black mb-3" />
           <ul className="space-y-1">
-            <li className="flex justify-between text-base">
-              <span>Status</span>
-              <span>{isInStock ? "In stock" : "Out of stock"}</span>
-            </li>
+            <MediaQueryCSS minSize="lg">
+              <li className="flex justify-between text-base">
+                <span>Status</span>
+                {isInStock ? (
+                  <span className="text-secondary">In stock</span>
+                ) : (
+                  <span className="text-destructive">Out of stock</span>
+                )}
+              </li>
+            </MediaQueryCSS>
             <InfoLabelsList openTab={openTab} />
           </ul>
-        </MediaQueryCSS>
+        </div>
         <hr className="border-black" />
         <div className="flex justify-between items-center py-1">
           <span className="text-base">Quantity</span>
@@ -167,7 +177,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
           Add to wish list
         </Button>
       </CardContent>
-      <MediaQueryCSS maxSize="lg">
+      {/* <MediaQueryCSS maxSize="lg">
         <CardFooter className="justify-center gap-2 ">
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
@@ -180,7 +190,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
             </AccordionItem>
           </Accordion>
         </CardFooter>
-      </MediaQueryCSS>
+      </MediaQueryCSS> */}
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent

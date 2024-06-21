@@ -59,7 +59,7 @@ export const WishlistCard = ({
             <div>
               <span className="text-xl">${whole}</span>
               <sup>{fraction}</sup>
-              <sub className="ml-2 line-through text-gray-400">$39.99</sub>
+              <sub className="ml-2 line-through text-halftone">$39.99</sub>
             </div>
           </div>
         </Link>

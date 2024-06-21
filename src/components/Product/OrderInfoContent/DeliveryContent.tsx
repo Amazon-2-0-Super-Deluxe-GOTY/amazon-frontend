@@ -59,7 +59,7 @@ export const DeliveryContent = () => {
                       `border-input p-3 text-base`,
                       e.isFocused ? "ring-1 ring-ring" : ""
                     ),
-                  dropdownIndicator: () => "text-gray-400",
+                  dropdownIndicator: () => "text-halftone",
                   menu: () =>
                     cn(
                       "absolute top-0 mt-1 text-sm z-10 w-full",

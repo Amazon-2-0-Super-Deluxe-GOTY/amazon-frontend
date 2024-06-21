@@ -225,7 +225,7 @@ export const OrderDetailsModal = ({
                 <div className="flex justify-between items-center py-6">
                   <Popover>
                     <PopoverTrigger className="group">
-                      <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-gray-400" />
+                      <InfoIcon className="w-6 h-6 group-data-[state=closed]:stroke-halftone" />
                     </PopoverTrigger>
                     <PopoverContent align="start" className="max-w-sm w-full">
                       <div className="space-y-2 text-sm">
