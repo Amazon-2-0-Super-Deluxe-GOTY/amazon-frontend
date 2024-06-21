@@ -19,20 +19,23 @@ export default async function middleware(req: NextRequest) {
   const hostname = req.headers.get("host") as string;
 
   // Define allowed Domains (localhost and production domain)
-  const allowedDomains = ["localhost:3000"];
+  // const allowedDomains = ["localhost:3000", "localhost:8888"];
 
   // Verify if hostname exist in allowed domains
-  const isAllowedDomain = allowedDomains.some((domain) =>
-    hostname.includes(domain)
-  );
+  // const isAllowedDomain = allowedDomains.some((domain) =>
+  //   hostname.includes(domain)
+  // );
 
   // Extract the possible subdomain in the URL
   const subdomainFromUrl = hostname.split(".")[0];
 
   // If we stay in a allowed domain and its not a subdomain
-  const isOnRootDomain =
-    isAllowedDomain &&
-    !subdomains.some((d) => d.subdomain === subdomainFromUrl);
+  // const isOnRootDomain =
+  //   isAllowedDomain &&
+  //   !subdomains.some((d) => d.subdomain === subdomainFromUrl);
+  const isOnRootDomain = !subdomains.some(
+    (d) => d.subdomain === subdomainFromUrl
+  );
 
   // Redirect to default subdomain (shop) or use existing subdomain
   const subdomain = isOnRootDomain ? shopSubdomain.subdomain : subdomainFromUrl;
