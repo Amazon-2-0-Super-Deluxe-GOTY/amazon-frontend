@@ -77,7 +77,7 @@ export function ProductAsideCard({
             )}
           </div>
           <h2 className="font-semibold text-2xl">{product.name}</h2>
-          <Separator className="bg-black" />
+          <Separator />
           <Button
             variant={"link"}
             className="mt-2.5 text-lg justify-start px-0"
@@ -90,10 +90,11 @@ export function ProductAsideCard({
               className="w-full"
             >
               <Button
+                variant={"secondary"}
                 className="w-full flex items-center gap-2 text-base"
                 disabled={isButtonsDisabled}
               >
-                <EditIcon className={"w-6 h-6"} />
+                <EditIcon className={"w-6 h-6 text-secondary"} />
                 Edit
               </Button>
             </Link>
@@ -103,7 +104,7 @@ export function ProductAsideCard({
               onClick={handleDelete}
               disabled={isButtonsDisabled}
             >
-              <TrashIcon className={"w-6 h-6"} />
+              <TrashIcon className={"w-6 h-6 text-destructive"} />
               Delete
             </Button>
           </div>

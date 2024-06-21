@@ -4,7 +4,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MediaQueryCSS } from "../Shared/MediaQuery";
 import { Sheet, SheetContent } from "../ui/sheet";
@@ -23,6 +23,7 @@ import { ProductShort, useCart, type Product } from "@/api/products";
 import { splitPrice } from "@/lib/products";
 import { ChevronRightIcon, MinusIcon, PlusIcon } from "../Shared/Icons";
 import { useWishlist } from "@/api/wishlist";
+import { useUser } from "@/api/users";
 
 const infoElements = [
   {
@@ -36,6 +37,7 @@ const infoElements = [
 ];
 
 export const ProductOrderCard = ({ product }: { product: Product }) => {
+  const { user } = useUser();
   const [count, setCount] = useState(1);
   const [openedTabIndex, setOpenedTabIndex] = useState<number>();
   const displayedPrice = product.discountPercent
@@ -85,6 +87,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
   const { addToCart, cart } = useCart();
 
   const canAddToCart = useMemo(() => {
+    if (!user || product.quantity === 0) return false;
     if (!cart.data) return true;
 
     const existingCartItem = cart.data.cartItems.find(
@@ -197,24 +200,11 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
           variant={"tertiary"}
           className="col-span-2 lg:col-span-1"
           onClick={onAddToWishlist}
+          disabled={!user}
         >
           {canAddToWishlist ? "Add to wish list" : "Remove from wish list"}
         </Button>
       </CardContent>
-      {/* <MediaQueryCSS maxSize="lg">
-        <CardFooter className="justify-center gap-2 ">
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1" className="border-none">
-              <AccordionTrigger className="flex justify-center items-center gap-1">
-                Details
-              </AccordionTrigger>
-              <AccordionContent className="p-4 pt-0">
-                <InfoLabelsList openTab={openTab} />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardFooter>
-      </MediaQueryCSS> */}
 
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent

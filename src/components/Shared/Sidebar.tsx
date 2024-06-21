@@ -31,7 +31,7 @@ export const Sidebar = ({
       <SheetContent
         side={"left"}
         hideClose={isDesktop}
-        className="w-full space-y-4 lg:space-y-6 bg-card"
+        className="w-full flex flex-col gap-4 lg:gap-6 bg-card"
       >
         {children}
         {isDesktop && isOpen && (

@@ -17,14 +17,14 @@ export const ReturnsContent = () => {
       {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
       <table className="w-full">
         <tbody>
-          <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+          <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-halftone rounded-md">
             <td>
               <p>Pilot Freight Services</p>
               <p className="text-xs sm:text-sm">Free on purchase from $150</p>
             </td>
             <td>At your expense</td>
           </tr>
-          <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+          <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-halftone rounded-md">
             <td>
               <p>USPS</p>
               <p className="text-xs sm:text-sm">Free on purchase from $100</p>

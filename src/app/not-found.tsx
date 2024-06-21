@@ -1,6 +1,7 @@
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -19,11 +20,11 @@ export default function NotFound() {
           </span>
         </div>
         <div className="flex w-full justify-center">
-          <Button className="sm:max-w-[400px] max-w-[260px] max-h-14 w-full h-full md:py-4 sm:py-3 py-2 mx-3">
-            <a href="/" className="lg:text-xl text-base">
+          <Link href={"/"}>
+            <Button className="sm:max-w-[400px] max-w-[260px] max-h-14 w-full h-full md:py-4 sm:py-3 py-2 mx-3 lg:text-xl text-base">
               Return to main page
-            </a>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

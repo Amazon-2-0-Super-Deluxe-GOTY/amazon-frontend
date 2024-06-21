@@ -237,7 +237,7 @@ export default function Page() {
                 <sup>{displayedPriceParts.fraction}</sup>
               </p>
               {!!product.discountPercent && (
-                <p className="text-base line-through text-gray-500">
+                <p className="text-base line-through text-halftone">
                   ${normalPriceParts.whole}
                   <sup>{normalPriceParts.fraction}</sup>
                 </p>

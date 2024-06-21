@@ -21,6 +21,8 @@ import { logOut, useUser } from "@/api/users";
 import { useAuthStore } from "@/lib/storage";
 import { useRouter } from "next/navigation";
 import { CategoryIcon, ExitIcon, FAQIcon, SettingsIcon } from "./Icons";
+import { MediaQueryCSS } from "./MediaQuery";
+import { Logo } from "./Logo";
 
 export const UserSidebar = ({
   isOpen,
@@ -53,64 +55,63 @@ export const UserSidebar = ({
   };
 
   return (
-    <div>
-      <Sidebar isOpen={isOpen} closeModal={closeSidebar}>
-        <SidebarHeader>
-          <SidebarAvatar
-            image={headerData.avatarImage}
-            fallback={headerData.avatarFallback}
-          />
-          <div>
-            <SidebarTitle>{headerData.title}</SidebarTitle>
-            <SidebarDescription>{headerData.description}</SidebarDescription>
-          </div>
-          {!isLoggedIn && (
-            <div className="flex flex-col gap-2 pt-2 lg:pt-4">
-              <SignInUpButtons variant="sidebar" />
-            </div>
-          )}
-        </SidebarHeader>
-        <Separator />
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1" className="border-none">
-            <AccordionTrigger className="py-3 lg:data-[state=open]:pb-4">
-              <SidebarItem icon={<CategoryIcon />} text="Product catalog" />
-            </AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-3 lg:gap-4">
-              {categories.map((item) => (
-                <Link
-                  className="w-full"
-                  href={item.url}
-                  key={item.title}
-                  onClick={closeSidebar}
-                >
-                  <SidebarItem icon={item.icon} text={item.title} />
-                </Link>
-              ))}
-              <Button variant={"secondary"}>See all</Button>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        <Separator />
-        <div className="flex flex-col gap-3 lg;gap-4">
-          {isLoggedIn && (
-            <Link href={"/account?tab=settings-open"}>
-              <SidebarItem icon={<SettingsIcon />} text="Settings" />
-            </Link>
-          )}
-          <Link href={"/help"}>
-            <SidebarItem icon={<FAQIcon />} text="Help & FAQ" />
-          </Link>
+    <Sidebar isOpen={isOpen} closeModal={closeSidebar}>
+      <SidebarHeader>
+        <SidebarAvatar image={headerData.avatarImage} />
+        <div>
+          <SidebarTitle>{headerData.title}</SidebarTitle>
+          <SidebarDescription>{headerData.description}</SidebarDescription>
         </div>
-        {isLoggedIn && (
-          <>
-            <Separator />
-            <button onClick={onLogOut}>
-              <SidebarItem icon={<ExitIcon />} text="Log out" />
-            </button>
-          </>
+        {!isLoggedIn && (
+          <div className="flex flex-col gap-2 pt-2 lg:pt-4">
+            <SignInUpButtons variant="sidebar" />
+          </div>
         )}
-      </Sidebar>
-    </div>
+      </SidebarHeader>
+      <Separator />
+      <Accordion type="single" collapsible>
+        <AccordionItem value="item-1" className="border-none">
+          <AccordionTrigger className="py-3 lg:data-[state=open]:pb-4">
+            <SidebarItem icon={<CategoryIcon />} text="Product catalog" />
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-3 lg:gap-4">
+            {categories.map((item) => (
+              <Link
+                className="w-full"
+                href={item.url}
+                key={item.title}
+                onClick={closeSidebar}
+              >
+                <SidebarItem icon={item.icon} text={item.title} />
+              </Link>
+            ))}
+            <Button variant={"secondary"}>See all</Button>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      <Separator />
+      <div className="flex flex-col gap-3 lg;gap-4">
+        {isLoggedIn && (
+          <Link href={"/account?tab=settings-open"}>
+            <SidebarItem icon={<SettingsIcon />} text="Settings" />
+          </Link>
+        )}
+        <Link href={"/help"}>
+          <SidebarItem icon={<FAQIcon />} text="Help & FAQ" />
+        </Link>
+      </div>
+      {isLoggedIn && (
+        <>
+          <Separator />
+          <button onClick={onLogOut}>
+            <SidebarItem icon={<ExitIcon />} text="Log out" />
+          </button>
+        </>
+      )}
+      <div className="mt-auto flex flex-col justify-center items-center gap-4 lg:hidden">
+        <Separator />
+        <Logo color="#4A7BD9" />
+      </div>
+    </Sidebar>
   );
 };

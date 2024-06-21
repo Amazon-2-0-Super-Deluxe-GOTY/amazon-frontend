@@ -7,7 +7,7 @@ interface Props {
   text: string;
   buttonConfirmText?: string;
   buttonCloseText?: string;
-  variant?: "primary" | "destructive";
+  colorVariant?: "primary" | "destructive";
   closeModal: (param?: { action: "CLOSE" } | { action: "CONFIRM" }) => void;
 }
 
@@ -17,13 +17,19 @@ export const AlertDialog = ({
   text,
   buttonConfirmText = "Delete",
   buttonCloseText = "Cancel",
-  variant = "destructive",
+  colorVariant = "destructive",
 }: Props) => {
   const onOpenChange = (open: boolean) => {
     if (!open) {
       closeModal();
     }
   };
+
+  const firstBtnVariant =
+    colorVariant === "destructive" ? "primary" : "secondary";
+  const secondBtnVariant =
+    colorVariant === "destructive" ? "destructive" : "primary";
+
   return (
     <Dialog open={true} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-md p-6" hideClose>
@@ -33,14 +39,14 @@ export const AlertDialog = ({
           <p className="text-lg text-center">{text}</p>
           <div className="pt-2 flex gap-3.5">
             <Button
-              variant={"secondary"}
+              variant={firstBtnVariant}
               className="w-full"
               onClick={() => closeModal({ action: "CLOSE" })}
             >
               {buttonCloseText}
             </Button>
             <Button
-              variant={variant}
+              variant={secondBtnVariant}
               className="w-full"
               onClick={() => closeModal({ action: "CONFIRM" })}
             >

@@ -22,6 +22,7 @@ import { User } from "@/api/types";
 import { useUser } from "@/api/users";
 import { AvatarDefaultFallback } from "../Shared/AvatarDefaultFallback";
 import { ChevronLeftIcon, HomeIcon } from "../Shared/Icons";
+import clsx from "clsx";
 
 export function AccountPage({ user: initialUser }: { user: User }) {
   const [user, setUser] = useState(initialUser);
@@ -29,6 +30,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
   const param = useSearchParamsTools();
 
   const userFullName = `${user.firstName} ${user.lastName}`;
+  const tabFromParams = param.get?.("tab");
 
   const [isOpenTab, setIsOpenTab] = useState<boolean>(() => {
     const defaultValue = param.get?.("tab");
@@ -117,21 +119,30 @@ export function AccountPage({ user: initialUser }: { user: User }) {
             <Button
               variant={"tertiary"}
               onClick={() => onChangeAccountTab("orders")}
-              className="flex justify-start font-normal text-base"
+              className={clsx(
+                "flex justify-start font-normal text-base",
+                tabFromParams === "orders-open" && "bg-tertiary-hover"
+              )}
             >
               My orders
             </Button>
             <Button
               variant={"tertiary"}
               onClick={() => onChangeAccountTab("wishlist")}
-              className="flex justify-start font-normal text-base"
+              className={clsx(
+                "flex justify-start font-normal text-base",
+                tabFromParams === "wishlist-open" && "bg-tertiary-hover"
+              )}
             >
               Wishlist
             </Button>
             <Button
               variant={"tertiary"}
               onClick={() => onChangeAccountTab("settings")}
-              className="flex justify-start font-normal text-base"
+              className={clsx(
+                "flex justify-start font-normal text-base",
+                tabFromParams === "settings-open" && "bg-tertiary-hover"
+              )}
             >
               Account settings
             </Button>

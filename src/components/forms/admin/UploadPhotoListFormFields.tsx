@@ -18,6 +18,7 @@ import { InfoIcon, PlusIcon, TrashIcon } from "../../Shared/Icons";
 import { isImageValid } from "@/lib/products";
 import { AlertDialog } from "../../Admin/AlertDialog";
 import { useModal } from "../../Shared/Modal";
+import { Button } from "@/components/ui/button";
 
 interface UploadPhotoListFormFieldProps {
   title: string;
@@ -66,7 +67,7 @@ export function UploadPhotoListFormField({
           text: "Your file exceeds 5 MB or does not match any format, namely JPEG or PNG.",
           buttonConfirmText: "Try again",
           buttonCloseText: "Back",
-          variant: "primary",
+          colorVariant: "primary",
         },
       });
       return;
@@ -128,13 +129,17 @@ export function UploadPhotoListFormField({
                     fill
                     className="object-cover rounded-lg"
                   />
-                  <button
-                    type="button"
-                    className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100 rounded-lg"
-                    onClick={onDeleteImage(i)}
-                  >
-                    <TrashIcon className="w-10 h-10 text-light" />
-                  </button>
+                  <div className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100 rounded-lg">
+                    <Button
+                      type="button"
+                      variant={"destructive"}
+                      size={"icon"}
+                      onClick={onDeleteImage(i)}
+                      className="border-light"
+                    >
+                      <TrashIcon className="w-6 h-6 text-light stroke-2" />
+                    </Button>
+                  </div>
                 </div>
               ))}
               {uploadLoadingElements.map((_, i) => (

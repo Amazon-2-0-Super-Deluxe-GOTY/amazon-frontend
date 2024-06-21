@@ -18,7 +18,7 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
   const sellerGrade = getSellerGrade(sellerInfo.byersRatingPercent);
 
   return (
-    <Card className="bg-gray-200 p-6 space-y-3">
+    <Card className="bg-halftone p-6 space-y-3">
       <div className="flex lg:flex-col justify-between lg:justify-start gap-3">
         <div className="flex items-center gap-3">
           <UserIcon className="w-8 h-8 lg:w-10 lg:h-10" />
@@ -101,7 +101,7 @@ export const SellerInfoCard = ({ sellerInfo }: { sellerInfo: SellerInfo }) => {
               <Accordion
                 type="single"
                 collapsible
-                className="bg-gray-200 rounded-md"
+                className="bg-halftone rounded-md"
               >
                 <AccordionItem value="item-1" className="border-none">
                   <AccordionTrigger className="p-4 font-semibold text-sm sm:text-lg lg:text-xl">

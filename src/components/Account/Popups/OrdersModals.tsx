@@ -47,7 +47,6 @@ export const OrderDetailsModal = ({
     name: string;
     adress: string;
     paymentType: string;
-    dateDelivered: string;
   };
 }) => {
   const isDesktop = useScreenSize({ minSize: "md" });
@@ -88,7 +87,7 @@ export const OrderDetailsModal = ({
                       status === "Recived" && "text-green-500",
                       status === "Ready for pickup" && "text-blue-600",
                       status === "Shipped" && "text-cyan-500",
-                      status === "Ordered" && "text-gray-300",
+                      status === "Ordered" && "text-halftone",
                       status === "Canceled" && "text-red-500",
                       "font-medium text-base"
                     )}
@@ -154,7 +153,7 @@ export const OrderDetailsModal = ({
                   Additional information
                 </span>
                 <div className="w-full h-full">
-                  <div className="w-full flex justify-between items-center">
+                  <div className="w-full flex justify-between items-center py-2">
                     <span className="text-xl font-medium">
                       Recipient&apos;s name
                     </span>
@@ -162,24 +161,24 @@ export const OrderDetailsModal = ({
                       {additionalInfo.name}
                     </span>
                   </div>
-                  <div className="w-full flex justify-between items-center">
-                    <span className="text-xl font-medium">Adress</span>
+                  <div className="w-full flex justify-between items-center py-2">
+                    <span className="text-xl font-medium">Address</span>
                     <span className="text-xl font-light">
                       {additionalInfo.adress}
                     </span>
                   </div>
-                  <div className="w-full flex justify-between items-center">
+                  <div className="w-full flex justify-between items-center py-2">
                     <span className="text-xl font-medium">Payment type</span>
-                    <span className="text-xl font-light">
+                    <span className="text-xl font-light capitalize">
                       {additionalInfo.paymentType}
                     </span>
                   </div>
-                  <div className="w-full flex justify-between items-center">
+                  {/* <div className="w-full flex justify-between items-center">
                     <span className="text-xl font-medium">Delivered on</span>
                     <span className="text-xl font-light">
                       {additionalInfo.dateDelivered}
                     </span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -213,7 +212,7 @@ export const OrderDetailsModal = ({
                     status === "Recived" && "text-green-500",
                     status === "Ready for pickup" && "text-blue-600",
                     status === "Shipped" && "text-cyan-500",
-                    status === "Ordered" && "text-gray-300",
+                    status === "Ordered" && "text-halftone",
                     status === "Canceled" && "text-red-500",
                     "font-medium text-sm"
                   )}
@@ -275,7 +274,7 @@ export const OrderDetailsModal = ({
                 Additional information
               </span>
               <div className="w-full h-full">
-                <div className="w-full flex justify-between items-start gap-3">
+                <div className="w-full flex justify-between items-start gap-3 py-2">
                   <span className="text-base font-medium">
                     Recipient&apos;s name
                   </span>
@@ -283,24 +282,24 @@ export const OrderDetailsModal = ({
                     {additionalInfo.name}
                   </span>
                 </div>
-                <div className="w-full flex justify-between items-start gap-3">
-                  <span className="text-base font-medium">Adress</span>
+                <div className="w-full flex justify-between items-start gap-3 py-2">
+                  <span className="text-base font-medium">Address</span>
                   <span className="text-base text-right">
                     {additionalInfo.adress}
                   </span>
                 </div>
-                <div className="w-full flex justify-between items-start gap-3">
+                <div className="w-full flex justify-between items-start gap-3 py-2">
                   <span className="text-base font-medium">Payment type</span>
-                  <span className="text-base text-right">
+                  <span className="text-base text-right capitalize">
                     {additionalInfo.paymentType}
                   </span>
                 </div>
-                <div className="w-full flex justify-between items-start gap-3">
+                {/* <div className="w-full flex justify-between items-start gap-3 py-2">
                   <span className="text-base font-medium">Delivered on</span>
                   <span className="text-base text-right">
                     {additionalInfo.dateDelivered}
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

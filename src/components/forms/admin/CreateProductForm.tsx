@@ -298,7 +298,7 @@ export function CreateProductForm({
           text: "You will lose all your changes.",
           buttonCloseText: "Back",
           buttonConfirmText: "Continue",
-          variant: "primary",
+          colorVariant: "destructive",
         },
       }).then(({ action }) => {
         if (action === "CONFIRM") {
@@ -522,7 +522,7 @@ export function CreateProductForm({
                         {...field}
                       />
                     </FormControl>
-                    <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5 peer-disabled:text-gray-500">
+                    <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5 peer-disabled:text-halftone">
                       Name
                     </FormLabel>
                     <FormMessage className="px-4 pt-2" />

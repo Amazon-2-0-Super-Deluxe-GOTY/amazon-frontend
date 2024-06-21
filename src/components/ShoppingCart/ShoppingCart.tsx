@@ -70,6 +70,7 @@ export const ShoppingCart = () => {
           isAuthenticated={isAuthenticated}
           onContinue={closeModal}
           onCheckout={onCheckout}
+          isLoading={cart.isLoading || cart.isRefetching}
         />
       ) : (
         <ShoppingCartMobile
@@ -78,6 +79,7 @@ export const ShoppingCart = () => {
           isAuthenticated={isAuthenticated}
           onContinue={closeModal}
           onCheckout={onCheckout}
+          isLoading={cart.isLoading || cart.isRefetching}
         />
       )}
     </>
@@ -88,6 +90,7 @@ interface ShoppingCartProps {
   cart?: Cart;
   suggestionsProducts: ProductShort[];
   isAuthenticated: boolean;
+  isLoading: boolean;
   onContinue: () => void;
   onCheckout: () => void;
 }
@@ -98,6 +101,7 @@ const ShoppingCartMobile = ({
   isAuthenticated,
   onContinue,
   onCheckout,
+  isLoading,
 }: ShoppingCartProps) => {
   const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
   const cartItems = useMemo(() => cart?.cartItems ?? [], [cart?.cartItems]);
@@ -172,7 +176,10 @@ const ShoppingCartMobile = ({
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts cartItems={cart?.cartItems ?? []} />
+                            <CartProducts
+                              cartItems={cart?.cartItems ?? []}
+                              isLoading={isLoading}
+                            />
                           </div>
                         </div>
                         <Separator />
@@ -248,6 +255,7 @@ const ShoppingCartDesktop = ({
   isAuthenticated,
   onContinue,
   onCheckout,
+  isLoading,
 }: ShoppingCartProps) => {
   const { isOpenCartModal, setIsOpenCartModal } = useStorageCart();
   const cartItems = useMemo(() => cart?.cartItems ?? [], [cart?.cartItems]);
@@ -325,7 +333,10 @@ const ShoppingCartDesktop = ({
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts cartItems={cart?.cartItems ?? []} />
+                            <CartProducts
+                              cartItems={cart?.cartItems ?? []}
+                              isLoading={isLoading}
+                            />
                           </div>
                         </div>
                         <Separator />
