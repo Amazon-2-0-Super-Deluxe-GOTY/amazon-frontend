@@ -19,9 +19,10 @@ import { SecurityContent } from "./OrderInfoContent/SecurityContent";
 import { SheetHeader } from "../Shared/SteetParts";
 import { ScrollArea } from "../ui/scroll-area";
 import { useStorageCart } from "@/lib/storage";
-import { useCart, type Product } from "@/api/products";
+import { ProductShort, useCart, type Product } from "@/api/products";
 import { splitPrice } from "@/lib/products";
 import { ChevronRightIcon, MinusIcon, PlusIcon } from "../Shared/Icons";
+import { useWishlist } from "@/api/wishlist";
 
 const infoElements = [
   {
@@ -106,6 +107,25 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
   };
   //#endregion
 
+  //#region AddProductToWishlist
+  const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
+
+  const canAddToWishlist = useMemo(() => {
+    if (!wishlist.data) return true;
+
+    const isInWishlistItem = wishlist.data.find(
+      (i: ProductShort) => i.id === product.id
+    );
+    return isInWishlistItem ? false : true;
+  }, [wishlist.data, product.id]);
+
+  const onAddToWishlist = () => {
+    if (!canAddToWishlist)
+      removeFromWishlist.mutateAsync({ productIds: [product.id] });
+    else addToWishlist.mutateAsync({ productId: product.id });
+  };
+  //#endregion
+
   return (
     <Card>
       <CardHeader className="space-y-3">
@@ -173,8 +193,12 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
         >
           Buy now
         </Button>
-        <Button variant={"tertiary"} className="col-span-2 lg:col-span-1">
-          Add to wish list
+        <Button
+          variant={"tertiary"}
+          className="col-span-2 lg:col-span-1"
+          onClick={onAddToWishlist}
+        >
+          {canAddToWishlist ? "Add to wish list" : "Remove from wish list"}
         </Button>
       </CardContent>
       {/* <MediaQueryCSS maxSize="lg">

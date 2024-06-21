@@ -6,35 +6,40 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { RemoveFromWishListModal } from "../Popups/WishlistModals";
 import { CustomerReviewsIcon, StarFullIcon } from "@/components/Shared/Icons";
+import { ProductShort } from "@/api/products";
 
 export const WishlistCard = ({
-  code,
-  title,
-  price,
-  quantity,
+  product,
   removeWishlistItem,
 }: {
-  code: string;
-  title: string;
-  price: number;
-  quantity?: number;
-  removeWishlistItem: (code: string) => void;
+  product: ProductShort;
+  removeWishlistItem: (productId: string) => void;
 }) => {
-  const priceParts = price.toFixed(2).split(".");
+  const code = product.id;
+  const priceParts = product.discountPercent
+    ? product.discountPrice.toFixed(2).split(".")
+    : product.price.toFixed(2).split(".");
   const whole = priceParts[0];
   const fraction = priceParts[1];
-  const isOutOfStock = quantity === 0;
+  const isOutOfStock = product.quantity === 0;
 
   return (
     <Card className="max-w-sm w-full border-0 relative shadow-none before:ring-1 before:ring-gray-300 before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
       <CardHeader className="pb-0">
         <div className="relative aspect-square">
-          <Link href={`/product/${code}`}>
-            <Image src={placeholder} fill={true} alt="Placeholder" />
+          <Link href={`/product/${product.slug}`} className="contents">
+            <Image
+              src={product.productImages[0].imageUrl ?? placeholder}
+              fill={true}
+              alt="Placeholder"
+              className="object-cover"
+            />
           </Link>
-          <div className="absolute top-6 left-0 rounded-e-xl bg-gray-100 px-2 pl-4 pr-6">
-            -24%
-          </div>
+          {product.discountPercent && (
+            <div className="absolute top-6 left-0 rounded-e-xl bg-gray-100 px-2 pl-4 pr-6">
+              -{product.discountPercent}%
+            </div>
+          )}
           <div className="absolute right-[-8px] top-[-8px]">
             <RemoveFromWishListModal
               onRemoveItem={() => removeWishlistItem(code)}
@@ -42,28 +47,32 @@ export const WishlistCard = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <Link href={`/product/${code}`}>
+      <Link href={`/product/${product.slug}`} className="contents">
+        <CardContent>
           <div className="mt-3 flex flex-col justify-center items-center">
-            <span className="text-lg line-clamp-2">{title}</span>
+            <span className="text-lg line-clamp-2">{product.name}</span>
             <div className="pb-3 flex gap-3 items-center">
               <div className="flex items-center gap-1">
                 <StarFullIcon width={16} height={16} />
-                <span className="text-sm">4.7</span>
+                <span className="text-sm">{product.generalRate}</span>
               </div>
               <div className="flex items-center gap-1">
                 <CustomerReviewsIcon width={16} height={16} />
-                <span className="text-sm">228</span>
+                <span className="text-sm">{product.reviewsCount}</span>
               </div>
             </div>
             <div>
               <span className="text-xl">${whole}</span>
               <sup>{fraction}</sup>
-              <sub className="ml-2 line-through text-halftone">$39.99</sub>
+              {product.discountPercent && (
+                <sub className="ml-2 line-through text-gray-400">
+                  ${product.price.toFixed(2)}
+                </sub>
+              )}
             </div>
           </div>
-        </Link>
-      </CardContent>
+        </CardContent>
+      </Link>
       {isOutOfStock && (
         <div className="absolute inset-0 bg-gray-200/50">
           <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-center max-w-[230px] w-full">
@@ -77,82 +86,3 @@ export const WishlistCard = ({
     </Card>
   );
 };
-
-// "use client"
-// import { Card, CardContent, CardHeader } from "@/components/ui/card";
-// import { MessageCircle, StarIcon } from "lucide-react";
-// import placeholder from "@/../public/Icons/placeholder.svg";
-// import Image from "next/image";
-// import { Button } from "@/components/ui/button";
-// import Link from "next/link";
-// import { RemoveFromWishListModal } from "../Popups/WishlistModals";
-// import { ProductCard } from "@/components/Product/ProductCard";
-// import { useQuery } from "@tanstack/react-query";
-
-// interface ProductShort {
-//   id: string;
-//   slug: string;
-//   name: string;
-//   price: number;
-//   discountPercent: number | null;
-//   discountPrice: number;
-//   productImages: { imageUrl: string }[];
-//   generalRate: number;
-//   reviewsCount: number;
-//   quantity: number;
-// }
-
-// export const WishlistCard = ({
-//   code,
-//   title,
-//   price,
-//   quantity,
-//   removeWishlistItem,
-// }: {
-//   code: string;
-//   title: string;
-//   price: number;
-//   quantity?: number;
-//   removeWishlistItem: (code: string) => void;
-// }) => {
-//   const priceParts = price.toFixed(2).split(".");
-//   const whole = priceParts[0];
-//   const fraction = priceParts[1];
-//   const isOutOfStock = quantity === 0;
-
-//   // const productsInWishlistQuery = useQuery({
-//   //   queryKey: ["productsInWishlist"],
-//   //   queryFn: async () => {
-//   //     return await fetch("/api/orders").then((res) => res.json());
-//   //   },
-//   //   refetchOnWindowFocus: false,
-//   //   select(data) {
-//   //     return data?.status === 200 ? data.data : [];
-//   //   },
-//   // });
-
-//   const products:ProductShort = {
-//     id: code,
-//     slug: "123",
-//     name: title,
-//     price: price,
-//     discountPercent: null,
-//     discountPrice: 10,
-//     productImages: [ {imageUrl: "/banner-signup-mobile.webp"} ],
-//     generalRate: 4,
-//     reviewsCount: 7,
-//     quantity: quantity ?? 0,
-//   };
-
-//   return (
-//     <div className="max-w-[243px] max-h-[263px]">
-//       <div className="-mb-9">
-//         <ProductCard product={products} />
-//         {/* <ProductCard product={productsInWishlistQuery.data ?? []} /> */}
-//       </div>
-//       <div className="absolute right-4 top-3">
-//         <RemoveFromWishListModal onRemoveItem={() => removeWishlistItem(code)} />
-//       </div>
-//     </div>
-//   );
-// };

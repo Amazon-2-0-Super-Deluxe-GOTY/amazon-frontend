@@ -120,7 +120,7 @@ export function ChangePasswordForm({
                     <Button
                       variant={"tertiary"}
                       type="button"
-                      className="absolute"
+                      className="absolute h-[36px] mt-[2px] mr-[1px] max-md:px-6 max-md:mr-0.5"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
@@ -163,7 +163,7 @@ export function ChangePasswordForm({
                     <Button
                       variant={"tertiary"}
                       type="button"
-                      className="absolute"
+                      className="absolute h-[36px] mt-[2px] mr-[1px] max-md:px-6 max-md:mr-0.5"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                     >
                       {showNewPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
@@ -195,7 +195,7 @@ export function ChangePasswordForm({
                     <Button
                       variant={"tertiary"}
                       type="button"
-                      className="absolute"
+                      className="absolute h-[36px] mt-[2px] mr-[1px] max-md:px-6 max-md:mr-0.5"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
