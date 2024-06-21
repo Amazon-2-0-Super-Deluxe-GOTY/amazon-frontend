@@ -5,10 +5,10 @@ import { CreateProductForm } from "@/components/forms/admin/CreateProductForm";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
-import { PlusIcon, SquarePenIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import Link from "next/link";
+import { EditIcon, PlusIcon } from "@/components/Shared/Icons";
 
 export function CreateProductPage({
   productId,
@@ -69,7 +69,7 @@ export function CreateProductPage({
         <div className="absolute inset-0 pointer-events-none flex items-end">
           <div className="sticky bottom-6 flex items-center gap-4 pointer-events-auto">
             {isEdit ? (
-              <SquarePenIcon className="w-10 h-10" />
+              <EditIcon className="w-10 h-10" />
             ) : (
               <PlusIcon className="w-10 h-10" />
             )}

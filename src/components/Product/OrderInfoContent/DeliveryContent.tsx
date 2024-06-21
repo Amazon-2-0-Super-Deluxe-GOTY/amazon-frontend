@@ -59,7 +59,7 @@ export const DeliveryContent = () => {
                       `border-input p-3 text-base`,
                       e.isFocused ? "ring-1 ring-ring" : ""
                     ),
-                  dropdownIndicator: () => "text-gray-400",
+                  dropdownIndicator: () => "text-halftone",
                   menu: () =>
                     cn(
                       "absolute top-0 mt-1 text-sm z-10 w-full",
@@ -69,10 +69,10 @@ export const DeliveryContent = () => {
                     cn(
                       "cursor-default",
                       "rounded-sm py-1.5 my-1 px-2 text-sm outline-none",
-                      "focus:bg-gray-200 hover:bg-gray-200 w-auto"
+                      "focus:bg-halftone hover:bg-halftone w-auto"
                     ),
                   noOptionsMessage: () => "p-5",
-                  multiValue: () => "bg-gray-200 px-2 p-1 rounded mr-2",
+                  multiValue: () => "bg-halftone px-2 p-1 rounded mr-2",
                   input: () => "text-sm overflow-x-hidden",
                 }}
                 options={countries}
@@ -90,14 +90,14 @@ export const DeliveryContent = () => {
           {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
           <table className="w-full">
             <tbody>
-              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-halftone rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
                   <p className="text-xs sm:text-sm">Mar 24 to point</p>
                 </td>
                 <td>$27.00</td>
               </tr>
-              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-halftone rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
                   <p className="text-xs sm:text-sm">Mar 24 to point</p>
@@ -113,14 +113,14 @@ export const DeliveryContent = () => {
           {/* FIXME: I don't know yet how the data will look like, so I hardcoded here data from design */}
           <table className="w-full">
             <tbody>
-              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-halftone rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
                   <p className="text-xs sm:text-sm">Mar 24 to point</p>
                 </td>
                 <td>$27.00</td>
               </tr>
-              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-gray-200 rounded-md">
+              <tr className="text-sm sm:text-base flex justify-between items-center p-4 even:bg-halftone rounded-md">
                 <td>
                   <p>Pilot Freight Services</p>
                   <p className="text-xs sm:text-sm">Mar 24 to point</p>

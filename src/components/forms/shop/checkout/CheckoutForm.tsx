@@ -35,8 +35,7 @@ import {
 import { PlaceOrderModal } from "@/components/Checkout/PlaceOrderModal";
 import { GetCountryData, GetStateData, GetCityData } from "./DeliveryData";
 import { Logo } from "@/components/Shared/Logo";
-import { CartItem } from "@/api/products";
-import { OrderProduct, Order, createOrder } from "@/api/orders";
+import { OrderProduct, createOrder } from "@/api/orders";
 import { useMutation } from "@tanstack/react-query";
 
 const FormSchema = z
@@ -171,8 +170,8 @@ export function CheckoutForm({
   });
   const handleSubmit = (values: z.infer<typeof FormSchema>) => {
     createOrderMutation
-      .mutateAsync({ ...values, postIndex: values.postcode })
-      .then((res) => {
+      .mutateAsync({ ...values, country: countryQuery.data?.find((item) => item.iso2 === values.country)?.name ?? values.country, state: stateQuery.data?.find((item) => item.iso2 === values.state)?.name ?? values.state, city: cityQuery.data?.find((item) => item.iso2 === values.city)?.name ?? values.city, postIndex: values.postcode,
+      }).then((res) => {
         if (res.status === 201) {
           setIsOpen(true);
         } else if (res.status === 400) {
@@ -197,7 +196,7 @@ export function CheckoutForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="grid lg:grid-cols-[57.6875fr_40.8125fr] lg:grid-rows-[56px_100fr] w-full h-full gap-6 max-w-[1600px]"
+        className="grid lg:grid-cols-[6fr_4fr] lg:grid-rows-[56px_1fr] w-full h-full gap-6 max-w-[1600px]"
       >
         <section className="w-full flex justify-between items-center">
           <Link href={"/"}>

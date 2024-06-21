@@ -1,29 +1,34 @@
 "use client";
 import { Separator } from "../ui/separator";
-import { useState } from "react";
+import { OrderCardSkeleton } from "./Cards/AccountSkeleton";
 import { MyOrderCard } from "./Cards/MyOrderCard";
-
-const orderItems = Array.from({ length: 9 }).map((_, index) => ({
-  code: index.toString(),
-  status: index%2===0 ? "Recived" : index%3===0 ? "Ready for pickup" : index%5===0 ? "Shipped" : index%7===0 ? "Cancelled" : "Ordered",
-  // cost: Math.floor(Math.random() * 200 + 1),
-  // count: Math.floor(Math.random() * 20 + 1),
-  cost: index+100,
-  count: index+1,
-  date: "24.05.2024",
-}));
+import { useOrders } from "@/api/orders";
 
 export const MyOrders = () => {
-  
+  const { orders } = useOrders();
+  if (!orders) return null;
+
   return (
     <div className="flex flex-col gap-3">
-      <h1 className="text-2xl md:text-3xl">My orders</h1>
+      <h1 className="text-2xl md:text-3xl font-semibold">My orders</h1>
       <Separator />
-      <div className="w-full md:py-6">
-        {orderItems.map((order, index) => (
-          <MyOrderCard key={index} code={order.code} status={order.status} cost={order.cost} count={order.count} dateOfArrived={order.date}  />
-        ))}
-      </div>
+      {orders.isLoading ? (
+        <div className="w-full flex flex-col gap-2">
+          {Array.from({ length: 6 }, (_, i) => (
+            <OrderCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : orders.data?.length! > 0 ? (
+        <div className="w-full md:py-6">
+          {orders.data?.map((order, index) => (
+            <MyOrderCard key={index} order={order} />
+          ))}
+        </div>
+      ) : (
+        <div className="w-full flex justify-center items-center">
+          <span className="text-lg md:text-xl text-center">No orders.</span>
+        </div>
+      )}
     </div>
   );
 };

@@ -8,26 +8,25 @@ import {
 } from "@/components/Shared/Sidebar";
 import { textAvatar } from "@/lib/utils";
 import { Separator } from "../ui/separator";
-import {
-  BarChart3Icon,
-  BoxIcon,
-  LogOutIcon,
-  ScrollTextIcon,
-  ShoppingBagIcon,
-  UsersRoundIcon,
-} from "lucide-react";
 import Link from "next/link";
 import type { User } from "@/api/types";
 import { useAuthStore } from "@/lib/storage";
 import { logOut } from "@/api/users";
 import { useRouter } from "next/navigation";
-import { CategoryIcon } from "../Shared/Icons";
+import {
+  CategoryIcon,
+  ExitIcon,
+  OrdersIcon,
+  ProductsIcon,
+  ReviewsIcon,
+  UsersIcon,
+} from "../Shared/Icons";
 
 const links = [
   {
     title: "Users",
     url: "/users",
-    icon: <UsersRoundIcon />,
+    icon: <UsersIcon />,
   },
   {
     title: "Category",
@@ -37,17 +36,17 @@ const links = [
   {
     title: "Products",
     url: "/products",
-    icon: <ShoppingBagIcon />,
+    icon: <ProductsIcon />,
   },
   {
     title: "Orders",
     url: "/orders",
-    icon: <BoxIcon />,
+    icon: <OrdersIcon />,
   },
   {
     title: "Reviews",
     url: "/reviews",
-    icon: <BarChart3Icon />,
+    icon: <ReviewsIcon />,
   },
 ];
 
@@ -74,10 +73,7 @@ export const AdminSidebar = ({
     <div>
       <Sidebar isOpen={isOpen} closeModal={closeSidebar}>
         <SidebarHeader>
-          <SidebarAvatar
-            image={user?.avatarUrl}
-            fallback={textAvatar(fullName)}
-          />
+          <SidebarAvatar image={user?.avatarUrl} />
           <div>
             <SidebarTitle>{fullName}</SidebarTitle>
             <SidebarDescription>Administrator</SidebarDescription>
@@ -98,7 +94,7 @@ export const AdminSidebar = ({
         </div>
         <Separator className="bg-black" />
         <button onClick={onLogOut}>
-          <SidebarItem icon={<LogOutIcon />} text="Log out" />
+          <SidebarItem icon={<ExitIcon />} text="Log out" />
         </button>
       </Sidebar>
     </div>

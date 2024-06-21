@@ -29,7 +29,7 @@ export function CarouselCategory({
         align: "end",
       }}
     >
-      <CarouselContent className="p-1">
+      <CarouselContent className="p-1 justify-stretch items-stretch">
         {isLoading
           ? Array.from({ length: 8 }).map((_, index) => (
               <CarouselItem
@@ -46,7 +46,7 @@ export function CarouselCategory({
                 <CarouselItem
                   key={index}
                   className={
-                    "basis-[unset] md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4 lg:pl-6"
+                    "basis-[unset] md:basis-1/4 lg:basis-1/5 xl:basis-1/6 flex justify-center pl-4 lg:pl-6 h-full self-stretch"
                   }
                 >
                   <CategoryCard category={category} />

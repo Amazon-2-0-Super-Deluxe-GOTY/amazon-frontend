@@ -93,7 +93,7 @@ export const AuthModal = ({
         text: "If you close the dialog now, your changes will not be saved",
         buttonCloseText: "Back",
         buttonConfirmText: "Close",
-        variant: "primary",
+        colorVariant: "primary",
       },
     }).then((value) => value.action === "CONFIRM" && closeModal());
   };

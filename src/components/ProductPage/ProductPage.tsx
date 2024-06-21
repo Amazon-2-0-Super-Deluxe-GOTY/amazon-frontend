@@ -99,7 +99,7 @@ export function ProductPage({ product }: { product: Product }) {
         <div className="lg:max-w-2xl w-full">
           <MediaQueryCSS maxSize="lg">
             <h1 className="text-heading-1">{product.name}</h1>
-            <span className="text-sm text-gray-400">Code: {product.code}</span>
+            <span className="text-sm text-halftone">Code: {product.code}</span>
             <div className="my-3 flex items-center">
               <div className="flex items-center gap-1 h-4">{starElements}</div>
               <span className="text-base font-bold ml-2">
@@ -132,7 +132,10 @@ export function ProductPage({ product }: { product: Product }) {
             </div>
           </div>
           <div className="mt-3 mb-6 lg:mt-8 lg:mb-0">
-            <h2 className="text-heading-3 font-semibold hidden lg:block mb-4">
+            <MediaQueryCSS maxSize="lg">
+              <Separator />
+            </MediaQueryCSS>
+            <h2 className="text-heading-3 font-semibold my-6 text-center lg:text-start lg:bt-0 lg:mb-4">
               About product
             </h2>
             <AboutProduct items={product.aboutProductItems} variant="list" />

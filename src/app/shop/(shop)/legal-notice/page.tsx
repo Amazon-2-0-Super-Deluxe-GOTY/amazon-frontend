@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useSearchParamsTools } from "@/lib/router";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TermsAndConditions from "@/components/LegalNotice/TermsAndConditions";
 import LicenseAgreement from "@/components/LegalNotice/LicenseAgreement";
 import PrivacyPolicy from "@/components/LegalNotice/PrivacyPolicy";
+import { ChevronLeftIcon } from "@/components/Shared/Icons";
 
 export default function NotFound() {
   const param = useSearchParamsTools();
@@ -91,7 +91,7 @@ export default function NotFound() {
                 className="pl-2 mb-3 md:hidden"
                 onClick={onBack}
               >
-                <ChevronLeft />
+                <ChevronLeftIcon />
                 <span className="text-base">Back</span>
               </Button>
               {(() => {

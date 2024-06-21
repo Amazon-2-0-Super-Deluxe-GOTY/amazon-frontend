@@ -8,8 +8,8 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import Image from "next/image";
-import { XIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { XIcon } from "../Shared/Icons";
 
 interface Props {
   images: string[];
@@ -69,7 +69,7 @@ export const ProductImageFullView = (props: Props) => {
           </Carousel>
         </div>
         <button
-          className="absolute -top-[20%] right-4 lg:top-auto lg:-right-[8%] w-10 h-10 bg-white rounded-full flex justify-center items-center"
+          className="absolute -top-[20%] right-4 lg:top-auto lg:-right-[8%] w-10 h-10 bg-card rounded-full flex justify-center items-center"
           onClick={props.closeModal}
         >
           <XIcon />

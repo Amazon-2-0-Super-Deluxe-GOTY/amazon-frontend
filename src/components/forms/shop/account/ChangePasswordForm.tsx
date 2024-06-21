@@ -6,18 +6,17 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { useMutation } from "@tanstack/react-query";
 import { updateUser } from "@/api/users";
+import { EyeClosedIcon, EyeOpenedIcon } from "@/components/Shared/Icons";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
@@ -121,10 +120,10 @@ export function ChangePasswordForm({
                     <Button
                       variant={"tertiary"}
                       type="button"
-                      className="absolute"
+                      className="absolute h-[36px] mt-[2px] mr-[1px] max-md:px-6 max-md:mr-0.5"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                      {showPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
                     </Button>
                   </div>
                 </div>
@@ -164,10 +163,10 @@ export function ChangePasswordForm({
                     <Button
                       variant={"tertiary"}
                       type="button"
-                      className="absolute"
+                      className="absolute h-[36px] mt-[2px] mr-[1px] max-md:px-6 max-md:mr-0.5"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                     >
-                      {showNewPassword ? <EyeIcon /> : <EyeOffIcon />}
+                      {showNewPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
                     </Button>
                   </div>
                 </div>
@@ -196,12 +195,16 @@ export function ChangePasswordForm({
                     <Button
                       variant={"tertiary"}
                       type="button"
-                      className="absolute"
+                      className="absolute h-[36px] mt-[2px] mr-[1px] max-md:px-6 max-md:mr-0.5"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
                     >
-                      {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+                      {showConfirmPassword ? (
+                        <EyeOpenedIcon />
+                      ) : (
+                        <EyeClosedIcon />
+                      )}
                     </Button>
                   </div>
                 </div>

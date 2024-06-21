@@ -5,7 +5,13 @@ import { MinusIcon, PlusIcon, TrashIcon } from "../Shared/Icons";
 import { splitPrice } from "@/lib/products";
 import { useDebounce } from "use-debounce";
 
-export const CartProducts = ({ cartItems }: { cartItems: CartItem[] }) => {
+export const CartProducts = ({
+  cartItems,
+  isLoading,
+}: {
+  cartItems: CartItem[];
+  isLoading: boolean;
+}) => {
   const { updateCartItemQuantity, deleteCartItems } = useCart();
 
   const updateQuantity = (cartItemId: string) => (newQuantity: number) => {
@@ -24,6 +30,7 @@ export const CartProducts = ({ cartItems }: { cartItems: CartItem[] }) => {
             cartItem={item}
             updateQuantity={updateQuantity(item.id)}
             deleteItem={deleteItem(item.id)}
+            isCartItemsLoading={isLoading}
           />
         </div>
       ))}
@@ -35,10 +42,12 @@ const CartProductCard = ({
   updateQuantity,
   deleteItem,
   cartItem,
+  isCartItemsLoading,
 }: {
   cartItem: CartItem;
   updateQuantity: (newQuantity: number) => void;
   deleteItem: () => void;
+  isCartItemsLoading: boolean;
 }) => {
   // const { removeFromCart, incrementQuantity, decrementQuantity } = useStorageCart();
   const [count, setCount] = useState(cartItem.quantity);
@@ -51,7 +60,9 @@ const CartProductCard = ({
   const [countDebounced] = useDebounce(count, 300);
 
   useEffect(() => {
-    if (countDebounced !== cartItem.quantity) {
+    console.log(isCartItemsLoading);
+
+    if (countDebounced !== cartItem.quantity && !isCartItemsLoading) {
       updateQuantity(countDebounced);
     }
   }, [countDebounced, cartItem.quantity]);

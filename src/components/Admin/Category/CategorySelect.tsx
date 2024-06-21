@@ -68,7 +68,7 @@ export function CategorySelect({
           <p className="p-2 text-start">{selectedCategory?.name}</p>
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="p-4 min-w-96">
+      <SelectContent className="p-4 min-w-96 bg-card">
         {treeRoots.map((root) => (
           <SelectItemRecursive
             isOpen={isOpen}
@@ -137,7 +137,7 @@ function SelectItemRecursive({
   ) : (
     <SelectItem
       value={root.value.id.toString()}
-      className="p-4 data-[state=checked]:bg-muted"
+      className="p-4 data-[state=checked]:bg-accent"
       style={{ paddingLeft: `${getOffset(index + 1)}px` }}
       checkAlign="right"
       checkOffset={4}

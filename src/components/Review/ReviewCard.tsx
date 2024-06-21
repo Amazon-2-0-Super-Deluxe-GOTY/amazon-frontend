@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { AvatarDefaultFallback } from "../Shared/AvatarDefaultFallback";
 
 export const ReviewCard = ({
   review,
@@ -71,7 +72,7 @@ export const ReviewCard = ({
           <div className="flex items-center gap-2">
             <Avatar>
               <AvatarImage src={review.user.avatarUrl} />
-              <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
+              <AvatarDefaultFallback />
             </Avatar>
             <span className="text-base lg:text-lg">{fullName}</span>
           </div>
@@ -181,17 +182,17 @@ export const UserReviewCard = ({
           <div className="flex items-center gap-2">
             <Avatar>
               <AvatarImage src={review.user.avatarUrl} />
-              <AvatarFallback>{textAvatar(fullName)}</AvatarFallback>
+              <AvatarDefaultFallback />
             </Avatar>
             <span className="text-base lg:text-lg">{fullName}</span>
           </div>
-          <div className="flex items-center gap-1 lg:gap-3">
+          <div className="flex items-center gap-3">
             <span className="text-xs lg:text-sm">
               {formatReviewDate(new Date(review.createdAt))}
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="border-1.5 border-foreground/50 rounded-sm w-10 h-10 flex justify-center items-center">
+                <button className="border-1.5 border-foreground/50 rounded-sm w-8 h-8 lg:w-10 lg:h-10 flex justify-center items-center">
                   <MeatballMenuIcon className="w-6 h-6" />
                 </button>
               </DropdownMenuTrigger>

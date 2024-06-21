@@ -79,12 +79,14 @@ export const ReviewsBlock = ({ productId }: Props) => {
   const userReviewQuery = useQuery({
     queryKey: ["review", "user", user, productId],
     queryFn: () =>
-      getProductReviews({
-        pageSize: 1,
-        pageIndex: 1,
-        userId: user?.id,
-        productId,
-      }),
+      user
+        ? getProductReviews({
+            pageSize: 1,
+            pageIndex: 1,
+            userId: user?.id,
+            productId,
+          })
+        : null,
     refetchOnWindowFocus: false,
     select(data) {
       return data?.status === 200 ? data.data[0] : undefined;
@@ -179,7 +181,7 @@ export const ReviewsBlock = ({ productId }: Props) => {
         text: "Your review will be impossible to recover.",
         buttonCloseText: "Cancel",
         buttonConfirmText: "Delete",
-        variant: "destructive",
+        colorVariant: "destructive",
       },
     }).then(async (r) => {
       if (r.action === "CONFIRM") {
@@ -265,14 +267,16 @@ export const ReviewsBlock = ({ productId }: Props) => {
               isDeleteInProgress={deleteReviewMutation.isPending}
             />
           ) : (
-            <Button
-              variant={"secondary"}
-              className="w-full h-max lg:justify-start gap-4 lg:text-lg font-semibold"
-              onClick={onCreateReview}
-            >
-              <PlusIcon className="w-6 h-6 stroke-secondary" />
-              Create review
-            </Button>
+            !!user && (
+              <Button
+                variant={"secondary"}
+                className="w-full h-max lg:justify-start gap-4 lg:text-lg font-semibold"
+                onClick={onCreateReview}
+              >
+                <PlusIcon className="w-6 h-6 stroke-secondary" />
+                Create review
+              </Button>
+            )
           )}
         </div>
         <div className="space-y-3 lg:space-y-8">
