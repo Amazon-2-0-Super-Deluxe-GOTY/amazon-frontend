@@ -33,10 +33,14 @@ export const AlertDialog = ({
   return (
     <Dialog open={true} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-md p-6" hideClose>
-        <div className="space-y-6">
-          <h3 className="text-center text-3xl font-semibold">{title}</h3>
-          <Separator />
-          <p className="text-lg text-center">{text}</p>
+        <div className="space-y-5 lg:space-y-6">
+          <div className="space-y-3.5 lg:space-y-6">
+            <h3 className="text-center text-xl lg:text-3xl font-semibold">
+              {title}
+            </h3>
+            <Separator />
+          </div>
+          <p className="text-base lg:text-lg text-center">{text}</p>
           <div className="pt-2 flex gap-3.5">
             <Button
               variant={firstBtnVariant}

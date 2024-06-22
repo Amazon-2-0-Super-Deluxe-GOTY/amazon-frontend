@@ -19,7 +19,7 @@ export const OrderDetailsProductCard = ({
   const fraction = priceParts[1];
 
   return (
-    <Card className="w-full bg-background even:bg-card border-0 relative shadow-none before:ring-1 before:ring-halftone before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
+    <Card className="w-full border-0 relative shadow-none before:ring-1 before:ring-halftone before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
       <CardContent className="w-full p-0">
         <div className="w-full flex md:p-6 p-3">
           <div className="relative aspect-square w-[100px] h-full bg-halftone">
@@ -36,22 +36,18 @@ export const OrderDetailsProductCard = ({
             </div>
             <div className="absolute right-3 bottom-3 md:right-6 md:bottom-6">
               <div>
-                <div className="flex justify-end items-center gap-3">
-                  <span className="text-xs md:text-base font-medium">
-                    {quantity}
-                  </span>
-                  <span className="text-xs md:text-base font-medium">x</span>
-                  <span className="text-xs md:text-base font-medium">
-                    ${price.toFixed(2)}
-                  </span>
-                </div>
+                <p className="flex justify-end items-center gap-2 text-halftone text-xs md:text-base font-medium">
+                  <span>{quantity}</span>
+                  <span>x</span>
+                  <span>${price.toFixed(2)}</span>
+                </p>
                 <div className="flex justify-end items-center">
                   <div className="flex">
                     <div>
-                      <span className="text-base md:text-3xl font-medium text-black">
+                      <span className="text-base md:text-2xl font-medium text-foreground">
                         ${whole}
                       </span>
-                      <sup className="text-xs md:text-lg font-medium text-black">
+                      <sup className="text-xs md:text-lg font-medium text-foreground">
                         {fraction}
                       </sup>
                     </div>

@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { CategoryIcon, ExitIcon, FAQIcon, SettingsIcon } from "./Icons";
 import { MediaQueryCSS } from "./MediaQuery";
 import { Logo } from "./Logo";
+import { SheetClose } from "../ui/sheet";
 
 export const UserSidebar = ({
   isOpen,
@@ -76,14 +77,11 @@ export const UserSidebar = ({
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-3 lg:gap-4">
             {categories.map((item) => (
-              <Link
-                className="w-full"
-                href={item.url}
-                key={item.title}
-                onClick={closeSidebar}
-              >
-                <SidebarItem icon={item.icon} text={item.title} />
-              </Link>
+              <SheetClose key={item.title} onClick={closeSidebar}>
+                <Link className="w-full" href={item.url} onClick={closeSidebar}>
+                  <SidebarItem icon={item.icon} text={item.title} />
+                </Link>
+              </SheetClose>
             ))}
             <Button variant={"secondary"}>See all</Button>
           </AccordionContent>
@@ -92,13 +90,17 @@ export const UserSidebar = ({
       <Separator />
       <div className="flex flex-col gap-3 lg;gap-4">
         {isLoggedIn && (
-          <Link href={"/account?tab=settings-open"}>
-            <SidebarItem icon={<SettingsIcon />} text="Settings" />
-          </Link>
+          <SheetClose onClick={closeSidebar}>
+            <Link href={"/account?tab=settings-open"}>
+              <SidebarItem icon={<SettingsIcon />} text="Settings" />
+            </Link>
+          </SheetClose>
         )}
-        <Link href={"/help"}>
-          <SidebarItem icon={<FAQIcon />} text="Help & FAQ" />
-        </Link>
+        <SheetClose onClick={closeSidebar}>
+          <Link href={"/help"}>
+            <SidebarItem icon={<FAQIcon />} text="Help & FAQ" />
+          </Link>
+        </SheetClose>
       </div>
       {isLoggedIn && (
         <>

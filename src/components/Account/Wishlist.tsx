@@ -22,7 +22,7 @@ export const Wishlist = () => {
 
   return (
     <div className="flex flex-col gap-3 min-h-[614px]">
-      <div className="flex justify-between items-center gap-3">
+      <div className="flex justify-between items-center gap-6">
         <h1 className="text-2xl md:text-3xl font-semibold">Wishlist</h1>
         <div className="flex w-full max-w-80">
           <Input

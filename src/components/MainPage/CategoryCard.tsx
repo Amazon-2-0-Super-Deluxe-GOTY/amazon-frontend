@@ -24,7 +24,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
           />
         </div>
         <div className="mt-2 flex flex-col justify-between gap-6">
-          <p className="text-base @md-card:text-lg line-clamp-2">
+          <p className="text-base @md-card:text-lg line-clamp-2 min-h-12 @md-card:min-h-14">
             {category.name}
           </p>
           <div className="text-end flex justify-end items-center gap-1 @md-card:gap-2 pr-2">

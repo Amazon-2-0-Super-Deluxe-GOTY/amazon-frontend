@@ -54,8 +54,8 @@ export const AccountSettings = ({
           className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2
                         lg:px-6 max-lg:flex-col max-lg:justify-center max-lg:items-stretch max-lg:gap-3"
         >
-          <div className="flex flex-col justify-center items-start gap-1 lg:gap-3">
-            <span className="text-base md:text-xl">Profile photo</span>
+          <div className="flex flex-col justify-center items-start gap-1 lg:gap-2">
+            <span className="text-base md:text-lg">Profile photo</span>
             <span className="text-sm md:tetx-base text-halftone">
               Change your profile picture.
             </span>
@@ -66,7 +66,7 @@ export const AccountSettings = ({
               <PopoverTrigger className="group">
                 <InfoIcon className="w-6 h-6 group-data-[state=closed]:text-halftone" />
               </PopoverTrigger>
-              <PopoverContent align="start" className="max-w-sm w-full mr-2">
+              <PopoverContent align="end" className="max-w-sm w-full mr-2">
                 <div className="space-y-2 text-sm bg-card">
                   <p className="font-semibold">Image requirements</p>
                   <div>
@@ -91,7 +91,7 @@ export const AccountSettings = ({
         </div>
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3 max-lg:w-full">
-            <span className="text-base md:text-xl">
+            <span className="text-base md:text-lg">
               First name and last name
             </span>
             <span className="text-sm md:tetx-base text-halftone">
@@ -106,7 +106,7 @@ export const AccountSettings = ({
         </div>
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3 max-lg:w-full">
-            <span className="text-base md:text-xl">Email</span>
+            <span className="text-base md:text-lg">Email</span>
             <span className="text-sm md:tetx-base text-halftone">
               Update the email address associated with your account.
             </span>
@@ -118,7 +118,7 @@ export const AccountSettings = ({
         </div>
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start lg:gap-3 gap-1 max-lg:w-full">
-            <span className="text-base md:text-xl">Password</span>
+            <span className="text-base md:text-lg">Password</span>
             <span className="text-sm md:tetx-base text-halftone">
               Change your account&apos;s password.
             </span>
@@ -130,7 +130,7 @@ export const AccountSettings = ({
         </div>
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3 max-lg:w-full">
-            <span className="text-base md:text-xl">Log out</span>
+            <span className="text-base md:text-lg">Log out</span>
             <span className="text-sm md:tetx-base text-halftone">
               Ends current session, disconnecting user from account or system.
             </span>
@@ -141,7 +141,7 @@ export const AccountSettings = ({
         </div>
         <div className="flex justify-between items-center px-3 py-3 rounded-lg even:bg-card gap-2 lg:px-6 max-lg:flex-col max-lg:gap-3">
           <div className="flex flex-col justify-center items-start gap-1 lg:gap-3 max-lg:w-full">
-            <span className="text-base md:text-xl">Delete account</span>
+            <span className="text-base md:text-lg">Delete account</span>
             <span className="text-sm md:tetx-base text-halftone">
               Permanently remove your account and associated data, disabling
               access and erasing personal information.
