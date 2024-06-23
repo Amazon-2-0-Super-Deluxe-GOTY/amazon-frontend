@@ -60,7 +60,7 @@ export function Banner() {
               <div className="w-full relative">
                 <picture className="block">
                   <source
-                    media="(max-width: 768px)"
+                    media="(max-width: 640px)"
                     srcSet={image.mobile.src}
                   />
                   <Image

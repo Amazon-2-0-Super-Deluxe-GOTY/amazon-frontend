@@ -21,7 +21,8 @@ export default async function Page({
   await Promise.allSettled([
     queryClient.prefetchQuery({
       queryKey: ["categories", "admin"],
-      queryFn: () => getAdminCategories({ pageNumber: 1, pageSize: 100 }),
+      queryFn: () =>
+        getAdminCategories({ pageNumber: 1, pageSize: 100, orderBy: "asc" }),
     }),
     queryClient.prefetchQuery({
       queryKey: ["product", productId],

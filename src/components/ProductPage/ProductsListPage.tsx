@@ -100,6 +100,7 @@ export function ProductsListPage({ category }: { category?: Category }) {
 
   const setPage = (page: number) => {
     searchParams.set("page", page.toString());
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const productFilterParams = useMemo<ProductFilters>(() => {
@@ -284,7 +285,12 @@ export function ProductsListPage({ category }: { category?: Category }) {
                 className="flex gap-0 max-md:hidden"
                 type="single"
                 value={listView}
-                onValueChange={(value) => value && setListView(value)}
+                onValueChange={(value) => {
+                  if (value) {
+                    setListView(value);
+                    setPage(1);
+                  }
+                }}
               >
                 <ToggleGroupItem
                   value="cols-3"
@@ -325,7 +331,7 @@ export function ProductsListPage({ category }: { category?: Category }) {
           {/* Pagination here */}
           {!!productsQuery.data?.count.pagesCount &&
             productsQuery.data.count.pagesCount > 1 && (
-              <div className="w-full mb-6 lg:mb-12">
+              <div className="w-full mt-6 lg:mt-12">
                 <Pagination
                   page={page}
                   setPage={setPage}
