@@ -17,16 +17,18 @@ export const ProductCard = ({ product }: { product: ProductShort }) => {
 
   return (
     <Link href={`/product/${product.slug}`} className="contents">
-      <Card className="max-w-sm w-full rounded-lg border-hover-card relative @container">
-        <CardHeader className="p-3 @md-card:p-4 pb-0">
-          <div className="relative aspect-square">
+      <Card className="max-w-sm w-full h-full rounded-lg border-hover-card relative flex flex-col @container">
+        <CardHeader className="p-3 pb-0 @md-card:p-4 @md-card:pb-0">
+          <div className="relative">
             <Image
               src={product.productImages[0].imageUrl}
-              fill
-              alt="Placeholder"
-              className="object-cover rounded-sm"
+              // fill
+              alt={product.name}
+              className="object-cover rounded-sm aspect-square"
+              width={250}
+              height={250}
             />
-            {product.discountPercent && (
+            {!!product.discountPercent && (
               <div className="absolute top-1.5 right-1.5 w-12 h-8 @md-card:w-16 @md-card:h-10 @lg-card:w-24 @lg-card:h-16">
                 <Image
                   src={discountShape}
@@ -43,11 +45,11 @@ export const ProductCard = ({ product }: { product: ProductShort }) => {
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-3 @md-card:p-4 pt-1.5 @md-card:pt-3">
-          <div className="flex flex-col justify-center items-center">
-            <p className="text-sm @md-card:text-lg @lg-card:text-2xl line-clamp-2">
-              {product.name}
-            </p>
+        <CardContent className="p-3 @md-card:p-4 pt-2 @md-card:pt-3 grow flex flex-col gap-1">
+          <p className="text-sm @md-card:text-lg @lg-card:text-2xl line-clamp-2 text-center">
+            {product.name}
+          </p>
+          <div className="flex flex-col justify-center items-center mt-auto">
             <div className="flex gap-3.5 items-center">
               <div className="flex items-center gap-1.5">
                 <StarFullIcon className="w-4 h-4 @md-card:w-6 @md-card:h-6 @lg-card:w-7 @lg-card:h-7" />
@@ -67,7 +69,7 @@ export const ProductCard = ({ product }: { product: ProductShort }) => {
                 <span>${whole}</span>
                 <sup>{fraction}</sup>
               </p>
-              {product.discountPercent && (
+              {!!product.discountPercent && (
                 <sub className="ml-2 line-through text-foreground/50 text-xs @md-card:text-base @lg-card:text-lg">
                   ${product.price.toFixed(2)}
                 </sub>

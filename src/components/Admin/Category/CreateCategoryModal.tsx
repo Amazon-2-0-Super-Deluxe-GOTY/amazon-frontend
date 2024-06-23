@@ -62,6 +62,8 @@ export const CreateCategoryModal = ({
   );
 
   const isEdit = !!category;
+  const isPending =
+    createCategoryMutation.isPending || editCategoryMutation.isPending;
 
   const onSubmit = (values: FormReturnValues) => {
     if (isEdit) {
@@ -136,10 +138,19 @@ export const CreateCategoryModal = ({
             />
           </ScrollArea>
           <div className="flex justify-end gap-3.5 bg-background">
-            <Button type="button" variant={"secondary"} onClick={closeModal}>
+            <Button
+              type="button"
+              variant={"secondary"}
+              onClick={closeModal}
+              disabled={isPending}
+            >
               Cancel
             </Button>
-            <Button type="submit" form="create-category-form">
+            <Button
+              type="submit"
+              form="create-category-form"
+              disabled={isPending}
+            >
               {isEdit ? "Save" : "Create"}
             </Button>
           </div>

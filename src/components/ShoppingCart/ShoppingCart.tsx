@@ -176,10 +176,7 @@ const ShoppingCartMobile = ({
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts
-                              cartItems={cart?.cartItems ?? []}
-                              isLoading={isLoading}
-                            />
+                            <CartProducts cartItems={cart?.cartItems ?? []} />
                           </div>
                         </div>
                         <Separator />
@@ -333,10 +330,7 @@ const ShoppingCartDesktop = ({
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts
-                              cartItems={cart?.cartItems ?? []}
-                              isLoading={isLoading}
-                            />
+                            <CartProducts cartItems={cart?.cartItems ?? []} />
                           </div>
                         </div>
                         <Separator />

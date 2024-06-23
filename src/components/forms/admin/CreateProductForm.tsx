@@ -35,7 +35,7 @@ import { PlusIcon, TrashIcon } from "../../Shared/Icons";
 const barcodeLenght = 13;
 const maxImages = 10;
 const productDetailsMaxTextLength = 30;
-const aboutProductMaxTextLength = 250;
+const aboutProductMaxTextLength = 500;
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name cannot be empty." }),
@@ -556,11 +556,11 @@ export function CreateProductForm({
               {!selectedCategoryPropertyKeyNames.includes(value.name) && (
                 <Button
                   type="button"
-                  variant={"tertiary"}
-                  className="h-max p-3"
+                  variant={"destructive"}
+                  className="h-max p-2 text-destructive"
                   onClick={onRemoveProductDetail(i)}
                 >
-                  <TrashIcon className="w-6 h-6" />
+                  <TrashIcon className="w-5 h-5" />
                 </Button>
               )}
             </fieldset>
@@ -632,11 +632,11 @@ export function CreateProductForm({
               />
               <Button
                 type="button"
-                variant={"tertiary"}
-                className="h-max p-3"
+                variant={"destructive"}
+                className="h-max p-2 text-destructive"
                 onClick={onRemoveAboutProduct(i)}
               >
-                <TrashIcon className="w-6 h-6" />
+                <TrashIcon className="w-5 h-5" />
               </Button>
             </fieldset>
           ))}

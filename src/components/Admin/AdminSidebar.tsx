@@ -66,7 +66,8 @@ export const AdminSidebar = ({
   const onLogOut = () => {
     logOut()
       .then(clearToken)
-      .then(() => router.refresh());
+      .then(() => router.push("/"))
+      .then(closeSidebar);
   };
 
   return (

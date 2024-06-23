@@ -26,7 +26,7 @@ import { UploadPhotoListFormField } from "./UploadPhotoListFormFields";
 
 const maxImages = 10;
 const titleMaxLenght = 60;
-const textMaxLenght = 250;
+const textMaxLenght = 1000;
 const minRating = 1;
 const maxRating = 5;
 

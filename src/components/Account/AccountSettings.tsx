@@ -45,7 +45,7 @@ export const AccountSettings = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <h1 className="text-2xl md:text-3xl max-lg:w-full text-left font-semibold">
+      <h1 className="text-3xl md:text-4xl max-lg:w-full text-left font-semibold">
         Account settings
       </h1>
       <Separator />

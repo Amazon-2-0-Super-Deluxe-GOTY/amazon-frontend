@@ -22,14 +22,13 @@ export const OrderDetailsProductCard = ({
     <Card className="w-full border-0 relative shadow-none before:ring-1 before:ring-halftone before:ring-inset before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:absolute before:inset-0 before:rounded-[inherit]">
       <CardContent className="w-full p-0">
         <div className="w-full flex md:p-6 p-3">
-          <div className="relative aspect-square w-[100px] h-full bg-halftone">
-            <Image
-              src={imageUrl ?? placeholder}
-              fill
-              alt="Placeholder"
-              className="object-cover"
-            />
-          </div>
+          <Image
+            src={imageUrl}
+            width={100}
+            height={100}
+            alt={name}
+            className="object-cover aspect-square rounded-sm"
+          />
           <div className="w-full pl-3 md:pl-6 flex justify-between">
             <div className="w-full max-w-3xl flex justify-start items-start mr-14 md:mr-24">
               <p className="text-sm md:text-xl line-clamp-2">{name}</p>

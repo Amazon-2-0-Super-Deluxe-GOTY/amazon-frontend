@@ -96,7 +96,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
     return existingCartItem
       ? count < existingCartItem.product.quantity - existingCartItem.quantity
       : true;
-  }, [cart.data, count, product.id]);
+  }, [cart.data, count, product.id, user, product.quantity]);
 
   const onAddToCartClick = () => {
     if (!canAddToCart) return;
@@ -138,7 +138,7 @@ export const ProductOrderCard = ({ product }: { product: Product }) => {
               ${whole}
               <sup>{fraction}</sup>
             </span>
-            {product.discountPercent && (
+            {!!product.discountPercent && (
               <sub className="ml-2 line-through text-halftone text-lg">
                 ${product.price}
               </sub>

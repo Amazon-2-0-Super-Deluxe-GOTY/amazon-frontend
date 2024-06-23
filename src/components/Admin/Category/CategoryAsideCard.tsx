@@ -55,14 +55,13 @@ export const CategoryAsideCard = ({
       {!!category ? (
         <div className="p-6 flex flex-col gap-6 h-full">
           <div className="space-y-3.5">
-            <figure className="w-full aspect-video relative">
-              <Image
-                src={category.image.url}
-                alt={category.name}
-                fill
-                className="object-cover"
-              />
-            </figure>
+            <Image
+              src={category.image.url}
+              alt={category.name}
+              width={480}
+              height={240}
+              className="object-cover aspect-video rounded-sm"
+            />
             <div className="flex items-center gap-4">
               {category.logo && getIcon(category.logo, iconClassLarge)}
               <h1 className="text-2xl font-semibold">{category.name}</h1>

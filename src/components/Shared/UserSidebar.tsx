@@ -52,7 +52,8 @@ export const UserSidebar = ({
   const onLogOut = () => {
     logOut()
       .then(clearToken)
-      .then(() => router.push("/"));
+      .then(() => router.push("/"))
+      .then(closeSidebar);
   };
 
   return (

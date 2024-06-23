@@ -3,15 +3,9 @@ import Image from "next/image";
 import { useCart, type CartItem } from "@/api/products";
 import { MinusIcon, PlusIcon, TrashIcon } from "../Shared/Icons";
 import { splitPrice } from "@/lib/products";
-import { useDebounce } from "use-debounce";
+import { useDebouncedCallback } from "use-debounce";
 
-export const CartProducts = ({
-  cartItems,
-  isLoading,
-}: {
-  cartItems: CartItem[];
-  isLoading: boolean;
-}) => {
+export const CartProducts = ({ cartItems }: { cartItems: CartItem[] }) => {
   const { updateCartItemQuantity, deleteCartItems } = useCart();
 
   const updateQuantity = (cartItemId: string) => (newQuantity: number) => {
@@ -30,7 +24,6 @@ export const CartProducts = ({
             cartItem={item}
             updateQuantity={updateQuantity(item.id)}
             deleteItem={deleteItem(item.id)}
-            isCartItemsLoading={isLoading}
           />
         </div>
       ))}
@@ -42,30 +35,32 @@ const CartProductCard = ({
   updateQuantity,
   deleteItem,
   cartItem,
-  isCartItemsLoading,
 }: {
   cartItem: CartItem;
   updateQuantity: (newQuantity: number) => void;
   deleteItem: () => void;
-  isCartItemsLoading: boolean;
 }) => {
-  // const { removeFromCart, incrementQuantity, decrementQuantity } = useStorageCart();
-  const [count, setCount] = useState(cartItem.quantity);
-  const increment = () =>
-    setCount(
-      count < cartItem.product.quantity ? count + 1 : cartItem.product.quantity
-    );
-  const decrement = () => setCount(count > 1 ? count - 1 : 1);
+  const onUpdateQuantity = useDebouncedCallback(
+    (newQuantity: number) => updateQuantity(newQuantity),
+    300
+  );
 
-  const [countDebounced] = useDebounce(count, 300);
+  const [count, setCount] = useState(cartItem.quantity);
+  const increment = () => {
+    const newQuantity =
+      count < cartItem.product.quantity ? count + 1 : cartItem.product.quantity;
+    setCount(newQuantity);
+    onUpdateQuantity(newQuantity);
+  };
+  const decrement = () => {
+    const newQuantity = count > 1 ? count - 1 : 1;
+    setCount(newQuantity);
+    onUpdateQuantity(newQuantity);
+  };
 
   useEffect(() => {
-    console.log(isCartItemsLoading);
-
-    if (countDebounced !== cartItem.quantity && !isCartItemsLoading) {
-      updateQuantity(countDebounced);
-    }
-  }, [countDebounced, cartItem.quantity]);
+    setCount(cartItem.quantity);
+  }, [cartItem.quantity]);
 
   const price = cartItem.product.discountPercent
     ? cartItem.product.discountPrice
@@ -80,12 +75,13 @@ const CartProductCard = ({
   return (
     <div className="hover:bg-secondary-light transition-colors rounded-lg">
       <div className="w-full flex max-md:gap-2 gap-6 p-6 max-md:p-3">
-        <div className="w-24 lg:w-40 flex-1 basis-40 aspect-square relative">
+        <div className="w-24 lg:w-40 aspect-square relative">
           <Image
             src={cartItem.product.imageUrl}
             alt={cartItem.product.name}
             fill
-            className="object-cover"
+            className="object-cover rounded-sm"
+            sizes="(max-width: 768px) 80px, 150px"
           />
         </div>
         <div className="w-full flex flex-col justify-between">

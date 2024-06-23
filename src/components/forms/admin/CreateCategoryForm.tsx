@@ -215,9 +215,9 @@ export const CreateCategoryForm = ({
                         <Image
                           src={field.value.imageUrl}
                           alt={"Category image"}
-                          fill
-                          className="object-cover"
-                          unoptimized
+                          width={256}
+                          height={256}
+                          className="object-cover aspect-square"
                         />
                       ) : (
                         <PlusIcon className="w-16 h-16" />
@@ -445,10 +445,10 @@ export const CreateCategoryForm = ({
                 <Button
                   type="button"
                   variant={"destructive"}
-                  size={"icon"}
+                  className="h-max p-2 text-destructive"
                   onClick={onRemovePropertyKey(i)}
                 >
-                  <TrashIcon className="w-6 h-6 text-destructive stroke-2" />
+                  <TrashIcon className="w-5 h-5 text-destructive stroke-2" />
                 </Button>
               </div>
             ))}

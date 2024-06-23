@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { AvatarDefaultFallback } from "../Shared/AvatarDefaultFallback";
+import { useScreenSize } from "@/lib/media";
 
 export const ReviewCard = ({
   review,
@@ -254,19 +255,21 @@ const ImagesList = ({
   imagesLeft?: number;
   onClick?: (index: number) => void;
 }) => {
+  const isDesktop = useScreenSize({ minSize: "lg" });
   return (
     <div className="mb-6 flex gap-4 overflow-y-auto">
       {images.map((img, i) => (
         <figure
-          className="relative w-full min-w-20 max-w-28 aspect-square rounded-md overflow-hidden"
+          className="rounded-md overflow-hidden"
           key={i}
           onClick={() => onClick?.(i)}
         >
           <Image
             src={img}
-            fill={true}
+            width={isDesktop ? 112 : 80}
+            height={isDesktop ? 112 : 80}
             alt="Placeholder"
-            className="object-cover"
+            className="object-cover aspect-square"
           />
           {!!imagesLeft && imagesLeft > 0 && i + 1 === images.length && (
             <div className="absolute inset-0 bg-black/60 flex justify-center items-center">

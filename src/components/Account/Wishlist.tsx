@@ -36,13 +36,13 @@ export const Wishlist = () => {
       </div>
       <Separator />
       {wishlist.isLoading ? (
-        <div className="w-full grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-2 py-6">
+        <div className="w-full grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-2 py-6 gap-2">
           {Array.from({ length: 8 }, (_, i) => (
             <WishlistCardSkeleton key={i} />
           ))}
         </div>
       ) : wishlist.data?.length! > 0 ? (
-        <div className="w-full grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-2 py-6">
+        <div className="w-full grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-2 py-6 gap-2">
           {wishlist.data
             ?.filter((v) => v.name.toLowerCase().includes(searchText))
             .map((product, index) => (

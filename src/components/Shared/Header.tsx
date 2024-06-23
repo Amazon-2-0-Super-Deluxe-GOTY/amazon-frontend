@@ -17,6 +17,7 @@ import {
 } from "./Icons";
 import { Logo } from "./Logo";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUser } from "@/api/users";
 
 const sidebarData = {
   // user: { fullName: "Marsha Shields", avatar: "" },
@@ -58,6 +59,7 @@ export function Header() {
     if (!existingParams) return "";
     return existingParams;
   });
+  const { user } = useUser();
 
   const openSidebar = () => setIsSidebarOpen(true);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -95,12 +97,14 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2">
           {/* designer moment 🤡 */}
-          <Link
-            href={"/account/?tab=settings-open"}
-            className="p-4 hidden md:block"
-          >
-            <UserIcon className="stroke-3 [&_:nth-child(1)]:stroke-1 w-8 h-8" />
-          </Link>
+          {!!user && (
+            <Link
+              href={"/account/?tab=settings-open"}
+              className="p-4 hidden md:block"
+            >
+              <UserIcon className="stroke-3 [&_:nth-child(1)]:stroke-1 w-8 h-8" />
+            </Link>
+          )}
           <ShoppingCart />
         </div>
       </div>

@@ -194,14 +194,13 @@ export default function Page() {
           const product = row.original;
           return (
             <div className="flex items-center gap-3">
-              <div className="w-20 h-20 relative">
-                <Image
-                  src={product.productImages[0].imageUrl}
-                  alt="Product image"
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <Image
+                src={product.productImages[0].imageUrl}
+                alt="Product image"
+                width={80}
+                height={80}
+                className="object-cover rounded-sm aspect-square"
+              />
               <p className="max-w-xs line-clamp-2 text-xl">{product.name}</p>
             </div>
           );

@@ -10,57 +10,76 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 
-const imageUrls: { desktop: string; mobile: string }[] = [
+import banner1Desktop from "@/../public/banner-main-1.webp";
+import banner1Mobile from "@/../public/banner-main-mobile-1.webp";
+import banner2Desktop from "@/../public/banner-main-2.webp";
+import banner2Mobile from "@/../public/banner-main-mobile-2.webp";
+
+const imageUrls: { desktop: StaticImageData; mobile: StaticImageData }[] = [
   {
-    desktop: "/banner-main-1.webp",
-    mobile: "/banner-main-mobile-1.webp",
+    desktop: banner1Desktop,
+    mobile: banner1Mobile,
   },
   {
-    desktop: "/banner-main-2.webp",
-    mobile: "/banner-main-mobile-2.webp",
+    desktop: banner2Desktop,
+    mobile: banner2Mobile,
   },
 ];
 
+// const imageUrls: { desktop: string; mobile: string }[] = [
+//   {
+//     desktop: "/banner-main-1.webp",
+//     mobile: "/banner-main-mobile-1.webp",
+//   },
+//   {
+//     desktop: "/banner-main-2.webp",
+//     mobile: "/banner-main-mobile-2.webp",
+//   },
+// ];
+
 export function Banner() {
   return (
-    <Carousel
-      className="w-full lg:rounded-lg overflow-hidden"
-      plugins={[
-        Autoplay({
-          delay: 4000,
-          stopOnMouseEnter: true,
-        }),
-      ]}
-      opts={{
-        loop: true,
-      }}
-    >
-      <CarouselContent>
-        {imageUrls.map((image, index) => (
-          <CarouselItem key={index}>
-            <div className="w-full h-56 lg:h-80 relative">
-              <Card className="w-full h-full">
-                <CardContent className="flex items-center justify-center">
-                  <picture className="block">
-                    <source media="(max-width: 768px)" srcSet={image.mobile} />
-                    <Image
-                      src={image.desktop}
-                      alt="Banner with waves and cutlery"
-                      fill={true}
-                      className="object-cover"
-                    />
-                  </picture>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
+    <Card className="w-full h-full">
+      <Carousel
+        className="w-full lg:rounded-lg overflow-hidden"
+        plugins={[
+          Autoplay({
+            delay: 4000,
+            stopOnMouseEnter: true,
+          }),
+        ]}
+        opts={{
+          loop: true,
+        }}
+      >
+        <CarouselContent>
+          {imageUrls.map((image, index) => (
+            <CarouselItem key={index}>
+              <div className="w-full relative">
+                <picture className="block">
+                  <source
+                    media="(max-width: 768px)"
+                    srcSet={image.mobile.src}
+                  />
+                  <Image
+                    src={image.desktop}
+                    alt="Banner with waves and cutlery"
+                    width={1600}
+                    height={350}
+                    className="object-cover"
+                    placeholder="blur"
+                  />
+                </picture>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
 
-      <CarouselPrevious className="hidden lg:inline-flex" />
-      <CarouselNext className="hidden lg:inline-flex" />
-    </Carousel>
+        <CarouselPrevious className="hidden lg:inline-flex" />
+        <CarouselNext className="hidden lg:inline-flex" />
+      </Carousel>
+    </Card>
   );
 }

@@ -33,7 +33,7 @@ export const WishlistCard = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <div className="absolute right-3 top-3 z-10">
         <Button
           variant={"secondary"}

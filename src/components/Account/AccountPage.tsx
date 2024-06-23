@@ -120,7 +120,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
               onClick={() => onChangeAccountTab("orders")}
               className={clsx(
                 "flex justify-start font-normal text-base px-6 py-4 rounded-sm",
-                accountTab === "orders" && "bg-tertiary-hover"
+                accountTab === "orders" && "lg:bg-tertiary-hover"
               )}
             >
               My orders
@@ -129,7 +129,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
               onClick={() => onChangeAccountTab("wishlist")}
               className={clsx(
                 "flex justify-start font-normal text-base px-6 py-4 rounded-sm",
-                accountTab === "wishlist" && "bg-tertiary-hover"
+                accountTab === "wishlist" && "lg:bg-tertiary-hover"
               )}
             >
               Wishlist
@@ -138,7 +138,7 @@ export function AccountPage({ user: initialUser }: { user: User }) {
               onClick={() => onChangeAccountTab("settings")}
               className={clsx(
                 "flex justify-start font-normal text-base px-6 py-4 rounded-sm",
-                accountTab === "settings" && "bg-tertiary-hover"
+                accountTab === "settings" && "lg:bg-tertiary-hover"
               )}
             >
               Account settings
@@ -152,14 +152,13 @@ export function AccountPage({ user: initialUser }: { user: User }) {
             )}
           >
             <div>
-              <Button
-                variant={"tertiary"}
-                className="pl-2 mb-3 md:hidden"
+              <button
+                className="flex items-center gap-2 mb-3 md:hidden"
                 onClick={onBack}
               >
-                <ChevronLeftIcon className="w-6 h-6 mr-2 text-secondary" />
+                <ChevronLeftIcon className="w-6 h-6 text-secondary" />
                 <span className="text-base">Back</span>
-              </Button>
+              </button>
               {(() => {
                 switch (accountTab) {
                   case "settings":
@@ -187,7 +186,10 @@ export function AccountPage({ user: initialUser }: { user: User }) {
 
 const AvatarNameBlock = ({ image }: { image?: string }) => {
   return (
-    <Avatar className="w-12 h-12">
+    <Avatar
+      className="w-14 h-14"
+      style={{ boxShadow: "0px 0px 16px 0px hsla(216, 75%, 26%, 0.25)" }}
+    >
       <AvatarImage src={image} />
       <AvatarDefaultFallback />
     </Avatar>

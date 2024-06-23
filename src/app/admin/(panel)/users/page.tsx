@@ -86,7 +86,6 @@ export default function Page() {
   const [defferedSearch] = useDebounce(searchQuery, 300);
   const { showModal } = useModal();
   const { user } = useUser();
-  console.log(defferedSearch);
 
   const fetchUsers = useCallback(
     () =>
