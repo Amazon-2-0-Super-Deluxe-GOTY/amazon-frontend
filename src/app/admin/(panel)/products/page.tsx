@@ -117,6 +117,8 @@ export default function Page() {
           ) {
             setSelectedProduct(undefined);
           }
+
+          await productsQuery.refetch();
         });
       }
     });

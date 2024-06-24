@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { SignInUpButtons } from "@/components/SignInUpModal/SignInUpModals";
+import Image from "next/image";
 
 export const SingInUpBanner = () => {
   return (
@@ -23,14 +24,12 @@ export const SingInUpBanner = () => {
           </div>
         </div>
         <div className="basis-1/2 w-full h-full relative lg:hidden">
-          <picture className="block h-full">
-            <img
-              src={"/banner-signup-mobile.webp"}
-              alt="Treasure chest"
-              className="object-cover"
-              loading="lazy"
-            />
-          </picture>
+          <Image
+            src={"/banner-signup-mobile.webp"}
+            width={500}
+            height={500}
+            alt="Treasure chest"
+          />
         </div>
       </CardContent>
     </Card>

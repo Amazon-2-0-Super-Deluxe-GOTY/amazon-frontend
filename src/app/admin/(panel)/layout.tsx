@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
 import { Header } from "@/components/Admin/Header";
 
-export const metadata: Metadata = {
-  title: "Admin | Perry",
-  description: "Perry admin panel",
-};
-
-export default function RootLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;

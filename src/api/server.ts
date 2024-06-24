@@ -1,3 +1,4 @@
+"use server";
 import "server-only";
 import type { Product } from "./products";
 import type { ApiResponse, ApiValidationErrors, User } from "./types";
@@ -9,13 +10,10 @@ export async function getUserProfileServer(
 ): Promise<ApiResponse<[[200, User], [401, null]]>> {
   return fetch(`${process.env.BASE_PATH}/api/users/profile`, {
     headers: { authorization: `Bearer ${token}` },
-    // next: {
-    //   revalidate: 120,
-    // },
   }).then((r) => r.json());
 }
 
-export function getProductBySlugServer({
+export async function getProductBySlugServer({
   productSlug,
 }: {
   productSlug: string;
@@ -27,7 +25,7 @@ export function getProductBySlugServer({
   ).then((r) => r.json());
 }
 
-export function getReviewByIdServer(
+export async function getReviewByIdServer(
   reviewId: string
 ): Promise<ApiResponse<[[200, Review], [404, null]]>> {
   return fetch(
@@ -35,7 +33,7 @@ export function getReviewByIdServer(
   ).then((r) => r.json());
 }
 
-export function getCategoryServer({
+export async function getCategoryServer({
   categoryId,
 }: {
   categoryId: number;

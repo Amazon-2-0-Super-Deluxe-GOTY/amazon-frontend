@@ -173,7 +173,6 @@ export function CreateProductForm({
           name: "",
           code: "",
           price: 0,
-          quantity: 0,
           categoryId: defaultCategoryId,
           images: [],
           productDetails: [],
