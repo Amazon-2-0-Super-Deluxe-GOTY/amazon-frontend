@@ -35,7 +35,7 @@ export const Sidebar = ({
       >
         {children}
         {isDesktop && isOpen && (
-          <SheetClose className="absolute -right-16 top-0 w-10 h-10 bg-background rounded-full flex justify-center items-center">
+          <SheetClose className="absolute -right-16 top-4 w-10 h-10 bg-background rounded-full flex justify-center items-center">
             <ChevronsLeftIcon className="w-6 h-6 stroke-secondary stroke-3" />
             <span className="sr-only">Close</span>
           </SheetClose>
