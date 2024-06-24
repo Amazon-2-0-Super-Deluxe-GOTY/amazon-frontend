@@ -119,7 +119,12 @@ export const AuthModal = ({
               case "reset-password":
                 return <ModalResetPassword changeModal={handleChangeModal} />;
               case "signup":
-                return <ModalSignUp changeModal={handleChangeModal} />;
+                return (
+                  <ModalSignUp
+                    changeModal={handleChangeModal}
+                    closeModal={closeModal}
+                  />
+                );
               case "signup-code":
                 return <ModalSignUpCode changeModal={handleChangeModal} />;
               case "finishing-touches":

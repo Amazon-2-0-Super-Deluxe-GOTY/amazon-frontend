@@ -167,6 +167,7 @@ export function ProductPage({ product }: { product: Product }) {
           maxSizeMobile={6}
           products={otherProductsInCategoryQuery.data ?? []}
           isLoading={otherProductsInCategoryQuery.isLoading}
+          categoryId={product.category.id}
         />
       </div>
       {discountProductsInCategoryQuery.isLoading ? (
@@ -176,6 +177,7 @@ export function ProductPage({ product }: { product: Product }) {
             maxSizeMobile={6}
             products={[]}
             isLoading
+            categoryId={product.category.id}
           />
         </div>
       ) : !!discountProductsInCategoryQuery.data?.length ? (
@@ -185,6 +187,7 @@ export function ProductPage({ product }: { product: Product }) {
             maxSizeMobile={6}
             products={discountProductsInCategoryQuery.data}
             isLoading={false}
+            categoryId={product.category.id}
           />
         </div>
       ) : null}

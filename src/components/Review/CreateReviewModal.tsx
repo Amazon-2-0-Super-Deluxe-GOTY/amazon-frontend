@@ -21,8 +21,8 @@ interface Props {
 
 type FormValues = {
   rating: number;
-  title?: string | undefined;
-  text?: string | undefined;
+  title?: string | null;
+  text?: string | null;
   images?:
     | {
         id: string;
@@ -76,8 +76,8 @@ export function CreateReviewModal({
           reviewId: review.id,
           productId,
           rating: values.rating,
-          title: values.title,
-          text: values.text,
+          title: values.title ?? undefined,
+          text: values.text ?? undefined,
           reviewImagesIds: values.images?.map((i) => i.id),
           reviewTagsIds: values.tagsIds?.map((t) => t.id),
         })
@@ -87,8 +87,8 @@ export function CreateReviewModal({
         .mutateAsync({
           productId,
           rating: values.rating,
-          title: values.title,
-          text: values.text,
+          title: values.title ?? undefined,
+          text: values.text ?? undefined,
           reviewImagesIds: values.images?.map((i) => i.id),
           reviewTagsIds: values.tagsIds?.map((t) => t.id),
         })

@@ -4,12 +4,14 @@ import { ProductsListMobile } from "./ProductsListMobile";
 import { MediaQueryCSS } from "../Shared/MediaQuery";
 import type { ProductShort } from "@/api/products";
 import { ChevronRightIcon } from "../Shared/Icons";
+import Link from "next/link";
 
 interface Props {
   title: string;
   maxSizeMobile?: number;
   products: ProductShort[];
   isLoading: boolean;
+  categoryId?: number;
 }
 
 export const ProductsBlock = ({
@@ -17,16 +19,21 @@ export const ProductsBlock = ({
   products,
   maxSizeMobile,
   isLoading,
+  categoryId,
 }: Props) => {
+  const seeAllUrl =
+    categoryId !== undefined ? `/category/${categoryId}` : "/products";
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-heading-2">{title}</h2>
         <MediaQueryCSS minSize="lg">
-          <Button variant="tertiary" className="text-sm">
-            See all{" "}
-            <ChevronRightIcon className="ml-2 stroke-secondary w-4 h-4 lg:w-6 lg:h-6" />
-          </Button>
+          <Link href={seeAllUrl}>
+            <Button variant="tertiary" className="text-sm">
+              See all{" "}
+              <ChevronRightIcon className="ml-2 stroke-secondary w-4 h-4 lg:w-6 lg:h-6" />
+            </Button>
+          </Link>
         </MediaQueryCSS>
       </div>
       <MediaQueryCSS maxSize="lg">
@@ -42,9 +49,11 @@ export const ProductsBlock = ({
       {maxSizeMobile === undefined && (
         <MediaQueryCSS maxSize="lg">
           <div className="mt-3 flex justify-center items-center">
-            <Button variant="secondary" className="text-sm">
-              See all
-            </Button>
+            <Link href={seeAllUrl}>
+              <Button variant="secondary" className="text-sm">
+                See all
+              </Button>
+            </Link>
           </div>
         </MediaQueryCSS>
       )}

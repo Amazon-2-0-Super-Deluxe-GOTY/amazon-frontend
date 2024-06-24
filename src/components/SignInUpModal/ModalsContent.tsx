@@ -127,8 +127,10 @@ export const ModalResetPassword = ({
 
 export const ModalSignUp = ({
   changeModal,
+  closeModal,
 }: {
   changeModal: (modal: SignInUpModalVariants) => void;
+  closeModal: () => void;
 }) => {
   const setToken = useAuthStore((state) => state.setToken);
   const handleSubmit = (token: string) => {
@@ -170,8 +172,9 @@ export const ModalSignUp = ({
           By clicking “Continue”, you agree with
         </span>
         <Link
-          href="/terms&conditions"
-          className="ml-2 underline text-black max-md:text-sm"
+          href="/legal-notice?tab=terms-open"
+          className="ml-2 underline max-md:text-sm"
+          onClick={closeModal}
         >
           PERRY Terms and Conditions
         </Link>

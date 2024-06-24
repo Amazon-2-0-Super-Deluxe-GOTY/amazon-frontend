@@ -43,11 +43,13 @@ const formSchema = z.object({
   title: z
     .string()
     .max(titleMaxLenght, { message: `${titleMaxLenght} characters maximum` })
-    .optional(),
+    .optional()
+    .nullable(),
   text: z
     .string()
     .max(textMaxLenght, { message: `${textMaxLenght} characters maximum` })
-    .optional(),
+    .optional()
+    .nullable(),
   images: z
     .array(
       z.object({
