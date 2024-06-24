@@ -8,6 +8,12 @@ export const AvatarDefaultFallback = ({
   ...props
 }: React.ComponentPropsWithoutRef<typeof AvatarFallback>) => (
   <AvatarFallback {...props} className={cn("relative", className)}>
-    <Image src={noAvatar} alt="Avatar" />
+    <Image
+      className="object-cover w-full h-full"
+      width={80}
+      height={80}
+      alt="No Avatar"
+      src={noAvatar.src}
+    />
   </AvatarFallback>
 );
