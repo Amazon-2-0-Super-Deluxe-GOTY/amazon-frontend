@@ -301,11 +301,11 @@ export function CreateProductForm({
         },
       }).then(({ action }) => {
         if (action === "CONFIRM") {
-          router.push("/products");
+          router.push("/admin/products");
         }
       });
     } else {
-      router.push("/products");
+      router.push("/admin/products");
     }
   };
 

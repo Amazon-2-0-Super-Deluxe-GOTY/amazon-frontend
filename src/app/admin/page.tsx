@@ -59,7 +59,7 @@ export default function Page() {
 
   useEffect(() => {
     if (user && user.isAdmin) {
-      router.push("/categories");
+      router.push("/admin/categories");
     }
   }, [user, router]);
 

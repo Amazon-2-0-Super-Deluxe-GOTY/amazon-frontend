@@ -15,7 +15,7 @@ export const withAuth = async (
   const isProtectedShopPath =
     subdomain === "shop" &&
     protectedPathsShop.some((path) => pathname.startsWith(path));
-  const isProtectedAdminPath = subdomain === "admin" && pathname !== "/";
+  const isProtectedAdminPath = subdomain === "admin" && pathname !== "/admin";
   const isProtectedPath = isProtectedShopPath || isProtectedAdminPath;
 
   if (isProtectedPath) {
@@ -37,7 +37,7 @@ export const withAuth = async (
       }
     } else if (isProtectedAdminPath) {
       if (!profile?.isAdmin) {
-        return NextResponse.redirect(new URL("/", req.nextUrl.origin));
+        return NextResponse.redirect(new URL("/admin", req.nextUrl.origin));
       }
     }
   }
