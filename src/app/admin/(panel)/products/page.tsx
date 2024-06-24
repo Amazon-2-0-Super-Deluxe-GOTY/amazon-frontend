@@ -266,7 +266,7 @@ export default function Page() {
                 </button>
               ) : (
                 <Link
-                  href={`/products/create?categoryId=${selectedCategory?.id}`}
+                  href={`/admin/products/create?categoryId=${selectedCategory?.id}`}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </Link>
@@ -307,7 +307,7 @@ export default function Page() {
                   </div>
                 ) : (
                   <Link
-                    href={`/products/create?categoryId=${selectedCategory?.id}`}
+                    href={`/admin/products/create?categoryId=${selectedCategory?.id}`}
                     className="p-8 max-w-sm w-full border border-secondary rounded-lg flex flex-col gap-3 items-center"
                   >
                     <PlusIcon className="w-12 h-12 stroke-secondary" />

@@ -25,27 +25,27 @@ import {
 const links = [
   {
     title: "Users",
-    url: "/users",
+    url: "/admin/users",
     icon: <UsersIcon />,
   },
   {
     title: "Category",
-    url: "/categories",
+    url: "/admin/categories",
     icon: <CategoryIcon />,
   },
   {
     title: "Products",
-    url: "/products",
+    url: "/admin/products",
     icon: <ProductsIcon />,
   },
   {
     title: "Orders",
-    url: "/orders",
+    url: "/admin/orders",
     icon: <OrdersIcon />,
   },
   {
     title: "Reviews",
-    url: "/reviews",
+    url: "/admin/reviews",
     icon: <ReviewsIcon />,
   },
 ];
@@ -66,7 +66,7 @@ export const AdminSidebar = ({
   const onLogOut = () => {
     logOut()
       .then(clearToken)
-      .then(() => router.push("/"))
+      .then(() => router.push("/admin"))
       .then(closeSidebar);
   };
 
@@ -80,7 +80,7 @@ export const AdminSidebar = ({
             <SidebarDescription>Administrator</SidebarDescription>
           </div>
         </SidebarHeader>
-        <Separator className="bg-black" />
+        <Separator />
         <div className="flex flex-col gap-3 lg:gap-4">
           {links.map((item) => (
             <Link
@@ -93,7 +93,7 @@ export const AdminSidebar = ({
             </Link>
           ))}
         </div>
-        <Separator className="bg-black" />
+        <Separator />
         <button onClick={onLogOut}>
           <SidebarItem icon={<ExitIcon />} text="Log out" />
         </button>
