@@ -41,7 +41,7 @@ export const ShoppingCart = () => {
   const { user } = useUser();
   const suggestionsProductsQuery = useQuery({
     queryKey: ["suggestionsProducts"],
-    queryFn: () => getProducts({ pageSize: 20, page: 1, orderBy: "rate" }),
+    queryFn: () => getProducts({ pageSize: 10, page: 1, orderBy: "rate" }),
     select(data) {
       return data.status === 200 ? data.data : [];
     },
@@ -176,21 +176,20 @@ const ShoppingCartMobile = ({
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts cartItems={cart?.cartItems ?? []} />
+                            <CartProducts
+                              cartItems={cart?.cartItems ?? []}
+                              closeModal={onContinue}
+                            />
                           </div>
                         </div>
                         <Separator />
                         <div className="my-3">
-                          <div className="flex justify-between items-center gap-1 mb-[6px]">
+                          <div className="flex justify-between items-center gap-1 mb-1.5">
                             <span className="text-xl font-medium">Total:</span>
-                            <div>
-                              <span className="text-xl font-medium">
-                                ${priceParts.whole}
-                              </span>
-                              <sup className="text-sm font-bold mt-3">
-                                ${priceParts.fraction}
-                              </sup>
-                            </div>
+                            <p className="font-semibold text-xl">
+                              <span>${priceParts.whole}</span>
+                              <sup>{priceParts.fraction}</sup>
+                            </p>
                           </div>
                           <div className="w-full flex justify-between items-center gap-1">
                             <Button
@@ -330,7 +329,10 @@ const ShoppingCartDesktop = ({
                       <div className="w-full h-full">
                         <div className="mt-2 mb-4">
                           <div>
-                            <CartProducts cartItems={cart?.cartItems ?? []} />
+                            <CartProducts
+                              cartItems={cart?.cartItems ?? []}
+                              closeModal={onContinue}
+                            />
                           </div>
                         </div>
                         <Separator />
@@ -343,13 +345,11 @@ const ShoppingCartDesktop = ({
                             Continue shopping
                           </Button>
                           <div className="flex justify-center items-center gap-4">
-                            <span className="text-2xl font-medium">Total:</span>
-                            <span className="text-2xl font-medium">
-                              ${priceParts.whole}
-                            </span>
-                            <sup className="text-xl font-bold mt-3 -ml-3">
-                              {priceParts.fraction}
-                            </sup>
+                            <p className="font-semibold text-2xl">
+                              <span className="mr-4">Total:</span>
+                              <span>${priceParts.whole}</span>
+                              <sup>{priceParts.fraction}</sup>
+                            </p>
                             <Button
                               className="text-xl"
                               onClick={onCheckout}

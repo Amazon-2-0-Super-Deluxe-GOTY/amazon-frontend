@@ -21,12 +21,11 @@ export const ProductCard = ({ product }: { product: ProductShort }) => {
         <CardHeader className="p-3 pb-0 @md-card:p-4 @md-card:pb-0">
           <div className="relative">
             <Image
-              src={product.productImages[0].imageUrl}
-              // fill
+              src={product.productImages[0]?.imageUrl}
               alt={product.name}
               className="object-cover rounded-sm aspect-square"
-              width={500}
-              height={500}
+              width={350}
+              height={350}
             />
             {!!product.discountPercent && (
               <div className="absolute top-1.5 right-1.5 w-12 h-8 @md-card:w-16 @md-card:h-10 @lg-card:w-24 @lg-card:h-16">

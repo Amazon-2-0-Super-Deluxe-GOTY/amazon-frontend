@@ -31,7 +31,7 @@ export const Wishlist = () => {
               handleSearchTextChange(e.target.value)
             }
           />
-          <SearchIcon className="absolute right-2 translate-y-1/3" />
+          <SearchIcon className="absolute top-1/2 -translate-y-1/2 right-2" />
         </div>
       </div>
       <Separator />

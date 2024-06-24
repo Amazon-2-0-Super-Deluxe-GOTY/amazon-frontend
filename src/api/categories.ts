@@ -26,25 +26,34 @@ export interface CategoryOption {
 export function getCategories(params: {
   pageNumber: number;
   pageSize: number;
+  orderBy: "asc" | "desc";
 }): Promise<Category[]> {
-  return fetch(
-    `/api/categories/category?pageNumber=${params.pageNumber}&pageSize=${params.pageSize}`
-  ).then((r) => r.json());
+  const searchParams = new URLSearchParams();
+  searchParams.set("pageNumber", params.pageNumber.toString());
+  searchParams.set("pageSize", params.pageSize.toString());
+  searchParams.set("orderBy", params.orderBy);
+
+  return fetch(`/api/categories/category?${searchParams}`).then((r) =>
+    r.json()
+  );
 }
 
 export function getAdminCategories(params: {
   pageNumber: number;
   pageSize: number;
+  orderBy: "asc" | "desc";
 }): Promise<Category[]> {
+  const searchParams = new URLSearchParams();
+  searchParams.set("pageNumber", params.pageNumber.toString());
+  searchParams.set("pageSize", params.pageSize.toString());
+  searchParams.set("orderBy", params.orderBy);
+
   const token = authStore.getState().token;
-  return fetch(
-    `/api/categories/category_admin?pageNumber=${params.pageNumber}&pageSize=${params.pageSize}`,
-    {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    }
-  ).then((r) => r.json());
+  return fetch(`/api/categories/category_admin?${searchParams}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
 }
 
 export function getCategory({
@@ -141,6 +150,7 @@ export function deleteCategory(params: { categoryId: number }) {
 export function useCategories(params: {
   pageNumber: number;
   pageSize: number;
+  orderBy: "asc" | "desc";
 }) {
   return useQuery({
     queryKey: ["categories"],
@@ -151,6 +161,7 @@ export function useCategories(params: {
 export function useAdminCategories() {
   return useQuery({
     queryKey: ["categories", "admin"],
-    queryFn: () => getAdminCategories({ pageNumber: 1, pageSize: 100 }),
+    queryFn: () =>
+      getAdminCategories({ pageNumber: 1, pageSize: 100, orderBy: "desc" }),
   });
 }
