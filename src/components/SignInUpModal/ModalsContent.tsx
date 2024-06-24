@@ -170,7 +170,7 @@ export const ModalSignUp = ({
           By clicking “Continue”, you agree with
         </span>
         <Link
-          href="/terms&conditions"
+          href="/legal-notice?tab=terms-open"
           className="ml-2 underline text-black max-md:text-sm"
         >
           PERRY Terms and Conditions

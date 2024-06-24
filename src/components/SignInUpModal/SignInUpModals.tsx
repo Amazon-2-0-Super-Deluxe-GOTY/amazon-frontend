@@ -17,7 +17,6 @@ import { Button } from "../ui/button";
 import { useModal } from "../Shared/Modal";
 import type { SignInUpModalVariants } from "./types";
 import { AlertDialog } from "../Admin/AlertDialog";
-import clsx from "clsx";
 
 export const SignInUpButtons = ({
   variant,
@@ -132,11 +131,14 @@ export const AuthModal = ({
             }
           })()}
           <div className="w-full h-full max-w-[530px] max-md:hidden">
-            <Image
-              src={placeholder}
-              alt="Placeholder"
-              className="h-full object-cover"
-            />
+            <picture className="block h-full">
+              <img
+                src={"/login-signup-popup.webp"}
+                alt="Abyss of Jellyfish"
+                className="object-cover absolute h-full -translate-x-6 -translate-y-6"
+                loading="lazy"
+              />
+            </picture>
           </div>
         </div>
       </DialogContent>

@@ -25,8 +25,8 @@ export const ProductCard = ({ product }: { product: ProductShort }) => {
               // fill
               alt={product.name}
               className="object-cover rounded-sm aspect-square"
-              width={250}
-              height={250}
+              width={500}
+              height={500}
             />
             {!!product.discountPercent && (
               <div className="absolute top-1.5 right-1.5 w-12 h-8 @md-card:w-16 @md-card:h-10 @lg-card:w-24 @lg-card:h-16">
