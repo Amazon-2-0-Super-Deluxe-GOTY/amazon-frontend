@@ -135,15 +135,14 @@ export const AuthModal = ({
                 return null;
             }
           })()}
-          <div className="w-full h-full max-w-[530px] max-md:hidden">
-            <picture className="block h-full">
-              <img
-                src={"/login-signup-popup.webp"}
-                alt="Abyss of Jellyfish"
-                className="object-cover absolute h-full -translate-x-6 -translate-y-6"
-                loading="lazy"
-              />
-            </picture>
+          <div className="w-full h-full max-w-[530px] max-md:hidden relative">
+            <Image
+              src={"/login-signup-popup.webp"}
+              alt="Abyss of Jellyfish"
+              width={600}
+              height={600}
+              className="object-cover"
+            />
           </div>
         </div>
       </DialogContent>
