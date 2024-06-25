@@ -74,7 +74,7 @@ export const ProductImagesBlock = ({
               <CarouselItem key={image.id} className="w-full">
                 <Image
                   src={image.imageUrl}
-                  width={700}
+                  width={1000}
                   height={700}
                   alt="Product"
                   className="object-cover rounded-lg aspect-square"

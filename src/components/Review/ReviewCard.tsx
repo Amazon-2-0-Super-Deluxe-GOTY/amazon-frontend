@@ -260,7 +260,7 @@ const ImagesList = ({
     <div className="mb-6 flex gap-4 overflow-y-auto">
       {images.map((img, i) => (
         <figure
-          className="rounded-md overflow-hidden"
+          className="rounded-md overflow-hidden relative"
           key={i}
           onClick={() => onClick?.(i)}
         >
