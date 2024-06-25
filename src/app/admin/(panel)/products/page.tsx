@@ -13,7 +13,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { ProductAsideCard } from "@/components/Admin/Product/ProductAsideCart";
-import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { splitPrice } from "@/lib/products";

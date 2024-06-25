@@ -12,7 +12,7 @@ export default function TermsAndConditions() {
       <Separator />
       <div className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-1 md:gap-2 text-sm md:text-base">
-          <span>Welcome to Perry! These terms and conditions (&quot;Agreement&quot;) govern your use of the services and products provided on the website located at <Link href="https://gitlabitstep.pp.ua" className=" text-blue-500">https://gitlabitstep.pp.ua</Link> (the &quot;Site&quot;). By accessing or using the Site, you agree to be bound by the terms and conditions of this Agreement. If you do not agree to these terms, please do not use the Site.</span>
+          <span>Welcome to Perry! These terms and conditions (&quot;Agreement&quot;) govern your use of the services and products provided on the website located at <Link href="https://perrymarket.pp.ua/" className=" text-blue-500">https://perrymarket.pp.ua/</Link> (the &quot;Site&quot;). By accessing or using the Site, you agree to be bound by the terms and conditions of this Agreement. If you do not agree to these terms, please do not use the Site.</span>
         </div>
 
         <div className="flex flex-col gap-3 md:gap-4 text-sm md:text-base">

@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
       <Separator />
       <div className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-1 md:gap-2 text-sm md:text-base">
-          <span>Perry is committed to protecting your privacy. This privacy policy explains how Perry collects, uses, and discloses your personal information when you visit or make a purchase from <Link href="https://gitlabitstep.pp.ua" className=" text-blue-500">https://gitlabitstep.pp.ua</Link> (the &quot;Site&quot;).</span>
+          <span>Perry is committed to protecting your privacy. This privacy policy explains how Perry collects, uses, and discloses your personal information when you visit or make a purchase from <Link href="https://perrymarket.pp.ua/" className=" text-blue-500">https://perrymarket.pp.ua/</Link> (the &quot;Site&quot;).</span>
           <span>By using the Site, you agree to the collection and use of information in accordance with this policy.</span>
         </div>
 
