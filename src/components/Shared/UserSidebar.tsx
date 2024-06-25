@@ -21,7 +21,6 @@ import { logOut, useUser } from "@/api/users";
 import { useAuthStore } from "@/lib/storage";
 import { useRouter } from "next/navigation";
 import { CategoryIcon, ExitIcon, FAQIcon, SettingsIcon } from "./Icons";
-import { MediaQueryCSS } from "./MediaQuery";
 import { Logo } from "./Logo";
 import { SheetClose } from "../ui/sheet";
 
