@@ -12,12 +12,11 @@ export default function NotFound() {
           <picture className="block">
             <source media="(max-width: 640px)" srcSet={NotFoundMobile.src} />
             <Image
-              src={NotFoundDesktop}
+              src={NotFoundDesktop.src}
               alt="Octopus with text 404"
               width={800}
               height={550}
               className="object-cover"
-              placeholder="blur"
             />
           </picture>
           <span className="w-full text-sm sm:text-base md:text-xl lg:text-2xl text-secondary-light text-center">
