@@ -141,7 +141,7 @@ export const AuthModal = ({
               alt="Abyss of Jellyfish"
               width={600}
               height={600}
-              className="object-cover"
+              className="object-cover absolute h-full translate-x-1 translate-y-1"
             />
           </div>
         </div>

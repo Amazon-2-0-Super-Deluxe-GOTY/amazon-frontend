@@ -24,6 +24,7 @@ import {
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
+import NoItemsImage from "@/../public/picture-for-admin.webp";
 import {
   deleteCategory,
   useAdminCategories,
@@ -228,8 +229,8 @@ export default function Page() {
           ) : (
             <div className="h-full flex flex-col justify-center items-center gap-3">
               <Image
-                src={placeholder}
-                alt="placeholder"
+                src={NoItemsImage}
+                alt="no items"
                 className="max-w-xs aspect-video object-cover"
               />
               <p>No subcategories in the selected category</p>

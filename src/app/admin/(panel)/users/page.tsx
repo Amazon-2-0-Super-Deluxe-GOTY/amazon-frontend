@@ -29,6 +29,7 @@ import {
 import type { ColumnDef, Table } from "@tanstack/react-table";
 import Image from "next/image";
 import placeholder from "@/../public/Icons/placeholder.svg";
+import NoItemsImage from "@/../public/picture-for-admin.webp";
 import clsx from "clsx";
 import { formatUserRegistrationDate } from "@/lib/date";
 import {
@@ -396,7 +397,7 @@ export default function Page() {
         empty={
           <div className="flex flex-col justify-center items-center gap-3">
             <Image
-              src={placeholder}
+              src={NoItemsImage}
               alt="not found"
               className="max-w-xs aspect-video object-cover"
             />

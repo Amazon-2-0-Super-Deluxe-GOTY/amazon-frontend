@@ -14,6 +14,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { ProductAsideCard } from "@/components/Admin/Product/ProductAsideCart";
 import placeholder from "@/../public/Icons/placeholder.svg";
+import NoItemsImage from "@/../public/picture-for-admin.webp";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { splitPrice } from "@/lib/products";
@@ -299,7 +300,7 @@ export default function Page() {
                 {defferedSearch ? (
                   <div className="grow flex flex-col gap-3 justify-center items-center">
                     <Image
-                      src={placeholder}
+                      src={NoItemsImage}
                       alt="not found"
                       className="max-w-xs aspect-video object-cover"
                     />
@@ -322,7 +323,7 @@ export default function Page() {
             {tableHeader}
             <div className="grow flex flex-col gap-3 justify-center items-center">
               <Image
-                src={placeholder}
+                src={NoItemsImage}
                 alt="not found"
                 className="max-w-xs aspect-video object-cover"
               />

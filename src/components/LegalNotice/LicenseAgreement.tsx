@@ -12,7 +12,7 @@ export default function LicenseAgreement() {
       <Separator />
       <div className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-1 md:gap-2 text-sm md:text-base">
-          <span>This license agreement (&quot;Agreement&quot;) governs your use of the services and products provided on the website located at <Link href="https://gitlabitstep.pp.ua" className=" text-blue-500">https://gitlabitstep.pp.ua</Link> (the &quot;Site&quot;). By accessing or using the Site, you agree to adhere to the terms and conditions outlined in this Agreement, which are designed to ensure a safe, lawful, and beneficial use of our services. This includes, but is not limited to, compliance with intellectual property laws, user contribution guidelines, and any other policies or rules that may be applicable to the Site.</span>
+          <span>This license agreement (&quot;Agreement&quot;) governs your use of the services and products provided on the website located at <Link href="https://perrymarket.pp.ua/" className=" text-blue-500">https://perrymarket.pp.ua/</Link> (the &quot;Site&quot;). By accessing or using the Site, you agree to adhere to the terms and conditions outlined in this Agreement, which are designed to ensure a safe, lawful, and beneficial use of our services. This includes, but is not limited to, compliance with intellectual property laws, user contribution guidelines, and any other policies or rules that may be applicable to the Site.</span>
         </div>
 
         <div className="flex flex-col gap-3 md:gap-4 text-sm md:text-base">
