@@ -113,7 +113,9 @@ export const UserSidebar = ({
       )}
       <div className="mt-auto flex flex-col justify-center items-center gap-4 lg:hidden">
         <Separator />
-        <Logo color="#4A7BD9" />
+        <Link href={"/"} onClick={closeSidebar}>
+          <Logo color="#4A7BD9" />
+        </Link>
       </div>
     </Sidebar>
   );

@@ -48,7 +48,7 @@ export const ReviewFilter = ({
     onRatingFilterChange(value);
 
   return (
-    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+    <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-2">
       <div className="flex gap-2 overflow-y-auto pb-1 md:pb-0">
         <Button
           variant={"secondary"}
