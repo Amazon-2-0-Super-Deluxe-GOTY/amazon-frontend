@@ -299,9 +299,11 @@ export default function Page() {
                 {defferedSearch ? (
                   <div className="grow flex flex-col gap-3 justify-center items-center">
                     <Image
-                      src={placeholder}
-                      alt="not found"
-                      className="max-w-xs aspect-video object-cover"
+                      src={"/no-results.webp"}
+                      alt="No results"
+                      width={320}
+                      height={160}
+                      className="aspect-video object-cover"
                     />
                     <p>Product not found</p>
                   </div>
@@ -322,9 +324,11 @@ export default function Page() {
             {tableHeader}
             <div className="grow flex flex-col gap-3 justify-center items-center">
               <Image
-                src={placeholder}
-                alt="not found"
-                className="max-w-xs aspect-video object-cover"
+                src={"/no-results.webp"}
+                alt="No results"
+                width={320}
+                height={160}
+                className="aspect-video object-cover"
               />
               <p>No products in the selected category</p>
             </div>

@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { ColumnDef, Table } from "@tanstack/react-table";
 import Image from "next/image";
-import placeholder from "@/../public/Icons/placeholder.svg";
 import clsx from "clsx";
 import { formatUserRegistrationDate } from "@/lib/date";
 import {
@@ -396,9 +395,11 @@ export default function Page() {
         empty={
           <div className="flex flex-col justify-center items-center gap-3">
             <Image
-              src={placeholder}
-              alt="not found"
-              className="max-w-xs aspect-video object-cover"
+              src={"/no-results.webp"}
+              alt="No results"
+              width={320}
+              height={160}
+              className="aspect-video object-cover"
             />
             <p>
               {searchQuery.length > 0

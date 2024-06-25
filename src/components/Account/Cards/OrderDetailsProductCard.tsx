@@ -1,7 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import placeholder from "@/../public/Icons/placeholder.svg";
 
 export const OrderDetailsProductCard = ({
   imageUrl,

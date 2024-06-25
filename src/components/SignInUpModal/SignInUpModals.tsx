@@ -1,6 +1,5 @@
 import * as React from "react";
 import Image from "next/image";
-import placeholder from "@/../public/Icons/placeholder.svg";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
