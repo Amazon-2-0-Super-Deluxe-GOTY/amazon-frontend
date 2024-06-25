@@ -87,6 +87,7 @@ export interface CartItem {
 }
 
 const defaultPageSize = "7";
+const separator = "--";
 
 export function getProducts(
   filters: ProductFilters
@@ -113,7 +114,7 @@ export function getProducts(
 
   if (filters.additionalFilters) {
     for (let param of filters.additionalFilters) {
-      params.set(param.name, param.values.join(","));
+      params.set(param.name, param.values.join(separator));
     }
   }
 
