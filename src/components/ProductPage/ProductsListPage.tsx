@@ -44,6 +44,8 @@ import { ProductCardSkeleton } from "@/components/Product/ProductCardSkeleton";
 import { FilterCardSkeleton } from "@/components/ProductByCategoryPage/FilterCardSkeleton";
 import type { Category } from "@/api/categories";
 
+const separator = "--";
+
 export function ProductsListPage({ category }: { category?: Category }) {
   const categoryId = category?.id;
   const searchParams = useSearchParamsTools();
@@ -68,7 +70,7 @@ export function ProductsListPage({ category }: { category?: Category }) {
       )
       .map((entry) => ({
         title: entry[0],
-        values: entry[1].split(","),
+        values: entry[1].split(separator),
         type:
           entry[0] === "rating" || entry[0] === "price"
             ? entry[0]
@@ -110,7 +112,8 @@ export function ProductsListPage({ category }: { category?: Category }) {
       page: page,
       pageSize: pageSize,
       price: parsePriceParamValue(searchParams.get?.("price")),
-      rating: searchParams.get?.("rating") ?? undefined,
+      rating:
+        searchParams.get?.("rating")?.replaceAll(separator, ",") ?? undefined,
       searchQuery: searchParams.get?.("searchQuery") ?? undefined,
       additionalFilters: checkedItems
         .filter((i) => i.type === "checkbox")
@@ -129,12 +132,12 @@ export function ProductsListPage({ category }: { category?: Category }) {
   });
 
   const uncheckFilter = (param: { title: string; value: string }) => {
-    const existingParams = searchParams.get?.(param.title)?.split(",");
+    const existingParams = searchParams.get?.(param.title)?.split(separator);
     if (!existingParams) return;
 
     searchParams.set(
       param.title,
-      existingParams.filter((p) => p !== param.value).join(",")
+      existingParams.filter((p) => p !== param.value).join(separator)
     );
   };
 
