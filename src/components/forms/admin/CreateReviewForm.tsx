@@ -26,7 +26,7 @@ import { UploadPhotoListFormField } from "./UploadPhotoListFormFields";
 
 const maxImages = 10;
 const titleMaxLenght = 60;
-const textMaxLenght = 250;
+const textMaxLenght = 1000;
 const minRating = 1;
 const maxRating = 5;
 
@@ -43,11 +43,13 @@ const formSchema = z.object({
   title: z
     .string()
     .max(titleMaxLenght, { message: `${titleMaxLenght} characters maximum` })
-    .optional(),
+    .optional()
+    .nullable(),
   text: z
     .string()
     .max(textMaxLenght, { message: `${textMaxLenght} characters maximum` })
-    .optional(),
+    .optional()
+    .nullable(),
   images: z
     .array(
       z.object({

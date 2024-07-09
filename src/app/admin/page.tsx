@@ -1,6 +1,6 @@
 "use client";
-import placeholder from "@/../public/Icons/placeholder.svg";
 import { logIn, useUser } from "@/api/users";
+import { EyeClosedIcon, EyeOpenedIcon } from "@/components/Shared/Icons";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -36,6 +36,7 @@ export default function Page() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
+  const [showPassword, setShowPassword] = useState(false);
   const { user } = useUser();
   const setToken = useAuthStore((state) => state.setToken);
   const router = useRouter();
@@ -59,7 +60,7 @@ export default function Page() {
 
   useEffect(() => {
     if (user && user.isAdmin) {
-      router.push("/categories");
+      router.push("/admin/categories");
     }
   }, [user, router]);
 
@@ -102,17 +103,26 @@ export default function Page() {
               name="password"
               render={({ field }) => (
                 <FormItem className="relative">
-                  <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
-                    Password
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="Enter your password"
-                      {...field}
-                    />
-                  </FormControl>
+                  <div className="relative">
+                    <FormLabel className="absolute left-3 -top-2.5 bg-background p-0.5">
+                      Password
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        placeholder="Enter your password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <button
+                      type="button"
+                      className="absolute top-0 bottom-0 right-6"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOpenedIcon /> : <EyeClosedIcon />}
+                    </button>
+                  </div>
                   <FormMessage className="px-4" />
                 </FormItem>
               )}

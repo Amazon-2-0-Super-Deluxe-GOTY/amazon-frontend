@@ -26,6 +26,7 @@ import {
 import { useScreenSize } from "@/lib/media";
 import { buttonVariants } from "@/components/ui/button";
 import { InfoIcon, XIcon } from "@/components/Shared/Icons";
+import { formatOrderDate } from "@/lib/date";
 
 export const OrderDetailsModal = ({
   code,
@@ -33,6 +34,7 @@ export const OrderDetailsModal = ({
   products,
   totalPrice,
   additionalInfo,
+  createdAt,
 }: {
   code: string;
   status: string;
@@ -42,6 +44,7 @@ export const OrderDetailsModal = ({
     quantity: number;
     price: number;
   }[];
+  createdAt: string;
   totalPrice: number;
   additionalInfo: {
     name: string;
@@ -75,7 +78,7 @@ export const OrderDetailsModal = ({
         </DialogTrigger>
         <DialogContent
           hideClose
-          className="max-w-7xl max-h-[750px] w-full p-6 pr-3 flex flex-col gap-4"
+          className="max-w-7xl max-h-[750px] w-full p-6 pr-3 flex flex-col gap-4 bg-card"
         >
           <div className="pr-3">
             <DialogTitle>
@@ -95,6 +98,9 @@ export const OrderDetailsModal = ({
                     {status}
                   </span>
                 </div>
+                <DrawerClose className="flex justify-center items-center">
+                  <XIcon className="w-6 h-6 stroke-3" />
+                </DrawerClose>
               </div>
             </DialogTitle>
             <Separator />
@@ -139,46 +145,38 @@ export const OrderDetailsModal = ({
                     </Popover>
                     <div className="flex justify-center items-center gap-4">
                       <span className="text-2xl font-medium">Total:</span>
-                      <span className="text-2xl font-medium">$ {whole}</span>
-                      <sup className="text-xl font-bold mt-3 -ml-3">
-                        {fraction}
-                      </sup>
+                      <p className="text-4xl font-semibold">
+                        <span>${whole}</span>
+                        <sup>{fraction}</sup>
+                      </p>
                     </div>
                   </div>
                   <Separator />
                 </div>
               </div>
-              <div className="flex flex-col justify-center items-center w-full gap-3 px-6 py-3 bg-slate-50 rounded">
+              <div className="flex flex-col justify-center items-center w-full gap-3 px-6 py-3 rounded">
                 <span className="text-xl font-semibold">
                   Additional information
                 </span>
                 <div className="w-full h-full">
-                  <div className="w-full flex justify-between items-center py-2">
-                    <span className="text-xl font-medium">
-                      Recipient&apos;s name
-                    </span>
-                    <span className="text-xl font-light">
-                      {additionalInfo.name}
-                    </span>
-                  </div>
-                  <div className="w-full flex justify-between items-center py-2">
-                    <span className="text-xl font-medium">Address</span>
-                    <span className="text-xl font-light">
-                      {additionalInfo.adress}
-                    </span>
-                  </div>
-                  <div className="w-full flex justify-between items-center py-2">
-                    <span className="text-xl font-medium">Payment type</span>
-                    <span className="text-xl font-light capitalize">
+                  <p className="w-full flex justify-between items-center py-2 text-lg">
+                    <span>Recipient&apos;s name</span>
+                    <span>{additionalInfo.name}</span>
+                  </p>
+                  <p className="w-full flex justify-between items-center py-2 text-lg">
+                    <span>Address</span>
+                    <span>{additionalInfo.adress}</span>
+                  </p>
+                  <p className="w-full flex justify-between items-center py-2 text-lg">
+                    <span>Payment type</span>
+                    <span className="capitalize">
                       {additionalInfo.paymentType}
                     </span>
-                  </div>
-                  {/* <div className="w-full flex justify-between items-center">
-                    <span className="text-xl font-medium">Delivered on</span>
-                    <span className="text-xl font-light">
-                      {additionalInfo.dateDelivered}
-                    </span>
-                  </div> */}
+                  </p>
+                  <p className="w-full flex justify-between items-center py-2 text-lg">
+                    <span>Ordered on</span>
+                    <span>{formatOrderDate(new Date(createdAt))}</span>
+                  </p>
                 </div>
               </div>
             </div>
@@ -201,7 +199,7 @@ export const OrderDetailsModal = ({
       >
         Details
       </DrawerTrigger>
-      <DrawerContent className="max-h-[750px] w-full p-4 pr-1 flex flex-col gap-3">
+      <DrawerContent className="max-h-[750px] w-full p-4 pr-1 flex flex-col gap-3 bg-card">
         <div className="pr-3">
           <DrawerTitle>
             <div className="flex justify-between items-center pb-6">
@@ -220,8 +218,8 @@ export const OrderDetailsModal = ({
                   {status}
                 </span>
               </div>
-              <DrawerClose className="w-4 h-4 flex justify-center items-center">
-                <XIcon />
+              <DrawerClose className="flex justify-center items-center">
+                <XIcon className="w-4 h-4 stroke-3" />
               </DrawerClose>
             </div>
           </DrawerTitle>
@@ -258,18 +256,18 @@ export const OrderDetailsModal = ({
                       </div>
                     </PopoverContent>
                   </Popover>
-                  <div className="flex justify-center items-center gap-4">
-                    <span className="text-xl font-medium">Total:</span>
-                    <span className="text-xl font-medium">$ {whole}</span>
-                    <sup className="text-sm font-bold mt-2 -ml-3">
-                      {fraction}
-                    </sup>
+                  <div className="flex justify-center items-center gap-4 text-3xl font-semibold">
+                    <span>Total:</span>
+                    <p>
+                      <span>$ {whole}</span>
+                      <sup>{fraction}</sup>
+                    </p>
                   </div>
                 </div>
                 <Separator />
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center w-full gap-3 p-3 bg-slate-50 rounded">
+            <div className="flex flex-col justify-center items-center w-full gap-3 p-3 rounded">
               <span className="text-base font-semibold">
                 Additional information
               </span>
@@ -284,7 +282,7 @@ export const OrderDetailsModal = ({
                 </div>
                 <div className="w-full flex justify-between items-start gap-3 py-2">
                   <span className="text-base font-medium">Address</span>
-                  <span className="text-base text-right">
+                  <span className="text-base text-right max-w-40">
                     {additionalInfo.adress}
                   </span>
                 </div>
@@ -294,12 +292,12 @@ export const OrderDetailsModal = ({
                     {additionalInfo.paymentType}
                   </span>
                 </div>
-                {/* <div className="w-full flex justify-between items-start gap-3 py-2">
-                  <span className="text-base font-medium">Delivered on</span>
+                <div className="w-full flex justify-between items-start gap-3 py-2">
+                  <span className="text-base font-medium">Ordered on</span>
                   <span className="text-base text-right">
-                    {additionalInfo.dateDelivered}
+                    {formatOrderDate(new Date(createdAt))}
                   </span>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>

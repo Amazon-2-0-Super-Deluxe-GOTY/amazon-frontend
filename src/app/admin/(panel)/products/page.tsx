@@ -13,7 +13,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { ProductAsideCard } from "@/components/Admin/Product/ProductAsideCart";
-import placeholder from "@/../public/Icons/placeholder.svg";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { splitPrice } from "@/lib/products";
@@ -117,6 +116,8 @@ export default function Page() {
           ) {
             setSelectedProduct(undefined);
           }
+
+          await productsQuery.refetch();
         });
       }
     });
@@ -194,14 +195,13 @@ export default function Page() {
           const product = row.original;
           return (
             <div className="flex items-center gap-3">
-              <div className="w-20 h-20 relative">
-                <Image
-                  src={product.productImages[0].imageUrl}
-                  alt="Product image"
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <Image
+                src={product.productImages[0].imageUrl}
+                alt="Product image"
+                width={80}
+                height={80}
+                className="object-cover rounded-sm aspect-square"
+              />
               <p className="max-w-xs line-clamp-2 text-xl">{product.name}</p>
             </div>
           );
@@ -265,7 +265,7 @@ export default function Page() {
                 </button>
               ) : (
                 <Link
-                  href={`/products/create?categoryId=${selectedCategory?.id}`}
+                  href={`/admin/products/create?categoryId=${selectedCategory?.id}`}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </Link>
@@ -298,15 +298,17 @@ export default function Page() {
                 {defferedSearch ? (
                   <div className="grow flex flex-col gap-3 justify-center items-center">
                     <Image
-                      src={placeholder}
-                      alt="not found"
-                      className="max-w-xs aspect-video object-cover"
+                      src={"/no-results.webp"}
+                      alt="No results"
+                      width={320}
+                      height={160}
+                      className="aspect-video object-cover"
                     />
                     <p>Product not found</p>
                   </div>
                 ) : (
                   <Link
-                    href={`/products/create?categoryId=${selectedCategory?.id}`}
+                    href={`/admin/products/create?categoryId=${selectedCategory?.id}`}
                     className="p-8 max-w-sm w-full border border-secondary rounded-lg flex flex-col gap-3 items-center"
                   >
                     <PlusIcon className="w-12 h-12 stroke-secondary" />
@@ -321,9 +323,11 @@ export default function Page() {
             {tableHeader}
             <div className="grow flex flex-col gap-3 justify-center items-center">
               <Image
-                src={placeholder}
-                alt="not found"
-                className="max-w-xs aspect-video object-cover"
+                src={"/no-results.webp"}
+                alt="No results"
+                width={320}
+                height={160}
+                className="aspect-video object-cover"
               />
               <p>No products in the selected category</p>
             </div>

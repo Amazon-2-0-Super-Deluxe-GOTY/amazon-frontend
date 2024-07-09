@@ -24,6 +24,8 @@ import { StarEmptyIcon, StarFullIcon } from "../Shared/Icons";
 import { Separator } from "../ui/separator";
 import { parsePriceParamValue } from "@/lib/products";
 
+const separator = "--";
+
 export function FilterCardVariation({
   filters,
   isOpen = true,
@@ -136,7 +138,7 @@ function CheckboxFilterCard({
     const existingParams = searchParams.get?.(filter.title);
     if (!existingParams) return [];
     return existingParams
-      .split(",")
+      .split(separator)
       .filter((param) => filter.values.includes(param));
   }, [searchParams, filter.title, filter.values]);
 
@@ -152,7 +154,7 @@ function CheckboxFilterCard({
       ? checkedItems.filter((elem) => elem !== item)
       : [...checkedItems, item];
     if (newItems.length > 0) {
-      searchParams.set(filter.title, newItems.join(","));
+      searchParams.set(filter.title, newItems.join(separator));
     } else {
       searchParams.set(filter.title, undefined);
     }
@@ -180,7 +182,7 @@ const FilterTiles = ({ filter, search }: FilterCardProps<FilterTilesItem>) => {
     const existingParams = searchParams.get?.(filter.title);
     if (!existingParams) return [];
     return existingParams
-      .split(",")
+      .split(separator)
       .filter((param) => filter.values.includes(param));
   }, [searchParams, filter.title, filter.values]);
 
@@ -196,7 +198,7 @@ const FilterTiles = ({ filter, search }: FilterCardProps<FilterTilesItem>) => {
       ? checkedItems.filter((elem) => elem !== item)
       : [...checkedItems, item];
     if (newItems.length > 0) {
-      searchParams.set(filter.title, newItems.join(","));
+      searchParams.set(filter.title, newItems.join(separator));
     } else {
       searchParams.set(filter.title, undefined);
     }
@@ -348,7 +350,7 @@ const FilterRating = ({ filter }: FilterCardProps<FilterRatingItem>) => {
   const checkedItems = useMemo<number[]>(() => {
     const existingParams = searchParams
       .get?.(filter.type)
-      ?.split(",")
+      ?.split(separator)
       .map(Number);
 
     if (!existingParams || existingParams.some(isNaN)) return [];
@@ -360,7 +362,7 @@ const FilterRating = ({ filter }: FilterCardProps<FilterRatingItem>) => {
       ? checkedItems.filter((elem) => elem !== value)
       : [...checkedItems, value];
     if (newItems.length > 0) {
-      searchParams.set(filter.type, newItems.join(","));
+      searchParams.set(filter.type, newItems.join(separator));
     } else {
       searchParams.set(filter.type, undefined);
     }

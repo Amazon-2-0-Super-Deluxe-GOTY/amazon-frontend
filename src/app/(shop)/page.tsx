@@ -15,6 +15,7 @@ export default function Home() {
   const categoriesQuery = useCategories({
     pageSize: pageSize * 2,
     pageNumber: 1,
+    orderBy: "desc",
   });
   const productsTrendingQuery = useQuery({
     queryKey: ["products", "main", "trending"],

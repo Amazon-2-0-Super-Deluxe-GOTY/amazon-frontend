@@ -6,10 +6,12 @@ import { Button } from "../ui/button";
 import { UserSidebar } from "./UserSidebar";
 import { ShoppingCart } from "../ShoppingCart/ShoppingCart";
 import {
+  BoxingGlovesIcon,
   CleaningSprayIcon,
   ClothesIcon,
   ComputerIcon,
   HammerIcon,
+  JumpRopeIcon,
   MenuIcon,
   SearchIcon,
   SofaIcon,
@@ -17,34 +19,34 @@ import {
 } from "./Icons";
 import { Logo } from "./Logo";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUser } from "@/api/users";
 
 const sidebarData = {
-  // user: { fullName: "Marsha Shields", avatar: "" },
   categories: [
     {
       icon: <ClothesIcon />,
       title: "Fashion",
-      url: "/category/fashion",
+      url: "/category/1",
     },
     {
       icon: <ComputerIcon />,
       title: "Electronics",
-      url: "/category/electronics",
+      url: "/category/5",
     },
     {
-      icon: <CleaningSprayIcon />,
-      title: "Household",
-      url: "/category/household",
+      icon: <BoxingGlovesIcon />,
+      title: "Sports equipment",
+      url: "/category/7",
     },
     {
-      icon: <SofaIcon />,
-      title: "Furniture",
-      url: "/category/furniture",
+      icon: <JumpRopeIcon />,
+      title: "Tool for hobby",
+      url: "/category/14",
     },
     {
       icon: <HammerIcon />,
-      title: "Work tools",
-      url: "/category/work-tools",
+      title: "Garden tools",
+      url: "/category/9",
     },
   ],
 };
@@ -58,6 +60,7 @@ export function Header() {
     if (!existingParams) return "";
     return existingParams;
   });
+  const { user } = useUser();
 
   const openSidebar = () => setIsSidebarOpen(true);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -95,12 +98,14 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2">
           {/* designer moment 🤡 */}
-          <Link
-            href={"/account/?tab=settings-open"}
-            className="p-4 hidden md:block"
-          >
-            <UserIcon className="stroke-3 [&_:nth-child(1)]:stroke-1 w-8 h-8" />
-          </Link>
+          {!!user && (
+            <Link
+              href={"/account/?tab=settings-open"}
+              className="p-4 hidden md:block"
+            >
+              <UserIcon className="stroke-3 [&_:nth-child(1)]:stroke-1 w-8 h-8" />
+            </Link>
+          )}
           <ShoppingCart />
         </div>
       </div>

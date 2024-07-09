@@ -29,7 +29,7 @@ export function CreateProductPage({
   const router = useRouter();
 
   const onSubmit = () => {
-    router.push("/products");
+    router.push("/admin/products");
   };
 
   const formDefaultValues = useMemo(() => {

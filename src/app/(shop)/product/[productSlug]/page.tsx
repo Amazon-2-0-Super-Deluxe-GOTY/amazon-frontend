@@ -4,12 +4,16 @@ import { ProductPage } from "@/components/ProductPage/ProductPage";
 import { getProductBySlugServer } from "@/api/server";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import { unstable_noStore } from "next/cache";
 
 export default async function Page({
   params,
 }: {
   params: { productSlug: string };
 }) {
+  // FIXME: remove caching for demonstration purposes
+  unstable_noStore();
+
   const product = await getProductBySlugServer(params);
 
   if (product.status !== 200) {

@@ -44,6 +44,8 @@ import { ProductCardSkeleton } from "@/components/Product/ProductCardSkeleton";
 import { FilterCardSkeleton } from "@/components/ProductByCategoryPage/FilterCardSkeleton";
 import type { Category } from "@/api/categories";
 
+const separator = "--";
+
 export function ProductsListPage({ category }: { category?: Category }) {
   const categoryId = category?.id;
   const searchParams = useSearchParamsTools();
@@ -68,7 +70,7 @@ export function ProductsListPage({ category }: { category?: Category }) {
       )
       .map((entry) => ({
         title: entry[0],
-        values: entry[1].split(","),
+        values: entry[1].split(separator),
         type:
           entry[0] === "rating" || entry[0] === "price"
             ? entry[0]
@@ -100,6 +102,7 @@ export function ProductsListPage({ category }: { category?: Category }) {
 
   const setPage = (page: number) => {
     searchParams.set("page", page.toString());
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const productFilterParams = useMemo<ProductFilters>(() => {
@@ -109,7 +112,8 @@ export function ProductsListPage({ category }: { category?: Category }) {
       page: page,
       pageSize: pageSize,
       price: parsePriceParamValue(searchParams.get?.("price")),
-      rating: searchParams.get?.("rating") ?? undefined,
+      rating:
+        searchParams.get?.("rating")?.replaceAll(separator, ",") ?? undefined,
       searchQuery: searchParams.get?.("searchQuery") ?? undefined,
       additionalFilters: checkedItems
         .filter((i) => i.type === "checkbox")
@@ -128,12 +132,12 @@ export function ProductsListPage({ category }: { category?: Category }) {
   });
 
   const uncheckFilter = (param: { title: string; value: string }) => {
-    const existingParams = searchParams.get?.(param.title)?.split(",");
+    const existingParams = searchParams.get?.(param.title)?.split(separator);
     if (!existingParams) return;
 
     searchParams.set(
       param.title,
-      existingParams.filter((p) => p !== param.value).join(",")
+      existingParams.filter((p) => p !== param.value).join(separator)
     );
   };
 
@@ -284,7 +288,12 @@ export function ProductsListPage({ category }: { category?: Category }) {
                 className="flex gap-0 max-md:hidden"
                 type="single"
                 value={listView}
-                onValueChange={(value) => value && setListView(value)}
+                onValueChange={(value) => {
+                  if (value) {
+                    setListView(value);
+                    setPage(1);
+                  }
+                }}
               >
                 <ToggleGroupItem
                   value="cols-3"
@@ -325,7 +334,7 @@ export function ProductsListPage({ category }: { category?: Category }) {
           {/* Pagination here */}
           {!!productsQuery.data?.count.pagesCount &&
             productsQuery.data.count.pagesCount > 1 && (
-              <div className="w-full mb-6 lg:mb-12">
+              <div className="w-full mt-6 lg:mt-12">
                 <Pagination
                   page={page}
                   setPage={setPage}

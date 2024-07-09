@@ -21,8 +21,8 @@ import { logOut, useUser } from "@/api/users";
 import { useAuthStore } from "@/lib/storage";
 import { useRouter } from "next/navigation";
 import { CategoryIcon, ExitIcon, FAQIcon, SettingsIcon } from "./Icons";
-import { MediaQueryCSS } from "./MediaQuery";
 import { Logo } from "./Logo";
+import { SheetClose } from "../ui/sheet";
 
 export const UserSidebar = ({
   isOpen,
@@ -51,7 +51,8 @@ export const UserSidebar = ({
   const onLogOut = () => {
     logOut()
       .then(clearToken)
-      .then(() => router.push("/"));
+      .then(() => router.push("/"))
+      .then(closeSidebar);
   };
 
   return (
@@ -76,14 +77,11 @@ export const UserSidebar = ({
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-3 lg:gap-4">
             {categories.map((item) => (
-              <Link
-                className="w-full"
-                href={item.url}
-                key={item.title}
-                onClick={closeSidebar}
-              >
-                <SidebarItem icon={item.icon} text={item.title} />
-              </Link>
+              <SheetClose key={item.title} onClick={closeSidebar}>
+                <Link className="w-full" href={item.url} onClick={closeSidebar}>
+                  <SidebarItem icon={item.icon} text={item.title} />
+                </Link>
+              </SheetClose>
             ))}
             <Button variant={"secondary"}>See all</Button>
           </AccordionContent>
@@ -92,13 +90,17 @@ export const UserSidebar = ({
       <Separator />
       <div className="flex flex-col gap-3 lg;gap-4">
         {isLoggedIn && (
-          <Link href={"/account?tab=settings-open"}>
-            <SidebarItem icon={<SettingsIcon />} text="Settings" />
-          </Link>
+          <SheetClose onClick={closeSidebar}>
+            <Link href={"/account?tab=settings-open"}>
+              <SidebarItem icon={<SettingsIcon />} text="Settings" />
+            </Link>
+          </SheetClose>
         )}
-        <Link href={"/help"}>
-          <SidebarItem icon={<FAQIcon />} text="Help & FAQ" />
-        </Link>
+        <SheetClose onClick={closeSidebar}>
+          <Link href={"/help"}>
+            <SidebarItem icon={<FAQIcon />} text="Help & FAQ" />
+          </Link>
+        </SheetClose>
       </div>
       {isLoggedIn && (
         <>
@@ -110,7 +112,9 @@ export const UserSidebar = ({
       )}
       <div className="mt-auto flex flex-col justify-center items-center gap-4 lg:hidden">
         <Separator />
-        <Logo color="#4A7BD9" />
+        <Link href={"/"} onClick={closeSidebar}>
+          <Logo color="#4A7BD9" />
+        </Link>
       </div>
     </Sidebar>
   );

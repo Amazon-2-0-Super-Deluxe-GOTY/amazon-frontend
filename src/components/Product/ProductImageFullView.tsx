@@ -41,7 +41,7 @@ export const ProductImageFullView = (props: Props) => {
   return (
     <Dialog open onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-screen w-screen h-[68vh] lg:w-[83vw] lg:h-[95vh] p-0 bg-transparent border-none"
+        className="max-w-screen w-screen h-[68vh] lg:w-[83vw] lg:h-[95vh] p-0 bg-transparent border-none shadow-none"
         hideClose
       >
         <div className="w-full h-full relative">

@@ -20,7 +20,16 @@ export const RemoveFromWishListModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger className={cn(buttonVariants({ variant:"secondary", size:"sm", className:"bg-background h-8 max-md:text-sm px-5 py-3 md:px-4 md:py-2" }))}>
+      <DialogTrigger
+        className={cn(
+          buttonVariants({
+            variant: "secondary",
+            size: "sm",
+            className:
+              "bg-background h-8 max-md:text-sm px-5 py-3 md:px-4 md:py-2",
+          })
+        )}
+      >
         Remove
       </DialogTrigger>
       <DialogContent className="max-w-[464px] gap-5 md:gap-6" hideClose>

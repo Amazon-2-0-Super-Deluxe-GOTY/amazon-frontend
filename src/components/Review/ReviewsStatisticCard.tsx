@@ -6,6 +6,7 @@ import {
   ConfirmIcon,
   ChevronRightIcon,
   StarEmptyIcon,
+  StarHalfEmptyIcon,
 } from "../Shared/Icons";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
@@ -13,24 +14,36 @@ import clsx from "clsx";
 import type { ReviewsStatistic } from "@/api/review";
 import { Skeleton } from "../ui/skeleton";
 
-const maxRate = 5;
+const maxRating = 5;
 
 export const ReviewsStatisticCard = ({ data }: { data?: ReviewsStatistic }) => {
   const generalRate = data?.generalRate ?? 0;
 
   const starElements = useMemo(() => {
-    return Array.from({ length: maxRate }).map((_, index) =>
-      index < Math.floor(generalRate) ? (
-        <StarFullIcon className="w-4 h-4" key={index} />
-      ) : (
-        <StarEmptyIcon className="w-4 h-4" key={index} />
-      )
-    );
+    const stars = [];
+    const rate = Math.floor(generalRate);
+    const hasHalf = rate !== generalRate;
+    let i = 0;
+
+    for (; i < rate; i++) {
+      stars.push(<StarFullIcon className="w-4 h-4" key={i} />);
+    }
+
+    if (rate !== maxRating && hasHalf) {
+      stars.push(<StarHalfEmptyIcon className="w-4 h-4" key={i} />);
+      i++;
+    }
+
+    for (; i < maxRating; i++) {
+      stars.push(<StarEmptyIcon className="w-4 h-4" key={i} />);
+    }
+
+    return stars;
   }, [generalRate]);
 
   const barsElements = useMemo(() => {
     const elements: ReviewsStatistic["ratingStats"] = [];
-    for (let i = maxRate; i > 0; i--) {
+    for (let i = maxRating; i > 0; i--) {
       const stat = data?.ratingStats.find((s) => s.mark === i);
       elements.push({
         mark: i,

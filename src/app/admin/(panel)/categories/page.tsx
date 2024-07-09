@@ -23,7 +23,6 @@ import {
 } from "@/lib/checkboxTree";
 import { CreateCategoryModal } from "@/components/Admin/Category/CreateCategoryModal";
 import Image from "next/image";
-import placeholder from "@/../public/Icons/placeholder.svg";
 import {
   deleteCategory,
   useAdminCategories,
@@ -228,9 +227,11 @@ export default function Page() {
           ) : (
             <div className="h-full flex flex-col justify-center items-center gap-3">
               <Image
-                src={placeholder}
-                alt="placeholder"
-                className="max-w-xs aspect-video object-cover"
+                src={"/no-results.webp"}
+                alt="No results"
+                width={320}
+                height={160}
+                className="aspect-video object-cover"
               />
               <p>No subcategories in the selected category</p>
             </div>

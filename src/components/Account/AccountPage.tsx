@@ -116,36 +116,33 @@ export function AccountPage({ user: initialUser }: { user: User }) {
                 </span>
               </div>
             </div>
-            <Button
-              variant={"tertiary"}
+            <button
               onClick={() => onChangeAccountTab("orders")}
               className={clsx(
-                "flex justify-start font-normal text-base",
-                tabFromParams === "orders-open" && "bg-tertiary-hover"
+                "flex justify-start font-normal text-base px-6 py-4 rounded-sm",
+                accountTab === "orders" && "lg:bg-tertiary-hover"
               )}
             >
               My orders
-            </Button>
-            <Button
-              variant={"tertiary"}
+            </button>
+            <button
               onClick={() => onChangeAccountTab("wishlist")}
               className={clsx(
-                "flex justify-start font-normal text-base",
-                tabFromParams === "wishlist-open" && "bg-tertiary-hover"
+                "flex justify-start font-normal text-base px-6 py-4 rounded-sm",
+                accountTab === "wishlist" && "lg:bg-tertiary-hover"
               )}
             >
               Wishlist
-            </Button>
-            <Button
-              variant={"tertiary"}
+            </button>
+            <button
               onClick={() => onChangeAccountTab("settings")}
               className={clsx(
-                "flex justify-start font-normal text-base",
-                tabFromParams === "settings-open" && "bg-tertiary-hover"
+                "flex justify-start font-normal text-base px-6 py-4 rounded-sm",
+                accountTab === "settings" && "lg:bg-tertiary-hover"
               )}
             >
               Account settings
-            </Button>
+            </button>
           </aside>
           <Separator orientation="vertical" className="hidden md:block" />
           <div
@@ -155,14 +152,13 @@ export function AccountPage({ user: initialUser }: { user: User }) {
             )}
           >
             <div>
-              <Button
-                variant={"tertiary"}
-                className="pl-2 mb-3 md:hidden"
+              <button
+                className="flex items-center gap-2 mb-3 md:hidden"
                 onClick={onBack}
               >
-                <ChevronLeftIcon />
+                <ChevronLeftIcon className="w-6 h-6 text-secondary" />
                 <span className="text-base">Back</span>
-              </Button>
+              </button>
               {(() => {
                 switch (accountTab) {
                   case "settings":
@@ -190,7 +186,10 @@ export function AccountPage({ user: initialUser }: { user: User }) {
 
 const AvatarNameBlock = ({ image }: { image?: string }) => {
   return (
-    <Avatar className="w-12 h-12">
+    <Avatar
+      className="w-14 h-14"
+      style={{ boxShadow: "0px 0px 16px 0px hsla(216, 75%, 26%, 0.25)" }}
+    >
       <AvatarImage src={image} />
       <AvatarDefaultFallback />
     </Avatar>

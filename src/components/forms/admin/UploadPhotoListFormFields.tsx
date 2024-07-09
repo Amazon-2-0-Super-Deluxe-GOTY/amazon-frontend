@@ -122,12 +122,13 @@ export function UploadPhotoListFormField({
           <FormControl>
             <div className="flex flex-wrap gap-4">
               {field.value?.map((img, i) => (
-                <div key={img.id} className="w-28 h-28 rounded-lg relative">
+                <div key={img.id} className="rounded-lg relative">
                   <Image
                     src={img.imageUrl}
                     alt={`Image ${i + 1}`}
-                    fill
-                    className="object-cover rounded-lg"
+                    width={112}
+                    height={112}
+                    className="object-cover rounded-lg aspect-square"
                   />
                   <div className="absolute inset-0 bg-black/55 flex justify-center items-center opacity-0 hover:opacity-100 rounded-lg">
                     <Button

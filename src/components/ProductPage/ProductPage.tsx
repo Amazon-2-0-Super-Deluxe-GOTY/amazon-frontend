@@ -21,6 +21,7 @@ import {
   HomeIcon,
   StarEmptyIcon,
   StarFullIcon,
+  StarHalfEmptyIcon,
 } from "@/components/Shared/Icons";
 import { Separator } from "../ui/separator";
 import { useQuery } from "@tanstack/react-query";
@@ -61,13 +62,25 @@ export function ProductPage({ product }: { product: Product }) {
   });
 
   const starElements = useMemo(() => {
-    return Array.from({ length: maxRating }).map((_, index) =>
-      index < product.generalRate ? (
-        <StarFullIcon className="w-6 h-6" key={index} />
-      ) : (
-        <StarEmptyIcon className="w-6 h-6" key={index} />
-      )
-    );
+    const stars = [];
+    const rate = Math.floor(product.generalRate);
+    const hasHalf = rate !== product.generalRate;
+    let i = 0;
+
+    for (; i < rate; i++) {
+      stars.push(<StarFullIcon className="w-6 h-6" key={i} />);
+    }
+
+    if (rate !== maxRating && hasHalf) {
+      stars.push(<StarHalfEmptyIcon className="w-6 h-6" key={i} />);
+      i++;
+    }
+
+    for (; i < maxRating; i++) {
+      stars.push(<StarEmptyIcon className="w-6 h-6" key={i} />);
+    }
+
+    return stars;
   }, [product.generalRate]);
 
   return (
@@ -167,6 +180,7 @@ export function ProductPage({ product }: { product: Product }) {
           maxSizeMobile={6}
           products={otherProductsInCategoryQuery.data ?? []}
           isLoading={otherProductsInCategoryQuery.isLoading}
+          categoryId={product.category.id}
         />
       </div>
       {discountProductsInCategoryQuery.isLoading ? (
@@ -176,6 +190,7 @@ export function ProductPage({ product }: { product: Product }) {
             maxSizeMobile={6}
             products={[]}
             isLoading
+            categoryId={product.category.id}
           />
         </div>
       ) : !!discountProductsInCategoryQuery.data?.length ? (
@@ -185,6 +200,7 @@ export function ProductPage({ product }: { product: Product }) {
             maxSizeMobile={6}
             products={discountProductsInCategoryQuery.data}
             isLoading={false}
+            categoryId={product.category.id}
           />
         </div>
       ) : null}

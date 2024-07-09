@@ -19,7 +19,9 @@ export const CheckoutProductCard = ({
         <div className="w-full flex p-4">
           <div className="w-full flex justify-between items-center gap-4">
             <div className="w-full flex justify-start items-start">
-              <p className="text-sm md:text-base line-clamp-2">{name}</p>
+              <p className="text-sm md:text-base line-clamp-2 max-w-80">
+                {name}
+              </p>
             </div>
             <div className="w-full">
               <div>

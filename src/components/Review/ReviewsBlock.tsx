@@ -104,14 +104,9 @@ export const ReviewsBlock = ({ productId }: Props) => {
     mutationFn: deleteReview,
   });
 
-  // const reviews, setReviews] = useState<Review[]>([]);
   const reviews = reviewsQuery.data ?? [];
   const [reviewsOptimistic, setReviewsOptimistic] = useOptimistic(reviews);
   const [isLikePending, startLikeTransition] = useTransition();
-
-  // useEffect(() => {
-  //   setReviews(reviewsQuery.data ?? []);
-  // }, [reviewsQuery.data]);
 
   const [openedReviewIndex, setOpenedReviewIndex] = useState<
     number | undefined

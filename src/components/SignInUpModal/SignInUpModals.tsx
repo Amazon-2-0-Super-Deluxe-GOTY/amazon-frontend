@@ -1,6 +1,5 @@
 import * as React from "react";
 import Image from "next/image";
-import placeholder from "@/../public/Icons/placeholder.svg";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
@@ -17,7 +16,6 @@ import { Button } from "../ui/button";
 import { useModal } from "../Shared/Modal";
 import type { SignInUpModalVariants } from "./types";
 import { AlertDialog } from "../Admin/AlertDialog";
-import clsx from "clsx";
 
 export const SignInUpButtons = ({
   variant,
@@ -119,7 +117,12 @@ export const AuthModal = ({
               case "reset-password":
                 return <ModalResetPassword changeModal={handleChangeModal} />;
               case "signup":
-                return <ModalSignUp changeModal={handleChangeModal} />;
+                return (
+                  <ModalSignUp
+                    changeModal={handleChangeModal}
+                    closeModal={closeModal}
+                  />
+                );
               case "signup-code":
                 return <ModalSignUpCode changeModal={handleChangeModal} />;
               case "finishing-touches":
@@ -131,11 +134,13 @@ export const AuthModal = ({
                 return null;
             }
           })()}
-          <div className="w-full h-full max-w-[530px] max-md:hidden">
+          <div className="w-full h-full max-w-[530px] max-md:hidden relative">
             <Image
-              src={placeholder}
-              alt="Placeholder"
-              className="h-full object-cover"
+              src={"/login-signup-popup.webp"}
+              alt="Abyss of Jellyfish"
+              width={600}
+              height={600}
+              className="object-cover absolute h-full translate-x-1 translate-y-1"
             />
           </div>
         </div>

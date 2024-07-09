@@ -86,7 +86,7 @@ export function ProductAsideCard({
           </Button>
           <div className="mt-auto flex gap-3.5">
             <Link
-              href={`/products/create?productId=${product.id}`}
+              href={`/admin/products/create?productId=${product.id}`}
               className="w-full"
             >
               <Button

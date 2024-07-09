@@ -11,6 +11,7 @@ import { ProductImageFullView } from "../Product/ProductImageFullView";
 import { useModal } from "../Shared/Modal";
 import Image from "next/image";
 import discountShape from "@/../public/Icons/discount-shape.svg";
+import { useScreenSize } from "@/lib/media";
 
 export const ProductImagesBlock = ({
   images,
@@ -24,6 +25,7 @@ export const ProductImagesBlock = ({
     React.useState<CarouselApi>();
   const [currentImageIndex, setCurrentImageIndex] = React.useState<number>(0);
   const { showModal } = useModal();
+  const isDesktop = useScreenSize({ minSize: "lg" });
 
   React.useEffect(() => {
     if (!mainCarouselApi) return;
@@ -69,15 +71,13 @@ export const ProductImagesBlock = ({
         <CarouselContent>
           {images.map((image) => {
             return (
-              <CarouselItem
-                key={image.id}
-                className="w-full aspect-square relative"
-              >
+              <CarouselItem key={image.id} className="w-full">
                 <Image
                   src={image.imageUrl}
-                  fill
+                  width={1000}
+                  height={700}
                   alt="Product"
-                  className="object-cover rounded-lg"
+                  className="object-cover rounded-lg aspect-square"
                   onClick={openModal}
                 />
               </CarouselItem>
@@ -86,7 +86,7 @@ export const ProductImagesBlock = ({
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />
-        {discountPercent && (
+        {!!discountPercent && (
           <div className="absolute top-4 right-4 w-20 h-12 md:w-24 md:h-16 xl:w-32 xl:h-20">
             <Image
               src={discountShape}
@@ -118,12 +118,13 @@ export const ProductImagesBlock = ({
                   key={image.id}
                   className={"basis-[unset] pl-2 md:pl-3"}
                 >
-                  <div className="w-14 h-14 lg:w-20 lg:h-20 relative cursor-pointer z-0">
+                  <div className="relative cursor-pointer z-0">
                     <Image
                       src={image.imageUrl}
                       alt="Product"
-                      fill
-                      className={"object-cover rounded-lg"}
+                      width={isDesktop ? 80 : 60}
+                      height={isDesktop ? 80 : 60}
+                      className={"object-cover rounded-lg aspect-square"}
                       onClick={onPreviewImageClick(index)}
                     />
                     {currentImageIndex !== index && "brightness-30" && (
